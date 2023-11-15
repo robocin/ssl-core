@@ -5,34 +5,46 @@ services:
     build:
       context: .
       dockerfile: service.Dockerfile
-    command: ["0"]
+    command: ["bin/client", "0"]
+    volumes:
+      - /tmp:/tmp
     
   service-1:
     build:
       context: .
       dockerfile: service.Dockerfile
-    command: ["1"]
+    command: ["bin/client", "1"]
+    volumes:
+      - /tmp:/tmp
 
   service-2:
     build:
       context: .
       dockerfile: service.Dockerfile
-    command: ["2"]
+    command: ["bin/client", "2"]
+    volumes:
+      - /tmp:/tmp
 
   service-3:
     build:
       context: .
       dockerfile: service.Dockerfile
-    command: ["3"]
+    command: ["bin/client", "3"]
+    volumes:
+      - /tmp:/tmp
 
   service-4:
     build:
       context: .
       dockerfile: service.Dockerfile
-    command: ["4"]
+    command: ["bin/client", "4"]
+    volumes:
+      - /tmp:/tmp
 
   service-5:
     build:
       context: .
       dockerfile: service.Dockerfile
-    command: ["5"]
+    command: ["bin/client", "5"]
+    volumes:
+      - /tmp:/tmp

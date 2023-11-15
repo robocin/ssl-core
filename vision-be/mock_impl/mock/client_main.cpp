@@ -18,26 +18,34 @@ int main(int argc, char *argv[]) {
   int service_id = std::atoi(argv[1]);
 
   std::unique_ptr<ITopicSubscriber> subscriber =
-      std::make_unique<ZmqSubscriber>(std::string(argv[1]));
-  subscriber->connect("ipc:///tmp/topic" + std::string(argv[1]) + ".ipc");
+      std::make_unique<ZmqSubscriber>("robocin");
+  subscriber->connect("ipc:///tmp/channel" + std::to_string(service_id - 1)  + ".ipc");
 
   std::unique_ptr<ITopicPublisher> publisher = std::make_unique<ZmqPublisher>();
-  publisher->bind("ipc:///tmp/vision.ipc" + std::to_string(service_id + 1) +
+  publisher->bind("ipc:///tmp/channel" + std::to_string(service_id) +
                   ".ipc");
 
-  while (true) {
-    auto start_time = absl::Now();
-    std::cout << service_id << ": " << start_time << '\n';
+  long long cycle = 0;
+  while(true) {
+    std::string pck = "s";
 
-    std::string pck;
-    if (service_id != 0) {
+    if(service_id == 0) {
+      auto start_time = absl::ToUnixNanos(absl::Now());
+      std::cout << "cycle: " << cycle << " id: " << service_id << ": " << start_time << '\n';
+    } else {
       subscriber->receive(PubSubMode::Wait, pck);
     }
+   
+    publisher->send("robocin", PubSubMode::Wait, pck);
 
-    publisher->send(std::to_string(service_id + 1), PubSubMode::Wait, pck);
-    auto end_time = absl::Now();
-    std::cout << service_id << ": " << end_time << ", diff:"
-              << absl::ToInt64Nanoseconds(end_time - start_time) / 1e6 << '\n';
+    if(service_id == 5) {
+      // std::cout << service_id << ": " << end_time << ", diff:"
+      //     << absl::ToInt64Nanoseconds(end_time - start_time) / 1e6 << '\n';
+      auto start_time = absl::ToUnixNanos(absl::Now());
+      std::cout << "cycle: " << cycle << " id: " << service_id << ": " << start_time << '\n';
+    } 
+
+    ++cycle;
   }
 
   return 0;
