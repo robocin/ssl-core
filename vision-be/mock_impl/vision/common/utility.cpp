@@ -1,11 +1,13 @@
-#include "mock/common/utility.h"
+#include "vision/common/utility.h"
 
-namespace ines {
+namespace vision {
 namespace {
 
 constexpr int64_t kNanosPerSecond = 1'000'000'000L;
 
 } // namespace
+
+google::protobuf::Timestamp timestampNow() { return {}; }
 
 google::protobuf::Timestamp timestampFromNanos(int64_t nanos) {
   google::protobuf::Timestamp timestamp;
@@ -27,4 +29,4 @@ absl::Time timeFromTimestamp(const google::protobuf::Timestamp &timestamp) {
                              timestamp.nanos());
 }
 
-} // namespace ines
+} // namespace vision

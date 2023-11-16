@@ -9,7 +9,7 @@ get_filename_component(ROBOCIN_PROJECT_PATH "${CMAKE_CURRENT_LIST_DIR}" ABSOLUTE
 
 include(project)
 
-project(mock LANGUAGES CXX)
+project(vision LANGUAGES CXX)
 
 ########################################################################################################################
 

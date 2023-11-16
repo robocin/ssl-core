@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: service.Dockerfile
-    command: ["bin/client", "0"]
+    command: ["bin/vision", "0"]
     volumes:
       - /tmp:/tmp
     
@@ -13,7 +13,7 @@ services:
     build:
       context: .
       dockerfile: service.Dockerfile
-    command: ["bin/client", "1"]
+    command: ["bin/vision", "1"]
     volumes:
       - /tmp:/tmp
 
@@ -21,7 +21,7 @@ services:
     build:
       context: .
       dockerfile: service.Dockerfile
-    command: ["bin/client", "2"]
+    command: ["bin/vision", "2"]
     volumes:
       - /tmp:/tmp
 
@@ -29,7 +29,7 @@ services:
     build:
       context: .
       dockerfile: service.Dockerfile
-    command: ["bin/client", "3"]
+    command: ["bin/vision", "3"]
     volumes:
       - /tmp:/tmp
 
@@ -37,7 +37,7 @@ services:
     build:
       context: .
       dockerfile: service.Dockerfile
-    command: ["bin/client", "4"]
+    command: ["bin/vision", "4"]
     volumes:
       - /tmp:/tmp
 
@@ -45,6 +45,6 @@ services:
     build:
       context: .
       dockerfile: service.Dockerfile
-    command: ["bin/client", "5"]
+    command: ["bin/vision", "5"]
     volumes:
       - /tmp:/tmp

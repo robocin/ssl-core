@@ -4,20 +4,21 @@
 #include <string>
 #include <string_view>
 
-#include "mock/common/publish_subscribe.h"
+#include "vision/common/publish_subscribe.h"
 
 #include <zmq.hpp>
 
-namespace ines {
+namespace vision {
 
 class ZmqPublisher : public ITopicPublisher {
- public:
+public:
   explicit ZmqPublisher(int n_threads);
   ZmqPublisher();
   void bind(std::string_view address) override;
-  void send(std::string_view topic, PubSubMode mode, std::string_view message) override;
+  void send(std::string_view topic, PubSubMode mode,
+            std::string_view message) override;
 
- private:
+private:
   static constexpr int kSocketType = ZMQ_PUB;
 
   ::zmq::context_t context_;
@@ -25,19 +26,19 @@ class ZmqPublisher : public ITopicPublisher {
 };
 
 class ZmqSubscriber : public ITopicSubscriber {
- public:
+public:
   ZmqSubscriber(std::string_view topic, int n_threads);
   explicit ZmqSubscriber(std::string_view topic);
   void connect(std::string_view address) override;
-  bool receive(PubSubMode mode, std::string& result) override;
+  bool receive(PubSubMode mode, std::string &result) override;
 
- private:
+private:
   static constexpr int kSocketType = ZMQ_SUB;
 
   ::zmq::context_t context_;
   ::zmq::socket_t subscriber_;
 };
 
-} // namespace ines
+} // namespace vision
 
 #endif // INES_ZMQ_COMMON_PUBLISH_SUBSCRIBE_H

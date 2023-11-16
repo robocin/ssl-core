@@ -6,11 +6,12 @@
 
 #include <google/protobuf/message_lite.h>
 
-namespace ines {
+namespace vision {
 
 template <class T>
-concept protobuf = std::derived_from<std::decay_t<T>, google::protobuf::MessageLite>;
+concept protobuf =
+    std::derived_from<std::decay_t<T>, google::protobuf::MessageLite>;
 
-} // namespace ines
+} // namespace vision
 
 #endif // INES_COMMON_CONCEPTS_H
