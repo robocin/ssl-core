@@ -1,13 +1,11 @@
-add_subdirectory(common)
-
 robocin_cpp_executable(
     NAME vision
     SRCS vision_main.cpp
-    DEPS zmq_publish_subscribe
-         absl::time
+    DEPS absl::time
          absl::synchronization
          absl::random_random
          absl::strings
-         utility
+         common::utility
+         common::zmq_publish_subscribe
          protobuf::libprotobuf
 )

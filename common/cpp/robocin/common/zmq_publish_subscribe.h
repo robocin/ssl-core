@@ -1,44 +1,38 @@
-#ifndef INES_ZMQ_COMMON_PUBLISH_SUBSCRIBE_H
-#define INES_ZMQ_COMMON_PUBLISH_SUBSCRIBE_H
+#ifndef ROBOCIN_COMMON_ZMQ_PUBLISH_SUBSCRIBE_H
+#define ROBOCIN_COMMON_ZMQ_PUBLISH_SUBSCRIBE_H
+
+#include "robocin/common/publish_subscribe.h"
 
 #include <string>
 #include <string_view>
-
-#include "vision/common/publish_subscribe.h"
-
 #include <zmq.hpp>
 
-namespace vision {
+namespace robocin {
 
 class ZmqPublisher : public ITopicPublisher {
-public:
+ public:
   explicit ZmqPublisher(int n_threads);
   ZmqPublisher();
   void bind(std::string_view address) override;
-  void send(std::string_view topic, PubSubMode mode,
-            std::string_view message) override;
+  void send(std::string_view topic, PubSubMode mode, std::string_view message) override;
 
-private:
-  static constexpr int kSocketType = ZMQ_PUB;
-
+ private:
   ::zmq::context_t context_;
   ::zmq::socket_t publisher_;
 };
 
 class ZmqSubscriber : public ITopicSubscriber {
-public:
+ public:
   ZmqSubscriber(std::string_view topic, int n_threads);
   explicit ZmqSubscriber(std::string_view topic);
   void connect(std::string_view address) override;
-  bool receive(PubSubMode mode, std::string &result) override;
+  bool receive(PubSubMode mode, std::string& result) override;
 
-private:
-  static constexpr int kSocketType = ZMQ_SUB;
-
+ private:
   ::zmq::context_t context_;
   ::zmq::socket_t subscriber_;
 };
 
-} // namespace vision
+} // namespace robocin
 
-#endif // INES_ZMQ_COMMON_PUBLISH_SUBSCRIBE_H
+#endif // ROBOCIN_COMMON_ZMQ_PUBLISH_SUBSCRIBE_H

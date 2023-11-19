@@ -112,9 +112,7 @@ CheckOptions:
 
   # * local:
   - key: readability-identifier-naming.LocalConstantCase
-    value: CamelCase
-  - key: readability-identifier-naming.LocalConstantPrefix
-    value: k
+    value: lower_case
 
   # * macro:
   - key: readability-identifier-naming.MacroDefinitionCase

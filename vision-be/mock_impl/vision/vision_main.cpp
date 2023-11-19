@@ -1,31 +1,29 @@
-#include <string>
+#include "robocin/common/publish_subscribe.h"
+#include "robocin/common/zmq_publish_subscribe.h"
 
 #include <absl/synchronization/mutex.h>
 #include <absl/time/clock.h>
 #include <absl/time/time.h>
+#include <span>
+#include <string>
 
-#include "vision/common/publish_subscribe.h"
-#include "vision/common/utility.h"
-#include "vision/common/zmq_publish_subscribe.h"
+using robocin::ITopicPublisher;
+using robocin::ITopicSubscriber;
+using robocin::PubSubMode;
+using robocin::ZmqPublisher;
+using robocin::ZmqSubscriber;
 
-#include "google/protobuf/util/time_util.h"
+constexpr double kNanosPerMilli = 1'000'000;
 
-using vision::ITopicPublisher;
-using vision::ITopicSubscriber;
-using vision::PubSubMode;
-using vision::ZmqPublisher;
-using vision::ZmqSubscriber;
+int main(int argc, char* argv[]) {
+  std::span args{argv + 1, argv + argc - 1};
+  int service_id = std::stoi(args.front());
 
-int main(int /*argc*/, char *argv[]) {
-  int service_id = std::stoi(argv[1]);
-
-  std::unique_ptr<ITopicSubscriber> subscriber =
-      std::make_unique<ZmqSubscriber>("robocin");
-  subscriber->connect("ipc:///tmp/channel" + std::to_string(service_id - 1) +
-                      ".ipc");
+  std::unique_ptr<ITopicSubscriber> subscriber = std::make_unique<ZmqSubscriber>("robocin");
+  subscriber->connect(std::format("ipc:///tmp/channel{}.ipc", service_id - 1));
 
   std::unique_ptr<ITopicPublisher> publisher = std::make_unique<ZmqPublisher>();
-  publisher->bind("ipc:///tmp/channel" + std::to_string(service_id) + ".ipc");
+  publisher->bind(std::format("ipc:///tmp/channel{}.ipc", service_id));
 
   while (true) {
     std::vector<std::string> pck;
@@ -45,14 +43,11 @@ int main(int /*argc*/, char *argv[]) {
     publisher->send("robocin", PubSubMode::Wait, pck.back());
 
     if (service_id > 4) {
-      std::vector<int64_t> order;
-      for (const auto& s : pck) {
-        order.emplace_back(std::stoll(s));
-      }
-      assert(order.front() == *std::min_element(order.begin(), order.end()));
-
-      std::cout << "elapsed: "
-                << (absl::GetCurrentTimeNanos() - order.front()) / 1e6 << ", received: " << pck.size() << '\n';
+      std::cout << std::format(
+          "elapsed: {:^7.3f}ms, received: {:^3}\n",
+          static_cast<double>(absl::GetCurrentTimeNanos() - std::stoll(pck.front()))
+              / kNanosPerMilli,
+          pck.size());
     }
   }
 
