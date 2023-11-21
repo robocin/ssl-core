@@ -1,0 +1,9 @@
+version: '2'
+services:
+  tester:
+    container_name: tester
+    build: .
+    ports:
+      - '8080:8080'
+    restart: always
+
