@@ -13,6 +13,11 @@ using robocin::PubSubMode;
 using robocin::ZmqPublisher;
 using robocin::ZmqSubscriber;
 
+class Point {
+ public:
+  int x, y;
+};
+
 constexpr double kNanosPerMilli = 1'000'000;
 
 int main(int argc, char* argv[]) {
