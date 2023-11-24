@@ -19,6 +19,8 @@ class Point {
 };
 
 
+
+
 constexpr double kNanosPerMilli = 1'000'000;
 
 int main(int argc, char* argv[]) {
