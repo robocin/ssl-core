@@ -16,6 +16,8 @@ services:
     command: ["bin/vision", "1"]
     volumes:
       - /tmp:/tmp
+    depends_on:
+      - service-0
 
   service-2:
     build:
@@ -24,27 +26,5 @@ services:
     command: ["bin/vision", "2"]
     volumes:
       - /tmp:/tmp
-
-  service-3:
-    build:
-      context: .
-      dockerfile: service.Dockerfile
-    command: ["bin/vision", "3"]
-    volumes:
-      - /tmp:/tmp
-
-  service-4:
-    build:
-      context: .
-      dockerfile: service.Dockerfile
-    command: ["bin/vision", "4"]
-    volumes:
-      - /tmp:/tmp
-
-  service-5:
-    build:
-      context: .
-      dockerfile: service.Dockerfile
-    command: ["bin/vision", "5"]
-    volumes:
-      - /tmp:/tmp
+    depends_on:
+      - service-1

@@ -7,7 +7,7 @@ Checks: >
   cert-*, -cert-err33-c,
   clang-analyzer-*,
   concurrency-*,
-  cppcoreguidelines-*, -cppcoreguidelines-pro-type-vararg,
+  cppcoreguidelines-*, -cppcoreguidelines-pro-type-vararg, -cppcoreguidelines-avoid-magic-numbers,
   darwin-*,
   google-*,
   hicpp-*,
@@ -73,6 +73,12 @@ CheckOptions:
   # * namespace:
   - key: readability-identifier-naming.NamespaceCase
     value: lower_case
+
+  # readability-magic-numbers:
+  - key: readability-magic-numbers.IgnorePowersOf2IntegerValues
+    value: true
+  - key: readability-magic-numbers.IgnoreUserDefinedLiterals
+    value: true
 
   # * class:
   - key: readability-identifier-naming.ClassCase
