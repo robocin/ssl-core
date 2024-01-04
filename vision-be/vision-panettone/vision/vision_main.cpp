@@ -1,37 +1,29 @@
-#include "vision/network/poller.h"
+#include "protocols/third_party/detection/raw_wrapper.pb.h"
 #include "vision/network/socket.h"
 #include "vision/network/udp_multicast_socket_receiver.h"
-#include "vision/network/zmq_subscriber_socket.h"
 
-#include <arpa/inet.h>
+#include <absl/time/clock.h>
+#include <absl/time/time.h>
+#include <iostream>
 #include <memory>
-#include <sys/poll.h>
-#include <sys/socket.h>
-#include <unistd.h>
-#include <vector>
-#include <zmq.hpp>
+#include <string>
 
+using protocols::third_party::detection::SSL_WrapperPacket;
 using vision::ISocketReceiver;
-using vision::Poller;
 using vision::UdpMulticastSocketReceiver;
-using vision::ZmqSubscriberSocket;
 
 int main() {
-  std::unique_ptr<ISocketReceiver> zmq_socket
-      = std::make_unique<ZmqSubscriberSocket>("topic", /*n_threads=*/1, "address");
   std::unique_ptr<ISocketReceiver> udp_socket
-      = std::make_unique<UdpMulticastSocketReceiver>("ip", "inet", /*port=*/12345);
-
-  std::unique_ptr<Poller> poller = std::make_unique<Poller>();
-
-  poller->add(zmq_socket);
-  poller->add(udp_socket);
+      = std::make_unique<UdpMulticastSocketReceiver>("224.5.23.2", "192.168.18.5", /*port=*/10020);
 
   while (true) {
-    auto message_zmq = poller->recvFrom(zmq_socket);
-    auto message_udp = poller->recvFrom(udp_socket);
-  }
+    std::string message = udp_socket->receive();
+    SSL_WrapperPacket packet;
+    packet.ParseFromString(message);
 
-  poller->close();
+    std::cout << "Received message: " << packet.DebugString() << '\n';
+
+    absl::SleepFor(absl::Seconds(1));
+  }
   return 0;
 }
