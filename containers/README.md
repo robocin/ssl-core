@@ -199,3 +199,13 @@ Install [Abseil](https://abseil.io/) libraries.
 ```bash
 bash absl.sh <library_directory>
 ```
+
+### [mongocxx](scripts/mongocxx.sh)
+
+Install [MongoDB C++ Driver](https://github.com/mongodb/mongo-cxx-driver) library.
+
+- **Arguments:**
+
+  1. `version`: The version of the MongoDB C++ Driver to install
+  2. `library_directory`: The directory where the library will be installed
+       * *default*: `/usr/local`
