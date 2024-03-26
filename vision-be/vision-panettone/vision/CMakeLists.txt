@@ -1,3 +1,10 @@
+robocin_cpp_library(
+  NAME controller
+  HDRS icontroller.h
+  SRCS icontroller.cpp
+  DEPS common::network
+)
+
 robocin_cpp_executable(
   NAME vision_main
   SRCS vision_main.cpp
@@ -14,4 +21,5 @@ robocin_cpp_executable(
        common::thread_pool
        irepository_factory
        repository_factory_mapping
+       controller
 )
