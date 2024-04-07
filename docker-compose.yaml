@@ -8,6 +8,21 @@ services:
       GEOMETRY: "2020"
       REALISM: "RC2021"
 
+  ssl-game-controller:
+    image: robocupssl/ssl-game-controller:3.9.0
+    command:
+      - "-visionAddress"
+      - "224.5.23.2:10020"
+      - "-trackerAddress"
+      - "224.5.23.2:11010"
+      - "-publishAddress"
+      - "224.5.23.1:10003"
+      - "-address"
+      - ":8081"
+    restart: unless-stopped
+    volumes:
+      - ssl-game-controller-config:/config:rw
+
   gateway:
     build:
       context: .
@@ -61,3 +76,6 @@ services:
       - 3031:3031
     depends_on:
       - match-bff
+
+volumes:
+  ssl-game-controller-config:
