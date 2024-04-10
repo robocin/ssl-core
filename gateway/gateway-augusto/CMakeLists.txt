@@ -8,6 +8,9 @@ include(project)
 
 project(gateway LANGUAGES CXX)
 
+set(BUILD_SHARED_LIBS OFF)
+set(CMAKE_EXE_LINKER_FLAGS "-static")
+
 ########################################################################################################################
 
 find_package(common CONFIG REQUIRED)

@@ -8,6 +8,10 @@ include(project)
 
 project(vision LANGUAGES CXX)
 
+set(BUILD_SHARED_LIBS OFF)
+set(ZLIB_USE_STATIC_LIBS "ON")
+set(CMAKE_EXE_LINKER_FLAGS "-static")
+
 ########################################################################################################################
 
 find_package(common CONFIG REQUIRED)
@@ -30,7 +34,7 @@ message(STATUS "Using bsonxx: '${bsoncxx_DIR}'")
 find_package(mongocxx CONFIG REQUIRED HINTS "/usr/local/mongocxx" "/opt/mongocxx")
 message(STATUS "Using mongocxx: '${mongocxx_DIR}'")
 
-set(mongocxx_deps mongo::mongoc_shared mongo::bson_shared mongo::mongocxx_shared mongo::bsoncxx_shared)
+set(mongocxx_deps mongo::mongoc_static mongo::bson_static mongo::mongocxx_static mongo::bsoncxx_static)
 
 ########################################################################################################################
 
