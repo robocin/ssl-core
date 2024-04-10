@@ -37,7 +37,7 @@ cmake -B build \
       -S . \
       -DENABLE_TESTS=OFF \
       -DCMAKE_BUILD_TYPE=Release \
-      -DBUILD_SHARED_AND_STATIC_LIBS=ON \
+      -DBUILD_SHARED_LIBS=OFF \
       -DMONGOCXX_OVERRIDE_DEFAULT_INSTALL_PREFIX=OFF \
       -DCMAKE_INSTALL_PREFIX="${MONGODB_DIR}"
 cmake --build build -j "$(nproc)"
