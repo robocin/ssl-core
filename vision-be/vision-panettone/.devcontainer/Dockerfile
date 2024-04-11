@@ -1,4 +1,4 @@
-FROM robocin/ssl-core-cpp-mongo:latest
+FROM robocin/ssl-core-cpp-mongo:manual-staticlib
 
 ARG SOURCE_DIRECTORY
 
