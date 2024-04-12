@@ -41,6 +41,14 @@ robocin_cpp_proto_library(
   DEPS common
 )
 
+get_protobufs("protocols/referee" referee_protos)
+
+robocin_cpp_proto_library(
+  NAME referee
+  PROTOS ${referee_protos}
+  DEPS common
+)
+
 robocin_cpp_grpc_library(
   NAME gateway
   PROTOS protocols/ui/gateway.proto

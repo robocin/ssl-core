@@ -20,7 +20,7 @@ constexpr UdpArgs kVisionThirdParty = {
     .address = "224.5.23.2",
     .port = 10020,
 };
-// constexpr UdpArgs kRefereeThirdParty = {.address = ..., .port = ...,};
+// constexpr UdpArgs kRefereeThirdParty = {.address = "224.5.23.1", .port = 1003};
 // constexpr UdpArgs kTrackedThirdParty = {.address = ..., .port = ...,};
 
 } // namespace

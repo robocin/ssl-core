@@ -37,7 +37,7 @@ class GatewayServiceImpl final : public GatewayService::Service {
 
     {
       auto [address, topics] = SServiceDiscovery.lookup(kVisionPubService);
-      subscriber_.connect(address, topics);
+      vision_subscriber_.connect(address, topics);
     }
   }
 
@@ -53,26 +53,56 @@ class GatewayServiceImpl final : public GatewayService::Service {
   Status ReceiveLiveStream(ServerContext* context,
                            const ReceiveLiveStreamRequest* request,
                            grpc::ServerWriter<ReceiveLiveStreamResponse>* writer) override {
-    // TODO(aalmds): Poller for specific subscribers.
+
+    std::vector<zmq::pollitem_t> items;
+    items.reserve(request->message_types_size());
+    for (auto message_type : request->message_types()) {
+      switch (message_type) {
+        case protocols::ui::MESSAGE_TYPE_VISION:
+          items.push_back({&vision_subscriber_, 0, ZMQ_POLLIN, 0});
+        // case protocols::ui::MESSAGE_TYPE_REFEREE:
+        //   items.push_back({&referee_subscriber_, 0, ZMQ_POLLIN, 0});
+        default: std::cout << "Unsuported type\n";
+      }
+    }
+
     while (true) {
-      auto reply = subscriber_.receive();
-      std::cout << "ReceiveLiveStream: Replying" << std::endl;
-      ReceiveLiveStreamResponse response;
-      *response.mutable_payload()->mutable_vision_frame()
-          = deserialize<protocols::vision::Frame>(reply.message);
-      writer->Write(response);
+      zmq::poll(items);
+      if (items[0].revents & ZMQ_POLLIN) {
+        auto reply = vision_subscriber_.receive();
+        ReceiveLiveStreamResponse response;
+        *response.mutable_payload()->mutable_vision_frame()
+            = deserialize<protocols::vision::Frame>(reply.message);
+        writer->Write(response);
+      }
+
+      if (items[1].revents & ZMQ_POLLIN) {
+        auto reply = vision_subscriber_.receive();
+        ReceiveLiveStreamResponse response;
+        *response.mutable_payload()->mutable_referee()
+            = deserialize<protocols::referee::Referee>(reply.message);
+        writer->Write(response);
+      }
     }
   }
 
  private:
   ZmqRequestSocket requester_;
-  ZmqSubscriberSocket subscriber_;
+  ZmqSubscriberSocket vision_subscriber_;
+  ZmqSubscriberSocket referee_subscriber_;
 
   template <class Response>
   static Response deserialize(std::string_view reply) {
     Response chunk;
     chunk.ParseFromString(std::string{reply});
     return chunk;
+  }
+
+  static ReceiveLiveStreamResponse buildLiveStreamResponse(std::string_view reply) {
+    ReceiveLiveStreamResponse response;
+    *response.mutable_payload()->mutable_vision_frame()
+        = deserialize<protocols::vision::Frame>(reply);
+    return response;
   }
 };
 
