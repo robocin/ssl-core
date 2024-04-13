@@ -30,6 +30,7 @@ int main(int argc, char* argv[]) {
 
   std::ifstream file(std::format("{}/{}", ROBOCIN_REPOSITORY_PATH, kServiceRegistryJson));
   if (!file.is_open()) {
+    std::cout << "ERROR: no service_registry.json file found.\n";
     return -1;
   }
 

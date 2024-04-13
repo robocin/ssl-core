@@ -8,11 +8,6 @@ include(project)
 
 project(vision LANGUAGES CXX)
 
-set(BUILD_SHARED_LIBS OFF)
-set(ZLIB_USE_STATIC_LIBS "ON")
-set(CMAKE_EXE_LINKER_FLAGS "-static")
-set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
-
 ########################################################################################################################
 
 find_package(common CONFIG REQUIRED)
