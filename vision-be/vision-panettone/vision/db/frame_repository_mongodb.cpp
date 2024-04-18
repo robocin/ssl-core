@@ -5,6 +5,7 @@
 #include <bsoncxx/json.hpp>
 #include <google/protobuf/util/json_util.h>
 #include <mutex>
+#include <ostream>
 
 namespace vision {
 namespace {
@@ -21,43 +22,41 @@ using MongoDbDocumentView = bsoncxx::document::view;
 using MongoDbDocument = bsoncxx::builder::stream::document;
 using MongoDbArray = bsoncxx::builder::stream::array;
 
-std::mutex mutex_db;
-
 MongoDbDocument toMongoDbDocument(const Frame& frame) {
   MongoDbDocument document{};
 
   document << "_id" << static_cast<int64_t>(frame.properties().serial_id());
 
-  // add balls array
-  MongoDbArray balls_array{};
-  for (const auto& ball : frame.balls()) {
-    MongoDbDocument ball_doc{};
-    ball_doc << "confidence" << ball.confidence();
-    ball_doc << "position" << bsoncxx::builder::stream::open_array << ball.position().x()
-             << ball.position().y() << ball.position().z() << bsoncxx::builder::stream::close_array;
-    ball_doc << "velocity" << bsoncxx::builder::stream::open_array << ball.velocity().x()
-             << ball.velocity().y() << ball.position().z() << bsoncxx::builder::stream::close_array;
-    balls_array << ball_doc;
-  }
-  document << "balls" << balls_array;
+  // // add balls array
+  // MongoDbArray balls_array{};
+  // for (const auto& ball : frame.balls()) {
+  //   MongoDbDocument ball_doc{};
+  //   ball_doc << "confidence" << ball.confidence();
+  //   ball_doc << "position" << bsoncxx::builder::stream::open_array << ball.position().x()
+  //            << ball.position().y() << ball.position().z() << bsoncxx::builder::stream::close_array;
+  //   ball_doc << "velocity" << bsoncxx::builder::stream::open_array << ball.velocity().x()
+  //            << ball.velocity().y() << ball.position().z() << bsoncxx::builder::stream::close_array;
+  //   balls_array << ball_doc;
+  // }
+  // document << "balls" << balls_array;
 
-  MongoDbArray robots_array{};
-  for (const auto& robot : frame.robots()) {
-    MongoDbDocument robot_doc{};
+  // MongoDbArray robots_array{};
+  // for (const auto& robot : frame.robots()) {
+  //   MongoDbDocument robot_doc{};
 
-    robot_doc << "confidence" << robot.confidence();
-    robot_doc << "id" << robot.robot_id().number();
-    robot_doc << "color" << robot.robot_id().color();
-    robot_doc << "position" << bsoncxx::builder::stream::open_array << robot.position().x()
-              << robot.position().y() << bsoncxx::builder::stream::close_array;
-    robot_doc << "angle" << robot.angle();
-    robot_doc << "velocity" << bsoncxx::builder::stream::open_array << robot.velocity().x()
-              << robot.velocity().y() << bsoncxx::builder::stream::close_array;
-    robot_doc << "angular_velocity" << robot.angular_velocity();
+  //   robot_doc << "confidence" << robot.confidence();
+  //   robot_doc << "id" << robot.robot_id().number();
+  //   robot_doc << "color" << robot.robot_id().color();
+  //   robot_doc << "position" << bsoncxx::builder::stream::open_array << robot.position().x()
+  //             << robot.position().y() << bsoncxx::builder::stream::close_array;
+  //   robot_doc << "angle" << robot.angle();
+  //   robot_doc << "velocity" << bsoncxx::builder::stream::open_array << robot.velocity().x()
+  //             << robot.velocity().y() << bsoncxx::builder::stream::close_array;
+  //   robot_doc << "angular_velocity" << robot.angular_velocity();
 
-    robots_array << robot_doc;
-  }
-  document << "robots" << robots_array;
+  //   robots_array << robot_doc;
+  // }
+  // document << "robots" << robots_array;
 
   MongoDbDocument field_doc{};
   const auto& field = frame.field();
@@ -99,23 +98,59 @@ FrameRepositoryMongoDb::FrameRepositoryMongoDb(const MongoDbRepositoryBuildArgs&
     IMongoDbRepository(args) {}
 
 void FrameRepositoryMongoDb::save(const Frame& frame) {
-  std::cout << "saving frame with id: " << static_cast<int64_t>(frame.properties().serial_id()) << "." << std::endl;
+  std::cout << "Saving frame with id: " << static_cast<int64_t>(frame.properties().serial_id())
+            << "." << std::endl;
   try {
     auto client = pool_.acquire();
-    auto collection = (*client)[db_][collection_];
+    auto db = client->database(db_);
+    auto collection = db[collection_];
 
-    std::cout << "client acquired (Frame" << static_cast<int64_t>(frame.properties().serial_id()) << ")" << std::endl;
+    std::cout << "Client acquired (Frame " << static_cast<int64_t>(frame.properties().serial_id())
+              << ")" << std::endl;
 
-    if (auto save_result = collection.insert_one(toMongoDbDocument(frame).view())) {
-      std::cout << "inserted frame with id: "
+    auto frame_view = toMongoDbDocument(frame).view();
+    std::cout << "Created MongoDocument for Frame "
+              << static_cast<int64_t>(frame.properties().serial_id()) << std::endl;
+    if (auto save_result = collection.insert_one(frame_view)) {
+      std::cout << "Inserted frame with id: "
                 << static_cast<int64_t>(frame.properties().serial_id()) << "." << std::endl;
     }
-    std::cout << "frame saved." << std::endl;
-  } catch (const std::exception& e) {
-    std::cerr << "error saving frame: " << e.what() << "." << std::endl;
+    std::cout << "FIM DO TRY " << std::endl;
+  } catch (...) {
+    std::cout << "Error saving frame!!!!!!!!!!!!!" << std::endl;
+    return;
   }
-  std::cout << "saved frame with id: " << static_cast<int64_t>(frame.properties().serial_id())
+  std::cout << "Saved frame with id: " << static_cast<int64_t>(frame.properties().serial_id())
             << "." << std::endl;
+}
+
+void FrameRepositoryMongoDb::saveMany(const std::vector<Frame>& frames) {
+
+  try {
+    auto client = pool_.acquire();
+    mongocxx::database db = client->database(db_);
+    auto collection = db[collection_];
+
+    std::cout << "Client acquired for multiple frames." << std::endl;
+
+    // Create a vector to hold documents to insert
+    std::vector<bsoncxx::document::view_or_value> documents;
+
+    // Add documents to the vector
+    for (const auto& frame : frames) {
+      bsoncxx::builder::stream::document document{};
+      auto frame_view = toMongoDbDocument(frame).view();
+      documents.emplace_back(frame_view);
+    }
+
+    // Perform bulk insert operation
+    if (auto save_result = collection.insert_many(documents)) {
+      std::cout << "Documents inserted successfully!" << std::endl;
+    }
+  } catch (const std::exception& e) {
+    std::cout << "Error saving frame: " << e.what() << "." << std::endl;
+  }
+  std::cout << "Saved frames." << std::endl;
 }
 
 void FrameRepositoryMongoDb::remove(const int64_t& key) {
@@ -123,10 +158,10 @@ void FrameRepositoryMongoDb::remove(const int64_t& key) {
     auto client = pool_.acquire();
     auto collection = (*client)[db_][collection_];
     if (auto remove_result = collection.delete_one(make_document(kvp("_id", key)))) {
-      std::cout << "removed frame with id: " << key << ".\n";
+      std::cout << "removed frame with id: " << key << "." << std::endl;
     }
   } catch (const std::exception& e) {
-    std::cerr << "error removing frame: " << e.what() << ".\n";
+    std::cout << "error removing frame: " << e.what() << "." << std::endl;
   }
 }
 
@@ -138,15 +173,15 @@ std::optional<Frame> FrameRepositoryMongoDb::find(const int64_t& key) {
     if (auto find_result = collection.find_one(make_document(kvp("_id", key)))) {
 
       std::string result = bsoncxx::to_json(*find_result);
-      std::cout << "result: " << result << "\n";
+      std::cout << "result: " << result << std::endl;
 
       return fromMongoDbDocument(find_result->view());
     }
 
-    std::cerr << "frame not found.\n";
+    std::cout << "frame not found." << std::endl;
     return std::nullopt;
   } catch (const std::exception& e) {
-    std::cerr << "Error : " << e.what() << '\n';
+    std::cout << "Error : " << e.what() << std::endl;
     return std::nullopt;
   }
 }
@@ -161,13 +196,13 @@ std::vector<Frame> FrameRepositoryMongoDb::findRange(const int64_t& key_lower_bo
 
     std::vector<Frame> frames;
     for (auto doc : find_result) {
-      std::cout << "key: " << doc["_id"].get_int64() << "\n";
+      std::cout << "key: " << doc["_id"].get_int64() << std::endl;
       frames.push_back(fromMongoDbDocument(doc));
     }
 
     return frames;
   } catch (const std::exception& e) {
-    std::cerr << "Error : " << e.what() << '\n';
+    std::cout << "Error : " << e.what() << std::endl;
     return {};
   }
 }

@@ -49,13 +49,13 @@ class IMongoDbRepository : public IRepository<Id, Data> {
           db.drop();
           db.run_command(kPing.view());
 
-          std::cout << "connected to MongoDB after " << rounded_elapsed_time << "s.\n";
-          
+          std::cout << "connected to MongoDB after " << rounded_elapsed_time << "s." << std::endl;
+
           return true;
         } catch (const std::exception& e) {
-          std::cerr << "error while connecting to MongoDB: " << e.what() << ".\n";
-          std::cerr << "retrying in " << kSleepTime.count()
-                    << " seconds (total: " << rounded_elapsed_time << "s)...\n";
+          std::cout << "error while connecting to MongoDB: " << e.what() << "." << std::endl;
+          std::cout << "retrying in " << kSleepTime.count()
+                    << " seconds (total: " << rounded_elapsed_time << "s)..." << std::endl;
 
           std::this_thread::sleep_for(kSleepTime);
         }
@@ -67,7 +67,7 @@ class IMongoDbRepository : public IRepository<Id, Data> {
 
  protected:
   // NOLINTBEGIN(*non-private*)
-  mongocxx::instance instance_{};
+  mongocxx::instance instance_;
   mongocxx::pool pool_;
   std::string db_;
   std::string collection_;

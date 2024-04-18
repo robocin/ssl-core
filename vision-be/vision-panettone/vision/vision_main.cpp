@@ -41,146 +41,157 @@ uint64_t frame_id = 1;
 const auto kFactory = RepositoryFactoryMapping{}[RepositoryType::MongoDb];
 std::unique_ptr<IFrameRepository> frame_repository = kFactory->createFrameRepository();
 
-// Database:
+// // Database:
 
-// saves a frame to the database.
-void saveToDatabase(IFrameRepository& repository, const Frame& frame) {
-    repository.save(frame);
-}
+// // saves a frame to the database.
+// void saveToDatabase(IFrameRepository& repository, const Frame& frame) { repository.save(frame); }
+
+// void saveManyToDatabase(IFrameRepository& repository, const std::vector<Frame>& frames) {
+//   repository.saveMany(frames);
+// }
 
 // fetches a frame range from the database.
 std::vector<Frame> findRangeFromDatabase(IFrameRepository& repository,
-                                     const int64_t& key_lower_bound,
-                                     const int64_t& key_upper_bound) {
+                                         const int64_t& key_lower_bound,
+                                         const int64_t& key_upper_bound) {
   return repository.findRange(key_lower_bound, key_upper_bound);
 }
 
-// Helpers:
+// // Helpers:
 
-Frame createMockedFrame() {
-  Frame frame;
-  frame.mutable_properties()->set_serial_id(frame_id++);
+// Frame createMockedFrame() {
+//   Frame frame;
+//   frame.mutable_properties()->set_serial_id(frame_id++);
 
-  Field& field = *frame.mutable_field();
-  field.set_length(9000);
-  field.set_width(6000);
-  field.set_goal_depth(180);
-  field.set_goal_width(1000);
-  field.set_penalty_area_depth(1000);
-  field.set_penalty_area_width(2000);
-  field.set_boundary_width(300);
-  field.set_goal_center_to_penalty_mark(6000);
+//   Field& field = *frame.mutable_field();
+//   field.set_length(9000);
+//   field.set_width(6000);
+//   field.set_goal_depth(180);
+//   field.set_goal_width(1000);
+//   field.set_penalty_area_depth(1000);
+//   field.set_penalty_area_width(2000);
+//   field.set_boundary_width(300);
+//   field.set_goal_center_to_penalty_mark(6000);
 
-  for (int i = 0; i < 11; ++i) {
-    protocols::vision::Robot& robot = *frame.add_robots();
-    robot.mutable_robot_id()->set_number(i);
-    robot.mutable_robot_id()->set_color(
-        protocols::common::RobotId_Color::RobotId_Color_COLOR_YELLOW);
+//   for (int i = 0; i < 11; ++i) {
+//     protocols::vision::Robot& robot = *frame.add_robots();
+//     robot.mutable_robot_id()->set_number(i);
+//     robot.mutable_robot_id()->set_color(
+//         protocols::common::RobotId_Color::RobotId_Color_COLOR_YELLOW);
 
-    robot.mutable_position()->set_x((i * 9000) / 11);
-    robot.mutable_position()->set_y(0);
-  }
+//     robot.mutable_position()->set_x((i * 9000) / 11);
+//     robot.mutable_position()->set_y(0);
+//   }
 
-  for (int i = 0; i < 11; ++i) {
-    protocols::vision::Robot& robot = *frame.add_robots();
-    robot.mutable_robot_id()->set_number(i);
-    robot.mutable_robot_id()->set_color(protocols::common::RobotId_Color::RobotId_Color_COLOR_BLUE);
+//   for (int i = 0; i < 11; ++i) {
+//     protocols::vision::Robot& robot = *frame.add_robots();
+//     robot.mutable_robot_id()->set_number(i);
+//     robot.mutable_robot_id()->set_color(protocols::common::RobotId_Color::RobotId_Color_COLOR_BLUE);
 
-    robot.mutable_position()->set_x((i * 9000) / 11);
-    robot.mutable_position()->set_y(0);
-  }
+//     robot.mutable_position()->set_x((i * 9000) / 11);
+//     robot.mutable_position()->set_y(0);
+//   }
 
-  return frame;
-}
+//   return frame;
+// }
 
-static constexpr std::string_view kThirdPartyAddress = "ipc:///tmp/gateway-pub-th-parties.ipc";
-static constexpr std::string_view kVisionMessageTopic = "vision-third-party";
-static constexpr std::string_view kVisionPublisherAddress = "ipc:///tmp/vision-async.ipc";
+// static constexpr std::string_view kThirdPartyAddress = "ipc:///tmp/gateway-pub-th-parties.ipc";
+// static constexpr std::string_view kVisionMessageTopic = "vision-third-party";
+// static constexpr std::string_view kVisionPublisherAddress = "ipc:///tmp/vision-async.ipc";
 
 ThreadPool thread_pool(4);
 
-std::mutex mutex;
-std::condition_variable cv;
-std::vector<ZmqDatagram> packages;
+// std::mutex mutex;
+// std::condition_variable cv;
+// std::vector<ZmqDatagram> packages;
 
-void subscriberRun() {
-  std::cout << "Subscriber thread running..." << std::endl;
-  robocin::ZmqSubscriberSocket vision_third_party_socket{};
-  vision_third_party_socket.connect(kThirdPartyAddress, std::span{&kVisionMessageTopic, 1});
+// void subscriberRun() {
+//   std::cout << "Subscriber thread running..." << std::endl;
+//   robocin::ZmqSubscriberSocket vision_third_party_socket{};
+//   vision_third_party_socket.connect(kThirdPartyAddress, std::span{&kVisionMessageTopic, 1});
 
-  uint64_t total_msgs_received = 0;
+//   uint64_t total_msgs_received = 0;
 
-  while (true) {
-    {
-      std::lock_guard lock(mutex);
+//   while (true) {
+//     {
+//       std::lock_guard lock(mutex);
 
-      while (true) {
-        auto message = vision_third_party_socket.receive();
-        if (message.message.empty()) {
-          break;
-        }
-        // std::cout << std::format("received message!, total: {}", total_msgs_received++) <<
-        // std::endl;
-        packages.push_back(message);
-      }
-    }
+//       while (true) {
+//         auto message = vision_third_party_socket.receive();
+//         if (message.message.empty()) {
+//           break;
+//         }
+//         // std::cout << std::format("received message!, total: {}", total_msgs_received++) <<
+//         // std::endl;
+//         packages.push_back(message);
+//       }
+//     }
 
-    cv.notify_one();
-  }
-}
+//     cv.notify_one();
+//   }
+// }
 
-void publisherRun() {
-  std::cout << "Publisher thread running..." << std::endl;
-  robocin::ZmqPublisherSocket vision_publisher;
-  vision_publisher.bind(kVisionPublisherAddress);
+// void publisherRun() {
+//   std::cout << "Publisher thread running..." << std::endl;
+//   robocin::ZmqPublisherSocket vision_publisher;
+//   vision_publisher.bind(kVisionPublisherAddress);
 
-  // Receive datagrams.
-  while (true) {
-    std::vector<ZmqDatagram> datagrams;
-    {
-      std::unique_lock lock(mutex);
-      cv.wait(lock, [&] { return !packages.empty(); });
+//   std::vector<Frame> unsaved_frames{};
 
-      datagrams.swap(packages);
-    }
+//   // Receive datagrams.
+//   while (true) {
+//     std::vector<ZmqDatagram> datagrams;
+//     {
+//       std::unique_lock lock(mutex);
+//       cv.wait(lock, [&] { return !packages.empty(); });
 
-    // TODO($ISSUE_N): Move this workflow to a DatagramHandler class.
-    for (auto& datagram : datagrams) { // 1 frame == 2 pacotes, normalmente.
-      auto topic = datagram.topic;
-      if (topic == kVisionMessageTopic) {
-        SSL_WrapperPacket detection;
-        detection.ParseFromString(datagram.message);
-        Frame frame = createMockedFrame();
+//       datagrams.swap(packages);
+//     }
 
-        std::string message;
-        frame.SerializeToString(&message);
-        vision_publisher.send("frame", message);
-        std::cout << std::format("frame '{}' sent.", frame.properties().serial_id()) << std::endl;
-        thread_pool.enqueue(saveToDatabase, std::ref(*frame_repository), std::cref(frame));
-      } else {
-        std::cout << std::format("unexpected topic for ZmqDatagram: expect {}, got: {} instead.",
-                                 kVisionMessageTopic,
-                                 topic)
-                  << std::endl;
-      }
-    }
-  }
-}
+//     // TODO($ISSUE_N): Move this workflow to a DatagramHandler class.
+//     for (auto& datagram : datagrams) {
+//       auto topic = datagram.topic;
+//       if (topic == kVisionMessageTopic) {
+//         SSL_WrapperPacket detection;
+//         detection.ParseFromString(datagram.message);
+//       } else {
+//         std::cout << std::format("unexpected topic for ZmqDatagram: expect {}, got: {} instead.",
+//                                  kVisionMessageTopic,
+//                                  topic)
+//                   << std::endl;
+//       }
+//     }
+
+//     // Only send the processed frame after process all datagrams.
+//     Frame frame = createMockedFrame();
+//     std::string message;
+//     frame.SerializeToString(&message);
+//     unsaved_frames.push_back(frame);
+//     vision_publisher.send("frame", message);
+//     // std::cout << std::format("frame '{}' sent.", frame.properties().serial_id()) << std::endl;
+
+//     constexpr int kMaxUnsavedFrames = 100;
+//     if (unsaved_frames.size() == kMaxUnsavedFrames) {
+//       thread_pool.enqueue(saveManyToDatabase, std::ref(*frame_repository), unsaved_frames);
+//       unsaved_frames.clear();
+//     }
+//   }
+// }
 
 static constexpr std::string_view kReplyAddress = "ipc:///tmp/vision-sync.ipc";
+
 void databaseHandlerRun() {
   std::cout << "Database thread running..." << std::endl;
-  robocin::ZmqReplySocket vision_reply_socket{};
+  robocin::ZmqReplySocket vision_reply_socket;
   vision_reply_socket.bind(kReplyAddress);
 
   std::random_device rd;
   std::mt19937 gen(rd());
   std::uniform_int_distribution<int64_t> distribution(1, 6);
-
-  // Receive sync request.
-  while (true) {
+  while(true) {
     if (auto request = vision_reply_socket.receive(); !request.empty()) {
       std::cout << "GetVisionChunk on VisionMS..." << std::endl;
+
       int64_t first_key = distribution(gen);
       int64_t second_key = distribution(gen);
       auto [lower, upper] = std::minmax(first_key, second_key);
@@ -188,44 +199,140 @@ void databaseHandlerRun() {
       auto range
           = thread_pool.enqueue(findRangeFromDatabase, std::ref(*frame_repository), lower, upper);
 
-      /*
-      message ChunkResponseHeader {
-        google.protobuf.Duration request_start = 1;
-        uint32 chunk_id = 2;
-        uint32 n_chunks = 3;
-
-        google.protobuf.Duration max_duration = 4;
-      }
-
-      message GetVisionChunkResponse {
-        ChunkResponseHeader header = 1;
-        repeated vision.Frame payloads = 2;
-      }
-      */
-      protocols::ui::ChunkResponseHeader header;
+      protocols::ui::GetVisionChunkResponse response;
+      protocols::ui::ChunkResponseHeader &header = *response.mutable_header();
       header.mutable_request_start()->set_seconds(0);
       header.set_chunk_id(1);
       header.set_n_chunks(1);
       header.mutable_max_duration()->set_seconds(0);
 
-      protocols::ui::GetVisionChunkResponse response;
-      response.set_allocated_header(&header);
-      for (auto& frame : range.get()) {
-        response.add_payloads()->CopyFrom(frame);
+      response.add_payloads();
+
+      vision_reply_socket.send(response.SerializeAsString());
+    }
+  }
+
+
+  
+  // Receive sync request.
+  // std::random_device rd;
+  // std::mt19937 gen(rd());
+  // std::uniform_int_distribution<int64_t> distribution(1, 6);
+  // while (true) {
+  //   if (auto request = vision_reply_socket->receive(); !request.empty()) {
+  //     std::cout << "GetVisionChunk on VisionMS..." << std::endl;
+  //     int64_t first_key = distribution(gen);
+  //     int64_t second_key = distribution(gen);
+  //     auto [lower, upper] = std::minmax(first_key, second_key);
+
+  //     // auto range
+  //     //     = thread_pool.enqueue(findRangeFromDatabase, std::ref(*frame_repository), lower, upper);
+
+  //     /*
+  //     message ChunkResponseHeader {
+  //       google.protobuf.Duration request_start = 1;
+  //       uint32 chunk_id = 2;
+  //       uint32 n_chunks = 3;
+
+  //       google.protobuf.Duration max_duration = 4;
+  //     }
+
+  //     message GetVisionChunkResponse {
+  //       ChunkResponseHeader header = 1;
+  //       repeated vision.Frame payloads = 2;
+  //     }
+  //     */
+  //     protocols::ui::ChunkResponseHeader header;
+  //     header.mutable_request_start()->set_seconds(0);
+  //     header.set_chunk_id(1);
+  //     header.set_n_chunks(1);
+  //     header.mutable_max_duration()->set_seconds(0);
+
+  //     protocols::ui::GetVisionChunkResponse response;
+  //     response.set_allocated_header(&header);
+  //     // for (auto& frame : range.get()) {
+  //     //   response.add_payloads()->CopyFrom(frame);
+  //     // }
+
+  //     std::string serialized_response;
+  //     response.SerializeToString(&serialized_response);
+  //     vision_reply_socket->send(serialized_response);
+  //   }
+  // }
+}
+
+struct TestInputs {
+  int64_t record_id;
+  std::string operation;
+};
+void setup() {
+  std::cout << "Creating test inputs"
+            << std::endl;
+  std::vector<TestInputs> test_inputs = {{0, "save"},
+                                         {0, "save"},
+                                         {1, "find"},
+                                         {2, "find"},
+                                         {0, "save"},
+                                         {3, "find"},
+                                         {3, "remove"},
+                                         {3, "find"},
+                                         {2, "find_range"}};
+
+  int serial_id = 0;
+  for (const auto& [record_id, operation] : test_inputs) {
+    if (operation == "find") {
+      std::cout << "fetching (key=" << record_id << ")..." << std::endl;
+      if (auto result = frame_repository->find(record_id)) {
+        std::cout << "retrieved frame: " << result->DebugString() << "." << std::endl;
+      } else {
+        std::cout << "frame not found." << std::endl;
       }
 
-      std::string serialized_response;
-      response.SerializeToString(&serialized_response);
-      vision_reply_socket.send(serialized_response);
+    } else if (operation == "find_range") {
+      std::cout << "fetching range 1 >= key <= " << record_id << ")..." << std::endl;
+      if (auto result = frame_repository->findRange(1, record_id); !result.empty()) {
+        std::cout << "retrieved frames" << std::endl;
+        for (const auto& frame : result) {
+          std::cout << frame.DebugString() << std::endl;
+        }
+      } else {
+        std::cout << "frames not found." << std::endl;
+      }
+    } else if (operation == "remove") {
+      std::cout << "removing (key=" << record_id << ")..." << std::endl;
+      frame_repository->remove(record_id);
+
+    } else if (operation == "save") {
+      std::cout << "saving..." << std::endl;
+
+      Frame frame;
+
+      frame.mutable_properties()->set_serial_id(++serial_id);
+
+      Field& field = *frame.mutable_field();
+      field.set_length(9000);
+      field.set_width(6000);
+      field.set_goal_depth(180);
+      field.set_goal_width(1000);
+      field.set_penalty_area_depth(1000);
+      field.set_penalty_area_width(2000);
+      field.set_boundary_width(300);
+      field.set_goal_center_to_penalty_mark(6000);
+
+      frame_repository->save(frame);
+
+      std::cout << "saved frame: " << frame.DebugString() << std::endl;
+    } else {
+      std::cout << "invalid operation: " << operation << std::endl;
     }
   }
 }
 
 int main() {
-  std::cout << "Vision is runnning!" << std::endl;
+  std::cout << "Vision is runnning aaaaaaaaaa!" << std::endl;
 
   // TODO($ISSUE_N): Move the database management to a class.
-  std::cout << "Creating factory and frame repository." << std::endl;
+  // std::cout << "Creating factory and frame repository." << std::endl;
 
   std::future<bool> connection_status = frame_repository->connect();
 
@@ -236,9 +343,11 @@ int main() {
     return -1;
   }
 
-  std::jthread publisher_thread(publisherRun);
-  std::jthread subscriber_thread(subscriberRun);
-  std::jthread database_thread(databaseHandlerRun);
+  setup();
+
+  // std::jthread publisher_thread(publisherRun);
+  // std::jthread subscriber_thread(subscriberRun);
+  // std::jthread database_thread(databaseHandlerRun);
 
   return 0;
 }
