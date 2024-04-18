@@ -20,10 +20,8 @@ services:
   service-0:
     build:
       context: .
-      dockerfile: vision-be/vision-panettone/.devcontainer/Dockerfile
-      args:
-        - SOURCE_DIRECTORY=vision-be/vision-panettone
-    working_dir: /workspaces/vision-be/vision-panettone
+      dockerfile: vision-be/vision-panettone/deploy.Dockerfile
+    working_dir: /vision-be/vision-panettone
     command: ["bin/microservice_main", "0", "0"]
     volumes:
       - /tmp:/tmp
@@ -34,10 +32,8 @@ services:
   service-1:
     build:
       context: .
-      dockerfile: vision-be/vision-panettone/.devcontainer/Dockerfile
-      args:
-        - SOURCE_DIRECTORY=vision-be/vision-panettone
-    working_dir: /workspaces/vision-be/vision-panettone
+      dockerfile: vision-be/vision-panettone/deploy.Dockerfile
+    working_dir: /vision-be/vision-panettone
     command: ["bin/microservice_main", "1", "0"]
     volumes:
       - /tmp:/tmp
@@ -48,10 +44,8 @@ services:
   service-2:
     build:
       context: .
-      dockerfile: vision-be/vision-panettone/.devcontainer/Dockerfile
-      args:
-        - SOURCE_DIRECTORY=vision-be/vision-panettone
-    working_dir: /workspaces/vision-be/vision-panettone
+      dockerfile: vision-be/vision-panettone/deploy.Dockerfile
+    working_dir: /vision-be/vision-panettone
     command: ["bin/microservice_main", "2", "0"]
     volumes:
       - /tmp:/tmp
@@ -62,10 +56,8 @@ services:
   service-3:
     build:
       context: .
-      dockerfile: vision-be/vision-panettone/.devcontainer/Dockerfile
-      args:
-        - SOURCE_DIRECTORY=vision-be/vision-panettone
-    working_dir: /workspaces/vision-be/vision-panettone
+      dockerfile: vision-be/vision-panettone/deploy.Dockerfile
+    working_dir: /vision-be/vision-panettone
     command: ["bin/microservice_main", "3", "0"]
     volumes:
       - /tmp:/tmp
@@ -76,10 +68,8 @@ services:
   service-4:
     build:
       context: .
-      dockerfile: vision-be/vision-panettone/.devcontainer/Dockerfile
-      args:
-        - SOURCE_DIRECTORY=vision-be/vision-panettone
-    working_dir: /workspaces/vision-be/vision-panettone
+      dockerfile: vision-be/vision-panettone/deploy.Dockerfile
+    working_dir: /vision-be/vision-panettone
     command: ["bin/microservice_main", "4", "0"]
     volumes:
       - /tmp:/tmp
@@ -90,10 +80,8 @@ services:
   service-5:
     build:
       context: .
-      dockerfile: vision-be/vision-panettone/.devcontainer/Dockerfile
-      args:
-        - SOURCE_DIRECTORY=vision-be/vision-panettone
-    working_dir: /workspaces/vision-be/vision-panettone
+      dockerfile: vision-be/vision-panettone/deploy.Dockerfile
+    working_dir: /vision-be/vision-panettone
     command: ["bin/microservice_main", "5", "0"]
     volumes:
       - /tmp:/tmp
