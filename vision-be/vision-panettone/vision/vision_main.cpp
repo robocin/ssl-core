@@ -232,14 +232,14 @@ int main() {
   // TODO($ISSUE_N): Move the database management to a class.
   std::cout << "Creating factory and frame repository." << std::endl;
 
-  // std::future<bool> connection_status = frame_repository->connect();
+  std::future<bool> connection_status = frame_repository->connect();
 
-  // if (connection_status.wait(); connection_status.get()) {
-  //   std::cout << "Connected to the database." << std::endl;
-  // } else {
-  //   std::cout << "Failed to connect to the database." << std::endl;
-  //   return -1;
-  // }
+  if (connection_status.wait(); connection_status.get()) {
+    std::cout << "Connected to the database." << std::endl;
+  } else {
+    std::cout << "Failed to connect to the database." << std::endl;
+    return -1;
+  }
 
   std::jthread publisher_thread(publisherRun);
   std::jthread subscriber_thread(subscriberRun);
