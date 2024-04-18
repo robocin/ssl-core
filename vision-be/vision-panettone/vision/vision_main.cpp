@@ -112,6 +112,8 @@ void publisherRun() {
 
   // Receive datagrams.
   while (true) {
+    std::optional<Frame> processedFrame; 
+
     std::vector<ZmqDatagram> datagrams;
     {
       std::unique_lock lock(mutex);
@@ -127,18 +129,19 @@ void publisherRun() {
       if (topic == kVisionMessageTopic) {
         SSL_WrapperPacket detection;
         detection.ParseFromString(datagram.message);
-        {
-          auto frame = parseMessage(datagram.message);
-          auto serialized_frame = frame.SerializeAsString();
-          vision_publisher.send("frame", serialized_frame);
-          thread_pool.enqueue(saveToDatabase, std::ref(*frame_repository), std::cref(frame));
-        }
+        processedFrame = parseMessage(datagram.message);  
       } else {
         std::cout << std::format("unexpected topic for ZmqDatagram: expect {}, got: {} instead.",
                                  kVisionMessageTopic,
                                  topic)
                   << std::endl;
       }
+    }
+
+    if(processedFrame.has_value()) {
+      auto serialized_frame = processedFrame.value().SerializeAsString();
+      vision_publisher.send("frame", serialized_frame);
+      thread_pool.enqueue(saveToDatabase, std::ref(*frame_repository), std::cref(processedFrame.value()));
     }
   }
 }

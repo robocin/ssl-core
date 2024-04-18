@@ -25,7 +25,7 @@ using MongoDbArray = bsoncxx::builder::stream::array;
 MongoDbDocument toMongoDbDocument(const Frame& frame) {
   MongoDbDocument document{};
 
-  document << "_id" << static_cast<int64_t>(frame.properties().serial_id());
+  // document << "_id" << static_cast<int64_t>(frame.properties().serial_id());
 
   // std::cout << "serial_id: " << static_cast<int64_t>(frame.properties().serial_id()) << std::endl;
 
