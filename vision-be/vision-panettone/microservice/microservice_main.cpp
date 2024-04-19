@@ -65,8 +65,11 @@ void subscriberRun() {
         }
         packages.push_back(message);
       }
-    }
 
+      if (packages.empty()) {
+        continue;
+      }
+    }
     cv.notify_one();
   }
 }
