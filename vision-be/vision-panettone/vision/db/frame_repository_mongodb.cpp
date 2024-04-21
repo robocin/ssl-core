@@ -25,9 +25,9 @@ using MongoDbArray = bsoncxx::builder::stream::array;
 MongoDbDocument toMongoDbDocument(const Frame& frame) {
   MongoDbDocument document{};
 
-  // document << "_id" << static_cast<int64_t>(frame.properties().serial_id());
+  document << "_id" << static_cast<int64_t>(frame.properties().serial_id());
 
-  // std::cout << "serial_id: " << static_cast<int64_t>(frame.properties().serial_id()) << std::endl;
+  std::cout << "serial_id: " << static_cast<int64_t>(frame.properties().serial_id()) << std::endl;
 
   // add balls array
   MongoDbArray balls_array{};
@@ -42,43 +42,25 @@ MongoDbDocument toMongoDbDocument(const Frame& frame) {
   }
   document << "balls" << balls_array;
 
-  std::cout << "added balls array" << std::endl;
 
-  // MongoDbArray robots_array{};
-  // std::cout << "created robots array" << std::endl;
-  // for (const auto& robot : frame.robots()) {
-  //   std::cout << "iterating robot" << std::endl;
-  //   MongoDbDocument robot_doc{};
-  //   std::cout << "created robot doc"  << std::endl;
+  MongoDbArray robots_array{};
+  for (const auto& robot : frame.robots()) {
+    MongoDbDocument robot_doc{};
 
-  //   robot_doc << "confidence" << robot.confidence();
-  //   std::cout << "added confidence" << std::endl;
+    robot_doc << "confidence" << robot.confidence();
+    robot_doc << "id" << robot.robot_id().number();
+    robot_doc << "color" << robot.robot_id().color();
+    robot_doc << "position" << bsoncxx::builder::stream::open_array << robot.position().x()
+              << robot.position().y() << bsoncxx::builder::stream::close_array;
+    robot_doc << "angle" << robot.angle();
+    robot_doc << "velocity" << bsoncxx::builder::stream::open_array << robot.velocity().x()
+              << robot.velocity().y() << bsoncxx::builder::stream::close_array;
+    robot_doc << "angular_velocity" << robot.angular_velocity();
+    robots_array << robot_doc;
+  }
+  document << "robots" << robots_array;
 
-  //   robot_doc << "id" << robot.robot_id().number();
-  //   std::cout << "added id" << std::endl;
-    
-  //   robot_doc << "color" << robot.robot_id().color();
-  //   std::cout << "added color" << std::endl;
-    
-  //   robot_doc << "position" << bsoncxx::builder::stream::open_array << robot.position().x()
-  //             << robot.position().y() << bsoncxx::builder::stream::close_array;
-  //   std::cout << "added position" << std::endl;
-    
-  //   robot_doc << "angle" << robot.angle();
-  //   std::cout << "added angle" << std::endl;
-    
-  //   robot_doc << "velocity" << bsoncxx::builder::stream::open_array << robot.velocity().x()
-  //             << robot.velocity().y() << bsoncxx::builder::stream::close_array;
-  //   std::cout << "added velocity" << std::endl;
-    
-  //   robot_doc << "angular_velocity" << robot.angular_velocity();
-  //   std::cout << "added angular_velocity" << std::endl;
-
-  //   robots_array << robot_doc;
-  // }
-  // document << "robots" << robots_array;
-
-  // std::cout << "added robots array" << std::endl;
+  std::cout << "added robots array" << std::endl;
 
   MongoDbDocument field_doc{};
   const auto& field = frame.field();

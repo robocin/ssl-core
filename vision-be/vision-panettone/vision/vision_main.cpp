@@ -49,7 +49,7 @@ std::unique_ptr<IFrameRepository> frame_repository = kFactory->createFrameReposi
 // Database:
 
 // saves a frame to the database.
-void saveToDatabase(IFrameRepository& repository, const Frame& frame) { repository.save(frame); }
+void saveToDatabase(IFrameRepository& repository, const Frame frame) { repository.save(frame); }
 
 // fetches a frame range from the database.
 std::vector<Frame> findRangeFromDatabase(IFrameRepository& repository,
@@ -141,7 +141,7 @@ void publisherRun() {
     if(processedFrame.has_value()) {
       auto serialized_frame = processedFrame.value().SerializeAsString();
       vision_publisher.send("frame", serialized_frame);
-      thread_pool.enqueue(saveToDatabase, std::ref(*frame_repository), std::cref(processedFrame.value()));
+      thread_pool.enqueue(saveToDatabase, std::ref(*frame_repository), processedFrame.value());
     }
   }
 }
