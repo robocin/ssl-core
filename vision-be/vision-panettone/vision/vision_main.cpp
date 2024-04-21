@@ -12,6 +12,8 @@
 #include <iostream>
 #include <memory>
 #include <mutex>
+#include <google/protobuf/util/time_util.h>
+#include <protocols/common/robot_id.pb.h>
 #include <protocols/third_party/detection/raw_wrapper.pb.h>
 #include <protocols/ui/messages.pb.h>
 #include <protocols/vision/frame.pb.h>
@@ -24,10 +26,12 @@
 #include <string>
 #include <thread>
 
+using protocols::third_party::detection::SSL_DetectionRobot;
 using protocols::third_party::detection::SSL_WrapperPacket;
-
-using protocols::vision::Field;
 using protocols::vision::Frame;
+using protocols::vision::Robot;
+
+using RobotIdColor = protocols::common::RobotId::Color;
 
 using robocin::ThreadPool;
 using robocin::ZmqDatagram;
@@ -42,7 +46,6 @@ uint64_t frame_id = 1;
 const auto kFactory = RepositoryFactoryMapping{}[RepositoryType::MongoDb];
 std::unique_ptr<IFrameRepository> frame_repository = kFactory->createFrameRepository();
 
-std::mutex mutex_db;
 // Database:
 
 // saves a frame to the database.
@@ -55,44 +58,6 @@ std::vector<Frame> findRangeFromDatabase(IFrameRepository& repository,
   return repository.findRange(key_lower_bound, key_upper_bound);
 }
 
-// Helpers:
-
-Frame createMockedFrame() {
-  std::cout << "Creating mocked frame..." << std::endl;
-  Frame frame;
-  frame.mutable_properties()->set_serial_id(frame_id++);
-
-  Field& field = *frame.mutable_field();
-  field.set_length(9000);
-  field.set_width(6000);
-  field.set_goal_depth(180);
-  field.set_goal_width(1000);
-  field.set_penalty_area_depth(1000);
-  field.set_penalty_area_width(2000);
-  field.set_boundary_width(300);
-  field.set_goal_center_to_penalty_mark(6000);
-
-  for (int i = 0; i < 11; ++i) {
-    protocols::vision::Robot& robot = *frame.add_robots();
-    robot.mutable_robot_id()->set_number(i);
-    robot.mutable_robot_id()->set_color(
-        protocols::common::RobotId_Color::RobotId_Color_COLOR_YELLOW);
-
-    robot.mutable_position()->set_x((i * 9000) / 11);
-    robot.mutable_position()->set_y(0);
-  }
-
-  for (int i = 0; i < 11; ++i) {
-    protocols::vision::Robot& robot = *frame.add_robots();
-    robot.mutable_robot_id()->set_number(i);
-    robot.mutable_robot_id()->set_color(protocols::common::RobotId_Color::RobotId_Color_COLOR_BLUE);
-
-    robot.mutable_position()->set_x((i * 9000) / 11);
-    robot.mutable_position()->set_y(0);
-  }
-
-  return frame;
-}
 
 static constexpr std::string_view kThirdPartyAddress = "ipc:///tmp/gateway-pub-th-parties.ipc";
 static constexpr std::string_view kVisionMessageTopic = "vision-third-party";
@@ -130,6 +95,16 @@ void subscriberRun() {
   }
 }
 
+Frame mapWrapperPacketToFrame(const SSL_WrapperPacket& packet);
+
+Frame parseMessage(std::string message) {
+  SSL_WrapperPacket packet;
+  packet.ParseFromString(message);
+
+  Frame frame = mapWrapperPacketToFrame(packet);
+  return frame;
+}
+
 void publisherRun() {
   std::cout << "Publisher thread running..." << std::endl;
   robocin::ZmqPublisherSocket vision_publisher;
@@ -137,6 +112,8 @@ void publisherRun() {
 
   // Receive datagrams.
   while (true) {
+    std::optional<Frame> processedFrame; 
+
     std::vector<ZmqDatagram> datagrams;
     {
       std::unique_lock lock(mutex);
@@ -146,27 +123,25 @@ void publisherRun() {
     }
 
     // TODO($ISSUE_N): Move this workflow to a DatagramHandler class.
-    for (auto& datagram : datagrams) { // 1 frame == 2 pacotes, normalmente.
+    for (auto& datagram : datagrams) {
 
       auto topic = datagram.topic;
       if (topic == kVisionMessageTopic) {
         SSL_WrapperPacket detection;
         detection.ParseFromString(datagram.message);
-        {
-          std::lock_guard<std::mutex> lock(mutex_db);
-          Frame frame = createMockedFrame();
-
-          std::string message;
-          frame.SerializeToString(&message);
-          vision_publisher.send("frame", message);
-          thread_pool.enqueue(saveToDatabase, std::ref(*frame_repository), std::cref(frame));
-        }
+        processedFrame = parseMessage(datagram.message);  
       } else {
         std::cout << std::format("unexpected topic for ZmqDatagram: expect {}, got: {} instead.",
                                  kVisionMessageTopic,
                                  topic)
                   << std::endl;
       }
+    }
+
+    if(processedFrame.has_value()) {
+      auto serialized_frame = processedFrame.value().SerializeAsString();
+      vision_publisher.send("frame", serialized_frame);
+      thread_pool.enqueue(saveToDatabase, std::ref(*frame_repository), std::cref(processedFrame.value()));
     }
   }
 }
@@ -192,29 +167,14 @@ void databaseHandlerRun() {
       auto range
           = thread_pool.enqueue(findRangeFromDatabase, std::ref(*frame_repository), lower,
           upper);
-
-      /*
-      message ChunkResponseHeader {
-        google.protobuf.Duration request_start = 1;
-        uint32 chunk_id = 2;
-        uint32 n_chunks = 3;
-
-        google.protobuf.Duration max_duration = 4;
-      }
-
-      message GetVisionChunkResponse {
-        ChunkResponseHeader header = 1;
-        repeated vision.Frame payloads = 2;
-      }
-      */
-      protocols::ui::ChunkResponseHeader header;
+          
+      protocols::ui::GetVisionChunkResponse response;
+      protocols::ui::ChunkResponseHeader &header = *response.mutable_header();
       header.mutable_request_start()->set_seconds(0);
       header.set_chunk_id(1);
       header.set_n_chunks(1);
       header.mutable_max_duration()->set_seconds(0);
 
-      protocols::ui::GetVisionChunkResponse response;
-      response.set_allocated_header(&header);
       for (auto& frame : range.get()) {
         response.add_payloads()->CopyFrom(frame);
       }
@@ -246,4 +206,90 @@ int main() {
   std::jthread database_thread(databaseHandlerRun);
 
   return 0;
+}
+
+
+google::protobuf::Timestamp protobufTimestampNow() {
+  return google::protobuf::util::TimeUtil::GetCurrentTime();
+}
+
+Robot mapWrapperRobotToRobot(const SSL_DetectionRobot& packet_robot, RobotIdColor color) {
+  Robot robot;
+
+  auto& robot_id = *robot.mutable_robot_id();
+  robot_id.set_number(static_cast<int>(packet_robot.robot_id()));
+  robot_id.set_color(color);
+
+  robot.set_confidence(packet_robot.confidence());
+
+  auto& position = *robot.mutable_position();
+  position.set_x(packet_robot.x());
+  position.set_y(packet_robot.y());
+
+  robot.set_angle(packet_robot.orientation());
+
+  // just to increase message size.
+  auto& velocity = *robot.mutable_velocity();
+  velocity.set_x(0);
+  velocity.set_y(0);
+
+  robot.set_angular_velocity(0);
+
+  return robot;
+};
+
+Frame mapWrapperPacketToFrame(const SSL_WrapperPacket& packet) {
+  static uint64_t serial_id = 0;
+  static uint64_t field_serial_id = 0;
+
+  Frame frame;
+
+  auto& properties = *frame.mutable_properties();
+  properties.set_serial_id(serial_id++);
+  *properties.mutable_created_at() = protobufTimestampNow();
+  properties.set_fps(60.0F); // NOLINT(*numbers*)
+
+  for (const auto& packet_ball : packet.detection().balls()) {
+    auto& ball = *frame.add_balls();
+
+    ball.set_confidence(packet_ball.confidence());
+
+    auto& position = *ball.mutable_position();
+    position.set_x(packet_ball.x());
+    position.set_y(packet_ball.y());
+    position.set_z(packet_ball.z());
+
+    // just to increase message size.
+    auto& velocity = *ball.mutable_velocity();
+    velocity.set_x(0);
+    velocity.set_y(0);
+    velocity.set_z(0);
+  }
+
+  for (const auto& packet_robot : packet.detection().robots_yellow()) {
+    *frame.add_robots()
+        = mapWrapperRobotToRobot(packet_robot, RobotIdColor::RobotId_Color_COLOR_YELLOW);
+  }
+  for (const auto& packet_robot : packet.detection().robots_blue()) {
+    *frame.add_robots()
+        = mapWrapperRobotToRobot(packet_robot, RobotIdColor::RobotId_Color_COLOR_BLUE);
+  }
+
+  if (packet.has_geometry()) {
+    auto& field = *frame.mutable_field();
+    field.set_serial_id(field_serial_id++);
+
+    // NOLINTBEGIN(*conversions*)
+    field.set_length(packet.geometry().field().field_length());
+    field.set_width(packet.geometry().field().field_width());
+    field.set_goal_depth(packet.geometry().field().goal_depth());
+    field.set_goal_width(packet.geometry().field().goal_width());
+    field.set_penalty_area_depth(packet.geometry().field().penalty_area_depth());
+    field.set_penalty_area_width(packet.geometry().field().penalty_area_width());
+    field.set_boundary_width(packet.geometry().field().boundary_width());
+    field.set_goal_center_to_penalty_mark(packet.geometry().field().goal_center_to_penalty_mark());
+    // NOLINTEND(*conversions*)
+  }
+
+  return frame;
 }
