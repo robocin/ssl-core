@@ -59,7 +59,10 @@ template <class Tp>
 }
 
 int reps_to_wait = 0;
-bool using_database = false;
+int save_frames_batch_size = 100;
+bool saving_to_db = false;
+bool allow_sync_requests = false;
+bool database_connected = false;
 
 std::unique_ptr<ZmqSubscriberSocket> sub;
 std::unique_ptr<ZmqPublisherSocket> pub;
@@ -142,13 +145,13 @@ void publisherRun(int id) {
 
       pub->send(kTopic, message_parsed);
 
-      if(using_database) {
+      if(saving_to_db) {
         unsaved_frames.push_back(processedFrame.value());
       }
     }
 
     const uint64_t kFrameBatchSave = 100; 
-    if(unsaved_frames.size() >= kFrameBatchSave && using_database) {
+    if(database_connected && saving_to_db && unsaved_frames.size() >= kFrameBatchSave) {
       thread_pool.enqueue(saveManyToDatabase, std::ref(*frame_repository), unsaved_frames);
       unsaved_frames.clear();
     }
@@ -164,7 +167,7 @@ void chunkReplyRun() {
 
   // Receive sync request.
   while (true) {
-    if (auto request = rep->receive(); !request.empty()) {
+    if (auto request = rep->receive(); !request.empty() && database_connected) {
       std::cout << "GetVisionChunk on VisionMS..." << std::endl;
       int64_t first_key = distribution(gen);
       int64_t second_key = distribution(gen);
@@ -192,43 +195,71 @@ void chunkReplyRun() {
   }
 }
 
-int main(int argc, char* argv[]) {
-  assert(argc > 3);
-  // argv[0] is relative binary name.
-
-  std::span args{argv + 1, argv + argc - 1};
-  // args[0] is the service_id.
-  // args[1] is the number of loops cycles to wait.
-  // args[2] is a boolean indicating whether it uses the database or not.
-
-  int service_id = std::stoi(args[0]);
-  reps_to_wait = std::stoi(args[1]);
-  using_database = std::stoi(args[2]);
-
-  std::cout << std::format("Service {} is running and waiting {} reps.!", service_id, reps_to_wait) << std::endl;
-  std::cout << std::format("Using database? {}", using_database) << std::endl;
-
-  sub = std::make_unique<ZmqSubscriberSocket>(makeSubscriberSocket(service_id));
-  pub = std::make_unique<ZmqPublisherSocket>(makePublisherSocket(service_id));
-  
-  if(using_database) {
-    rep = std::make_unique<ZmqReplySocket>(makeReplySocket(service_id));
-    frame_repository = kFactory->createFrameRepository(service_id);
+void setupChunkReplyThread(int id) {
+  if(allow_sync_requests) {
+    rep = std::make_unique<ZmqReplySocket>(makeReplySocket(id));
+    frame_repository = kFactory->createFrameRepository(id);
 
     std::cout << "Database connection check..." << std::endl;
     std::future<bool> connection_status = frame_repository->connect();
 
     if (connection_status.wait(); connection_status.get()) {
+      database_connected = true;
       std::cout << "Connected to the database." << std::endl;
     } else {
       std::cout << "Failed to connect to the database." << std::endl;
-      return -1;
+      return;
     }
-    std::jthread database_thread(chunkReplyRun);
+    std::jthread chunk_reply_thread(chunkReplyRun);
+  }
+}
+
+void setupSubscriberThread(int id) {
+  sub = std::make_unique<ZmqSubscriberSocket>(makeSubscriberSocket(id));  
+  std::jthread subscriber_thread(subscriberRun);
+}
+
+void setupPublisherThread(int id) {
+  pub = std::make_unique<ZmqPublisherSocket>(makePublisherSocket(id));
+  std::jthread publisher_thread(publisherRun, id);
+}
+
+int main(int argc, char* argv[]) {
+  assert(argc > 2);
+  // argv[0] is relative binary name.
+
+  std::span args{argv + 1, argv + argc - 1};
+  // args[0] is the service_id.
+  // args[1] is the number of loops cycles to wait.
+  // args[2] is a boolean indicating whether it saves the frames to database or not. (Optional)
+  // args[3] is a boolean indicating whether it handles sync requests. (Optional)
+  // args[4] is the size of the batch to save many frames to database. (Optional)
+
+  int service_id = std::stoi(args[0]);
+  reps_to_wait = std::stoi(args[1]);
+
+  if(argc > 3) {
+    saving_to_db = std::stoi(args[2]);
   }
 
-  std::jthread subscriber_thread(subscriberRun);
-  std::jthread publisher_thread(publisherRun, service_id);
+  if(argc > 4) {
+    allow_sync_requests = std::stoi(args[3]);
+  }
+
+  if(argc > 5) {
+    save_frames_batch_size = std::stoi(args[4]);
+  }
+
+  // Check args.
+  std::cout << std::format("Service {} is running and waiting {} reps.!", service_id, reps_to_wait) << std::endl;
+  std::cout << std::format("Service is saving to database? {}", saving_to_db) << std::endl;
+  std::cout << std::format("Service save frames batch size: {}", save_frames_batch_size) << std::endl;
+  std::cout << std::format("Service is handling sync requests? {}", allow_sync_requests) << std::endl;
+
+  // Setup threads, as needed.
+  setupSubscriberThread(service_id);
+  setupPublisherThread(service_id);
+  setupChunkReplyThread(service_id);
 
   return 0;
 }
