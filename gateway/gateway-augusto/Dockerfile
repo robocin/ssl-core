@@ -1,11 +1,25 @@
-FROM robocin/ssl-core-cpp-base:latest AS devcontainer
+FROM robocin/ssl-core-go-base:latest AS devcontainer
 
-COPY .cmake/ /tmp/.cmake/
-COPY common/ /tmp/common/
+COPY /protocols /tmp/protocols
 
-RUN apt-get install nlohmann-json3-dev -y && \
-  \
-  pushd /tmp/common/cpp && rm -rf build && \
-  cmake -B build -S . -G "Ninja" -DCMAKE_CXX_COMPILER=clang++ && \
-  cmake --build build && cmake --install build && \
-  popd && rm -rf /tmp/*
+FROM devcontainer AS build
+
+WORKDIR /app
+
+COPY gateway/gateway-augusto .
+
+RUN make setup
+RUN make build-linux
+
+FROM scratch AS prod
+
+COPY --from=build /usr/share/zoneinfo /usr/share/zoneinfo
+COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=build /etc/passwd /etc/passwd
+COPY --from=build /etc/group /etc/group
+
+COPY --from=build /app/bin/gateway .
+
+EXPOSE 4040
+
+ENTRYPOINT ["./gateway"]
