@@ -21,5 +21,7 @@ COPY --from=build /gateway/gateway-augusto/bin/gateway .
 
 ENV VISION_PORT ${VISION_PORT}
 ENV GC_PORT ${GC_PORT}
+ENV INTERCEPT ${INTERCEPT}
+ENV WAIT_PACKAGES ${WAIT_PACKAGES}
 
 ENTRYPOINT ["./gateway"]
