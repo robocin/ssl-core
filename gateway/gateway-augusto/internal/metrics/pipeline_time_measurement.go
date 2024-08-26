@@ -44,7 +44,7 @@ func (tm *TimeMeasurementFromAutoRefInputToPlaybackOutput) GetStartTime(datagram
 		return
 	}
 
-	if tm.hasReferenceID && tm.TimeMeasurement.SaveStartTime() {
+	if !tm.hasReferenceID && tm.TimeMeasurement.SaveStartTime() {
 		fmt.Println("Saving start time for referenceID", tm.referenceID)
 		tm.referenceID = trackedPacket.GetTrackedFrame().GetFrameNumber()
 		tm.hasReferenceID = true
