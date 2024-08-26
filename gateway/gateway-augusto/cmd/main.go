@@ -53,15 +53,21 @@ func interceptGrpcServerWith(timeMeasurement *metrics.TimeMeasurementFromAutoRef
 }
 
 func main() {
-	visionPort := os.Getenv("VISION_PORT")
-	if visionPort == "" {
-		fmt.Println("VISION_PORT not set")
+	visionAddr := os.Getenv("VISION_ADDRESS")
+	if visionAddr == "" {
+		fmt.Println("VISION_ADDRESS not set")
 		return
 	}
 
-	gcPort := os.Getenv("GC_PORT")
-	if gcPort == "" {
-		fmt.Println("GC_PORT not set")
+	gcAddr := os.Getenv("GC_ADDRESS")
+	if gcAddr == "" {
+		fmt.Println("GC_ADDRESS not set")
+		return
+	}
+
+	trackedAddr := os.Getenv("TRACKED_ADDRESS")
+	if trackedAddr == "" {
+		fmt.Println("TRACKED_ADDRESS not set")
 		return
 	}
 
@@ -75,8 +81,8 @@ func main() {
 	wg := sync.WaitGroup{}
 	wg.Add(5)
 
-	go startGatewayUdpMulticastWorker(fmt.Sprintf("224.5.23.2:%s", visionPort), proxy, "vision-third-party", &wg, nil)
-	go startGatewayUdpMulticastWorker(fmt.Sprintf("224.5.23.1:%s", gcPort), proxy, "referee-third-party", &wg, nil)
+	go startGatewayUdpMulticastWorker(visionAddr, proxy, "vision-third-party", &wg, nil)
+	go startGatewayUdpMulticastWorker(gcAddr, proxy, "referee-third-party", &wg, nil)
 	go startGatewayZmqServer(proxy, &wg)
 
 	if os.Getenv("INTERCEPT") == "true" {
@@ -91,10 +97,10 @@ func main() {
 			return
 		}
 		timeMeasurement := metrics.NewPipelineTimeMeasurement(waitPackagesInt)
-		go interceptUDPWorkerWith(timeMeasurement, "224.5.23.2:10010", proxy, "tracked-third-party", &wg)
+		go interceptUDPWorkerWith(timeMeasurement, trackedAddr, proxy, "tracked-third-party", &wg)
 		go interceptGrpcServerWith(timeMeasurement, &wg)
 	} else {
-		go startGatewayUdpMulticastWorker("224.5.23.2:10010", proxy, "tracked-third-party", &wg, nil)
+		go startGatewayUdpMulticastWorker(trackedAddr, proxy, "tracked-third-party", &wg, nil)
 		go startGatewayGrpcServer(&wg)
 	}
 

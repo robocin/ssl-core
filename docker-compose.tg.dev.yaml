@@ -63,8 +63,9 @@ services:
       context: .
       dockerfile: gateway/gateway-augusto/gateway-augusto.Dockerfile
     environment:
-      - VISION_PORT=10020
-      - GC_PORT=11003
+      - VISION_ADDRESS="224.5.23.2:10020"
+      - GC_ADDRESS="224.5.23.1:11003"
+      - TRACKED_ADDRESS="224.5.23.2:11010"
       - INTERCEPT=true
       - WAIT_PACKAGES=1000
     volumes:
