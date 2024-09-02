@@ -67,7 +67,7 @@ services:
       dockerfile: gateway/gateway-augusto/gateway-augusto.Dockerfile
     environment:
       - VISION_PORT=10020
-      - GC_PORT=10003
+      - GC_PORT=11003
     volumes:
       - .ssl-core:/tmp/.ssl-core
     ports:
