@@ -77,7 +77,6 @@ services:
 
   perception-ms:
     container_name: perception-ms
-    #    image: robocin/perception-brutus:manual-c7208b
     build:
       context: .
       dockerfile: perception-ms/perception-brutus/perception-brutus.Dockerfile
@@ -89,9 +88,6 @@ services:
   referee-ms:
     container_name: referee-ms
     image: robocin/referee-daronco:manual-419128
-    #    build:
-    #      context: .
-    #      dockerfile: referee-ms/referee-daronco/referee-daronco.Dockerfile
     volumes:
       - .ssl-core:/tmp/.ssl-core
     depends_on:
