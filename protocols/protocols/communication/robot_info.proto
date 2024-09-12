@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package protocols.communication;
+
+import "protocols/common/game_command.proto";
+import "protocols/common/robot_id.proto";
+import "protocols/common/packet.proto";
+
+message RobotInfo {
+
+    message SSLCommand {
+        common.Packet msg_type = 1;
+        common.RobotId robot_id = 2;
+    
+        common.GameCommand command = 3;
+        
+        RobotSpeed speed = 4;
+        Kick kick_command = 5;
+        
+        Flags robot_flags = 6;
+    }
+
+    message SSLTelemetry {
+        common.Packet msg_type = 1;
+        common.RobotId robot_id = 2;
+
+        Motors motors_speed = 3;
+        Motors motors_current = 4;
+
+        double battery_voltage = 5;
+    }
+    
+    message Motors {
+        double m1 = 1;
+        double m2 = 2;
+        double m3 = 3;
+        double m4 = 4;
+    }
+    
+    message RobotSpeed {
+        double vx = 1;
+        double vy = 2;
+        double w = 3;
+    }
+    
+    message Kick {
+        bool front = 1;
+        bool chip = 2;
+        bool charge = 3;
+        float kick_strength = 4;
+        bool ball = 5;
+        bool dribbler = 6;
+        bool bypass_ir = 7;
+        float dribbler_speed = 8;
+    }
+
+    message Flags {
+        bool robot_locked = 1;
+        bool critical_move = 2;
+        bool global_speed = 3;
+    }
+    
+}
