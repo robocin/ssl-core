@@ -3,8 +3,8 @@ syntax = "proto3";
 package protocols.navigation;
 
 message PeripheralActuation {
-	bool Kick = 1;
-	bool Dribbler = 2;
+	Kick kick = 1;
+	Dribbler dribbler = 2;
 }
 
 message Kick {
