@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package protocols.decision;
+
+message Decision {
+    // wip
+}

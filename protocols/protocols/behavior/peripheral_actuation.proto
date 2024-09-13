@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package protocols.navigation;
+
+message PeripheralActuation {
+	bool Kick = 1;
+	bool Dribbler = 2;
+}
+
+message Kick {
+	double strength = 1;
+	bool front = 2;
+	bool chip = 3;
+	bool charge = 4;
+	bool bypass_ir = 5;
+}
+
+message Dribbler {
+	double angular_velocity = 1;
+	bool active = 2;
+}

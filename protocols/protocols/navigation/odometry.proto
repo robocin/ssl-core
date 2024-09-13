@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package protocols.navigation;
+
+import "protocols/common/geometry.proto";
+import "protocols/navigation/motion.proto";
+
+message Odometry {
+	oneof motion {
+		GoToPoint go_to_point = 1;
+		RotateInPoint rotate_in_point = 2;
+		RotateOnSelf rotate_on_self = 3;
+	}
+	RobotPose robot_pose = 2;
+}
+
+message RobotPose {
+	common.Point3Df position = 1;
+	double angle = 2;
+}

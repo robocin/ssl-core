@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package protocols.navigation;
+
+import "google/protobuf/timestamp.proto";
+import "protocols/common/geometry.proto";
+import "protocols/navigation/odometry.proto";
+
+message Navigation {
+	uint32 id = 1;
+	google.protobuf.Timestamp timestamp = 2;
+	double forward_velocity = 3;
+	double left_velocity = 4;
+	double angular_velocity = 5;
+	
+	uint32 custom_command = 6;
+	
+	uint32 sequence_number = 7;
+	common.Point2Df output_global_linear_velocity = 8;
+	
+	// Real robot only, odometry control
+	Odometry odometry = 9;
+}
