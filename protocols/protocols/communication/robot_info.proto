@@ -8,7 +8,7 @@ import "protocols/common/packet.proto";
 
 message RobotInfo {
 
-    message SSLCommand {
+    message Command {
         common.Packet msg_type = 1;
         common.RobotId robot_id = 2;
     
@@ -20,7 +20,7 @@ message RobotInfo {
         Flags robot_flags = 6;
     }
 
-    message SSLTelemetry {
+    message Telemetry {
         common.Packet msg_type = 1;
         common.RobotId robot_id = 2;
 
