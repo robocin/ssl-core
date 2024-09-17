@@ -2,6 +2,9 @@ syntax = "proto3";
 
 package protocols.navigation;
 
+import "protocols/navigation/motion.proto";
+import "protocols/common/peripheral_actuation.proto";
+
 message Planning {
     oneof type {
         DiscretizedPath discretized_path = 1;
@@ -9,5 +12,5 @@ message Planning {
         RotateInPoint rotate_in_point = 3;
         RotateOnSelf rotate_on_self = 4;
     }
-    PeripheralActuation peripheral_actuation = 2;
+    common.PeripheralActuation peripheral_actuation = 5;
 }

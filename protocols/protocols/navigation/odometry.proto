@@ -12,5 +12,5 @@ message Odometry {
 		RotateInPoint rotate_in_point = 2;
 		RotateOnSelf rotate_on_self = 3;
 	}
-	RobotPose robot_pose = 2;
+	common.RobotPose robot_pose = 4;
 }

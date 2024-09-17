@@ -16,18 +16,18 @@ import "protocols/navigation/planning.proto";
 message Behavior {
     oneof output {
         Motion motion = 1;
-        Planning planning = 2;
-        Navigation navigation = 3;
+        navigation.Planning planning = 2;
+        navigation.Navigation navigation = 3;
     }
 }
 
 message Motion {
     oneof type {
-        GoToPoint go_to_point = 1;
-        GoToPointWithTrajectory go_to_point_with_trajectory = 2;
-        RotateInPoint rotate_in_point = 3;
-        RotateOnSelf rotate_on_self = 4;
+        protocols.navigation.GoToPoint go_to_point = 1;
+        // protocols.navigation.GoToPointWithTrajectory go_to_point_with_trajectory = 2;
+        protocols.navigation.RotateInPoint rotate_in_point = 3;
+        protocols.navigation.RotateOnSelf rotate_on_self = 4;
     }
-    PeripheralActuation peripheral_actuation = 2;
+    common.PeripheralActuation peripheral_actuation = 5;
 }
 

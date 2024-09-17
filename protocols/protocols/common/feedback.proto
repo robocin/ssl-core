@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package protocols.common;
 
-import "protocols/common/geometry.proto";
 import "protocols/common/robot_id.proto";
 import "protocols/common/robot_pose.proto";
 import "protocols/common/robot_kick.proto";

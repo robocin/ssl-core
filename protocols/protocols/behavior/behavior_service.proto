@@ -14,7 +14,7 @@ import "protocols/common/peripheral_actuation.proto";
 message Motion {
   Target target = 1;
   Obstacles obstacles = 2;
-  PeripheralActuation peripheral_actuation = 3;
+  common.PeripheralActuation peripheral_actuation = 3;
 }
 
 message Target {
