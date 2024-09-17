@@ -4,6 +4,7 @@ package protocols.navigation;
 
 import "protocols/common/geometry.proto";
 import "protocols/navigation/motion.proto";
+import "protocols/common/robot_pose.proto";
 
 message Odometry {
 	oneof motion {
@@ -12,9 +13,4 @@ message Odometry {
 		RotateOnSelf rotate_on_self = 3;
 	}
 	RobotPose robot_pose = 2;
-}
-
-message RobotPose {
-	common.Point3Df position = 1;
-	double angle = 2;
 }
