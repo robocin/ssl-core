@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package protocols.common;
+
+import "protocols/common/geometry.proto";
+import "protocols/common/robot_id.proto";
+import "protocols/common/robot_pose.proto";
+import "protocols/common/robot_kick.proto";
+import "protocols/common/robot_speed.proto";
+import "protocols/common/robot_motors.proto";
+
+message Feedback {
+    oneof type {
+        Telemetry telemetry = 1;
+        Odometry odometry = 2;
+    }
+    
+    message Telemetry {
+        RobotId robot_id = 1;
+        RobotSpeed robot_speed = 1;
+        RobotMotors motors_info = 2;
+        RobotKick.KickInfo kick_info = 3;
+    }
+
+    message Odometry {
+        Telemetry robot_info = 1;
+        RobotPose robot_pose = 2;
+    }
+    
+}
+
