@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package protocols.common;
+
+message RobotDribbler {
+	double dribbler_velocity = 1;
+	bool is_active = 2;
+}
