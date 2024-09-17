@@ -17,9 +17,9 @@ message Feedback {
     
     message Telemetry {
         RobotId robot_id = 1;
-        RobotSpeed robot_speed = 1;
-        RobotMotors motors_info = 2;
-        RobotKick.KickInfo kick_info = 3;
+        RobotSpeed robot_speed = 2;
+        RobotMotors motors_info = 3;
+        RobotKick.KickInfo kick_info = 4;
     }
 
     message Odometry {
