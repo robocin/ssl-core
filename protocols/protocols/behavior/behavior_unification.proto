@@ -23,11 +23,11 @@ message Behavior {
 
 message Motion {
     oneof type {
-        protocols.navigation.GoToPoint go_to_point = 1;
+        navigation.GoToPoint go_to_point = 1;
         // protocols.navigation.GoToPointWithTrajectory go_to_point_with_trajectory = 2;
-        protocols.navigation.RotateInPoint rotate_in_point = 3;
-        protocols.navigation.RotateOnSelf rotate_on_self = 4;
+        navigation.RotateInPoint rotate_in_point = 2;
+        navigation.RotateOnSelf rotate_on_self = 3;
     }
-    common.PeripheralActuation peripheral_actuation = 5;
+    common.PeripheralActuation peripheral_actuation = 4;
 }
 
