@@ -43,37 +43,37 @@ message GoToPoint {
 }
 
 enum PrecisionToTarget {
-	High = 1;
-	Normal = 2;
+	High = 0;
+	Normal = 1;
 }
 
 enum MovingProfile {
 	   // Move safely profile
-    SafeInStopSpeed = 1;
+    SafeInStopSpeed = 0;
 
     // Specific movement profile
-    BalancedInApproachBallSpeed = 2;
-    BalancedInCarryBallSpeed = 3;
-    BalancedInCarryBallLowSpeed = 4;
+    BalancedInApproachBallSpeed = 1;
+    BalancedInCarryBallSpeed = 2;
+    BalancedInCarryBallLowSpeed = 3;
 
     // Goto point direct profile
-    DirectApproachBallSpeed = 5;
-    DirectSafeKickBallSpeed = 6;
-    DirectBalancedKickBallSpeed = 7;
-    DirectKickBallwithEnemyClose = 8;
-    gotoBallWithEnemy = 9;
-    PushBallInPenalty = 10;
-    TOTOZINHO = 11;
+    DirectApproachBallSpeed = 4;
+    DirectSafeKickBallSpeed = 5;
+    DirectBalancedKickBallSpeed = 6;
+    DirectKickBallwithEnemyClose = 7;
+    gotoBallWithEnemy = 8;
+    PushBallInPenalty = 9;
+    TOTOZINHO = 10;
 
     // Default movement profile
-    BalancedInSlowSpeed = 12;
-    BalancedInMedianSpeed = 13;
-    BalancedInDefaultSpeed = 14;
-    BalancedInHighSpeed = 15;
+    BalancedInSlowSpeed = 11;
+    BalancedInMedianSpeed = 12;
+    BalancedInDefaultSpeed = 13;
+    BalancedInHighSpeed = 14;
 
     // Goalkepper profile
-    GoalkeeperInTopSpeed = 16;
+    GoalkeeperInTopSpeed = 15;
 
     // Penalty push ball
-    PenaltyPushBall = 17;
+    PenaltyPushBall = 16;
 }
