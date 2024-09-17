@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package protocols.navigation;
 
-import "protocols/common/geometry.proto";
 import "protocols/navigation/motion.proto";
 import "protocols/common/robot_pose.proto";
 
