@@ -2,10 +2,11 @@ syntax = "proto3";
 
 package protocols.behavior.uninfication;
 
+import "protocols/common/peripheral_actuation.proto";
+
 import "protocols/navigation/motion.proto";
 import "protocols/navigation/navigation_service.proto";
 import "protocols/navigation/planning.proto";
-import "protocols/navigation/peripheral_actuation.proto";
 
 /* 
     Remove this implementation after CBR-2024.
