@@ -9,22 +9,14 @@ import "protocols/common/robot_speed.proto";
 import "protocols/common/robot_motors.proto";
 
 message Feedback {
-    oneof type {
-        Telemetry telemetry = 1;
-        Odometry odometry = 2;
-    }
+    Telemetry telemetry = 1;
+    optional RobotPose pose = 2;
     
     message Telemetry {
         RobotId robot_id = 1;
         RobotSpeed robot_speed = 2;
         RobotMotors motors_info = 3;
         RobotKick.KickInfo kick_info = 4;
-    }
-
-    message Odometry {
-        Telemetry robot_info = 1;
-        RobotPose robot_pose = 2;
-    }
-    
+    }    
 }
 
