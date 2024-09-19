@@ -5,7 +5,7 @@ package protocols.common;
 import "protocols/common/robot_id.proto";
 import "protocols/common/robot_pose.proto";
 import "protocols/common/robot_kick.proto";
-import "protocols/common/robot_speed.proto";
+import "protocols/common/robot_velocity.proto";
 import "protocols/common/robot_motors.proto";
 
 message Feedback {
@@ -14,7 +14,7 @@ message Feedback {
     
     message Telemetry {
         RobotId robot_id = 1;
-        RobotSpeed robot_speed = 2;
+        RobotVelocity robot_velocity = 2;
         RobotMotors motors_info = 3;
         RobotKick.KickInfo kick_info = 4;
     }    

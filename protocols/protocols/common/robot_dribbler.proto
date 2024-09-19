@@ -9,12 +9,12 @@ message RobotDribbler {
 	}
 	
 	message DribblerCommand {
-		double dribbler_velocity = 1;
+		double dribbler_speed = 1;
 		bool is_active = 2;
 	}
 
 	message DribblerInfo {
-		double dribbler_velocity = 1;
+		double dribbler_speed = 1;
 		double dribbler_current = 2;
 		bool is_ball_detected = 3;
 	}

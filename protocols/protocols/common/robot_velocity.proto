@@ -4,7 +4,7 @@ package protocols.common;
 
 import "protocols/common/geometry.proto";
 
-message RobotSpeed {
+message RobotVelocity {
     Point2Df velocity = 1;
-    float angular_velocity = 2;
+    float angular_velocity = 2  ;
 }
