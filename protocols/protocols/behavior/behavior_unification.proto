@@ -24,10 +24,10 @@ message Behavior {
 message Motion {
     oneof type {
         navigation.GoToPoint go_to_point = 1;
-        // protocols.navigation.GoToPointWithTrajectory go_to_point_with_trajectory = 2;
-        navigation.RotateInPoint rotate_in_point = 2;
-        navigation.RotateOnSelf rotate_on_self = 3;
+        navigation.GoToPointWithTrajectory go_to_point_with_trajectory = 2;
+        navigation.RotateInPoint rotate_in_point = 3;
+        navigation.RotateOnSelf rotate_on_self = 4;
     }
-    common.PeripheralActuation peripheral_actuation = 4;
+    common.PeripheralActuation peripheral_actuation = 5;
 }
 

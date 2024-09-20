@@ -42,6 +42,24 @@ message GoToPoint {
 	bool sync_rotate_with_linear_movement = 5;
 }
 
+message GoToPointWithTrajectory {
+    GoToPoint go_to_point = 1;
+    PathConfig path_config = 2;
+}
+
+message PathConfig {
+    common.Point2Df target_velocity = 1;
+    bool avoid_ball = 2;
+    bool avoid_ball_placement = 3;
+    bool avoid_ally_penalty_area = 4;
+    bool avoid_enemy_penalty_area = 5;
+    bool avoid_ally_robots = 6;
+    bool avoid_enemy_robots = 7;
+
+    repeated int32 ally_skipped = 8;
+    repeated int32 enemy_skipped = 9;
+}
+
 enum PrecisionToTarget {
 	High = 0;
 	Normal = 1;
