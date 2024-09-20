@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package protocols.behavior.uninfication;
+package protocols.behavior.unification;
 
 import "protocols/common/peripheral_actuation.proto";
 

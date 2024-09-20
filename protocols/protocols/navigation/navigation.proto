@@ -4,7 +4,8 @@ package protocols.navigation;
 
 import "google/protobuf/timestamp.proto";
 import "protocols/common/geometry.proto";
-import "protocols/navigation/odometry.proto";
+import "protocols/common/robot_pose.proto";
+import "protocols/navigation/motion.proto";
 
 message Navigation {
 	uint32 id = 1;
@@ -19,5 +20,10 @@ message Navigation {
 	common.Point2Df output_global_linear_velocity = 8;
 	
 	// Real robot only, odometry control
-	Odometry odometry = 9;
+	oneof motion {
+		GoToPoint go_to_point = 9;
+		RotateInPoint rotate_in_point = 10;
+		RotateOnSelf rotate_on_self = 11;
+	}
+	common.RobotPose robot_pose = 12;
 }

@@ -13,7 +13,7 @@ message RobotKick {
         bool is_front = 2;
         bool is_chip = 3;
         bool charge_capacitor = 4;
-        bool ir_bypass_enabled = 5;
+        bool is_bypass_ir = 5;
     }
 
     message KickInfo {

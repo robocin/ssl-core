@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package protocols.common;
 
-message RobotMotors {
+message RobotMotor {
     repeated Motor motor = 4;
 
     message Motor {
