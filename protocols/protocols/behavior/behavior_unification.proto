@@ -5,7 +5,7 @@ package protocols.behavior.uninfication;
 import "protocols/common/peripheral_actuation.proto";
 
 import "protocols/navigation/motion.proto";
-import "protocols/navigation/navigation_service.proto";
+import "protocols/navigation/navigation.proto";
 import "protocols/navigation/planning.proto";
 
 /* 
