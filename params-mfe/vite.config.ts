@@ -14,12 +14,12 @@ export default defineConfig({
     },
   },
   preview: {
-    port: 3033,
+    port: 3034,
     strictPort: true,
     host: "0.0.0.0",
   },
   server: {
-    port: 3033,
+    port: 3034,
     strictPort: true,
     host: "0.0.0.0",
   },

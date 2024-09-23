@@ -1,6 +1,6 @@
 # scoreboard-mfe
 
-This folder contains the source code for the `Viewer` microfrontend of SSL Core. It is one of the microfrontends that make up the project, developed, tested, and deployed independently of other microfrontends. It is composed at runtime in the browser through the [`app-shell`](https://github.com/robocin/ssl-core/app-shell).
+This folder contains the source code for the `Scoreboard` microfrontend of SSL Core. It is one of the microfrontends that make up the project, developed, tested, and deployed independently of other microfrontends. It is composed at runtime in the browser through the [`app-shell`](https://github.com/robocin/ssl-core/app-shell).
 
 ## About
 

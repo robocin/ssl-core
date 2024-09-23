@@ -38,3 +38,14 @@ match:
       cols:
         start: 5
         end: 6
+    params:
+      url: http://127.0.0.1:3034/params-mfe.js
+      type: webcomponent
+      metadata:
+        tag: params-mfe
+      rows:
+        start: 0
+        end: 0
+      cols:
+        start: 0
+        end: 0
