@@ -203,7 +203,11 @@ class ThreeSceneManager {
 
     // @ts-ignore
     this.canvasDOM.addEventListener("mousedown", (event: MouseEvent) => {
-      const canvasRect = this.canvasDOM!.getBoundingClientRect();
+      if (!this.canvasDOM) {
+        return;
+      }
+
+      const canvasRect = this.canvasDOM.getBoundingClientRect();
 
       const pointer = new Vector2(
         ((event.clientX - canvasRect?.left) / canvasRect?.width) * 2 - 1,

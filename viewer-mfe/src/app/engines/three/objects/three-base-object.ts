@@ -36,9 +36,13 @@ abstract class ThreeBaseObject extends Group {
     this.onDeselect();
   }
 
-  protected onSelect() {}
+  protected onSelect() {
+    // do nothing.
+  }
 
-  protected onDeselect() {}
+  protected onDeselect() {
+    // do nothing.
+  }
 
   public abstract update(): void;
   protected abstract addMeshes(): void;

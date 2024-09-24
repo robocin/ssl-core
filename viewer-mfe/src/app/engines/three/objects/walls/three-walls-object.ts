@@ -14,7 +14,9 @@ class ThreeWallsObject extends ThreeBaseObject {
     this.addMeshes();
   }
 
-  public update() {}
+  public update() {
+    // do nothing.
+  }
 
   public setParams(params: Field) {
     if (this.needsToRedraw(params)) {

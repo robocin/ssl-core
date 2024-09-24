@@ -16,7 +16,9 @@ class ThreeGoalObject extends ThreeBaseObject {
     this.addMeshes();
   }
 
-  public update() {}
+  public update() {
+    // do nothing.
+  }
 
   public setParams(params: Field, side: number) {
     this.position.set(

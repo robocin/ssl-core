@@ -27,8 +27,12 @@ class ThreeElementProxyReceiver extends EventDispatcher {
   }
 
   public handleEvent(data: any) {
-    data.preventDefault = () => {};
-    data.stopPropagation = () => {};
+    data.preventDefault = () => {
+      // do nothing.
+    };
+    data.stopPropagation = () => {
+      // do nothing.
+    };
 
     // @ts-ignore
     this.dispatchEvent<any>(data);
@@ -45,9 +49,13 @@ class ThreeElementProxyReceiver extends EventDispatcher {
     return this;
   }
 
-  public setPointerCapture() {}
+  public setPointerCapture() {
+    // do nothing.
+  }
 
-  public releasePointerCapture() {}
+  public releasePointerCapture() {
+    // do nothing.
+  }
 
   public getBoundingClientRect() {
     return {
@@ -59,11 +67,15 @@ class ThreeElementProxyReceiver extends EventDispatcher {
       bottom: this.top + this.height,
       x: this.left,
       y: this.top,
-      toJSON: () => {},
+      toJSON: () => {
+        // do nothing.
+      },
     };
   }
 
-  public focus() {}
+  public focus() {
+    // do nothing.
+  }
 }
 
 export default ThreeElementProxyReceiver;

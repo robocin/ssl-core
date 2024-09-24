@@ -8,7 +8,9 @@ const handler = new ThreeEventHandler(sceneManager, proxyManager);
 
 // @ts-ignore
 self.document = {
-  addEventListener: () => {},
+  addEventListener: () => {
+    // do nothing.
+  },
 };
 
 self.onmessage = (event) => {

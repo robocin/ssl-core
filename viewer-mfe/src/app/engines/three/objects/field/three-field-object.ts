@@ -28,7 +28,9 @@ class ThreeFieldObject extends ThreeBaseObject {
     }
   }
 
-  public update() {}
+  public update() {
+    // do nothing.
+  }
 
   public setParams(params: Field) {
     this.yellowGoal.setParams(params, 1);

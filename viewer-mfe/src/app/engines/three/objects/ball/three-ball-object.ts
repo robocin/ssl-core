@@ -8,7 +8,9 @@ class ThreeBallObject extends ThreeBaseObject {
     this.addMeshes();
   }
 
-  public update() {}
+  public update() {
+    // do nothing.
+  }
 
   public setParams(params: Ball) {
     this.position.set(

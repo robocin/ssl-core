@@ -69,7 +69,9 @@ class PlayerMFEControls extends HTMLElement {
     this.playback.addEventListener("update", this.handlePlaybackUpdate);
   }
 
-  public disconnectedCallback() {}
+  public disconnectedCallback() {
+    // do nothing.
+  }
 
   public render() {
     this.innerHTML = html`

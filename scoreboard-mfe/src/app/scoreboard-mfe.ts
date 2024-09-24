@@ -60,7 +60,11 @@ class ScoreboardMFE extends HTMLElement {
   }
 
   public render() {
-    this.shadowRoot!.innerHTML = html`
+    if (!this.shadowRoot) {
+      return;
+    }
+
+    this.shadowRoot.innerHTML = html`
       <div class="scoreboard">
         <div class="scoreboard__header">
           <div class="scoreboard__team scoreboard__team--home">

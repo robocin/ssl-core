@@ -25,7 +25,9 @@ class ParamsMFE extends HTMLElement {
     this.showModal();
   }
 
-  public disconnectedCallback() {}
+  public disconnectedCallback() {
+    // do nothing.
+  }
 
   public render() {
     this.root.innerHTML = html`

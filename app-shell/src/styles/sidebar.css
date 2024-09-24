@@ -8,7 +8,6 @@
 #sidebar ul {
   list-style: none;
   padding: 0;
-  margin: 0;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -60,16 +59,16 @@
 }
 
 [href="/"] {
-  background-color: var(--color-green)!important;
+  background-color: var(--color-green) !important;
 }
 
 [href="/"]:hover {
-  background-color: var(--color-light-green)!important;
+  background-color: var(--color-light-green) !important;
 }
 
 [href="/"] svg {
-  width: 2rem!important;
-  height: 2rem!important;
+  width: 2rem !important;
+  height: 2rem !important;
 }
 
 #routes {

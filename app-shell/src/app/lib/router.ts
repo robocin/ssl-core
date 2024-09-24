@@ -93,7 +93,11 @@ class Router {
     anchor.appendChild(icon);
     anchor.appendChild(tooltip);
 
-    document.querySelector("#routes > ul")!.appendChild(item);
+    const ulElement = document.querySelector("#routes > ul");
+
+    if (ulElement) {
+      ulElement.appendChild(item);
+    }
   }
 
   renderRoute(route: Route, pushState = true) {

@@ -25,7 +25,9 @@ class ThreeRobotObject extends ThreeBaseObject {
     this.addMeshes();
   }
 
-  public update() {}
+  public update() {
+    // do nothing.
+  }
 
   public setParams(params: Robot) {
     this.position.set(
