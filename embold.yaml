@@ -33,15 +33,15 @@ sources:
     - 'referee-ms'
     - 'e2e'
     
-  modules:
-    - name: eslint
-      enabled: true
-      rules:
-        - key: 'ESLINT-JS-53'
-          enabled: false
-        - key: 'ESLINT-TS-483'
-          enabled: false
-        - key: 'ESLINT-TS-501'
-          enabled: false
-        - key: 'ESLINT-TS-513'
-          enabled: false
+modules:
+  - name: eslint
+    enabled: true
+    rules:
+      - key: 'ESLINT-JS-53'
+        enabled: false
+      - key: 'ESLINT-TS-483'
+        enabled: false
+      - key: 'ESLINT-TS-501'
+        enabled: false
+      - key: 'ESLINT-TS-513'
+        enabled: false
