@@ -11,7 +11,7 @@ class OrbitNavigation {
   private followObject: ThreeBaseObject | null;
 
   constructor(camera: Camera, dom: ThreeElementProxyReceiver) {
-    // @ts-ignore
+    // @ts-expect-error Rationale: dom is a proxy to HTMLElement
     this.orbitControls = new OrbitControls(camera, dom);
     this.followObject = null;
   }

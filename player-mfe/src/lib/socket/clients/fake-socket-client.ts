@@ -26,10 +26,12 @@ class TestSocketClient implements SocketClient {
     this.startTime = Date.now();
   }
 
-  public connect(_address: string) {
+  public connect(address: string) {
     if (this.connected) {
       return;
     }
+
+    console.log("connected to", address);
 
     this.createFakeSocket();
     this.sendState("connect");

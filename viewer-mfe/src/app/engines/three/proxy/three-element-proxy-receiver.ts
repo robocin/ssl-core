@@ -34,7 +34,7 @@ class ThreeElementProxyReceiver extends EventDispatcher {
       // do nothing.
     };
 
-    // @ts-ignore
+    // @ts-expect-error Rationale: ProxyReceiver should handle any kind of data
     this.dispatchEvent<any>(data);
   }
 

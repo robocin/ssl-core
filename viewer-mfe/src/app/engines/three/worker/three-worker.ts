@@ -6,7 +6,7 @@ const sceneManager = new ThreeSceneManager();
 const proxyManager = new ThreeProxyManager();
 const handler = new ThreeEventHandler(sceneManager, proxyManager);
 
-// @ts-ignore
+// @ts-expect-error Rationale: self.document is a proxy to Document
 self.document = {
   addEventListener: () => {
     // do nothing.

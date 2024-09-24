@@ -201,7 +201,7 @@ class ThreeSceneManager {
       throw new Error("Canvas not initialized");
     }
 
-    // @ts-ignore
+    // @ts-expect-error Rationale: canvasDOM is a proxy of a HTMLElement
     this.canvasDOM.addEventListener("mousedown", (event: MouseEvent) => {
       if (!this.canvasDOM) {
         return;
