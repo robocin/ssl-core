@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package protocols.common;
+
+enum GameState {
+    // Dynamic formation
+    ball_placement_enemy = 0;
+    defend_kickoff = 1;
+    defend_enemy_free_kick = 2;
+    stop = 3;
+    
+    // Planned tactic
+    ball_placement_ally = 4;
+    defend_penalty = 5;
+    kick_penalty = 6;
+    
+    // Game tactic
+    attack_kick_off = 7;
+    direct_ally = 8;
+    game_running = 9;
+
+    // Static formation
+    interval = 10;
+    time_out = 11;
+    prepare_attack_kickoff = 12;
+    prepare_defend_kickoff = 13;
+    prepare_kick_penalty = 14;
+    prepare_defend_penalty = 15;
+
+    // Halt tactic
+    halt = 16;
+}
