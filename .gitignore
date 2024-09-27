@@ -110,3 +110,4 @@ node_modules/
 .embold/
 .scannerwork/
 .ssl-core/
+**/*.Identifier
