@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package protocols.common;
 
-enum GameState {
+enum GameStrategy {
     // Dynamic formation
     ball_placement_enemy = 0;
     defend_kickoff = 1;

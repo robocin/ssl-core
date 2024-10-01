@@ -4,6 +4,7 @@
 #include "referee/processing/game_command/game_command_mapper.h"
 #include "referee/processing/game_events/game_events_mapper.h"
 #include "referee/processing/game_stage/game_stage_mapper.h"
+#include "referee/processing/game_strategy/game_strategy_mapper.h"
 #include "referee/processing/team_status/team_status_mapper.h"
 
 #include <protocols/common/team.pb.h>
@@ -36,7 +37,8 @@ class GameStatusMapper : public IGameStatusMapper {
   GameStatusMapper(std::unique_ptr<ITeamStatusMapper> team_status_mapper,
                    std::unique_ptr<IGameStageMapper> game_stage_mapper,
                    std::unique_ptr<IGameCommandMapper> game_command_mapper,
-                   std::unique_ptr<IGameEventsMapper> game_events_mapper);
+                   std::unique_ptr<IGameEventsMapper> game_events_mapper,
+                   std::unique_ptr<IGameStrategyMapper> game_strategy_mapper);
 
   ::protocols::referee::GameStatus fromDetectionAndReferee(
       const ::protocols::perception::Detection& detection,

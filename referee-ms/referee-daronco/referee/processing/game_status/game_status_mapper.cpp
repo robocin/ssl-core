@@ -58,11 +58,13 @@ rc::MatchType matchTypeFromMatchType(tp::MatchType match_type) {
 GameStatusMapper::GameStatusMapper(std::unique_ptr<ITeamStatusMapper> team_status_mapper,
                                    std::unique_ptr<IGameStageMapper> game_stage_mapper,
                                    std::unique_ptr<IGameCommandMapper> game_command_mapper,
-                                   std::unique_ptr<IGameEventsMapper> game_events_mapper) :
+                                   std::unique_ptr<IGameEventsMapper> game_events_mapper,
+                                   std::unique_ptr<IGameStrategyMapper> game_strategy_mapper) :
     team_status_mapper_{std::move(team_status_mapper)},
     game_stage_mapper_{std::move(game_stage_mapper)},
     game_command_mapper_{std::move(game_command_mapper)},
-    game_events_mapper_{std::move(game_events_mapper)} {}
+    game_events_mapper_{std::move(game_events_mapper)},
+    game_strategy_mapper_{std::move(game_strategy_mapper)} {}
 
 rc::GameStatus GameStatusMapper::fromDetectionAndReferee(const rc::Detection& detection,
                                                          const tp::Referee& referee) {
@@ -102,7 +104,9 @@ rc::GameStatus GameStatusMapper::fromDetectionAndReferee(const rc::Detection& de
   *result.mutable_game_events() = game_events_mapper_->fromReferee(referee);
   *result.mutable_game_events_proposals() = game_events_mapper_->proposalsFromReferee(referee);
 
-  return result;
+  *result.game_strategy() = game_strategy_mapper->fromCommand()
+
+                                return result;
 }
 
 } // namespace referee

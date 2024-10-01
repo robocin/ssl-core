@@ -1,3 +1,4 @@
+#include "processing/parser/game_strategy_mapper.h"
 #include "referee/controller/consumer_controller.h"
 #include "referee/controller/producer_controller.h"
 
@@ -20,6 +21,7 @@ using referee::GameCommandMapper;
 using referee::GameEventsMapper;
 using referee::GameStageMapper;
 using referee::GameStatusMapper;
+using referee::GameStrategyMapper;
 using referee::IController;
 using referee::IMessageReceiver;
 using referee::IMessageSender;
@@ -83,7 +85,8 @@ std::unique_ptr<IRefereeProcessor> makeRefereeProcessor() {
       std::make_unique<GameStatusMapper>(std::make_unique<TeamStatusMapper>(),
                                          std::make_unique<GameStageMapper>(),
                                          std::make_unique<GameCommandMapper>(),
-                                         std::make_unique<GameEventsMapper>()));
+                                         std::make_unique<GameEventsMapper>(),
+                                         std::make_unique<GameStrategyMapper>()));
 }
 
 std::unique_ptr<IMessageSender> makeMessageSender() {
