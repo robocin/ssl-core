@@ -7,6 +7,7 @@ import "google/protobuf/timestamp.proto";
 import "protocols/common/game_command.proto";
 import "protocols/common/game_event.proto";
 import "protocols/common/game_stage.proto";
+import "protocols/common/game_strategy.proto";
 import "protocols/common/match_type.proto";
 import "protocols/common/robot_id.proto";
 
@@ -29,6 +30,7 @@ message GameStatus {
 
   repeated common.GameEvent game_events = 13;
   repeated GameEventsProposal game_events_proposals = 14;
+  common.GameStrategy game_strategy = 15;
 
   message Team {
     string name = 1;

@@ -1,4 +1,3 @@
-#include "processing/parser/game_strategy_mapper.h"
 #include "referee/controller/consumer_controller.h"
 #include "referee/controller/producer_controller.h"
 

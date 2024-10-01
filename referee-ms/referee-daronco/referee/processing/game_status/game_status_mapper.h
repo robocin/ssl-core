@@ -48,6 +48,7 @@ class GameStatusMapper : public IGameStatusMapper {
   std::unique_ptr<IGameStageMapper> game_stage_mapper_;
   std::unique_ptr<IGameCommandMapper> game_command_mapper_;
   std::unique_ptr<IGameEventsMapper> game_events_mapper_;
+  std::unique_ptr<IGameStrategyMapper> game_strategy_mapper_;
   std::unique_ptr<ITeamStatusMapper> team_status_mapper_;
 };
 
