@@ -19,15 +19,16 @@ class IGameStrategyMapper {
   virtual ~IGameStrategyMapper() = default;
 
   virtual ::protocols::common::GameStrategy
-  map(const ::protocols::common::GameCommand& game_command,
-      const ::protocols::common::GameStage& game_stage)
+  fromCommandAndStage(const ::protocols::common::GameCommand& game_command,
+                      const ::protocols::common::GameStage& game_stage)
       = 0;
 };
 
 class GameStrategyMapper : public IGameStrategyMapper {
  public:
-  ::protocols::common::GameStrategy map(const ::protocols::common::GameCommand& game_command,
-                                        const ::protocols::common::GameStage& game_stage) override;
+  ::protocols::common::GameStrategy
+  fromCommandAndStage(const ::protocols::common::GameCommand& game_command,
+                      const ::protocols::common::GameStage& game_stage) override;
 };
 
 } // namespace referee
