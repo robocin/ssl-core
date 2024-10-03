@@ -104,7 +104,8 @@ rc::GameStatus GameStatusMapper::fromDetectionAndReferee(const rc::Detection& de
   *result.mutable_game_events() = game_events_mapper_->fromReferee(referee);
   *result.mutable_game_events_proposals() = game_events_mapper_->proposalsFromReferee(referee);
 
-  result.set_game_strategy(game_strategy_mapper_->fromCommandAndStage(*result.mutable_command(), result.game_stage()));
+  result.set_game_strategy(
+      game_strategy_mapper_->fromCommandAndStage(result.command(), result.game_stage()));
 
   return result;
 }
