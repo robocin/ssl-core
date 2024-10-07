@@ -13,7 +13,7 @@ import "protocols/common/robot_dribbler.proto";
 message RobotComm {
     oneof type {
         Command command = 1;
-        common.Feedback telemetry = 2;
+        common.Feedback feedback = 2;
     }
 }
 
