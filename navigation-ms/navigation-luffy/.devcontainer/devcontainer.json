@@ -1,8 +1,8 @@
 {
-    "name": "C++: Navigation Jaiminho",
+    "name": "C++: Navigation Luffy",
     "build": {
         "context": "./../../..",
-        "dockerfile": "./../navigation-jaiminho.Dockerfile",
+        "dockerfile": "./../navigation-luffy.Dockerfile",
         "target": "devcontainer"
     },
     "initializeCommand": "mkdir -p /tmp/.ssl-core",
