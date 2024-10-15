@@ -1,8 +1,8 @@
 {
-    "name": "C++: Decision Foo",
+    "name": "C++: Decision Guardiola",
     "build": {
         "context": "./../../..",
-        "dockerfile": "./../decision-foo.Dockerfile",
+        "dockerfile": "./../decision-guardiola.Dockerfile",
         "target": "devcontainer"
     },
     "initializeCommand": "mkdir -p /tmp/.ssl-core",

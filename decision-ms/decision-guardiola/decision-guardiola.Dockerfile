@@ -22,7 +22,7 @@ FROM devcontainer AS build
 
 COPY . /
 
-WORKDIR /decision-ms/decision-foo
+WORKDIR /decision-ms/decision-guardiola
 
 RUN set -x && \
     rm -rf build bin && \
@@ -32,6 +32,6 @@ RUN set -x && \
 
 FROM scratch AS prod
 
-COPY --from=build /decision-ms/decision-foo/bin/decision_main /decision_main
+COPY --from=build /decision-ms/decision-guardiola/bin/decision_main /decision_main
 
 ENTRYPOINT [ "./decision_main" ]

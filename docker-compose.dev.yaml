@@ -206,7 +206,7 @@ services:
     container_name: decision-ms
     build:
       context: .
-      dockerfile: decision-ms/decision-foo/decision-foo.Dockerfile
+      dockerfile: decision-ms/decision-guardiola/decision-guardiola.Dockerfile
     volumes:
       - .ssl-core:/tmp/.ssl-core
 
