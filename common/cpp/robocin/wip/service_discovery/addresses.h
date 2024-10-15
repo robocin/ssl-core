@@ -19,6 +19,12 @@ inline constexpr std::string_view kPerceptionDetectionWrapperTopic = "wrapper";
 inline constexpr std::string_view kRefereeAddress = "ipc:///tmp/.ssl-core/referee.ipc";
 inline constexpr std::string_view kRefereeGameStatusTopic = "game-status";
 
+inline constexpr std::string_view kNavigationAddress = "ipc:///tmp/.ssl-core/navigation.ipc";
+inline constexpr std::string_view kNavigationTopic = "navigation";
+
+inline constexpr std::string_view kBehaviorAddress = "ipc:///tmp/.ssl-core/behavior.ipc";
+inline constexpr std::string_view kBehaviorTopic = "behavior_unification";
+
 } // namespace robocin::service_discovery
 
 #endif // ROBOCIN_WIP_SERVICE_DISCOVERY_ADDRESSES_H
