@@ -93,6 +93,16 @@ services:
     depends_on:
       - perception-ms
 
+  communication-ms:
+    container_name: communication-ms
+    build:
+      context: .
+      dockerfile: communication-ms/communication-jaiminho/communication-jaiminho.Dockerfile
+    volumes:
+      - .ssl-core:/tmp/.ssl-core
+    depends_on:
+      - gateway
+
   playback-ms:
     container_name: playback-ms
     build:
