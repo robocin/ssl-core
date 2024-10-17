@@ -1,6 +1,6 @@
 robocin_cpp_library(
   NAME processing
-  HDRS referee_processor.h
-  SRCS referee_processor.cpp
-  DEPS game_status_mapper
+  HDRS communication_processor.h
+  SRCS communication_processor.cpp
+  DEPS robot_command_mapper
 )
