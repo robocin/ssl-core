@@ -3,7 +3,7 @@
 
 #include "robocin/network/zmq_publisher_socket.h"
 
-#include <protocols/decision/decision_service.pb.h>
+#include <protocols/decision/decision.pb.h>
 
 namespace decision {
 
@@ -25,7 +25,7 @@ class MessageSender : public IMessageSender {
  public:
   explicit MessageSender(std::unique_ptr<::robocin::IZmqPublisherSocket> decision_socket);
 
-  void send(const ::protocols::perception::Decision& decision) override;
+  void send(const ::protocols::decision::Decision& decision) override;
 
  private:
   std::unique_ptr<::robocin::IZmqPublisherSocket> decision_socket_;

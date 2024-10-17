@@ -3,7 +3,7 @@
 #include "decision/messaging/receiver/payload.h"
 
 #include <optional>
-#include <protocols/decision/decision_service.pb.h>
+#include <protocols/decision/decision.pb.h>
 #include <robocin/concurrency/concurrent_queue.h>
 #include <robocin/memory/object_ptr.h>
 #include <robocin/output/log.h>
@@ -58,7 +58,6 @@ void ConsumerController::exec(std::span<const Payload> payloads) {
   std::optional<rc::Decision> decision = decision_processor_->process(payloads);
 
   if (decision != std::nullopt) {
-    message_sender_->send(decision->detection());
     message_sender_->send(*decision);
   }
 }

@@ -1,6 +1,6 @@
-#include "perception/messaging/sender/message_sender.h"
+#include "decision/messaging/sender/message_sender.h"
 
-#include <protocols/decision/decision_service.pb.h>
+#include <protocols/decision/decision.pb.h>
 #include <robocin/output/log.h>
 #include <robocin/wip/service_discovery/addresses.h>
 
