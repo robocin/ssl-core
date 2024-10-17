@@ -19,6 +19,7 @@ message Behavior {
         navigation.Planning planning = 2;
         navigation.Navigation navigation = 3;
     }
+    common.RobotId id = 4;
 }
 
 message Motion {

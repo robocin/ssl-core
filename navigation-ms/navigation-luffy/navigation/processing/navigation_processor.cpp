@@ -5,6 +5,7 @@
 #include <protocols/behavior/behavior_unification.pb.h>
 #include <protocols/navigation/navigation.pb.h>
 #include <ranges>
+#include "motion_parser/MotionParser.h"
 
 namespace navigation {
 
@@ -35,6 +36,33 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
     // a new package must be generated only when a new behavior is received.
     return std::nullopt;
   }
+
+  rc::Behavior last_behavior = behaviors.back();
+
+  MotionParser motion_parser{};
+
+  switch (behavior.output_case()) {
+    case Behavior::kMotion: {
+      const Motion& motion = behavior.motion();
+      RobotMove robot_move = motion_parser.parse(motion);
+      break;
+    }
+    case Behavior::kPlanning: {
+      const navigation::Planning& planning = behavior.planning();
+      // Adicione aqui o processamento específico para Planning
+      break;
+    }
+    case Behavior::kNavigation: {
+      const navigation::Navigation& navigation = behavior.navigation();
+      // Adicione aqui o processamento específico para Navigation
+      break;
+    }
+    case Behavior::OUTPUT_NOT_SET:
+      return std::nullopt;
+      break ;
+  }
+
+
 
   return;
 }
