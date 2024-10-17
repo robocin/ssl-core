@@ -18,14 +18,14 @@ class IMessageSender {
 
   virtual ~IMessageSender() = default;
 
-  virtual void send(const ::protocols::communication::RobotComm& comm) = 0;
+  virtual void send(const ::protocols::communication::RobotInfo& robot_command) = 0;
 };
 
 class MessageSender : public IMessageSender {
  public:
   explicit MessageSender(std::unique_ptr<::robocin::IZmqPublisherSocket> communication_socket);
 
-  void send(const ::protocols::communication::RobotComm& comm) override;
+  void send(const ::protocols::communication::RobotInfo& robot_commnad) override;
 
  private:
   std::unique_ptr<::robocin::IZmqPublisherSocket> communication_socket_;

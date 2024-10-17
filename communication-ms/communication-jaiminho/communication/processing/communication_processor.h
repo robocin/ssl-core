@@ -20,7 +20,7 @@ class ICommunicationProcessor {
 
   virtual ~ICommunicationProcessor() = default;
 
-  virtual std::optional<::protocols::communication::RobotComm> process(std::span<const Payload> payloads)
+  virtual std::optional<::protocols::communication::RobotInfo> process(std::span<const Payload> payloads)
       = 0;
 };
 
@@ -30,7 +30,7 @@ class CommunicationProcessor : public ICommunicationProcessor {
       std::unique_ptr<::robocin::parameters::IHandlerEngine> parameters_handler_engine,
       std::unique_ptr<IRobotCommandMapper> robot_command_mapper);
 
-  std::optional<::protocols::communication::RobotComm>
+  std::optional<::protocols::communication::RobotInfo>
   process(std::span<const Payload> payloads) override;
 
  private:

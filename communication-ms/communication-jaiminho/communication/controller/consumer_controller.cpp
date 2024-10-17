@@ -16,7 +16,7 @@ using ::robocin::object_ptr;
 
 namespace rc {
 
-using ::protocols::communication::RobotComm;
+using ::protocols::communication::RobotInfo;
 
 } // namespace rc
 
@@ -46,7 +46,7 @@ void ConsumerController::exec(std::span<const Payload> payloads) {
     return;
   }
 
-  if (std::optional<rc::RobotComm> robot_command = communication_processor_->process(payloads);
+  if (std::optional<rc::RobotInfo> robot_command = communication_processor_->process(payloads);
       robot_command != std::nullopt) {
     if(robot_command->has_command()) {
       ilog("command: {} sent.", robot_command->command().DebugString());

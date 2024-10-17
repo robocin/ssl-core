@@ -15,7 +15,7 @@ namespace {
 
 namespace rc {
 
-using ::protocols::communication::RobotComm;
+using ::protocols::communication::RobotInfo;
 using ::protocols::navigation::Navigation;
 
 } // namespace rc
@@ -45,7 +45,7 @@ CommunicationProcessor::CommunicationProcessor(
     parameters_handler_engine_{std::move(parameters_handler_engine)},
     robot_command_mapper_{std::move(robot_command_mapper)} {}
 
-std::optional<rc::RobotComm> CommunicationProcessor::process(std::span<const Payload> payloads) {
+std::optional<rc::RobotInfo> CommunicationProcessor::process(std::span<const Payload> payloads) {
 
     if(std::vector<tp::Referee> referees = refereeFromPayloads(payloads); !referees.empty()) {
         last_game_controller_referee_ = std::move(referees.back());

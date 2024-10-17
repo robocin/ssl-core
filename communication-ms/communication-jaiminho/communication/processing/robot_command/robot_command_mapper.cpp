@@ -16,7 +16,7 @@ using ::robocin::object_ptr;
 namespace rc {
     
 using ::protocols::navigation::Navigation;
-using ::protocols::communication::RobotComm;
+using ::protocols::communication::RobotInfo;
 using ::protocols::communication::Command;
 
 } // namespace rc
@@ -31,8 +31,8 @@ using ::protocols::third_party::game_controller::Referee;
 
 RobotCommandMapper::RobotCommandMapper(){}
 
-rc::RobotComm RobotCommandMapper::fromNavigationAndReferee(const rc::Navigation& navigation, const tp::Referee& referee) {
-    rc::RobotComm result;
+rc::RobotInfo RobotCommandMapper::fromNavigationAndReferee(const rc::Navigation& navigation, const tp::Referee& referee) {
+    rc::RobotInfo result;
     rc::Command* command = result.mutable_command();
 
     // *command->mutable_msg_type(); // TODO
