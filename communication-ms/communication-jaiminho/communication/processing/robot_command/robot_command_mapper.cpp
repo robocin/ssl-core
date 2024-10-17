@@ -27,14 +27,6 @@ using ::protocols::third_party::game_controller::Referee;
 
 } // namespace tp
 
-google::protobuf::Duration durationFromMicros(int64_t microseconds) {
-    return TimeUtil::MicrosecondsToDuration(microseconds);
-}
-
-google::protobuf::Timestamp timestampFromUnixMicros(uint64_t microseconds) {
-    return TimeUtil::MicrosecondsToTimestamp(static_cast<int64_t>(microseconds));
-}
-
 } // namespace
 
 RobotCommandMapper::RobotCommandMapper(){}
