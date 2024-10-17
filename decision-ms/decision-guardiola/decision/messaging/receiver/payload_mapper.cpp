@@ -29,7 +29,7 @@ Payload PayloadMapper::fromZmqDatagrams(std::span<const ZmqDatagram> messages) c
   std::vector<rc::GameStatus> game_statuses;
 
   for (const ZmqDatagram& zmq_datagram : messages) {
-    if (zmq_datagram.topic() == service_discovery::kPerceptionDetectionWrapperTopic) {
+    if (zmq_datagram.topic() == service_discovery::kPerceptionDetectionTopic) {
       rc::Detection detection;
       detection.ParseFromString(std::string{zmq_datagram.message()});
       detections.emplace_back(std::move(detection));
@@ -40,7 +40,7 @@ Payload PayloadMapper::fromZmqDatagrams(std::span<const ZmqDatagram> messages) c
       game_statuses.emplace_back(std::move(game_status));
 
     } else {
-      // wlog("zmq_datagram with topic '{}' not processed.", zmq_datagram.topic());
+     // wlog("zmq_datagram with topic '{}' not processed.", zmq_datagram.topic());
     }
   }
 
