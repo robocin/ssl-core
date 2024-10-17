@@ -19,7 +19,6 @@ services:
       - "224.5.23.2:10020"
       - "-refereeAddress"
       - "224.5.23.1:11003"
-
     logging:
       driver: none
     depends_on:
@@ -40,6 +39,7 @@ services:
     restart: unless-stopped
     ports:
       - 8081/tcp
+      - 8081:8081
     logging:
       driver: none
     depends_on:
