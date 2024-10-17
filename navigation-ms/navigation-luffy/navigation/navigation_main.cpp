@@ -84,7 +84,7 @@ std::unique_ptr<IController> makeConsumer(object_ptr<IConcurrentQueue<Payload>> 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 int main() {
-  std::println("navigation_luffy is runnning!");
+  std::println("navigation-luffy is runnning!");
 
   std::unique_ptr<IConcurrentQueue<Payload>> messages
       = std::make_unique<ConditionVariableConcurrentQueue<Payload>>();

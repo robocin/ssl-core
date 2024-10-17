@@ -24,12 +24,12 @@ class IMessageSender {
 
 class MessageSender : public IMessageSender {
  public:
-  explicit MessageSender(std::unique_ptr<::robocin::IZmqPublisherSocket> detection_socket);
+  explicit MessageSender(std::unique_ptr<::robocin::IZmqPublisherSocket> navigation_socket);
 
   void send(const ::protocols::navigation::Navigation& navigation) override;
 
  private:
-  std::unique_ptr<::robocin::IZmqPublisherSocket> detection_socket_;
+  std::unique_ptr<::robocin::IZmqPublisherSocket> navigation_socket_;
 };
 
 } // namespace navigation

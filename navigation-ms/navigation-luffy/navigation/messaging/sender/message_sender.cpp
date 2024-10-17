@@ -19,14 +19,14 @@ using ::protocols::navigation::Navigation;
 
 } // namespace
 
-MessageSender::MessageSender(std::unique_ptr<::robocin::IZmqPublisherSocket> detection_socket) :
-    detection_socket_{std::move(detection_socket)} {}
+MessageSender::MessageSender(std::unique_ptr<::robocin::IZmqPublisherSocket> navigation_socket) :
+    navigation_socket_{std::move(navigation_socket)} {}
 
 void MessageSender::send(const rc::Navigation& navigation) {
   // ilog("sending... {}", navigation.DebugString());
 
-  detection_socket_->send({
-      service_discovery::kNavigationTopic,
+  navigation_socket_->send({
+      service_discovery::kNavigationOutputTopic,
       navigation.SerializeAsString(),
   });
 }
