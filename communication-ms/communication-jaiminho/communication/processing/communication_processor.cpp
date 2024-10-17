@@ -51,10 +51,6 @@ std::optional<rc::RobotComm> CommunicationProcessor::process(std::span<const Pay
         last_game_controller_referee_ = std::move(referees.back());
     }
 
-    if(!last_game_controller_referee_) {
-        return std::nullopt;
-    }
-
     std::vector<rc::Navigation> navigation = navigationFromPayloads(payloads);
     if(navigation.empty()) {
         return std::nullopt;
