@@ -3,7 +3,7 @@
 
 #include "robocin/network/zmq_publisher_socket.h"
 
-#include <protocols/communication/RobotComm.pb.h>
+#include <protocols/communication/robot_info.pb.h>
 
 namespace communication {
 

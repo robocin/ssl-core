@@ -30,7 +30,7 @@ using ::protocols::third_party::game_controller::Referee;
 
 Payload PayloadMapper::fromZmqDatagrams(std::span<const ZmqDatagram> messages) const {
   std::vector<rc::Navigation> navigation;
-  std::vector<rc::Referee> referee;
+  std::vector<tp::Referee> referee;
 
   for (const ZmqDatagram& zmq_datagram : messages) {
     if (zmq_datagram.topic() == service_discovery::kNavigationOutputTopic) {

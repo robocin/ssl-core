@@ -1,5 +1,7 @@
 #include "communication/messaging/receiver/message_receiver.h"
 
+#include "communication/parameters/parameters.h"
+
 #include <robocin/network/zmq_datagram.h>
 #include <robocin/network/zmq_poller.h>
 #include <robocin/output/log.h>
@@ -19,7 +21,7 @@ MessageReceiver::MessageReceiver(std::unique_ptr<IZmqSubscriberSocket> navigatio
                                  std::unique_ptr<IZmqSubscriberSocket> gateway_socket,
                                  std::unique_ptr<IZmqPoller> zmq_poller,
                                  std::unique_ptr<IPayloadMapper> payload_mapper) :
-    perception_socket_{std::move(navigation_socket)},
+    navigation_socket_{std::move(navigation_socket)},
     gateway_socket_{std::move(gateway_socket)},
     zmq_poller_{std::move(zmq_poller)},
     payload_mapper_{std::move(payload_mapper)} {}
