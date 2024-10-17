@@ -2,6 +2,7 @@
 
 #include "decision/messaging/receiver/payload.h"
 
+#include <protocols/perception/detection.pb.h>
 #include <robocin/network/zmq_datagram.h>
 #include <robocin/output/log.h>
 #include <robocin/wip/service_discovery/addresses.h>
@@ -14,27 +15,27 @@ namespace service_discovery = ::robocin::service_discovery;
 using ::robocin::wlog;
 using ::robocin::ZmqDatagram;
 
-namespace tp {
+namespace rc {
 
-using ::protocols::perception::DetectionWrapper;
+using ::protocols::perception::Detection;
 using ::protocols::referee::GameStatus;
 
-} // namespace tp
+} // namespace rc
 
 } // namespace
 
 Payload PayloadMapper::fromZmqDatagrams(std::span<const ZmqDatagram> messages) const {
-  std::vector<tp::DetectionWrapper> detections;
-  std::vector<tp::GameStatus> game_statuses;
+  std::vector<rc::Detection> detections;
+  std::vector<rc::GameStatus> game_statuses;
 
   for (const ZmqDatagram& zmq_datagram : messages) {
     if (zmq_datagram.topic() == service_discovery::kPerceptionDetectionWrapperTopic) {
-      tp::DetectionWrapper detection;
+      rc::Detection detection;
       detection.ParseFromString(std::string{zmq_datagram.message()});
       detections.emplace_back(std::move(detection));
 
     } else if (zmq_datagram.topic() == service_discovery::kRefereeGameStatusTopic) {
-      tp::GameStatus game_status;
+      rc::GameStatus game_status;
       game_status.ParseFromString(std::string{zmq_datagram.message()});
       game_statuses.emplace_back(std::move(game_status));
 

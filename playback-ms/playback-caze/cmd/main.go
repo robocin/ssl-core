@@ -35,6 +35,10 @@ func runPlayback(wg *sync.WaitGroup) {
 		service_discovery.GatewayReplayChunckAddress,
 	)
 
+	decisionSocket := network.NewZmqSubscriberSocket(
+		service_discovery.DecisionAddress, 
+		service_discovery.DecisionTopic)
+
 	subscriberDatagrams := concurrency.NewQueue[network.ZmqMultipartDatagram]()
 	routerDatagrams := concurrency.NewQueue[network.ZmqMultipartDatagram]()
 	messageReceiver := receiver.NewMessageReceiver(
@@ -42,6 +46,7 @@ func runPlayback(wg *sync.WaitGroup) {
 			receiver.NewSocketHandler(perceptionSocket, enqueueDatagram(subscriberDatagrams)),
 			receiver.NewSocketHandler(refereeSocket, enqueueDatagram(subscriberDatagrams)),
 			receiver.NewSocketHandler(replayRouter, enqueueDatagram(routerDatagrams)),
+			receiver.NewSocketHandler(decisionSocket, enqueueDatagram(subscriberDatagrams)),
 		},
 	)
 

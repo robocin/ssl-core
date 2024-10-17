@@ -5,19 +5,19 @@ namespace {
 
 namespace tp {
 
-using ::protocols::perception::DetectionWrapper;
+using ::protocols::perception::Detection;
 using ::protocols::referee::GameStatus;
 
 } // namespace tp
 
 } // namespace
 
-Payload::Payload(std::vector<tp::DetectionWrapper> detections,
+Payload::Payload(std::vector<tp::Detection> detections,
                  std::vector<tp::GameStatus> game_statuses) :
     detections_{std::move(detections)},
     game_statuses_{std::move(game_statuses)} {}
 
-std::span<const tp::DetectionWrapper> Payload::getDetections() const { return detections_; }
+std::span<const tp::Detection> Payload::getDetections() const { return detections_; }
 
 std::span<const tp::GameStatus> Payload::getGameStatuses() const { return game_statuses_; }
 

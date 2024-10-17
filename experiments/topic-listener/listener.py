@@ -2,11 +2,11 @@ import sys
 import zmq
 
 
-def new_zmq_subscriber(topic=""):
+def new_zmq_subscriber(topic="detection"):
     context = zmq.Context()
 
     socket = context.socket(zmq.SUB)
-    socket.connect("ipc:///tmp/topic_listener")
+    socket.connect("ipc:///tmp/.ssl-core/perception.ipc")
     socket.setsockopt_string(zmq.SUBSCRIBE, topic)
 
     print(f"Subscribed topic: {topic}")
@@ -21,12 +21,7 @@ def listen(socket: zmq.Socket):
 
 
 if __name__ == "__main__":
-    topic = "no_topic"
-    try:
-        topic = sys.argv[1]
-    except:
-        raise ValueError("No topic given.")
 
-    subscriber = new_zmq_subscriber(topic)
+    subscriber = new_zmq_subscriber()
 
     listen(subscriber)

@@ -37,6 +37,10 @@ func (lh *LiveHandler) Process(datagram *network.ZmqMultipartDatagram) (*playbac
 		return nil, fmt.Errorf("updating local referee")
 	}
 
+	if topic == service_discovery.DecisionTopic {
+		fmt.Println("Recebendo decision")
+	}
+
 	if lh.lastGameStatus == nil {
 		return nil, fmt.Errorf("local referee is nil")
 	}
