@@ -15,10 +15,7 @@ namespace parameters = ::robocin::parameters;
 namespace service_discovery = robocin::service_discovery;
 
 using communication::ConsumerController;
-using communication::GameCommandMapper;
-using communication::GameEventsMapper;
-using communication::GameStageMapper;
-using communication::GameStatusMapper;
+using communication::RobotCommandMapper;
 using communication::IController;
 using communication::IMessageReceiver;
 using communication::IMessageSender;
@@ -54,11 +51,11 @@ std::unique_ptr<IMessageReceiver> makeMessageReceiver() {
   gateway_socket->connect(service_discovery::kGatewayAddress, kGatewayTopics);
 
   std::unique_ptr<IZmqSubscriberSocket> navigation_socket = std::make_unique<ZmqSubscriberSocket>();
-  perception_socket->connect(service_discovery::kNavigationAddress, kNavigationTopics);
+  navigation_socket->connect(service_discovery::kNavigationAddress, kNavigationTopics);
 
   std::unique_ptr<IZmqPoller> zmq_poller = std::make_unique<ZmqPoller>();
   zmq_poller->push(*gateway_socket);
-  zmq_poller->push(*perception_socket);
+  zmq_poller->push(*navigation_socket);
 
   std::unique_ptr<IPayloadMapper> payload_mapper = std::make_unique<PayloadMapper>();
 
