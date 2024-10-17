@@ -26,6 +26,6 @@ std::span<const rc::Navigation> Payload::getNavigation() const { return navigati
 
 std::span<const tp::Referee> Payload::getReferee() const { return referee_; }
 
-bool Payload::empty() const { return navigation_.empty(); }
+bool Payload::empty() const { return navigation_.empty() and referee_.empty(); }
 
 } // namespace communication
