@@ -1,0 +1,36 @@
+#ifndef COMMUNICATION_MESSAGING_SENDER_MESSAGE_SENDER_H
+#define COMMUNICATION_MESSAGING_SENDER_MESSAGE_SENDER_H
+
+#include "robocin/network/zmq_publisher_socket.h"
+
+#include <protocols/communication/robot_info.pb.h>
+
+namespace communication {
+
+class IMessageSender {
+ public:
+  IMessageSender() = default;
+
+  IMessageSender(const IMessageSender&) = delete;
+  IMessageSender& operator=(const IMessageSender&) = delete;
+  IMessageSender(IMessageSender&&) = default;
+  IMessageSender& operator=(IMessageSender&&) = default;
+
+  virtual ~IMessageSender() = default;
+
+  virtual void send(const ::protocols::communication::RobotComm& comm) = 0;
+};
+
+class MessageSender : public IMessageSender {
+ public:
+  explicit MessageSender(std::unique_ptr<::robocin::IZmqPublisherSocket> communication_socket);
+
+  void send(const ::protocols::communication::RobotComm& comm) override;
+
+ private:
+  std::unique_ptr<::robocin::IZmqPublisherSocket> communication_socket_;
+};
+
+} // namespace communication
+
+#endif // COMMUNICATION_MESSAGING_SENDER_MESSAGE_SENDER_H
