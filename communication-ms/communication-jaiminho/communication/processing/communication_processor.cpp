@@ -16,7 +16,7 @@ namespace {
 namespace rc {
 
 using ::protocols::communication::RobotComm;
-using ::protocols::navigation::Navigation
+using ::protocols::navigation::Navigation;
 
 } // namespace rc
 
@@ -55,14 +55,14 @@ std::optional<rc::RobotComm> CommunicationProcessor::process(std::span<const Pay
         return std::nullopt;
     }
 
-    std::vector<tp::Navigation> navigation = navigationFromPayloads(payloads);
+    std::vector<rc::Navigation> navigation = navigationFromPayloads(payloads);
     if(navigation.empty()) {
         return std::nullopt;
     }
 
     const rc::Navigation last_navigation = navigation.back();
 
-    return ->fromNavigationAndReferee(last_navigation, *last_game_controller_referee_);
+    return robot_command_mapper_->fromNavigationAndReferee(last_navigation, *last_game_controller_referee_);
 }
 
 } // namespace communication
