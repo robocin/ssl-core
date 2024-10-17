@@ -25,7 +25,7 @@ class ConsumerController : public IController {
   void exec(std::span<const Payload> payloads);
 
   ::robocin::object_ptr<::robocin::IConcurrentQueue<Payload>> messages_;
-  std::unique_ptr<ICommunicationProcessor> referee_processor_;
+  std::unique_ptr<ICommunicationProcessor> communication_processor_;
   std::unique_ptr<IMessageSender> message_sender_;
 };
 

@@ -49,7 +49,7 @@ void ConsumerController::exec(std::span<const Payload> payloads) {
   if (std::optional<rc::RobotComm> comm = communication_processor_->process(payloads);
       comm != std::nullopt) {
     if(comm->has_command()) {
-      message_sender_->send(*comm->command());
+      message_sender_->send(*comm);
     }
   }
 }

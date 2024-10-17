@@ -1,7 +1,7 @@
-#ifndef REFEREE_CONTROLLER_ICONTROLLER
-#define REFEREE_CONTROLLER_ICONTROLLER
+#ifndef COMMUNICATION_CONTROLLER_ICONTROLLER
+#define COMMUNICATION_CONTROLLER_ICONTROLLER
 
-namespace referee {
+namespace communication {
 
 class IController {
  public:
@@ -17,6 +17,6 @@ class IController {
   virtual void run() = 0;
 };
 
-} // namespace referee
+} // namespace communication
 
-#endif // REFEREE_CONTROLLER_ICONTROLLER
+#endif // COMMUNICATION_CONTROLLER_ICONTROLLER
