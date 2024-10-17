@@ -18,12 +18,11 @@ using ::robocin::IConcurrentQueue;
 using ::robocin::ilog;
 using ::robocin::object_ptr;
 
-// Precisa desse namespace abaixo?
-// namespace rc {
+namespace rc {
 
-// using ::protocols::perception::DetectionWrapper;
+using ::protocols::decision::Decision;
 
-// } // namespace rc
+} // namespace rc
 
 } // namespace
 
@@ -56,13 +55,12 @@ void ConsumerController::exec(std::span<const Payload> payloads) {
   // TODO(joseviccruz): update parameters here from Payload.
   // parameters_handler_engine_->update(parameters_values);
 
-  // std::optional<rc::DetectionWrapper> detection_wrapper = decision_processor_->process(payloads);
-  // ilog("detection_wrapper {} initialized.", detection_wrapper != std::nullopt ? "is" : "isn't");
+  std::optional<rc::Decision> decision = decision_processor_->process(payloads);
 
-  // if (detection_wrapper != std::nullopt) {
-  //   message_sender_->send(detection_wrapper->detection());
-  //   message_sender_->send(*detection_wrapper);
-  // }
+  if (decision != std::nullopt) {
+    message_sender_->send(decision->detection());
+    message_sender_->send(*decision);
+  }
 }
 
 } // namespace decision
