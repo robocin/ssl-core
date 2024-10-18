@@ -1,8 +1,8 @@
 #ifndef BEHAVIOR_MESSAGING_RECEIVER_PAYLOAD_H
 #define BEHAVIOR_MESSAGING_RECEIVER_PAYLOAD_H
 
+#include <protocols/decision/decision.pb.h>
 #include <protocols/perception/detection.pb.h>
-#include <protocols/referee/game_status.pb.h>
 #include <robocin/network/zmq_datagram.h>
 #include <span>
 #include <vector>
@@ -20,17 +20,17 @@ namespace behavior {
 class Payload {
  public:
   Payload(std::vector<::protocols::perception::Detection> detections,
-          std::vector<::protocols::referee::GameStatus> game_statuses);
+          std::vector<::protocols::decision::Decision> decision);
 
   [[nodiscard]] std::span<const ::protocols::perception::Detection> getDetectionPackets() const;
 
-  [[nodiscard]] std::span<const ::protocols::referee::GameStatus> getGameStatusPackets() const;
+  [[nodiscard]] std::span<const ::protocols::decision::Decision> getDecisionPackets() const;
 
   [[nodiscard]] bool empty() const;
 
  private:
   std::vector<::protocols::perception::Detection> detections_;
-  std::vector<::protocols::referee::GameStatus> game_statuses_;
+  std::vector<::protocols::decision::Decision> decisions_;
 };
 
 } // namespace behavior

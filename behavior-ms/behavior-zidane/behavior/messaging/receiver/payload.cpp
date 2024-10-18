@@ -5,21 +5,21 @@ namespace {
 
 namespace rc {
 
+using ::protocols::decision::Decision;
 using ::protocols::perception::Detection;
-using ::protocols::referee::GameStatus;
 
 } // namespace rc
 
 } // namespace
 
-Payload::Payload(std::vector<rc::Detection> detections, std::vector<rc::GameStatus> game_statuses) :
+Payload::Payload(std::vector<rc::Detection> detections, std::vector<rc::Decision> decisions) :
     detections_{std::move(detections)},
-    game_statuses_{std::move(game_statuses)} {}
+    decisions_{std::move(decisions)} {}
 
 std::span<const rc::Detection> Payload::getDetectionPackets() const { return detections_; }
 
-std::span<const rc::GameStatus> Payload::getGameStatusPackets() const { return game_statuses_; }
+std::span<const rc::Decision> Payload::getDecisionPackets() const { return decisions_; }
 
-bool Payload::empty() const { return detections_.empty() and game_statuses_.empty(); }
+bool Payload::empty() const { return detections_.empty() and decisions_.empty(); }
 
 } // namespace behavior
