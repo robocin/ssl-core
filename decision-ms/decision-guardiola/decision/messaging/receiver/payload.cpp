@@ -3,24 +3,23 @@
 namespace decision {
 namespace {
 
-namespace tp {
+namespace rc {
 
 using ::protocols::perception::Detection;
 using ::protocols::referee::GameStatus;
 
-} // namespace tp
+} // namespace rc
 
 } // namespace
 
-Payload::Payload(std::vector<tp::Detection> detections,
-                 std::vector<tp::GameStatus> game_statuses) :
+Payload::Payload(std::vector<rc::Detection> detections, std::vector<rc::GameStatus> game_status) :
     detections_{std::move(detections)},
-    game_statuses_{std::move(game_statuses)} {}
+    game_status_{std::move(game_status)} {}
 
-std::span<const tp::Detection> Payload::getDetections() const { return detections_; }
+std::span<const rc::Detection> Payload::getDetections() const { return detections_; }
 
-std::span<const tp::GameStatus> Payload::getGameStatuses() const { return game_statuses_; }
+std::span<const rc::GameStatus> Payload::getGameStatus() const { return game_status_; }
 
-bool Payload::empty() const { return detections_.empty() and game_statuses_.empty(); }
+bool Payload::empty() const { return detections_.empty(); }
 
 } // namespace decision

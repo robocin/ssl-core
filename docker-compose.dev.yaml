@@ -8,6 +8,7 @@ services:
       REALISM: "RC2021"
     logging:
       driver: none
+    attach: false
 
   autoref-tigers:
     container_name: autoref-tigers
@@ -23,6 +24,7 @@ services:
       driver: none
     depends_on:
       - simulator
+    attach: false
 
   game-controller:
     container_name: game-controller
@@ -44,6 +46,7 @@ services:
       driver: none
     depends_on:
       - autoref-tigers
+    attach: false
 
   ssl-vision-client:
     container_name: ssl-vision-client
@@ -60,6 +63,7 @@ services:
     depends_on:
       - game-controller
     network_mode: host
+    attach: false
 
   gateway:
     container_name: gateway
@@ -88,7 +92,9 @@ services:
 
   referee-ms:
     container_name: referee-ms
-    image: robocin/referee-daronco:manual-419128
+    build:
+      context: .
+      dockerfile: referee-ms/referee-daronco/referee-daronco.Dockerfile
     volumes:
       - .ssl-core:/tmp/.ssl-core
     depends_on:
@@ -104,10 +110,12 @@ services:
     depends_on:
       - referee-ms
       - playback-db
+    attach: false
 
   playback-db:
     container_name: playback-db
     image: redis:7.2.5
+    attach: false
 
   player-bff:
     container_name: player-bff

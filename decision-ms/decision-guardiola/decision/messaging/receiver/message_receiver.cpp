@@ -1,8 +1,10 @@
 #include "decision/messaging/receiver/message_receiver.h"
 
 #include "decision/parameters/parameters.h"
+#include "payload.h"
 
 #include <robocin/network/zmq_datagram.h>
+#include <robocin/network/zmq_poller.h>
 #include <robocin/output/log.h>
 
 namespace decision {
@@ -16,8 +18,8 @@ using ::robocin::ZmqDatagram;
 
 } // namespace
 
-MessageReceiver::MessageReceiver(std::unique_ptr<::robocin::IZmqSubscriberSocket> perception_socket,
-                                 std::unique_ptr<::robocin::IZmqSubscriberSocket> referee_socket,
+MessageReceiver::MessageReceiver(std::unique_ptr<IZmqSubscriberSocket> perception_socket,
+                                 std::unique_ptr<IZmqSubscriberSocket> referee_socket,
                                  std::unique_ptr<IZmqPoller> zmq_poller,
                                  std::unique_ptr<IPayloadMapper> payload_mapper) :
     perception_socket_{std::move(perception_socket)},
@@ -40,8 +42,9 @@ Payload MessageReceiver::receive() {
       }
 
       datagrams.emplace_back(std::move(perception_zmq_datagram));
+    }
 
-      // Tá certo pegar os pacotes de 2 serviços diferentes dessa forma? Jogando tudo no datagrams
+    while (true) {
       ZmqDatagram referee_zmq_datagram = zmq_poller_->receive(*referee_socket_);
       if (referee_zmq_datagram.empty()) {
         break;
@@ -51,7 +54,7 @@ Payload MessageReceiver::receive() {
     }
 
     if (datagrams.empty()) {
-      // wlog("no datagram received after {} ms.", pDecisionPollerTimeoutMs());
+      wlog("no datagram received after {} ms.", pDecisionPollerTimeoutMs());
     }
   }
 

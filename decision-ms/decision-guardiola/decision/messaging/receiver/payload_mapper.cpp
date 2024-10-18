@@ -2,7 +2,7 @@
 
 #include "decision/messaging/receiver/payload.h"
 
-#include <protocols/perception/detection.pb.h>
+#include <protocols/referee/game_status.pb.h>
 #include <robocin/network/zmq_datagram.h>
 #include <robocin/output/log.h>
 #include <robocin/wip/service_discovery/addresses.h>
@@ -10,7 +10,7 @@
 namespace decision {
 namespace {
 
-namespace service_discovery = ::robocin::service_discovery;
+namespace service_discovery = robocin::service_discovery;
 
 using ::robocin::wlog;
 using ::robocin::ZmqDatagram;
@@ -38,9 +38,8 @@ Payload PayloadMapper::fromZmqDatagrams(std::span<const ZmqDatagram> messages) c
       rc::GameStatus game_status;
       game_status.ParseFromString(std::string{zmq_datagram.message()});
       game_statuses.emplace_back(std::move(game_status));
-
     } else {
-     // wlog("zmq_datagram with topic '{}' not processed.", zmq_datagram.topic());
+      // wlog("zmq_datagram with topic '{}' not processed.", zmq_datagram.topic());
     }
   }
 

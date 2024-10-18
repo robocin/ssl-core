@@ -1,3 +1,4 @@
+
 #ifndef DECISION_CONTROLLER_PRODUCER_CONTROLLER_H
 #define DECISION_CONTROLLER_PRODUCER_CONTROLLER_H
 
@@ -14,13 +15,6 @@ class ProducerController : public IController {
   explicit ProducerController(::robocin::object_ptr<::robocin::IConcurrentQueue<Payload>> messages,
                               std::unique_ptr<IMessageReceiver> message_receiver);
 
-  // TODO: adjust this documentation to decision
-  /**
-   * @brief Starts the controller's run loop to consume and process messages.
-   *
-   * This method overrides the run method of the IController interface. It continuously
-   * consumes messages, processes them into vision packets, and adds these packets to the deque.
-   */
   void run() override;
 
  private:

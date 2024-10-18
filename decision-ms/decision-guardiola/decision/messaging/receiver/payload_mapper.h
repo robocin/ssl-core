@@ -34,4 +34,4 @@ class PayloadMapper : public IPayloadMapper {
 
 } // namespace decision
 
-#endif // DECISION_MESSAGING_RECEIVER_PAYLOAD_MAPPER_H
+#endif // REFEREE_MESSAGING_RECEIVER_PAYLOAD_MAPPER_H
