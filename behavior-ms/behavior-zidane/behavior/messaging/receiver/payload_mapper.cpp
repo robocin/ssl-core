@@ -37,7 +37,6 @@ Payload PayloadMapper::fromZmqDatagrams(std::span<const ZmqDatagram> messages) c
       rc::Decision decision;
       decision.ParseFromString(std::string{zmq_datagram.message()});
       decisions.emplace_back(std::move(decision));
-      ilog("Received decision: {}", decision.DebugString());
 
     } else {
       // wlog("zmq_datagram with topic '{}' not processed.", zmq_datagram.topic());

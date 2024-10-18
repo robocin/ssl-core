@@ -23,6 +23,9 @@ using ::protocols::perception::Detection;
 using ::protocols::referee::GameStatus;
 using ::protocols::decision::Behavior;
 using ::protocols::common::RobotId;
+using ::protocols::decision::TacticalPlan;
+using ::protocols::decision::DefensivePlan;
+using ::protocols::decision::OffensivePlan;
 
 } // namespace rc
 
@@ -63,13 +66,17 @@ std::optional<rc::Decision> DecisionProcessor::process(std::span<const Payload> 
 
   // TODO
   rc::Decision decision;
-  std::vector<rc::Behavior*> behavior;
-  behavior.push_back(decision.mutable_behavior());
+  rc::Behavior* behavior = decision.add_behavior();
+  behavior->set_id(199);
 
-  rc::RobotId* robot_id = behavior[0].mutable_robot_id();
-  robot_id.set_color(rc::RobotId::COLOR_BLUE);
-  robot_id.set_number(199);
-  behavior[0].set_id(199);
+  rc::RobotId* robot_id = behavior->mutable_robot_id();
+  robot_id->set_color(rc::RobotId::COLOR_BLUE);
+  robot_id->set_number(199);
+
+  rc::TacticalPlan* tplan = decision.mutable_plan();
+  
+  rc::OffensivePlan* ofPlan = tplan->mutable_offensive();
+  rc::DefensivePlan* dfPlan = tplan->mutable_defensive();
 
   return decision;
 }
