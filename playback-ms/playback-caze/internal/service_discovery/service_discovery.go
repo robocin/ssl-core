@@ -13,7 +13,4 @@ const (
 
 	GatewayReplayChunckAddress = "ipc:///tmp/.ssl-core/replay.ipc"
 	GatewayLivestreamTopic     = "sample"
-
-	DecisionAddress 	= "ipc:///tmp/.ssl-core/decision.ipc"
-	DecisionTopic 		= "decision"
 )
