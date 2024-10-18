@@ -19,16 +19,21 @@ using ::protocols::communication::RobotInfo;
 
 } // namespace
 
-MessageSender::MessageSender(std::unique_ptr<::robocin::IZmqPublisherSocket> communication_socket) :
-    communication_socket_{std::move(communication_socket)} {}
+MessageSender::MessageSender(std::unique_ptr<::robocin::IZmqPublisherSocket> communication_socket,
+                             std::unique_ptr<::robocin::IUdpMulticastSocketSender> robot_socket) :
+    communication_socket_{std::move(communication_socket)},
+    robot_socket_{std::move(robot_socket)} {}
 
 void MessageSender::send(const rc::RobotInfo& robot_command) {
-  // ilog("sending... {}", game_status.DebugString());
+  ilog("sending... {}", robot_command.DebugString());
 
   communication_socket_->send({
       service_discovery::kCommunicationCommandTopic,
       robot_command.SerializeAsString(),
   });
+  robot_socket_->send(robot_command.SerializeAsString());
+
+  ilog("Message sent");
 }
 
 } // namespace communication

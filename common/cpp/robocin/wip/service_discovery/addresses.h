@@ -26,6 +26,9 @@ inline constexpr std::string_view kCommunicationFeedbackTopic = "feedback";
 inline constexpr std::string_view kNavigationAddress = "ipc:///tmp/.ssl-core/navigation.ipc";
 inline constexpr std::string_view kNavigationOutputTopic = "navigation-output";
 
+inline constexpr std::string_view kRobotAddress = "224.0.0.1";
+inline constexpr int kRobotPort = 19900;
+
 } // namespace robocin::service_discovery
 
 #endif // ROBOCIN_WIP_SERVICE_DISCOVERY_ADDRESSES_H

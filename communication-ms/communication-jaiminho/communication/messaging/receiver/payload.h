@@ -11,8 +11,7 @@ namespace communication {
 
 class Payload {
  public:
-  Payload(std::vector<::protocols::navigation::Navigation> navigation,
-          std::vector<::protocols::third_party::game_controller::Referee> referee);
+  Payload(std::vector<::protocols::third_party::game_controller::Referee> referee);
 
   [[nodiscard]] std::span<const ::protocols::navigation::Navigation> getNavigation() const;
   [[nodiscard]] std::span<const ::protocols::third_party::game_controller::Referee> getReferee() const;

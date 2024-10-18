@@ -26,4 +26,4 @@ void ProducerController::run() {
   }
 }
 
-} // namespace referee
+} // namespace communication

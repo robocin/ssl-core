@@ -32,19 +32,21 @@ using ::robocin::IConcurrentQueue;
 using ::robocin::IZmqPoller;
 using ::robocin::IZmqPublisherSocket;
 using ::robocin::IZmqSubscriberSocket;
+using ::robocin::IUdpMulticastSocketSender;
 using ::robocin::object_ptr;
 using ::robocin::ZmqPoller;
 using ::robocin::ZmqPublisherSocket;
 using ::robocin::ZmqSubscriberSocket;
+using ::robocin::UdpMulticastSocketSender;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 std::unique_ptr<IMessageReceiver> makeMessageReceiver() {
   static constexpr std::array kNavigationTopics = {
-      service_discovery::kNavigationOutputTopic,
+      service_discovery::kNavigationOutputTopic
   };
   static constexpr std::array kGatewayTopics = {
-      service_discovery::kGameControllerRefereeTopic,
+      service_discovery::kGameControllerRefereeTopic
   };
 
   std::unique_ptr<IZmqSubscriberSocket> gateway_socket = std::make_unique<ZmqSubscriberSocket>();
@@ -81,7 +83,10 @@ std::unique_ptr<IMessageSender> makeMessageSender() {
   std::unique_ptr<IZmqPublisherSocket> communication_socket = std::make_unique<ZmqPublisherSocket>();
   communication_socket->bind(service_discovery::kCommunicationAddress);
 
-  return std::make_unique<MessageSender>(std::move(communication_socket));
+  std::unique_ptr<IUdpMulticastSocketSender> robot_socket = std::make_unique<UdpMulticastSocketSender>();
+  robot_socket->connect(service_discovery::kRobotAddress, service_discovery::kRobotPort);
+
+  return std::make_unique<MessageSender>(std::move(communication_socket), std::move(robot_socket));
 }
 
 std::unique_ptr<IController> makeConsumer(object_ptr<IConcurrentQueue<Payload>> messages) {
@@ -93,7 +98,7 @@ std::unique_ptr<IController> makeConsumer(object_ptr<IConcurrentQueue<Payload>> 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 int main() {
-  std::println("communication-daronco is runnning!");
+  std::println("communication-jaiminho is runnning!");
 
   std::unique_ptr<IConcurrentQueue<Payload>> messages
       = std::make_unique<ConditionVariableConcurrentQueue<Payload>>();

@@ -27,28 +27,27 @@ MessageReceiver::MessageReceiver(std::unique_ptr<IZmqSubscriberSocket> navigatio
     payload_mapper_{std::move(payload_mapper)} {}
 
 Payload MessageReceiver::receive() {
-  // ilog("running.");
 
   std::vector<ZmqDatagram> datagrams{};
 
   while (datagrams.empty()) {
     zmq_poller_->poll(pCommunicationPollerTimeoutMs());
 
-    while (true) {
-      ZmqDatagram navigation_zmq_datagram = zmq_poller_->receive(*navigation_socket_);
-      if (navigation_zmq_datagram.empty()) {
-        break;
-      }
+    // while (true) {
+    //   ZmqDatagram navigation_zmq_datagram = zmq_poller_->receive(*navigation_socket_);
+    //   if (!navigation_zmq_datagram.empty()) {
+    //     ilog("receiving navigation datagram.");
+    //     datagrams.emplace_back(std::move(navigation_zmq_datagram));
+    //   }
 
-      datagrams.emplace_back(std::move(navigation_zmq_datagram));
-    }
+    // }
 
     while (true) {
       ZmqDatagram gateway_zmq_datagram = zmq_poller_->receive(*gateway_socket_);
       if (gateway_zmq_datagram.empty()) {
         break;
       }
-
+      // ilog("receiving gateway datagram.");
       datagrams.emplace_back(std::move(gateway_zmq_datagram));
     }
 

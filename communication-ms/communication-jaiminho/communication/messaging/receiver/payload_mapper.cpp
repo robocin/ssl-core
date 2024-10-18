@@ -13,6 +13,7 @@ namespace service_discovery = robocin::service_discovery;
 
 using ::robocin::wlog;
 using ::robocin::ZmqDatagram;
+using ::robocin::ilog;
 
 namespace rc {
 
@@ -48,7 +49,7 @@ Payload PayloadMapper::fromZmqDatagrams(std::span<const ZmqDatagram> messages) c
     }
   }
 
-  return Payload{std::move(navigation), std::move(referee)};
+  return Payload{std::move(referee)};
 }
 
 } // namespace communication
