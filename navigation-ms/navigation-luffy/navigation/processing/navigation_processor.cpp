@@ -15,10 +15,10 @@ namespace parameters = ::robocin::parameters;
 
 namespace rc {
 
-using ::protocols::behavior::unification::Behavior;
-using ::protocols::behavior::unification::Motion;
-using ::protocols::navigation::Navigation;
-using ::protocols::navigation::Planning;
+  using ::protocols::behavior::unification::Behavior;
+  using ::protocols::behavior::unification::Motion;
+  using ::protocols::navigation::Navigation;
+  using ::protocols::navigation::Planning;
 
 } // namespace rc
 
@@ -63,20 +63,21 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
         return robot_move; // Criar objeto do protobuf navigation aqui
       } else {
         // RobotMove robot_move = go_to_point_with_trajectory_parser_->parse(motion);
-        // return robot_move; // Criar objeto do protobuf navigation aqui
+        return std::nullopt; // Criar objeto do protobuf navigation aqui
       }
     }
-    case rc::Behavior::kPlanning: {
-      const rc::Planning& planning = last_behavior.planning();
-      // Adicione aqui o processamento específico para Planning
-      break;
-    }
-    case rc::Behavior::kNavigation: {
-      const rc::Navigation& navigation = last_behavior.navigation();
-      // Adicione aqui o processamento específico para Navigation
-      break;
-    }
-    case rc::Behavior::OUTPUT_NOT_SET: return std::nullopt; break;
+    // case rc::Behavior::kPlanning: {
+    //   const rc::Planning& planning = last_behavior.planning();
+    //   // Adicione aqui o processamento específico para Planning
+    //   break;
+    // }
+    // case rc::Behavior::kNavigation: {
+    //   const rc::Navigation& navigation = last_behavior.navigation();
+    //   // Adicione aqui o processamento específico para Navigation
+    //   break;
+    // }
+    case default:  
+      return std::nullopt;
   }
 
   return;

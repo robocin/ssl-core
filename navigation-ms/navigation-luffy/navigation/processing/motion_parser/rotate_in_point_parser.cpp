@@ -4,13 +4,7 @@
 
 namespace navigation {
 
-RobotMove RotateInPointParser::parse(const ::protocols::navigation::Navigation& navigation) {
-  if (navigation.motion_case() != ::protocols::navigation::Navigation::kRotateInPoint) {
-    return RobotMove{};
-  }
-
-  const ::protocols::navigation::RotateInPoint& rotateInPoint = navigation.rotate_in_point();
-
+RobotMove RotateInPointParser::parse(const ::protocols::navigation::RotateInPoint& motion) {
   RobotMove move;
   // PROCESSAMENTO DO ROTATEINPOINT
   return move;

@@ -2,30 +2,36 @@
 #define NAVIGATION_PROCESSING_MOVE_TASK_STATE_H
 
 #include <protocols/navigation/motion.pb.h>
+#include "navigation/parameters/parameters.h"
+#include "common/cpp/robocin/geometry/geometry.h"
+#include <robocin/detection_util/elapsed_timer.h>
 #include <protocols/perception/detection.pb.h>
 #include <robocin/geometry/point2d.h>
 namespace navigation {
 
 namespace rc {
-using ::protocols::navigation::GoToPoint;
-using ::protocols::navigation::PathNode;
-using ::protocols::perception::Robot;
-using ::robocin::Point2Df;
+  using ::protocols::navigation::GoToPoint;
+  using ::protocols::navigation::PathNode;
+  using ::protocols::perception::Robot;
+  using ::protocols::common::GameCommand;
+  using ::robocin::Point2Df;
+  using ::robocin::detection_util;
 } // namespace rc
 
+enum class SkillMoveState { Unknown, Started, Running, Finished, ChangedTarget };
 class MoveTaskState {
   inline static constexpr double TOLERANCE_TO_CONSIDER_SAME_TARGET = 50;
   double estimateTimeToTarget;
-  QElapsedTimer runningToTarget;
-  QElapsedTimer globalRunningToTarget;
+  rc::detection_util::ElapsedTimer runningToTarget;
+  rc::detection_util::ElapsedTimer globalRunningToTarget;
   rc::Point2Df currentTarget;
   rc::Point2Df currentDesiredTarget;
 
   SkillMoveState m_state = SkillMoveState::Unknown;
 
-  // TODO: fazer escutar do referee ou receber essa informação de alguma forma
-  inline static bool refereeRequestFinish(const Referee::State& state) {
-    return std::holds_alternative<Referee::StateType::Halt>(state);
+  // TODO: fazer escutar do GameStatus ou receber essa informação de alguma forma
+  inline static bool refereeRequestFinish(const rc::GameCommand& command) {
+    return std::holds_alternative<GameStatus::StateType::Halt>(command);
   }
 
   inline static bool checkFinishState(const rc::Point2Df& allyPosition,
@@ -33,15 +39,15 @@ class MoveTaskState {
                                       const rc::Point2Df& lastPosition) {
     // TODO: Adaptar função
     bool robotCloseToDestinationInTask
-        = goToPointTask.target().distTo(allyPosition) < TOLERANCE_TO_CONSIDER_SAME_TARGET;
-    bool finishPathToTask = lastPosition.distTo(allyPosition) < TOLERANCE_TO_CONSIDER_SAME_TARGET;
+        = goToPointTask.target().distanceTo(allyPosition) < TOLERANCE_TO_CONSIDER_SAME_TARGET;
+    bool finishPathToTask = lastPosition.distanceTo(allyPosition) < TOLERANCE_TO_CONSIDER_SAME_TARGET;
 
     return robotCloseToDestinationInTask || finishPathToTask;
   }
 
   [[nodiscard]] inline bool checkChangeTarget(const rc::GoToPoint& goToPointTask) const {
     // TODO: Adaptar função
-    return currentDesiredTarget().distTo(goToPointTask.target())
+    return currentDesiredTarget().distanceTo(goToPointTask.target())
            > TOLERANCE_TO_CONSIDER_SAME_TARGET;
   }
 
@@ -49,15 +55,13 @@ class MoveTaskState {
   inline MoveTaskState() = default;
 
   inline void updateState(const rc::Robot& ally,
-                          const Referee::State& state,
+                          const rc::GameCommand& command,
                           const rc::GoToPoint& goToPointTask,
                           const rc::PathNode& lastNode) {
     // TODO: Adaptar função
-    const int M_TO_MM = 1e3; // TODO: transformar em constante do software
-    rc::Point2Df lastPositionInPath
-        = lastNode.position() * M_TO_MM; // TODO: fazer operações com point
+    rc::Point2Df lastPositionInPath = lastNode.position() * M_TO_MM(); // TODO: fazer operações com point
 
-    if (!refereeRequestFinish(state)) {
+    if (!refereeRequestFinish(command)) {
       if (m_state != SkillMoveState::Unknown
           && checkFinishState(ally.position(), goToPointTask, lastPositionInPath)) {
         m_state = SkillMoveState::Finished;
@@ -98,7 +102,7 @@ class MoveTaskState {
 
   inline double executionTimeError(const rc::PathNode& lastNode) {
     return estimateTimeToTarget()
-           - (static_cast<double>(runningToTarget.nsecsElapsed()) / 1e9 + lastNode.time());
+           - (static_cast<double>(runningToTarget.elapsed()) / 1e9 + lastNode.time());
   }
 };
 

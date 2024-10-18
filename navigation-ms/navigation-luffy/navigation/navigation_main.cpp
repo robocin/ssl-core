@@ -1,5 +1,8 @@
 #include "navigation/controller/consumer_controller.h"
 #include "navigation/controller/producer_controller.h"
+#include "processing/motion_parser/go_to_point_parser.h"
+#include "processing/motion_parser/rotate_in_point_parser.h"
+#include "processing/motion_parser/rotate_on_self_parser.h"
 
 #include <memory>
 #include <print>
@@ -15,8 +18,10 @@ namespace parameters = ::robocin::parameters;
 namespace detection_util = ::robocin::detection_util;
 namespace service_discovery = robocin::service_discovery;
 
+using navigation::GoToPointParser;
+using navigation::RotateInPointParser;
+using navigation::RotateOnSelfParser;
 using navigation::ConsumerController;
-// using navigation::NavigationMapper;
 using navigation::IController;
 using navigation::IMessageReceiver;
 using navigation::IMessageSender;
@@ -65,7 +70,9 @@ std::unique_ptr<IController> makeProducer(object_ptr<IConcurrentQueue<Payload>> 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 std::unique_ptr<INavigationProcessor> makeNavigationProcessor() {
-  return std::make_unique<NavigationProcessor>(); // TODO: passar os parâmetros aqui
+  return std::make_unique<NavigationProcessor>(std::make_unique<GoToPointParser>(),
+                                                std::make_unique<RotateInPointParser>(),
+                                                std::make_unique<RotateOnSelfParser>());
 }
 
 std::unique_ptr<IMessageSender> makeMessageSender() {

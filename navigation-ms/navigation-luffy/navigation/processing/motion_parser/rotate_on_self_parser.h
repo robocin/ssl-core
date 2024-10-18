@@ -1,13 +1,13 @@
 #ifndef NAVIGATION_PROCESSING_ROTATE_ON_SELF_PARSER_H
 #define NAVIGATION_PROCESSING_ROTATE_ON_SELF_PARSER_H
 
-#include <navigation/processing/motion_parser/motion_parser.h>
+#include "IMotionParser.h"
 
 namespace navigation {
 
-class RotateOnSelfParser : public IMotionParser {
+class RotateOnSelfParser : public IMotionParser<::protocols::navigation::RotateOnSelf> {
  public:
-  RobotMove parse(const ::protocols::navigation::Navigation& navigation) override;
+  RobotMove parse(const ::protocols::navigation::RotateOnSelf& motion) override;
 
  private:
   //   std::optional<::protocols::perception::Detection> last_detection_;
