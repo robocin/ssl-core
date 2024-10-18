@@ -27,7 +27,7 @@ inline constexpr std::string_view kNavigationAddress = "ipc:///tmp/.ssl-core/nav
 inline constexpr std::string_view kNavigationOutputTopic = "navigation-output";
 
 inline constexpr std::string_view kRobotAddress = "224.0.0.1";
-inline constexpr int kRobotPort = 19900;
+inline constexpr int kRobotPort = 19901;
 
 } // namespace robocin::service_discovery
 
