@@ -65,7 +65,7 @@ std::unique_ptr<IController> makeProducer(object_ptr<IConcurrentQueue<Payload>> 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 std::unique_ptr<INavigationProcessor> makeNavigationProcessor() {
-  return std::make_unique<NavigationProcessor>();
+  return std::make_unique<NavigationProcessor>(); // TODO: passar os parâmetros aqui
 }
 
 std::unique_ptr<IMessageSender> makeMessageSender() {
