@@ -54,7 +54,7 @@ Payload MessageReceiver::receive() {
     }
 
     if (datagrams.empty()) {
-      wlog("no datagram received after {} ms.", pDecisionPollerTimeoutMs());
+      // wlog("no datagram received after {} ms.", pDecisionPollerTimeoutMs());
     }
   }
 
