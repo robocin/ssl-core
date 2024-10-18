@@ -9,5 +9,4 @@ robocin_cpp_library(
        common::memory
        common::output
        messaging_receiver
-       messaging_sender
 )
