@@ -5,15 +5,16 @@
 namespace navigation {
 
 namespace rc {
-using ::robocin::Point2Df;
+  using ::robocin::Point2Df;
 } // namespace rc
 
 class RobotMove {
-  rc::Point2Df velocity_;
-  double angularVelocity_;
+  private:
+    rc::Point2Df velocity_;
+    double angularVelocity_;
 
- public:
-  RobotMove(rc::Point2Df velocity, double angularVelocity);
+  public:
+    RobotMove(rc::Point2Df velocity, double angularVelocity);
 };
 
 } // namespace navigation

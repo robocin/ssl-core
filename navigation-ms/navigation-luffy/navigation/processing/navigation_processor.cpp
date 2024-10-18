@@ -15,10 +15,10 @@ namespace parameters = ::robocin::parameters;
 
 namespace rc {
 
-using ::protocols::behavior::unification::Behavior;
-using ::protocols::behavior::unification::Motion;
-using ::protocols::navigation::Navigation;
-using ::protocols::navigation::Planning;
+  using ::protocols::behavior::unification::Behavior;
+  using ::protocols::behavior::unification::Motion;
+  using ::protocols::navigation::Navigation;
+  using ::protocols::navigation::Planning;
 
 } // namespace rc
 
@@ -76,7 +76,8 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
       // Adicione aqui o processamento específico para Navigation
       break;
     }
-    case rc::Behavior::OUTPUT_NOT_SET: return std::nullopt; break;
+    case default:  
+      return std::nullopt;
   }
 
   return;

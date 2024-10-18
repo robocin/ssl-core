@@ -1,15 +1,17 @@
 #ifndef NAVIGATION_PROCESSING_GO_TO_POINT_PARSER_H
 #define NAVIGATION_PROCESSING_GO_TO_POINT_PARSER_H
 
-#include <navigation/processing/motion_parser/motion_parser.h>
+#include "IMotionParser.h"
 
 namespace navigation {
 
-class GoToPointParser : public IMotionParser {
+class GoToPointParser : public IMotionParser<::protocols::navigation::GoToPoint> {
  public:
-  RobotMove parse(const ::protocols::navigation::Navigation& navigation) override;
+  explicit GoToPointParser(std::any world);
+  RobotMove parse(const ::protocols::navigation::GoToPoint& go_to_point) override;
 
  private:
+  std::any world_;
   //   std::optional<::protocols::perception::Detection> last_detection_;
   //   std::unique_ptr<ICameraFilter::Factory> camera_filter_factory_;
   //   // TODO(joseviccruz): replace by absl::flat_hash_map
