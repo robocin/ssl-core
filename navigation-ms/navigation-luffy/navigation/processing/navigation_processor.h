@@ -1,14 +1,13 @@
 #ifndef NAVIGATION_PROCESSING_NAVIGATION_PROCESSOR_H
 #define NAVIGATION_PROCESSING_NAVIGATION_PROCESSOR_H
 
-#include "navigation/messaging/receiver/payload.h"
-#include "navigation/processing/motion_parser/go_to_point_parser.h"
-#include "navigation/processing/motion_parser/rotate_in_point_parser.h"
-#include "navigation/processing/motion_parser/rotate_on_self_parser.h"
-
-#include <memory>
-#include <optional>
+#include "../messaging/receiver/payload.h"
 #include <protocols/navigation/navigation.pb.h>
+#include "motion_parser/go_to_point_parser/go_to_point_parser.h"
+#include "motion_parser/rotate_in_point_parser/rotate_in_point_parser.h"
+#include "motion_parser/rotate_on_self_parser/rotate_on_self_parser.h"
+
+#include <optional>
 
 namespace navigation {
 

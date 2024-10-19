@@ -4,7 +4,7 @@
 #include <type_traits>
 #include <concepts>
 #include <optional>
-#include "../utils/robot_move.h"
+#include "../utils/robot_move/robot_move.h"
 #include <protocols/navigation/navigation.pb.h>
 #include <protocols/navigation/motion.pb.h>
 #include <protocols/behavior/behavior_unification.pb.h>
@@ -34,10 +34,10 @@ class IMotionParser {
                             ::protocols::referee::GameStatus& game_status, 
                             ::protocols::perception::Detection& detection) = 0;
   private:
-    std::optional<T> motion_;
-    std::optional<::protocols::referee::GameStatus> game_status_;
-    std::optional<::protocols::perception::Detection> detection_;
-    std::optional<::protocols::perception::Robot> ally_;
+    // std::optional<T> motion_ = {};
+    // std::optional<::protocols::referee::GameStatus> game_status_ = {};
+    // std::optional<::protocols::perception::Detection> detection_ = {};
+    // std::optional<::protocols::perception::Robot> ally_ = {};
 
 };
 

@@ -1,13 +1,13 @@
-#include "navigation/processing/navigation_processor.h"
+#include "navigation_processor.h"
 
 #include "navigation/messaging/receiver/payload.h"
 
-#include <protocols/behavior/behavior_unification.pb.h>
 #include <protocols/navigation/motion.pb.h>
 #include <protocols/navigation/navigation.pb.h>
 #include <protocols/navigation/planning.pb.h>
 #include <protocols/perception/detection.pb.h>
 #include <protocols/referee/game_status.pb.h>
+#include <protocols/behavior/behavior_unification.pb.h>
 
 #include <ranges>
 #include <utility>
@@ -46,10 +46,10 @@ std::vector<rc::GameStatus> gameStatusFromPayloads(std::span<const Payload> payl
 
 } // namespace
 
-NavigationProcessor::NavigationProcessor(
-    std::unique_ptr<GoToPointParser> go_to_point_parser,
-    std::unique_ptr<RotateInPointParser> rotate_in_point_parser,
-    std::unique_ptr<RotateOnSelfParser> rotate_on_self_parser) :
+NavigationProcessor::NavigationProcessor(std::unique_ptr<GoToPointParser> go_to_point_parser,
+                                         std::unique_ptr<RotateInPointParser> rotate_in_point_parser,
+                                         std::unique_ptr<RotateOnSelfParser> rotate_on_self_parser) :
+
     go_to_point_parser_(std::move(go_to_point_parser)),
     rotate_in_point_parser_(std::move(rotate_in_point_parser)),
     rotate_on_self_parser_(std::move(rotate_on_self_parser)) {}
@@ -72,13 +72,13 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
     case rc::Behavior::kMotion: {
       const rc::Motion& motion = last_behavior.motion();
       if (motion.has_go_to_point()) {
-        RobotMove robot_move = go_to_point_parser_->parse(motion);
+        RobotMove robot_move = go_to_point_parser_->parse(motion,last_game_status,last_detection);
         return robot_move; // Criar objeto do protobuf navigation aqui
       } else if (motion.has_rotate_in_point()) {
-        RobotMove robot_move = rotate_in_point_parser_->parse(motion);
+        RobotMove robot_move = rotate_in_point_parser_->parse(motion,last_game_status,last_detection);
         return robot_move; // Criar objeto do protobuf navigation aqui
       } else if (motion.has_rotate_on_self()) {
-        RobotMove robot_move = rotate_on_self_parser_->parse(motion);
+        RobotMove robot_move = rotate_on_self_parser_->parse(motion,last_game_status,last_detection);
         return robot_move; // Criar objeto do protobuf navigation aqui
       } else {
         // RobotMove robot_move = go_to_point_with_trajectory_parser_->parse(motion);

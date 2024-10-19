@@ -1,29 +1,32 @@
 #include "go_to_point_parser.h"
 #include "navigation/parameters/parameters.h"
 #include "common/cpp/robocin/geometry/angles.h"
+#include "common/cpp/robocin/geometry/math_lib.h"
 #include "navigation/processing/utils/move_task_state.h"
 #include <regex>
 #include <cmath>
 
 namespace navigation {
 
-GoToPointParser::GoToPointParser(const ::protocols::navigation::GoToPoint& motion,
-                                std::optional<::protocols::referee::GameStatus> game_status,
-                                std::optional<::protocols::perception::Detection> detection) : 
-    motion_(std::move(motion)),
-    game_status_(std::move(game_status)),
-    detection_(std::move(detection)) {
+::protocols::perception::Robot GoToPointParser::matchAlly(
+    ::protocols::navigation::GoToPoint& motion,
+    ::protocols::referee::GameStatus& game_status,
+    ::protocols::perception::Detection& detection){
 
-    // for(auto robot : detection.robots()){
-    //   if(motion.id() == robot.id()) //TODO: match team color
-    //     ally_ = robot;
-    // }
+  for(auto robot : detection.robots()){
+    if(motion.id() == robot.id()) //TODO: match team color
+      return robot;
+  }
 
 }
 
-RobotMove GoToPointParser::parse(const ::protocols::navigation::GoToPoint& motion) {
-  
-  const auto& ally = ally_;
+RobotMove GoToPointParser::parse(
+  const ::protocols::navigation::GoToPoint& motion,
+  ::protocols::referee::GameStatus& game_status, 
+  ::protocols::perception::Detection& detection) {
+
+  MoveTaskState::moveTask;
+  const auto& ally = this->matchAlly(motion, game_status, detection);
 
   auto&& s0 = ally.position();
   auto&& s = motion.target();
@@ -32,12 +35,12 @@ RobotMove GoToPointParser::parse(const ::protocols::navigation::GoToPoint& motio
   const double kp = ANGLE_KP();
   const double maxAngularVel = ROBOT_MAX_ANGULAR_VELOCITY();
 
-  auto [minVelocity, maxVelocity] = minAndMaxVelocityToProfile(motion.moving_profile.type());
-  double propDistance = propDistanceToProfile(motion.moving_profile.type());
+  auto [minVelocity, maxVelocity] = this->minAndMaxVelocityToProfile(motion.moving_profile());
+  double propDistance = this->propDistanceToProfile(motion.moving_profile());
 
   if (deltaS.length() <= propDistance) {
     maxVelocity =
-        std::max(map(deltaS.length(), 0.0, propDistance, minVelocity, maxVelocity),
+        std::max(::robocin::math::map(deltaS.length(), 0.0, propDistance, minVelocity, maxVelocity),
                   minVelocity);
   }
 
@@ -47,7 +50,7 @@ RobotMove GoToPointParser::parse(const ::protocols::navigation::GoToPoint& motio
           DEFAULT_TOLERANCE_TO_DESIRED_POSITION_M();
 
   const double dTheta =
-      ::robocin::geometry::smallestAngleDiff<double>(ally.angle(), motion.targetAngle());
+      ::robocin::angles::smallestAngleDiff<double>(ally.angle(), motion.targetAngle());
 
   if (deltaS.length() > toleranceToTarget) {
     
@@ -57,7 +60,7 @@ RobotMove GoToPointParser::parse(const ::protocols::navigation::GoToPoint& motio
     double accProp = moving_profile::ROBOT_DEFAULT_LINEAR_ACCELERATION();
     auto v0 = ally.velocity() / M_TO_MM();
     auto v = Point2D::fromPolar(maxVelocity, theta);
-    const double v0Decay = abs(Point2D::angleBetween(v, v0)) > 60_degrees ?
+    const double v0Decay = ::robocin::math::abs(Point2D::angleBetween(v, v0)) > 60_degrees ?
                                 ROBOT_VEL_BREAK_DECAY_FACTOR() :
                                 ROBOT_VEL_FAVORABLE_DECAY_FACTOR();
 
@@ -67,7 +70,7 @@ RobotMove GoToPointParser::parse(const ::protocols::navigation::GoToPoint& motio
     auto accelerationRequired = Point2D((v.x() - v0.x()) / CYCLE_STEP(),
                                       (v.y() - v0.y()) / CYCLE_STEP());
 
-    double alpha = map(abs(dTheta), 0.0, PI, 0.0, 1.0);
+    double alpha = ::robocin::math::map(::robocin::math::abs(dTheta), 0.0, PI, 0.0, 1.0);
     // -x^2 +1
     // double propFactor = (-(alpha * alpha) + 1);
 
@@ -100,12 +103,55 @@ RobotMove GoToPointParser::parse(const ::protocols::navigation::GoToPoint& motio
                         ::protocols::navigation::PathNode(motion.target(), {0, 0}, 0));
 
 
-    return RobotMove{newVelocity, bound(kp * dTheta, -maxAngularVel, maxAngularVel)};
-  
+    return RobotMove{newVelocity, ::robocin::math::bound(kp * dTheta, -maxAngularVel, maxAngularVel)};
+
   } else {
 
-    return {{0, 0}, bound(kp * dTheta, -maxAngularVel, maxAngularVel)};
+    return RobotMove{{0, 0}, ::robocin::math::bound(kp * dTheta, -maxAngularVel, maxAngularVel)};
   }
+}
+
+inline static std::pair<double, double> GoToPointParser::
+  minAndMaxVelocityToProfile(rc::MovingProfile& profile) {
+    switch(profile.type_case()){
+      case rc::MovingProfile::kDirectApproachBallSpeed:
+        return {moving_profile::APPROACH_BALL_MIN_SPEED(),
+              moving_profile::APPROACH_BALL_MAX_SPEED()};
+
+      case rc::MovingProfile::kDirectKickBallwithEnemyClose:
+        return {moving_profile::KICK_BALL_WITH_ENEMY_MAX_SPEED(),
+              moving_profile::KICK_BALL_WITH_ENEMY_MIN_SPEED()};
+
+      case rc::MovingProfile::kDirectSafeKickBallSpeed:
+      case rc::MovingProfile::kDirectBalancedKickBallSpeed:
+        return {moving_profile::KICK_BALL_MIN_SPEED(),
+              moving_profile::KICK_BALL_MAX_SPEED()};
+
+      case rc::MovingProfile::kTOTOZINHO:
+        return {moving_profile::TOTOZINHO_MIN_SPEED(),
+              moving_profile::TOTOZINHO_MAX_SPEED()};
+      case default:
+        return {moving_profile::ALLY_MIN_SPEED(), moving_profile::ALLY_MAX_SPEED()};
+    }
+
+  }
+
+  inline static double GoToPointParser::
+    propDistanceToProfile(rc::MovingProfile& profile){
+
+    switch(profile.type_case()){
+      case rc::MovingProfile::kDirectApproachBallSpeed:
+        return moving_profile::APPROACH_BALL_PROP_DISTANCE();
+
+      case rc::MovingProfile::kDirectSafeKickBallSpeed:
+        return moving_profile::KICK_BALL_SAFE_PROP_DISTANCE();
+
+      case rc::MovingProfile::kDirectBalancedKickBallSpeed:
+        return moving_profile::KICK_BALL_BALANCED_PROP_DISTANCE();
+
+      case default:
+        return moving_profile::MIN_DIST_TO_PROP_VELOCITY();
+    }
 }
 
 } // namespace navigation
