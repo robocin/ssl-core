@@ -61,7 +61,7 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
   std::vector<rc::Behavior> behaviors = behaviorFromPayloads(payloads);
   std::vector<rc::Detection> detections = detectionFromPayloads(payloads);
 
-  rc::Navigation navigation;
+  rc::Navigation navigation_output;
 
   if (detections.empty()) {
     // a new package must be generated only when a new detection is received.
@@ -125,7 +125,7 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
           rc::RobotPose* robot_pose = output.mutable_robot_pose();
           // Defina os campos de robot_pose conforme necessário
 
-          *navigation.add_output() = output; // Adiciona o output ao repeated output
+          *navigation_output.add_output() = output; // Adiciona o output ao repeated output
 
         } else if (motion.has_rotate_in_point()) {
           // RobotMove robot_move = rotate_in_point_parser_->parse(motion);
@@ -141,7 +141,7 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
         }
       }
 
-      return navigation; // Criar objeto do protobuf navigation aqui
+      return navigation_output; // Criar objeto do protobuf navigation aqui
 
     }
     case rc::Behavior::kPlanning: {
@@ -154,7 +154,13 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
       // Adicione aqui o processamento específico para Navigation
       break;
     }
-    case rc::Behavior::OUTPUT_NOT_SET: return std::nullopt; break;
+    case rc::Behavior::OUTPUT_NOT_SET: {   
+      rc::Output output;         
+      rc::RobotId *robot_id = output.mutable_id();
+      robot_id->CopyFrom(last_behavior.id());
+      *navigation_output.add_output() = output;
+      return navigation_output; 
+    } 
   }
 
   return std::nullopt;

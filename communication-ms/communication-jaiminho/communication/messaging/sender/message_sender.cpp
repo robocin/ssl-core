@@ -25,7 +25,7 @@ MessageSender::MessageSender(std::unique_ptr<::robocin::IZmqPublisherSocket> com
     robot_socket_{std::move(robot_socket)} {}
 
 void MessageSender::send(const rc::RobotInfo& robot_command) {
-  ilog("sending... {}", robot_command.DebugString());
+  // ilog("sending... {}", robot_command.DebugString());
 
   communication_socket_->send({
       service_discovery::kCommunicationCommandTopic,
@@ -33,7 +33,7 @@ void MessageSender::send(const rc::RobotInfo& robot_command) {
   });
   robot_socket_->send(robot_command.SerializeAsString());
 
-  ilog("Message sent");
+  // ilog("Message sent");
 }
 
 } // namespace communication

@@ -33,14 +33,13 @@ Payload MessageReceiver::receive() {
   while (datagrams.empty()) {
     zmq_poller_->poll(pCommunicationPollerTimeoutMs());
 
-    // while (true) {
-    //   ZmqDatagram navigation_zmq_datagram = zmq_poller_->receive(*navigation_socket_);
-    //   if (!navigation_zmq_datagram.empty()) {
-    //     ilog("receiving navigation datagram.");
-    //     datagrams.emplace_back(std::move(navigation_zmq_datagram));
-    //   }
-
-    // }
+    while (true) {
+      ZmqDatagram navigation_zmq_datagram = zmq_poller_->receive(*navigation_socket_);
+      if (navigation_zmq_datagram.empty()) {
+        break;
+      }
+      datagrams.emplace_back(std::move(navigation_zmq_datagram));
+    }
 
     while (true) {
       ZmqDatagram gateway_zmq_datagram = zmq_poller_->receive(*gateway_socket_);

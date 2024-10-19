@@ -37,6 +37,7 @@ Payload PayloadMapper::fromZmqDatagrams(std::span<const ZmqDatagram> messages) c
     if (zmq_datagram.topic() == service_discovery::kNavigationOutputTopic) {
       rc::Navigation navigation_message;
       navigation_message.ParseFromString(std::string{zmq_datagram.message()});
+      ilog("Received from navigation: {}", navigation_message.DebugString());
       navigation.emplace_back(std::move(navigation_message));
 
     } else if (zmq_datagram.topic() == service_discovery::kGameControllerRefereeTopic) {
@@ -49,7 +50,7 @@ Payload PayloadMapper::fromZmqDatagrams(std::span<const ZmqDatagram> messages) c
     }
   }
 
-  return Payload{std::move(referee)};
+  return Payload{std::move(referee), std::move(navigation)};
 }
 
 } // namespace communication
