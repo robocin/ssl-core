@@ -1,12 +1,15 @@
 #ifndef NAVIGATION_PROCESSING_I_MOTION_PARSER_H
 #define NAVIGATION_PROCESSING_I_MOTION_PARSER_H
 
-#include <algorithm>
-#include <any>
-#include <navigation/processing/utils/robot_move.h>
+#include <type_traits>
+#include <concepts>
+#include <optional>
+#include "../utils/robot_move.h"
 #include <protocols/navigation/navigation.pb.h>
 #include <protocols/navigation/motion.pb.h>
-#include <type_traits>
+#include <protocols/behavior/behavior_unification.pb.h>
+#include <protocols/perception/detection.pb.h>
+#include <protocols/referee/game_status.pb.h>
 
 namespace navigation {
 
@@ -27,9 +30,14 @@ class IMotionParser {
 
     virtual ~IMotionParser() = default;
 
-    virtual RobotMove parse(const T& motion) = 0;
+    virtual RobotMove parse(const T& motion, 
+                            ::protocols::referee::GameStatus& game_status, 
+                            ::protocols::perception::Detection& detection) = 0;
   private:
-    std::any world_;
+    std::optional<T> motion_;
+    std::optional<::protocols::referee::GameStatus> game_status_;
+    std::optional<::protocols::perception::Detection> detection_;
+    std::optional<::protocols::perception::Robot> ally_;
 
 };
 

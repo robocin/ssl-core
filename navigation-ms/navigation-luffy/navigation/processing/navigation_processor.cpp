@@ -6,6 +6,9 @@
 #include <protocols/navigation/motion.pb.h>
 #include <protocols/navigation/navigation.pb.h>
 #include <protocols/navigation/planning.pb.h>
+#include <protocols/perception/detection.pb.h>
+#include <protocols/referee/game_status.pb.h>
+
 #include <ranges>
 #include <utility>
 
@@ -17,6 +20,8 @@ namespace rc {
 
   using ::protocols::behavior::unification::Behavior;
   using ::protocols::behavior::unification::Motion;
+  using ::protocols::referee::GameStatus;
+  using ::protocols::perception::Detection;
   using ::protocols::navigation::Navigation;
   using ::protocols::navigation::Planning;
 
@@ -26,6 +31,16 @@ namespace {
 
 std::vector<rc::Behavior> behaviorFromPayloads(std::span<const Payload> payloads) {
   return payloads | std::views::transform(&Payload::getBehaviors) | std::views::join
+         | std::ranges::to<std::vector>();
+}
+
+std::vector<rc::Detection> detectionFromPayloads(std::span<const Payload> payloads) {
+  return payloads | std::views::transform(&Payload::getDetections) | std::views::join
+         | std::ranges::to<std::vector>();
+}
+
+std::vector<rc::GameStatus> gameStatusFromPayloads(std::span<const Payload> payloads) {
+  return payloads | std::views::transform(&Payload::getGameStatuses) | std::views::join
          | std::ranges::to<std::vector>();
 }
 
@@ -41,13 +56,17 @@ NavigationProcessor::NavigationProcessor(
 
 std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Payload> payloads) {
   std::vector<rc::Behavior> behaviors = behaviorFromPayloads(payloads);
+  std::vector<rc::Detection> detections = detectionFromPayloads(payloads);
+  std::vector<rc::GameStatus> game_statuses = gameStatusFromPayloads(payloads);
 
-  if (behaviors.empty()) {
+  if (behaviors.empty() || detections.empty() || game_statuses.empty()) {
     // a new package must be generated only when a new behavior is received.
     return std::nullopt;
   }
 
   const rc::Behavior last_behavior = behaviors.back();
+  const rc::Detection last_detection = detections.back();
+  const rc::GameStatus last_game_status = game_statuses.back();
 
   switch (last_behavior.output_case()) {
     case rc::Behavior::kMotion: {
@@ -66,7 +85,6 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
         return std::nullopt; // Criar objeto do protobuf navigation aqui
       }
     }
-<<<<<<< HEAD
     // case rc::Behavior::kPlanning: {
     //   const rc::Planning& planning = last_behavior.planning();
     //   // Adicione aqui o processamento específico para Planning
@@ -77,18 +95,6 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
     //   // Adicione aqui o processamento específico para Navigation
     //   break;
     // }
-=======
-    case rc::Behavior::kPlanning: {
-      const rc::Planning& planning = last_behavior.planning();
-      // Adicione aqui o processamento específico para Planning
-      break;
-    }
-    case rc::Behavior::kNavigation: {
-      const rc::Navigation& navigation = last_behavior.navigation();
-      // Adicione aqui o processamento específico para Navigation
-      break;
-    }
->>>>>>> origin/feat/navigation_processor
     case default:  
       return std::nullopt;
   }

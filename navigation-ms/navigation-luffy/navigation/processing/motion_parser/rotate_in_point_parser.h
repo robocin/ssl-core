@@ -7,9 +7,15 @@ namespace navigation {
 
 class RotateInPointParser : public IMotionParser<::protocols::navigation::RotateInPoint> {
  public:
-  RobotMove parse(const ::protocols::navigation::RotateInPoint& motion) override;
+  RobotMove parse(const ::protocols::navigation::RotateInPoint& motion,
+                  ::protocols::referee::GameStatus& game_status,
+                  ::protocols::perception::Detection& detection) override;
 
  private:
+  std::optional<::protocols::navigation::RotateInPoint> motion_;
+  std::optional<::protocols::referee::GameStatus> game_status_;
+  std::optional<::protocols::perception::Detection> detection_;
+  std::optional<::protocols::perception::Robot> ally_;
   //   std::optional<::protocols::perception::Detection> last_detection_;
   //   std::unique_ptr<ICameraFilter::Factory> camera_filter_factory_;
   //   // TODO(joseviccruz): replace by absl::flat_hash_map

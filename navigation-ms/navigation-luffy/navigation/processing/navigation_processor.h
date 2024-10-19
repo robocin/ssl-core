@@ -8,10 +8,7 @@
 
 #include <memory>
 #include <optional>
-#include <protocols/behavior/behavior_unification.pb.h>
 #include <protocols/navigation/navigation.pb.h>
-#include <robocin/detection_util/clock.h>
-#include <robocin/parameters/parameters.h>
 
 namespace navigation {
 
@@ -26,8 +23,8 @@ class INavigationProcessor {
 
   virtual ~INavigationProcessor() = default;
 
-  virtual std::optional<::protocols::navigation::Navigation>
-  process(std::span<const Payload> payloads) = 0;
+  virtual std::optional<::protocols::navigation::Navigation> 
+      process(std::span<const Payload> payloads) = 0;
 };
 
 class NavigationProcessor : public INavigationProcessor {
@@ -37,7 +34,7 @@ class NavigationProcessor : public INavigationProcessor {
                       std::unique_ptr<RotateOnSelfParser> rotate_on_self_parser);
 
   std::optional<::protocols::navigation::Navigation>
-  process(std::span<const Payload> payloads) override;
+      process(std::span<const Payload> payloads) override;
 
  private:
   std::unique_ptr<GoToPointParser> go_to_point_parser_;

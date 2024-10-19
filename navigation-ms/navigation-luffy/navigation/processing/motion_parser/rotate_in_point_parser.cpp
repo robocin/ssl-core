@@ -4,7 +4,9 @@
 
 namespace navigation {
 
-RobotMove RotateInPointParser::parse(const ::protocols::navigation::RotateInPoint& motion) {
+RobotMove RotateInPointParser::parse(::protocols::navigation::RotateInPoint& motion, 
+                  ::protocols::referee::GameStatus& game_status, 
+                  ::protocols::perception::Detection& detection) {
   RobotMove move;
   // PROCESSAMENTO DO ROTATEINPOINT
   return move;
