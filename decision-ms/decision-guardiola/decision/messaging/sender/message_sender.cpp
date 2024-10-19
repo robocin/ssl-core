@@ -24,7 +24,7 @@ MessageSender::MessageSender(std::unique_ptr<::robocin::IZmqPublisherSocket> dec
     decision_socket_{std::move(decision_socket)} {}
 
 void MessageSender::send(const rc::Decision& decision) {
-  ilog("sending... {}", decision.DebugString());
+  // ilog("sending... {}", decision.DebugString());
 
   decision_socket_->send({
       service_discovery::kDecisionTopic,
