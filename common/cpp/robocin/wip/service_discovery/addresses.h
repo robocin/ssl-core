@@ -23,7 +23,10 @@ inline constexpr std::string_view kNavigationAddress = "ipc:///tmp/.ssl-core/nav
 inline constexpr std::string_view kNavigationOutputTopic = "navigation-output";
 
 inline constexpr std::string_view kBehaviorAddress = "ipc:///tmp/.ssl-core/behavior.ipc";
-inline constexpr std::string_view kBehaviorTopic = "behavior_unification";
+inline constexpr std::string_view kBehaviorTopic = "behavior-unification";
+
+inline constexpr std::string_view kDecisionAddress = "ipc:///tmp/.ssl-core/decision.ipc";
+inline constexpr std::string_view kDecisionTopic = "decision";
 
 } // namespace robocin::service_discovery
 

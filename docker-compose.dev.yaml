@@ -19,7 +19,6 @@ services:
       - "224.5.23.2:10020"
       - "-refereeAddress"
       - "224.5.23.1:11003"
-
     logging:
       driver: none
     depends_on:
@@ -60,6 +59,7 @@ services:
       driver: none
     depends_on:
       - game-controller
+    network_mode: host
 
   gateway:
     container_name: gateway
@@ -88,7 +88,9 @@ services:
 
   referee-ms:
     container_name: referee-ms
-    image: robocin/referee-daronco:manual-419128
+    build:
+      context: .
+      dockerfile: referee-ms/referee-daronco/referee-daronco.Dockerfile
     volumes:
       - .ssl-core:/tmp/.ssl-core
     depends_on:
@@ -104,10 +106,12 @@ services:
     depends_on:
       - referee-ms
       - playback-db
+    attach: false
 
   playback-db:
     container_name: playback-db
     image: redis:7.2.5
+    attach: false
 
   player-bff:
     container_name: player-bff
@@ -162,6 +166,7 @@ services:
     depends_on:
       - playback-ms
       - metrics-db
+    attach: false
 
   metrics-db:
     container_name: metrics-db
@@ -176,6 +181,7 @@ services:
       DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: metrics
     ports:
       - 8086:8086
+    attach: false
 
   grafana:
     container_name: grafana
@@ -194,12 +200,32 @@ services:
       - 3000:3000
     depends_on:
       - metrics-db
+    attach: false
 
   navigation-ms:
     container_name: navigation-ms
     build:
       context: .
       dockerfile: navigation-ms/navigation-luffy/navigation-luffy.Dockerfile
+    volumes:
+      - .ssl-core:/tmp/.ssl-core
+
+  decision-ms:
+    container_name: decision-ms
+    build:
+      context: .
+      dockerfile: decision-ms/decision-guardiola/decision-guardiola.Dockerfile
+    volumes:
+      - .ssl-core:/tmp/.ssl-core
+    depends_on:
+      - perception-ms
+      - referee-ms
+
+  behavior-ms:
+    container_name: behavior-ms
+    build:
+      context: .
+      dockerfile: behavior-ms/behavior-zidane/behavior-zidane.Dockerfile
     volumes:
       - .ssl-core:/tmp/.ssl-core
 
