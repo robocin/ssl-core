@@ -18,11 +18,15 @@ class ElapsedTimer {
 
   Duration restart();
 
+  void invalidate() noexcept;
+  [[nodiscard]] bool isValid() const noexcept;
+
   [[nodiscard]] bool isStarted() const;
   [[nodiscard]] Duration elapsed() const;
 
  private:
   bool started_;
+  bool valid_;
   Timestamp start_;
 };
 
