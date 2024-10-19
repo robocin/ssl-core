@@ -96,6 +96,17 @@ services:
     depends_on:
       - perception-ms
 
+  communication-ms:
+    container_name: communication-ms
+    build:
+      context: .
+      dockerfile: communication-ms/communication-jaiminho/communication-jaiminho.Dockerfile
+    volumes:
+      - .ssl-core:/tmp/.ssl-core
+    depends_on:
+      - gateway
+    network_mode: "host"
+
   playback-ms:
     container_name: playback-ms
     build:
@@ -155,7 +166,7 @@ services:
     command: [ "-g", "daemon off;" ]
     ports:
       - 3030:3030
-
+      
   metrics-ms:
     container_name: metrics-ms
     build:
