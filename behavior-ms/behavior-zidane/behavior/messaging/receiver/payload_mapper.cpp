@@ -36,6 +36,7 @@ Payload PayloadMapper::fromZmqDatagrams(std::span<const ZmqDatagram> messages) c
     } else if (zmq_datagram.topic() == service_discovery::kDecisionTopic) {
       rc::Decision decision;
       decision.ParseFromString(std::string{zmq_datagram.message()});
+      // ilog("Decision: {}", decision.DebugString());
       decisions.emplace_back(std::move(decision));
 
     } else {

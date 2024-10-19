@@ -28,16 +28,17 @@ Payload PayloadMapper::fromZmqDatagrams(std::span<const ZmqDatagram> messages) c
   std::vector<rc::Detection> detections;
 
   for (const ZmqDatagram& zmq_datagram : messages) {
-    if (zmq_datagram.topic() == service_discovery::kBehaviorTopic) {
+    if (zmq_datagram.topic() == service_discovery::kBehaviorUnificationTopic) {
       rc::Behavior behavior;
       behavior.ParseFromString(std::string{zmq_datagram.message()});
+      // ilog("Behavior: {}", behavior.DebugString());
       behaviors.emplace_back(std::move(behavior));
 
     } 
     if (zmq_datagram.topic() == service_discovery::kPerceptionDetectionTopic) {
       rc::Detection detection;
       detection.ParseFromString(std::string{zmq_datagram.message()});
-      ilog("detection: {}", detection.DebugString());
+      // ilog("detection: {}", detection.DebugString());
       detections.emplace_back(std::move(detection));
     }
     else {

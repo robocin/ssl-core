@@ -27,6 +27,8 @@ namespace rc {
 using ::protocols::behavior::unification::Behavior;
 using ::protocols::decision::Decision;
 using ::protocols::perception::Detection;
+using ::protocols::common::RobotId;
+
 
 } // namespace rc
 
@@ -50,8 +52,18 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
   std::vector<rc::Decision> decision_messages = decisionfromPayloads(payloads);
   std::vector<rc::Detection> detection_messages = detectionFromPayloads(payloads);
 
+  rc::Decision last_decision = decision_messages.back();
+
+  rc::Behavior behavior_output;
+  for (auto behavior : last_decision.behavior()) {
+    if (behavior.id() == 199) {
+        rc::RobotId *robot_id = behavior_output.mutable_id();
+        robot_id->CopyFrom(behavior.robot_id());
+    }
+  }
+
   // todo: implement process
-  return rc::Behavior{};
+  return behavior_output;
 }
 
 } // namespace behavior

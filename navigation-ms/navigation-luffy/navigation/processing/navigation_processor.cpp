@@ -70,7 +70,7 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
 
   rc::Detection last_detection = detections.back();
 
-  if (!behaviors.empty()) {
+  if (behaviors.empty()) {
     return std::nullopt;
   }
   rc::Behavior last_behavior = behaviors.back();
