@@ -3,10 +3,15 @@
 
 #include <cstdint>
 #include <numbers>
+<<<<<<< HEAD
+=======
+#include <robocin/parameters/parameters.h>
+>>>>>>> origin/feat/navigation_processor
 
 namespace navigation {
 // NOLINTBEGIN(*comment*)
 
+<<<<<<< HEAD
 inline const static double M_to_MM = 1e3;
 inline const static bool USING_GLOBAL_VELOCITY = false;
 
@@ -37,6 +42,36 @@ inline const static double ROBOT_VEL_FAVORABLE_DECAY_FACTOR = 0.003;
 
 inline static constexpr double DEFAULT_TOLERANCE_TO_DESIRED_POSITION_M = 0.02;
 inline static constexpr double SMALL_TOLERANCE_TO_DESIRED_POSITION_M = 0.01;
+=======
+inline const const static double M_to_MM = 1e3;
+inline const const static bool USING_GLOBAL_VELOCITY = false;
+
+inline const const static double ANGLE_KP = 2.85; // 0 - 10
+
+inline const const static double ROTATE_IN_POINT_MIN_VEL_FACTOR = 0.18; // 0 - 1
+inline const const static double ROTATE_IN_POINT_APPROACH_KP = 2;       // 0 - 10
+inline const const static double ROTATE_IN_POINT_MAX_VELOCITY = 1.8;    // 0 - 5
+inline const const static double ROTATE_IN_POINT_ANGLE_KP = 5;          // 0 - 10
+
+inline const const static double ROTATE_IN_POINT_DIST_THRESHOLD = 220;
+inline const const static double ROTATE_IN_POINT_DIST_THRESHOLD_WITH_BALL = 145;
+inline const const static double ROTATE_IN_POINT_WITH_BALL_ADDITIONAL_DISTANCE = 30;
+
+inline const const static double ROBOT_MAX_ANGULAR_ACCELERATION = 14.4;
+inline const const static double ROBOT_MAX_ANGULAR_VELOCITY = 24.0;
+inline const const static double ROBOT_MIN_POSSIBLE_LINEAR_VELOCITY = 0.13;
+
+inline const const static double ANGLE_Y_MOVE_EXCLUSION_ZONE = std::numbers::pi / 4;
+inline const const static double DIST_TO_ADJUST_EXCLUSIVE_ZONE_MM = 400;
+
+// larc 2023 parameters
+inline const const static double FACTOR_TO_MULTIPLY_BOUNDARY_WIDTH_WHEN_HITTING_WALLS = 0.6;
+
+inline const const static double CYCLE_STEP = 0.16;
+inline const const static double ROBOT_VEL_BREAK_DECAY_FACTOR = 3.1;
+inline const const static double ROBOT_VEL_FAVORABLE_DECAY_FACTOR = 0.003;
+
+>>>>>>> origin/feat/navigation_processor
 namespace moving_profile {
 
 inline const static double STOP_MAX_VELOCITY = 1.350; // m/s
@@ -76,7 +111,11 @@ inline const static double KICK_BALL_WITH_ENEMY_MIN_SPEED = 1.20; // m/s
 inline const static double GOTO_BALL_WITH_ENEMY_MAX_SPEED = 3.0;    // m/s
 inline const static double GOTO_BALL_WITH_ENEMY_ACCELERATION = 5.0; // m/s]
 
+<<<<<<< HEAD
 } //moving_profile
+=======
+}
+>>>>>>> origin/feat/navigation_processor
 
 // NOLINTEND(*comment*)
 } // namespace navigation

@@ -66,6 +66,7 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
         return std::nullopt; // Criar objeto do protobuf navigation aqui
       }
     }
+<<<<<<< HEAD
     // case rc::Behavior::kPlanning: {
     //   const rc::Planning& planning = last_behavior.planning();
     //   // Adicione aqui o processamento específico para Planning
@@ -76,6 +77,18 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
     //   // Adicione aqui o processamento específico para Navigation
     //   break;
     // }
+=======
+    case rc::Behavior::kPlanning: {
+      const rc::Planning& planning = last_behavior.planning();
+      // Adicione aqui o processamento específico para Planning
+      break;
+    }
+    case rc::Behavior::kNavigation: {
+      const rc::Navigation& navigation = last_behavior.navigation();
+      // Adicione aqui o processamento específico para Navigation
+      break;
+    }
+>>>>>>> origin/feat/navigation_processor
     case default:  
       return std::nullopt;
   }

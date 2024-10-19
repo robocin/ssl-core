@@ -8,7 +8,11 @@ namespace navigation {
 class GoToPointParser : public IMotionParser<::protocols::navigation::GoToPoint> {
  public:
   explicit GoToPointParser(std::any world);
+<<<<<<< HEAD
   RobotMove parse(const ::protocols::navigation::GoToPoint& motion) override;
+=======
+  RobotMove parse(const ::protocols::navigation::GoToPoint& go_to_point) override;
+>>>>>>> origin/feat/navigation_processor
 
  private:
   std::any world_;

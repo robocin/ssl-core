@@ -2,8 +2,11 @@
 #define NAVIGATION_PROCESSING_MOVE_TASK_STATE_H
 
 #include <protocols/navigation/motion.pb.h>
+<<<<<<< HEAD
 #include "navigation/parameters/parameters.h"
 #include "common/cpp/robocin/geometry/geometry.h"
+=======
+>>>>>>> origin/feat/navigation_processor
 #include <robocin/detection_util/elapsed_timer.h>
 #include <protocols/perception/detection.pb.h>
 #include <robocin/geometry/point2d.h>
@@ -22,8 +25,13 @@ enum class SkillMoveState { Unknown, Started, Running, Finished, ChangedTarget }
 class MoveTaskState {
   inline static constexpr double TOLERANCE_TO_CONSIDER_SAME_TARGET = 50;
   double estimateTimeToTarget;
+<<<<<<< HEAD
   rc::detection_util::ElapsedTimer runningToTarget;
   rc::detection_util::ElapsedTimer globalRunningToTarget;
+=======
+  detection_util::ElapsedTimer runningToTarget;
+  detection_util::ElapsedTimer globalRunningToTarget;
+>>>>>>> origin/feat/navigation_processor
   rc::Point2Df currentTarget;
   rc::Point2Df currentDesiredTarget;
 
