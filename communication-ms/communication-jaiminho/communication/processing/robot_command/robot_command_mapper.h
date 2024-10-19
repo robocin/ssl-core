@@ -19,7 +19,9 @@ class IRobotCommandMapper {
 
   virtual ~IRobotCommandMapper() = default;
 
-  virtual ::protocols::communication::RobotInfo fromNavigationAndReferee(const ::protocols::third_party::game_controller::Referee& referee) = 0;
+  virtual ::protocols::communication::RobotInfo fromNavigationAndReferee(
+    const ::protocols::third_party::game_controller::Referee& referee,
+    const ::protocols::navigation::Navigation& navigation ) = 0;
 };
 
 class RobotCommandMapper : public IRobotCommandMapper {
@@ -27,7 +29,7 @@ class RobotCommandMapper : public IRobotCommandMapper {
   RobotCommandMapper();
 
   ::protocols::communication::RobotInfo fromNavigationAndReferee(
-      const ::protocols::third_party::game_controller::Referee& referee) override;
+      const ::protocols::third_party::game_controller::Referee& referee, const ::protocols::navigation::Navigation& navigation) override;
 };
 
 } // namespace communication

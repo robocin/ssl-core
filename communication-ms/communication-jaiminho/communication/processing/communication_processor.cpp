@@ -2,6 +2,7 @@
 
 #include "communication/messaging/receiver/payload.h"
 
+#include <cstddef>
 #include <protocols/communication/robot_info.pb.h>
 #include <protocols/navigation/navigation.pb.h>
 
@@ -26,10 +27,10 @@ using ::protocols::third_party::game_controller::Referee;
 
 } // namespace tp
 
-// std::vector<rc::Navigation> navigationFromPayloads(std::span<const Payload> payloads) {
-//     return payloads | std::views::transform(&Payload::getNavigation) | std::views::join
-//             | std::ranges::to<std::vector>();
-// }
+std::vector<rc::Navigation> navigationFromPayloads(std::span<const Payload> payloads) {
+    return payloads | std::views::transform(&Payload::getNavigation) | std::views::join
+            | std::ranges::to<std::vector>();
+}
 
 std::vector<tp::Referee> refereeFromPayloads(std::span<const Payload> payloads) {
     return payloads | std::views::transform(&Payload::getReferee) | std::views::join
@@ -51,14 +52,13 @@ std::optional<rc::RobotInfo> CommunicationProcessor::process(std::span<const Pay
         last_game_controller_referee_ = std::move(referees.back());
     }
 
-    // std::vector<rc::Navigation> navigation = navigationFromPayloads(payloads);
-    // if(navigation.empty()) {
-    //     return std::nullopt;
-    // }
+    std::vector<rc::Navigation> navigation = navigationFromPayloads(payloads);
+    if(navigation.empty()) {
+        return std::nullopt;
+    }
+    rc::Navigation last_navigation_ = navigation.back();
 
-    // const rc::Navigation last_navigation = navigation.back();
-
-    return robot_command_mapper_->fromNavigationAndReferee(*last_game_controller_referee_);
+    return robot_command_mapper_->fromNavigationAndReferee(*last_game_controller_referee_, last_navigation_);
 }
 
 } // namespace communication

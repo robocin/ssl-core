@@ -42,7 +42,7 @@ using ::protocols::third_party::game_controller::Referee;
 
 RobotCommandMapper::RobotCommandMapper(){}
 
-rc::RobotInfo RobotCommandMapper::fromNavigationAndReferee(const tp::Referee& referee) {
+rc::RobotInfo RobotCommandMapper::fromNavigationAndReferee(const tp::Referee& referee, const rc::Navigation& navigation) {
     rc::RobotInfo result;
     rc::Command* command = result.mutable_command();
     rc::RobotId* robot_id = command->mutable_robot_id();
@@ -53,8 +53,7 @@ rc::RobotInfo RobotCommandMapper::fromNavigationAndReferee(const tp::Referee& re
 
     command->set_msg_type(rc::MessageType::SSL_SPEED);
     
-    robot_id->set_color(rc::RobotId::COLOR_BLUE);
-    robot_id->set_number(1);
+    robot_id->CopyFrom(navigation.output(navigation.output_size() - 1).id());
 
     // *command->mutable_ref_command()->CopyFrom(referee.ref_command());
 
