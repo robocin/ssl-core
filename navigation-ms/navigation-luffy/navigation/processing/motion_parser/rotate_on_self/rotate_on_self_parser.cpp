@@ -1,4 +1,4 @@
-#include "navigation/processing/motion_parser/rotate_on_self_parser.h"
+#include "rotate_on_self_parser.h"
 
 #include <protocols/navigation/motion.pb.h>
 
