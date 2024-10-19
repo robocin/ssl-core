@@ -4,16 +4,16 @@
 #include <robocin/geometry/point2d.h>
 namespace navigation {
 
-namespace rc {
-using ::robocin::Point2Df;
-} // namespace rc
-
 class RobotMove {
-  rc::Point2Df velocity_;
+  ::robocin::Point2Df velocity_;
   double angularVelocity_;
 
- public:
-  RobotMove(rc::Point2Df velocity, double angularVelocity);
+  public:
+    RobotMove(::robocin::Point2Df velocity, double angularVelocity);
+    explicit RobotMove(double angularVelocity);
+
+    ::robocin::Point2Df velocity() const { return velocity_; }
+    double angularVelocity() const { return angularVelocity_; }
 };
 
 } // namespace navigation

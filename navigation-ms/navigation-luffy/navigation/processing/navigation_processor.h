@@ -10,7 +10,6 @@
 #include <optional>
 #include <protocols/behavior/behavior_unification.pb.h>
 #include <protocols/navigation/navigation.pb.h>
-#include <robocin/detection_util/clock.h>
 #include <robocin/parameters/parameters.h>
 
 namespace navigation {
@@ -32,7 +31,7 @@ class INavigationProcessor {
 
 class NavigationProcessor : public INavigationProcessor {
  public:
-  NavigationProcessor(std::unique_ptr<GoToPointParser> go_to_point_parser,
+  explicit NavigationProcessor(std::unique_ptr<GoToPointParser> go_to_point_parser,
                       std::unique_ptr<RotateInPointParser> rotate_in_point_parser,
                       std::unique_ptr<RotateOnSelfParser> rotate_on_self_parser);
 
@@ -43,6 +42,9 @@ class NavigationProcessor : public INavigationProcessor {
   std::unique_ptr<GoToPointParser> go_to_point_parser_;
   std::unique_ptr<RotateInPointParser> rotate_in_point_parser_;
   std::unique_ptr<RotateOnSelfParser> rotate_on_self_parser_;
+
+  const ::protocols::behavior::unification::Behavior last_behavior_;
+
 };
 
 } // namespace navigation

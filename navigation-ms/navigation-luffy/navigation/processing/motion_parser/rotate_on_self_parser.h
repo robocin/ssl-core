@@ -7,7 +7,8 @@ namespace navigation {
 
 class RotateOnSelfParser : public IMotionParser {
  public:
-  RobotMove parse(const ::protocols::navigation::Navigation& navigation) override;
+  RobotMove parse(const ::protocols::behavior::unification::Motion& motion,
+                  const ::protocols::perception::Robot& robot) override;
 
  private:
   //   std::optional<::protocols::perception::Detection> last_detection_;

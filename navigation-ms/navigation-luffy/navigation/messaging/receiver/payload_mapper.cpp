@@ -11,12 +11,13 @@ namespace {
 
 namespace service_discovery = robocin::service_discovery;
 
-using ::robocin::wlog;
+using ::robocin::ilog;
 using ::robocin::ZmqDatagram;
 
 namespace rc {
 
 using ::protocols::behavior::unification::Behavior;
+using ::protocols::perception::Detection;
 
 } // namespace rc
 
@@ -24,6 +25,7 @@ using ::protocols::behavior::unification::Behavior;
 
 Payload PayloadMapper::fromZmqDatagrams(std::span<const ZmqDatagram> messages) const {
   std::vector<rc::Behavior> behaviors;
+  std::vector<rc::Detection> detections;
 
   for (const ZmqDatagram& zmq_datagram : messages) {
     if (zmq_datagram.topic() == service_discovery::kBehaviorTopic) {
@@ -31,12 +33,19 @@ Payload PayloadMapper::fromZmqDatagrams(std::span<const ZmqDatagram> messages) c
       behavior.ParseFromString(std::string{zmq_datagram.message()});
       behaviors.emplace_back(std::move(behavior));
 
-    } else {
+    } 
+    if (zmq_datagram.topic() == service_discovery::kPerceptionDetectionTopic) {
+      rc::Detection detection;
+      detection.ParseFromString(std::string{zmq_datagram.message()});
+      ilog("detection: {}", detection.DebugString());
+      detections.emplace_back(std::move(detection));
+    }
+    else {
       // wlog("zmq_datagram with topic '{}' not processed.", zmq_datagram.topic());
     }
   }
 
-  return Payload{std::move(behaviors)};
+  return Payload{std::move(behaviors), std::move(detections)};
 }
 
 } // namespace navigation

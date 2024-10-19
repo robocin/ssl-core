@@ -18,9 +18,11 @@ using ::robocin::ZmqDatagram;
 } // namespace
 
 MessageReceiver::MessageReceiver(std::unique_ptr<IZmqSubscriberSocket> behavior_socket,
+                                 std::unique_ptr<IZmqSubscriberSocket> perception_socket,
                                  std::unique_ptr<IZmqPoller> zmq_poller,
                                  std::unique_ptr<IPayloadMapper> payload_mapper) :
     behavior_socket_{std::move(behavior_socket)},
+    perception_socket_{std::move(perception_socket)},
     zmq_poller_{std::move(zmq_poller)},
     payload_mapper_{std::move(payload_mapper)} {}
 
@@ -40,6 +42,16 @@ Payload MessageReceiver::receive() {
 
       datagrams.emplace_back(std::move(behavior_zmq_datagram));
     }
+
+    while(true) {
+      ZmqDatagram perception_zmq_datagram = zmq_poller_->receive(*perception_socket_);
+      if (perception_zmq_datagram.empty()) {
+        break;
+      }
+      
+      datagrams.emplace_back(std::move(perception_zmq_datagram));
+    }
+
 
     if (datagrams.empty()) {
       // wlog("no datagram received after {} ms.", pRefereePollerTimeoutMs());

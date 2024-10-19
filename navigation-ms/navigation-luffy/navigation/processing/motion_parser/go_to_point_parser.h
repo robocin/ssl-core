@@ -7,7 +7,11 @@ namespace navigation {
 
 class GoToPointParser : public IMotionParser {
  public:
-  RobotMove parse(const ::protocols::navigation::Navigation& navigation) override;
+  RobotMove parse(const ::protocols::behavior::unification::Motion& motion,
+                  const ::protocols::perception::Robot& robot) override;
+
+  RobotMove parse(const ::protocols::navigation::GoToPoint& go_to_point,
+                  const ::protocols::perception::Robot& robot);
 
  private:
   //   std::optional<::protocols::perception::Detection> last_detection_;

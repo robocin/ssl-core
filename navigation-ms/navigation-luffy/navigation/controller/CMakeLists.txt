@@ -10,7 +10,6 @@ robocin_cpp_library(
        common::concurrency
        common::memory
        common::output
-       common::detection_util
        messaging_receiver
        messaging_sender
        processing

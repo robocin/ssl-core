@@ -7,6 +7,7 @@ import "protocols/common/peripheral_actuation.proto";
 import "protocols/navigation/motion.proto";
 import "protocols/navigation/navigation.proto";
 import "protocols/navigation/planning.proto";
+import "protocols/common/robot_id.proto";
 
 /* 
     Remove this implementation after CBR-2024.
