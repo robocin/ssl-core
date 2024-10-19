@@ -17,12 +17,16 @@ using ::robocin::ZmqDatagram;
 
 } // namespace
 
-MessageReceiver::MessageReceiver(std::unique_ptr<IZmqSubscriberSocket> behavior_socket,
-                                 std::unique_ptr<IZmqPoller> zmq_poller,
+MessageReceiver::MessageReceiver(std::unique_ptr<::robocin::IZmqSubscriberSocket> behavior_socket,
+                                 std::unique_ptr<::robocin::IZmqSubscriberSocket> detection_socket,
+                                 std::unique_ptr<::robocin::IZmqSubscriberSocket> game_status_socket,
+                                 std::unique_ptr<::robocin::IZmqPoller> zmq_poller,
                                  std::unique_ptr<IPayloadMapper> payload_mapper) :
-    behavior_socket_{std::move(behavior_socket)},
-    zmq_poller_{std::move(zmq_poller)},
-    payload_mapper_{std::move(payload_mapper)} {}
+  behavior_socket_{std::move(behavior_socket)},
+  detection_socket_{std::move(detection_socket)},
+  game_status_socket_{std::move(game_status_socket)},
+  zmq_poller_{std::move(zmq_poller)},
+  payload_mapper_{std::move(payload_mapper)} {}
 
 Payload MessageReceiver::receive() {
   // ilog("running.");
@@ -39,6 +43,24 @@ Payload MessageReceiver::receive() {
       }
 
       datagrams.emplace_back(std::move(behavior_zmq_datagram));
+    }
+
+    while (true) {
+      ZmqDatagram game_status_zmq_datagram = zmq_poller_->receive(*game_status_socket_);
+      if (game_status_zmq_datagram.empty()) {
+        break;
+      }
+
+      datagrams.emplace_back(std::move(game_status_zmq_datagram));
+    }
+
+    while (true) {
+      ZmqDatagram detection_zmq_datagram = zmq_poller_->receive(*detection_socket_);
+      if (detection_zmq_datagram.empty()) {
+        break;
+      }
+
+      datagrams.emplace_back(std::move(detection_zmq_datagram));
     }
 
     if (datagrams.empty()) {

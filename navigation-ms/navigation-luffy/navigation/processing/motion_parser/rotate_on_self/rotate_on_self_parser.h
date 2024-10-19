@@ -7,9 +7,15 @@ namespace navigation {
 
 class RotateOnSelfParser : public IMotionParser<::protocols::navigation::RotateOnSelf> {
  public:
-  RobotMove parse(const ::protocols::navigation::RotateOnSelf& motion) override;
+  RobotMove parse(const ::protocols::navigation::RotateOnSelf& motion,
+                  ::protocols::referee::GameStatus& game_status,
+                  ::protocols::perception::Detection& detection) override;
 
  private:
+  std::optional<::protocols::navigation::RotateOnSelf> motion_;
+  std::optional<::protocols::referee::GameStatus> game_status_;
+  std::optional<::protocols::perception::Detection> detection_;
+  std::optional<::protocols::perception::Robot> ally_;
   //   std::optional<::protocols::perception::Detection> last_detection_;
   //   std::unique_ptr<ICameraFilter::Factory> camera_filter_factory_;
   //   // TODO(joseviccruz): replace by absl::flat_hash_map
