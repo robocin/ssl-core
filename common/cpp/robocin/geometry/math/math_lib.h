@@ -2,8 +2,8 @@
 // Created by jose-cruz on 29/06/2021.
 //
 
-#ifndef ROBOCIN_MATH_H
-#define ROBOCIN_MATH_H
+#ifndef ROBOCIN_MATH_LIB_H
+#define ROBOCIN_MATH_LIB_H
 
 #include <cmath>
 #include <numeric>
@@ -22,7 +22,7 @@ namespace robocin::math {
   template <class T>
   [[maybe_unused]] constexpr bool isNull(const T& value) noexcept {
     if constexpr (std::is_floating_point_v<T>) {
-      return qFuzzyIsNull(value);
+      return (fabsf(value - 1.0F) < 0.00001F);
     } else {
       return value == 0;
     }
