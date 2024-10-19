@@ -2,8 +2,8 @@
 // Created by jose-cruz on 29/06/2021.
 //
 
-#ifndef ROBOCIN_MATH_H
-#define ROBOCIN_MATH_H
+#ifndef ROBOCIN_MATH_LIB_H
+#define ROBOCIN_MATH_LIB_H
 
 #include <cmath>
 #include <numeric>
