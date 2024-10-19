@@ -8,27 +8,40 @@
 
 namespace robocin::detection_util {
 
-ElapsedTimer::ElapsedTimer(bool started) : started_{started}, valid_ = true, start_{Clock::now()} {}
+ElapsedTimer::ElapsedTimer(bool started) : started_{started}, valid_ {false}, start_{Clock::now()} {}
 
 void ElapsedTimer::stop() { started_ = false; }
 
+/*starting a timer makes it valid again.*/
 void ElapsedTimer::start() { started_ = true, valid_ = true, start_ = Clock::now(); }
 
+/*Restarts the timer and returns the number of milliseconds elapsed since the previous start.
+Calling this function on a ElapsedTimer that is invalid results in undefined behavior.*/
 Duration ElapsedTimer::restart() {
-  started_ = true;
-  valid_ = true;
-  Duration result = this->elapsed();
-  return start_ = Clock::now(), result;
+  if(valid_){
+    started_ = true;
+    valid_ = true;
+    Duration result = this->elapsed();
+    return start_ = Clock::now(), result;
+  }
 }
 
 bool ElapsedTimer::isStarted() const { return started_; }
 
-bool isValid() const noexcept { return valid_; }
+/* Returns false if the timer has never been started 
+or invalidated by a call to invalidate().*/
+bool ElapsedTimer::isValid() const noexcept { return valid_; }
 
-void invalidate() noexcept { valid_ = false; }
+/*Marks this object as invalid. Calculations of timer elapsed since
+ the data invalidation are undefined and will likely produce bizarre results.*/
+void ElapsedTimer::invalidate() noexcept { valid_ = false; }
 
+/*returns time in nanoseconds.
+Calling this function on a ElapsedTimer that is invalid results in undefined behavior.*/
 Duration ElapsedTimer::elapsed() const {
-  return started_ ? Frames(/*frames=*/0) : Clock::now() - start_;
+  if(valid_){
+    return started_ ? Frames(/*frames=*/0) : Clock::now() - start_;
+  }
 }
 
 } // namespace robocin::detection_util
