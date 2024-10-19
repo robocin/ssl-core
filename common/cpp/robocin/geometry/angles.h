@@ -1,5 +1,5 @@
-#ifndef ROBOCIN_GEOMETRY_H
-#define ROBOCIN_GEOMETRY_H
+#ifndef ROBOCIN_ANGLES_H
+#define ROBOCIN_ANGLES_H
 
 #include <cassert>
 #include <concepts>
