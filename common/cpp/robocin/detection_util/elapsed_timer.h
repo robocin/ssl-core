@@ -6,7 +6,6 @@
 #if defined(__robocin_lib_std_concurrency) and __robocin_lib_std_concurrency >= 202405L
 
 #include "robocin/detection_util/timestamp.h"
-#include <cstdint>
 
 namespace robocin::detection_util {
 
@@ -24,7 +23,6 @@ class ElapsedTimer {
 
   [[nodiscard]] bool isStarted() const;
   [[nodiscard]] Duration elapsed() const;
-  [[nodiscard]] int64_t nsecsElapsed() const noexcept;
 
  private:
   bool started_;
