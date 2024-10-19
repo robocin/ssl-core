@@ -1,5 +1,5 @@
+#include "behavior/controller/consumer_controller.h"
 #include "behavior/controller/producer_controller.h"
-#include "behavior/messaging/receiver/payload.h"
 
 #include <memory>
 #include <print>
@@ -13,16 +13,21 @@
 #include <robocin/wip/service_discovery/addresses.h>
 #include <thread>
 
+using behavior::BehaviorProcessor;
+using behavior::ConsumerController;
+using behavior::IBehaviorProcessor;
 using behavior::IController;
 using behavior::IMessageReceiver;
+using behavior::IMessageSender;
 using behavior::IPayloadMapper;
 using behavior::MessageReceiver;
+using behavior::MessageSender;
 using behavior::Payload;
 using behavior::PayloadMapper;
 using behavior::ProducerController;
-
 using ::robocin::ConditionVariableConcurrentQueue;
 using ::robocin::IConcurrentQueue;
+using ::robocin::ilog;
 using ::robocin::IZmqPoller;
 using ::robocin::IZmqPublisherSocket;
 using ::robocin::IZmqSubscriberSocket;
@@ -64,6 +69,28 @@ std::unique_ptr<IController> makeProducer(object_ptr<IConcurrentQueue<Payload>> 
   return std::make_unique<ProducerController>(messages, makeMessageReceiver());
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+std::unique_ptr<IBehaviorProcessor> makeBehaviorProcessor() {
+  return std::make_unique<BehaviorProcessor>(std::make_unique<parameters::HandlerEngine>());
+}
+
+std::unique_ptr<IMessageSender> makeMessageSender() {
+  std::unique_ptr<IZmqPublisherSocket> behavior_socket = std::make_unique<ZmqPublisherSocket>();
+  behavior_socket->bind(service_discovery::kBehaviorAddress);
+
+  return std::make_unique<MessageSender>(std::move(behavior_socket));
+}
+
+std::unique_ptr<IController> makeConsumer(object_ptr<IConcurrentQueue<Payload>> messages) {
+  return std::make_unique<ConsumerController>(messages,
+                                              std::make_unique<parameters::HandlerEngine>(),
+                                              makeBehaviorProcessor(),
+                                              makeMessageSender());
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
 int main() {
   std::println("behavior-zidane is runnning!");
 
@@ -71,8 +98,10 @@ int main() {
       = std::make_unique<ConditionVariableConcurrentQueue<Payload>>();
 
   std::unique_ptr<IController> producer_controller = makeProducer(messages);
+  std::unique_ptr<IController> consumer_controller = makeConsumer(messages);
 
   std::jthread producer_thread(&IController::run, producer_controller.get());
+  std::jthread consumer_thread(&IController::run, consumer_controller.get());
 
   return 0;
 }

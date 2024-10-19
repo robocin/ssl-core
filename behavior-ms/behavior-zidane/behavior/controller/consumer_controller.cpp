@@ -56,7 +56,7 @@ void ConsumerController::exec(std::span<const Payload> payloads) {
 
   std::optional<rc::Behavior> behavior = behavior_processor_->process(payloads);
   if (behavior != std::nullopt) {
-    ilog("Sent something!");
+    // ilog("Sent something!");
     message_sender_->send(*behavior);
   }
 }

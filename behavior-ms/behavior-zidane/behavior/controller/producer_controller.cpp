@@ -21,7 +21,7 @@ void ProducerController::run() {
 
   while (true) {
     if (Payload payload = message_receiver_->receive(); !payload.empty()) {
-      ilog("Received something");
+      // ilog("Received something");
       messages_->push(std::move(payload));
     }
   }
