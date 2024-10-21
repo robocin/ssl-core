@@ -69,29 +69,28 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
 
   rc::Behavior behavior_output;
   rc::Decision last_decision = decision_messages.back();
-  // // ilog("Detection lentgh : {}", detection_messages.size());
-  // // rc::Detection last_detection = detection_messages.back();
+  // ilog("Detection lentgh : {}", detection_messages.size());
+  rc::Detection last_detection = detection_messages.back();
 
-  // for (auto behavior : last_decision.behavior()) {
-  //   if (behavior.id() == 199) {
-  //       rc::RobotId *robot_id = behavior_output.mutable_id();
-  //       robot_id->CopyFrom(behavior.robot_id());
-  //   }
-  // }
+  for (auto behavior : last_decision.behavior()) {
+    if (behavior.id() == 199) {
+        rc::RobotId *robot_id = behavior_output.mutable_id();
+        robot_id->CopyFrom(behavior.robot_id());
+    }
+  }
 
-  // rc::MotionList motion_list;
-  // rc::Motion motion;
-  // rc::GoToPoint go_to_point;
-  // rc::Ball ball = last_detection.balls(last_detection.balls_size() - 1);
+  rc::MotionList motion_list;
+  rc::Motion motion;
+  auto* go_to_point = new rc::GoToPoint;
+  rc::Ball ball = last_detection.balls(last_detection.balls_size() - 1);
 
-  // go_to_point.mutable_target()->set_x(ball.position().x());
-  // go_to_point.mutable_target()->set_y(ball.position().y());
-  // go_to_point.set_target_angle(0.0);
+  go_to_point->mutable_target()->set_x(ball.position().x());
+  go_to_point->mutable_target()->set_y(ball.position().y());
+  go_to_point->set_target_angle(0.0);
 
-  // motion.set_allocated_go_to_point(&go_to_point);
-  // *motion_list.add_motion() = motion;
-  // behavior_output.set_allocated_motion(&motion_list);
-
+  motion.set_allocated_go_to_point(go_to_point);
+  motion_list.add_motion()->CopyFrom(motion);
+  behavior_output.mutable_motion()->CopyFrom(motion_list);
 
   // todo: implement process
   return behavior_output;
