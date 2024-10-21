@@ -1,6 +1,7 @@
 #ifndef NAVIGATION_PROCESSING_MOVE_TASK_STATE_H
 #define NAVIGATION_PROCESSING_MOVE_TASK_STATE_H
 
+#include <protocols/behavior/motion.pb.h>
 #include <protocols/navigation/motion.pb.h>
 #include "navigation/parameters/parameters.h"
 #include "common/cpp/robocin/geometry/angles.h"

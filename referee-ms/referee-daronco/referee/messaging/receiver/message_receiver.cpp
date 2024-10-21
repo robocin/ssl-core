@@ -39,7 +39,6 @@ Payload MessageReceiver::receive() {
       if (gateway_zmq_datagram.empty()) {
         break;
       }
-
       datagrams.emplace_back(std::move(gateway_zmq_datagram));
     }
 
@@ -48,7 +47,6 @@ Payload MessageReceiver::receive() {
       if (perception_zmq_datagram.empty()) {
         break;
       }
-
       datagrams.emplace_back(std::move(perception_zmq_datagram));
     }
 

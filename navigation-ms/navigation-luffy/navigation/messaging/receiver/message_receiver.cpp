@@ -39,6 +39,7 @@ Payload MessageReceiver::receive() {
     while (true) {
       ZmqDatagram behavior_zmq_datagram = zmq_poller_->receive(*behavior_socket_);
       if (behavior_zmq_datagram.empty()) {
+        // ilog("Received nothing from behavior.");
         break;
       }
 
@@ -64,7 +65,7 @@ Payload MessageReceiver::receive() {
     }
 
     if (datagrams.empty()) {
-      // wlog("no datagram received after {} ms.", pRefereePollerTimeoutMs());
+      // wlog("no datagram received after {} ms.", pNavigationPollerTimeoutMs());
     }
   }
 

@@ -11,7 +11,7 @@ namespace {
 
 namespace service_discovery = robocin::service_discovery;
 
-using ::robocin::wlog;
+using ::robocin::ilog;
 using ::robocin::ZmqDatagram;
 
 namespace rc {
@@ -30,9 +30,10 @@ Payload PayloadMapper::fromZmqDatagrams(std::span<const ZmqDatagram> messages) c
   std::vector<rc::GameStatus> game_statuses;
 
   for (const ZmqDatagram& zmq_datagram : messages) {
-    if (zmq_datagram.topic() == service_discovery::kBehaviorTopic) {
+    if (zmq_datagram.topic() == service_discovery::kBehaviorUnificationTopic) {
       rc::Behavior behavior;
       behavior.ParseFromString(std::string{zmq_datagram.message()});
+      // ilog("Behavior: {}", behavior.DebugString());
       behaviors.emplace_back(std::move(behavior));
 
     } else if (zmq_datagram.topic() == service_discovery::kPerceptionDetectionTopic) {

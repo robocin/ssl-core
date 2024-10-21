@@ -2,9 +2,12 @@
 #include "navigation/parameters/parameters.h"
 #include "common/cpp/robocin/geometry/angles.h"
 #include "common/cpp/robocin/geometry/math_lib.h"
+#include <protocols/navigation/motion.pb.h>
+#include <protocols/perception/detection.pb.h>
 #include "navigation/processing/utils/move_task_state.h"
 #include <regex>
-#include <cmath>
+#include "navigation/parameters/parameters.h"
+#include "robocin/geometry/point2d.h"
 
 namespace navigation {
 

@@ -1,12 +1,8 @@
-#include "navigation/controller/consumer_controller.h"
 #include "navigation/controller/producer_controller.h"
-#include "processing/motion_parser/go_to_point_parser.h"
-#include "processing/motion_parser/rotate_in_point_parser.h"
-#include "processing/motion_parser/rotate_on_self_parser.h"
+#include "navigation/controller/consumer_controller.h"
 
 #include <memory>
 #include <print>
-#include <robocin/detection_util/clock.h>
 #include <robocin/memory/object_ptr.h>
 #include <robocin/network/zmq_poller.h>
 #include <robocin/network/zmq_subscriber_socket.h>
@@ -15,7 +11,6 @@
 #include <thread>
 
 namespace parameters = ::robocin::parameters;
-namespace detection_util = ::robocin::detection_util;
 namespace service_discovery = robocin::service_discovery;
 
 using navigation::GoToPointParser;
@@ -33,6 +28,9 @@ using navigation::NavigationProcessor;
 using navigation::Payload;
 using navigation::PayloadMapper;
 using navigation::ProducerController;
+using navigation::GoToPointParser;
+using navigation::RotateInPointParser;
+using navigation::RotateOnSelfParser;
 using ::robocin::ConditionVariableConcurrentQueue;
 using ::robocin::IConcurrentQueue;
 using ::robocin::IZmqPoller;
@@ -42,18 +40,23 @@ using ::robocin::object_ptr;
 using ::robocin::ZmqPoller;
 using ::robocin::ZmqPublisherSocket;
 using ::robocin::ZmqSubscriberSocket;
+using ::robocin::ilog;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 std::unique_ptr<IMessageReceiver> makeMessageReceiver() {
   static constexpr std::array kBehaviorTopics = {
-      service_discovery::kBehaviorTopic,
+      service_discovery::kBehaviorUnificationTopic,
   };
   static constexpr std::array kPerceptionTopics = {
       service_discovery::kPerceptionDetectionTopic,
   };
   static constexpr std::array kRefereeTopics = {
       service_discovery::kRefereeGameStatusTopic,
+  };
+
+  static constexpr std::array kPerceptionTopics = {
+      service_discovery::kPerceptionDetectionTopic,
   };
 
   std::unique_ptr<IZmqSubscriberSocket> behavior_socket = std::make_unique<ZmqSubscriberSocket>();
@@ -64,6 +67,9 @@ std::unique_ptr<IMessageReceiver> makeMessageReceiver() {
   
   std::unique_ptr<IZmqSubscriberSocket> game_status_socket = std::make_unique<ZmqSubscriberSocket>();
   behavior_socket->connect(service_discovery::kRefereeAddress, kRefereeTopics);
+
+  std::unique_ptr<IZmqSubscriberSocket> perception_socket = std::make_unique<ZmqSubscriberSocket>();
+  perception_socket->connect(service_discovery::kPerceptionAddress, kPerceptionTopics);
 
   std::unique_ptr<IZmqPoller> zmq_poller = std::make_unique<ZmqPoller>();
   zmq_poller->push(*behavior_socket);

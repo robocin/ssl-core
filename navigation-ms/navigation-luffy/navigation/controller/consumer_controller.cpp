@@ -51,6 +51,7 @@ void ConsumerController::exec(std::span<const Payload> payloads) {
   if (std::optional<rc::Navigation> navigation_msg = navigation_processor_->process(payloads);
     navigation_msg != std::nullopt) {
     message_sender_->send(*navigation_msg);
+    // ilog("navigation sent: {}", navigation_msg->DebugString());
   }
 }
 

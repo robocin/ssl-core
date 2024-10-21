@@ -22,6 +22,7 @@ Payload::Payload(std::vector<rc::Behavior> behaviors,
     game_statuses_{std::move(game_statuses)} {}
 
 std::span<const rc::Behavior> Payload::getBehaviors() const { return behaviors_; }
+std::span<const rc::Detection> Payload::getDetections() const { return detections_; }
 
 std::span<const rc::Detection> Payload::getDetections() const { return detections_; }
 
