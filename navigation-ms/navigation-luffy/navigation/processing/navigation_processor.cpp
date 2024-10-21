@@ -67,10 +67,18 @@ std::vector<rc::Detection> detectionFromPayloads(std::span<const Payload> payloa
 NavigationProcessor::NavigationProcessor() {}
 
 std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Payload> payloads) {
-  std::vector<rc::Behavior> behaviors = behaviorFromPayloads(payloads);
   std::vector<rc::Detection> detections = detectionFromPayloads(payloads);
 
   rc::Navigation navigation_output;
+
+  if(std::vector<rc::Behavior> behaviors = behaviorFromPayloads(payloads);
+    !behaviors.empty()) {
+    last_behavior_ = std::move(behaviors.back());
+  }
+
+  if(!last_behavior_) {
+    return std::nullopt;
+  }
 
   if (detections.empty()) {
     // a new package must be generated only when a new detection is received.
@@ -78,16 +86,11 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
   }
 
   rc::Detection last_detection = detections.back();
-
-  if (behaviors.empty()) {
-    return std::nullopt;
-  }
-  rc::Behavior last_behavior = behaviors.back();
   
-  switch (last_behavior.output_case()) {
+  switch (last_behavior_->output_case()) {
     case rc::Behavior::kMotion: {
       // robocin::ilog("Motion: {}", last_behavior.motion().DebugString());
-      const rc::MotionList& motionList = last_behavior.motion();
+      const rc::MotionList& motionList = last_behavior_->motion();
       rc::Robot ally;
 
       for (const auto& motion : motionList.motion()) {
@@ -98,8 +101,7 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
           // robocin::ilog("GoToPoint: {}", go_to_point.DebugString());
           // get robot from detection if robot id == behavior id field
           for (const auto& robot : last_detection.robots()) {
-            if (199 == last_behavior.id().number()) {
-              robocin::ilog("Robot: {}", robot.DebugString());
+            if (199 == last_behavior_->id().number()) {
               ally = robot;
               break;
             }
@@ -149,8 +151,8 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
           //////////////////////////////////////
 
           rc::RobotId* robot_id = output.mutable_id();
-          robot_id->set_number(last_behavior.id().number());
-          robot_id->set_color(last_behavior.id().color());
+          robot_id->set_number(last_behavior_->id().number());
+          robot_id->set_color(last_behavior_->id().color());
 
           rc::PeripheralActuation* peripheral_actuation = output.mutable_peripheral_actuation();
           peripheral_actuation->CopyFrom(motion.peripheral_actuation());
@@ -197,22 +199,22 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
       }
     }
     case rc::Behavior::kPlanning: {
-      robocin::ilog("Planning: {}", last_behavior.planning().DebugString());
-      const rc::PlanningList& planningList = last_behavior.planning();
+      // robocin::ilog("Planning: {}", last_behavior_->planning().DebugString());
+      const rc::PlanningList& planningList = last_behavior_->planning();
       // Adicione aqui o processamento específico para Planning
       break;
     }
     case rc::Behavior::kNavigation: {
-      robocin::ilog("Navigation: {}", last_behavior.navigation().DebugString());
-      const rc::NavigationList& navigationList = last_behavior_.navigation();
+      // robocin::ilog("Navigation: {}", last_behavior_->navigation().DebugString());
+      const rc::NavigationList& navigationList = last_behavior_->navigation();
       // Adicione aqui o processamento específico para Navigation
       break;
     }
     case rc::Behavior::OUTPUT_NOT_SET: {
-      robocin::ilog("Output not set");
+      // robocin::ilog("Output not set");
       rc::Output output;         
       rc::RobotId *robot_id = output.mutable_id();
-      robot_id->CopyFrom(last_behavior.id());
+      robot_id->CopyFrom(last_behavior_->id());
       *navigation_output.add_output() = output;
       return navigation_output; 
     } 

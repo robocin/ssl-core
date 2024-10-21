@@ -54,11 +54,14 @@ BehaviorProcessor::BehaviorProcessor(
     parameters_handler_engine_{std::move(parameters_handler_engine)} {}
 
 std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> payloads) {
-  std::vector<rc::Decision> decision_messages = decisionfromPayloads(payloads);
   std::vector<rc::Detection> detection_messages = detectionFromPayloads(payloads);
   
-  if(decision_messages.empty()) {
-    // ilog("Sem decision");
+   if(std::vector<rc::Decision> decision_messages = decisionfromPayloads(payloads); 
+    !decision_messages.empty()) {
+      last_decision_ = decision_messages.back();
+  }
+
+  if (!last_decision_) {
     return std::nullopt;
   }
 
@@ -68,11 +71,10 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
   }
 
   rc::Behavior behavior_output;
-  rc::Decision last_decision = decision_messages.back();
   // ilog("Detection lentgh : {}", detection_messages.size());
   rc::Detection last_detection = detection_messages.back();
 
-  for (auto behavior : last_decision.behavior()) {
+  for (auto behavior : last_decision_->behavior()) {
     if (behavior.id() == 199) {
         rc::RobotId *robot_id = behavior_output.mutable_id();
         robot_id->CopyFrom(behavior.robot_id());
