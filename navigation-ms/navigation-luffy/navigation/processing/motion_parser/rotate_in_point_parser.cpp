@@ -1,13 +1,13 @@
-#include "navigation/processing/motion_parser/rotate_in_point_parser.h"
+#include "rotate_in_point_parser.h"
 
-#include <protocols/navigation/motion.pb.h>
+#include <protocols/behavior/motion.pb.h>
 
 namespace navigation {
 
-RobotMove RotateInPointParser::parse(::protocols::navigation::RotateInPoint& motion, 
-                  ::protocols::referee::GameStatus& game_status, 
-                  ::protocols::perception::Detection& detection) {
-  RobotMove move;
+RobotMove RotateInPointParser::parse(::protocols::behavior::RotateInPoint& motion,
+                                     ::protocols::referee::GameStatus& game_status,
+                                     ::protocols::perception::Detection& detection) {
+  RobotMove move(0);
   // PROCESSAMENTO DO ROTATEINPOINT
   return move;
 }
