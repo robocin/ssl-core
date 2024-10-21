@@ -26,9 +26,9 @@ using navigation::NavigationProcessor;
 using navigation::Payload;
 using navigation::PayloadMapper;
 using navigation::ProducerController;
-using navigation::GoToPointParser;
-using navigation::RotateInPointParser;
-using navigation::RotateOnSelfParser;
+// using navigation::GoToPointParser;
+// using navigation::RotateInPointParser;
+// using navigation::RotateOnSelfParser;
 using ::robocin::ConditionVariableConcurrentQueue;
 using ::robocin::IConcurrentQueue;
 using ::robocin::IZmqPoller;
@@ -76,7 +76,7 @@ std::unique_ptr<IController> makeProducer(object_ptr<IConcurrentQueue<Payload>> 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 std::unique_ptr<INavigationProcessor> makeNavigationProcessor() {
-  return std::make_unique<NavigationProcessor>(std::make_unique<GoToPointParser>()); // TODO: passar os parâmetros aqui
+  return std::make_unique<NavigationProcessor>(); // TODO: passar os parâmetros aqui
 }
 
 std::unique_ptr<IMessageSender> makeMessageSender() {

@@ -57,15 +57,15 @@ rc::RobotInfo RobotCommandMapper::fromNavigationAndReferee(const tp::Referee& re
 
     // *command->mutable_ref_command()->CopyFrom(referee.ref_command());
 
-    robot_velocity.mutable_velocity()->set_x(0.0);
-    robot_velocity.mutable_velocity()->set_y(0.0);
-    robot_velocity.set_angular_velocity(2.0);
+    robot_velocity.mutable_velocity()->set_x(navigation.output(navigation.output_size() - 1).forward_velocity());
+    robot_velocity.mutable_velocity()->set_y(navigation.output(navigation.output_size() - 1).left_velocity());
+    robot_velocity.set_angular_velocity(navigation.output(navigation.output_size() - 1).angular_velocity());
     *command->mutable_robot_velocity() = robot_velocity;
 
     kick_command.set_kick_strength(5.0);
-    kick_command.set_is_front(true);
+    kick_command.set_is_front(false);
     kick_command.set_is_chip(false);
-    kick_command.set_charge_capacitor(true);
+    kick_command.set_charge_capacitor(false);
     kick_command.set_is_bypass_ir(false);
     *command->mutable_kick_command() = kick_command;
 
