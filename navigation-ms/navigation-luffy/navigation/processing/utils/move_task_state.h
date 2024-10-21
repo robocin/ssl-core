@@ -1,13 +1,13 @@
 #ifndef NAVIGATION_PROCESSING_MOVE_TASK_STATE_H
 #define NAVIGATION_PROCESSING_MOVE_TASK_STATE_H
 
-#include <protocols/navigation/motion.pb.h>
+#include <protocols/behavior/motion.pb.h>
 #include <protocols/perception/detection.pb.h>
 #include <robocin/geometry/point2d.h>
 namespace navigation {
 
 namespace rc {
-using ::protocols::navigation::GoToPoint;
+using ::protocols::behavior::GoToPoint;
 using ::protocols::navigation::PathNode;
 using ::protocols::perception::Robot;
 using ::robocin::Point2Df;

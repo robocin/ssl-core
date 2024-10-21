@@ -31,9 +31,11 @@ class INavigationProcessor {
 
 class NavigationProcessor : public INavigationProcessor {
  public:
-  explicit NavigationProcessor(std::unique_ptr<GoToPointParser> go_to_point_parser,
+  NavigationProcessor(std::unique_ptr<GoToPointParser> go_to_point_parser,
                       std::unique_ptr<RotateInPointParser> rotate_in_point_parser,
                       std::unique_ptr<RotateOnSelfParser> rotate_on_self_parser);
+
+  explicit NavigationProcessor(std::unique_ptr<GoToPointParser> go_to_point_parser);
 
   std::optional<::protocols::navigation::Navigation>
   process(std::span<const Payload> payloads) override;

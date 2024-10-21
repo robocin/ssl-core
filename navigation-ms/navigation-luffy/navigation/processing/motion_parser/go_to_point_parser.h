@@ -7,6 +7,8 @@ namespace navigation {
 
 class GoToPointParser : public IMotionParser {
  public:
+  GoToPointParser();
+
   RobotMove parse(const ::protocols::behavior::unification::Motion& motion,
                   const ::protocols::perception::Robot& robot) override;
 

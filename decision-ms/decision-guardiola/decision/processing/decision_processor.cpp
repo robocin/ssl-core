@@ -51,13 +51,13 @@ std::optional<rc::Decision> DecisionProcessor::process(std::span<const Payload> 
 
   std::vector<rc::GameStatus> gameStatus = gameStatusFromPayloads(payloads);
   if (!gameStatus.empty()) {
-    ilog("Sem game status");
+    // ilog("Sem game status");
     const rc::GameStatus last_game_status_ = gameStatus.back();
   }
 
   std::vector<rc::Detection> detections = detectionFromPayloads(payloads);
   if (detections.empty()) {
-    ilog("Sem detection");
+    // ilog("Sem detection");
     // a new package must be generated only when a new detection is received.
     return std::nullopt;
   }

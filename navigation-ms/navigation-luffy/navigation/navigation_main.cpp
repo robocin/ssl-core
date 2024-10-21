@@ -76,9 +76,7 @@ std::unique_ptr<IController> makeProducer(object_ptr<IConcurrentQueue<Payload>> 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 std::unique_ptr<INavigationProcessor> makeNavigationProcessor() {
-  return std::make_unique<NavigationProcessor>(std::unique_ptr<GoToPointParser>(),
-                                               std::unique_ptr<RotateInPointParser>(),
-                                               std::unique_ptr<RotateOnSelfParser>()); // TODO: passar os parâmetros aqui
+  return std::make_unique<NavigationProcessor>(std::make_unique<GoToPointParser>()); // TODO: passar os parâmetros aqui
 }
 
 std::unique_ptr<IMessageSender> makeMessageSender() {
