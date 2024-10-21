@@ -57,17 +57,27 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
   std::vector<rc::Decision> decision_messages = decisionfromPayloads(payloads);
   std::vector<rc::Detection> detection_messages = detectionFromPayloads(payloads);
   
+  if(decision_messages.empty()) {
+    // ilog("Sem decision");
+    return std::nullopt;
+  }
+
+  if(detection_messages.empty()) {
+    // ilog("Sem detection");
+    return std::nullopt;
+  }
+
   rc::Behavior behavior_output;
   rc::Decision last_decision = decision_messages.back();
-  // ilog("Detection lentgh : {}", detection_messages.size());
-  // rc::Detection last_detection = detection_messages.back();
+  // // ilog("Detection lentgh : {}", detection_messages.size());
+  // // rc::Detection last_detection = detection_messages.back();
 
-  for (auto behavior : last_decision.behavior()) {
-    if (behavior.id() == 199) {
-        rc::RobotId *robot_id = behavior_output.mutable_id();
-        robot_id->CopyFrom(behavior.robot_id());
-    }
-  }
+  // for (auto behavior : last_decision.behavior()) {
+  //   if (behavior.id() == 199) {
+  //       rc::RobotId *robot_id = behavior_output.mutable_id();
+  //       robot_id->CopyFrom(behavior.robot_id());
+  //   }
+  // }
 
   // rc::MotionList motion_list;
   // rc::Motion motion;

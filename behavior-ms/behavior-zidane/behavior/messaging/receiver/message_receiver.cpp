@@ -38,7 +38,7 @@ Payload MessageReceiver::receive() {
       if (perception_zmq_datagram.empty()) {
         break;
       }
-      ilog("Received perception datagram");
+      
       datagrams.emplace_back(std::move(perception_zmq_datagram));
     }
 
