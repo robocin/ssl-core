@@ -14,7 +14,7 @@ namespace navigation {
     ::protocols::perception::Detection& detection){
 
   for(auto robot : detection.robots()){
-    if(motion.id() == robot.id()) //TODO: match team color
+    if(motion.id().number() == robot.id().number()) //TODO: match team color
       return robot;
   }
 

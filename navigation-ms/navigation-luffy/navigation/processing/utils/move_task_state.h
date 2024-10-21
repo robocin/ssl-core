@@ -3,7 +3,7 @@
 
 #include <protocols/navigation/motion.pb.h>
 #include "navigation/parameters/parameters.h"
-#include "common/cpp/robocin/geometry/geometry.h"
+#include "common/cpp/robocin/geometry/angles.h"
 #include <robocin/detection_util/elapsed_timer.h>
 #include <protocols/perception/detection.pb.h>
 #include <robocin/geometry/point2d.h>
