@@ -3,30 +3,34 @@
 
 #include "IMotionParser.h"
 
-#include <protocols/navigation/motion.pb>
+#include <cstdint>
 #include <utility>
 
 namespace navigation {
 
 namespace rc {
-using ::protocols::navigation::MovingProfile;
-}
-class GoToPointParser : public IMotionParser<::protocols::navigation::GoToPoint> {
+using protocols::behavior::MovingProfile;
+} // namespace rc
+class GoToPointParser : public IMotionParser<::protocols::behavior::GoToPoint> {
  public:
   GoToPointParser() = default;
 
-  RobotMove parse(const ::protocols::navigation::GoToPoint& motion,
+  RobotMove parse(const ::protocols::behavior::GoToPoint& motion,
                   ::protocols::referee::GameStatus& game_status,
                   ::protocols::perception::Detection& detection) override;
 
+  void setID(int id);
+
  private:
-  ::protocols::perception::Robot matchAlly(::protocols::navigation::GoToPoint& motion,
+  ::protocols::perception::Robot matchAlly(const ::protocols::behavior::GoToPoint& motion,
                                            ::protocols::referee::GameStatus& game_status,
                                            ::protocols::perception::Detection& detection);
 
-  inline static std::pair<double, double> minAndMaxVelocityToProfile(rc::MovingProfile& profile);
+  inline static std::pair<double, double> minAndMaxVelocityToProfile(rc::MovingProfile profile);
 
-  inline static double propDistanceToProfile(rc::MovingProfile& profile);
+  inline static double propDistanceToProfile(rc::MovingProfile profile);
+
+  int robot_id_ = -1;
 
   //   std::optional<::protocols::perception::Detection> last_detection_;
   //   std::unique_ptr<ICameraFilter::Factory> camera_filter_factory_;

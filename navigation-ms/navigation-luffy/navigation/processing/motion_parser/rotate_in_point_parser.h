@@ -1,13 +1,13 @@
 #ifndef NAVIGATION_PROCESSING_ROTATE_IN_POINT_PARSER_H
 #define NAVIGATION_PROCESSING_ROTATE_IN_POINT_PARSER_H
 
-#include "../IMotionParser.h"
+#include "IMotionParser.h"
 
 namespace navigation {
 
-class RotateInPointParser : public IMotionParser<::protocols::navigation::RotateInPoint> {
+class RotateInPointParser : public IMotionParser<::protocols::behavior::RotateInPoint> {
  public:
-  RobotMove parse(const ::protocols::navigation::RotateInPoint& motion,
+  RobotMove parse(const ::protocols::behavior::RotateInPoint& motion,
                   ::protocols::referee::GameStatus& game_status,
                   ::protocols::perception::Detection& detection) override;
 

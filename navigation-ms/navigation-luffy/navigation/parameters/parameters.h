@@ -51,9 +51,9 @@ inline const static double MIN_DIST_TO_PROP_VELOCITY = 1.100; // m/s
 inline const static double ALLY_MEDIAN_SPEED = 1.200; // m/s
 inline const static double ALLY_SLOW_SPEED = 0.250;   // m/s
 
-inline const static double ROBOT_HIGH_PRECISION_LINEAR_ACCELERATION = 1.100;                                                                          // m/s^2
-inline const static double ROBOT_DEFAULT_LINEAR_ACCELERATION = 4.500; // m/s^2
-inline const static double MAX_SPEED_IN_CARRY_BALL = 0.27;            // m/s
+inline const static double ROBOT_HIGH_PRECISION_LINEAR_ACCELERATION = 1.100; // m/s^2
+inline const static double ROBOT_DEFAULT_LINEAR_ACCELERATION = 4.500;        // m/s^2
+inline const static double MAX_SPEED_IN_CARRY_BALL = 0.27;                   // m/s
 
 inline const static double GOALKEEPER_MAX_SPEED = 3.400; // m/s
 inline const static double ROBOT_LATERAL_CRITICAL_ACCELERATION = 5.400;
@@ -79,7 +79,7 @@ inline const static double KICK_BALL_WITH_ENEMY_MIN_SPEED = 1.20; // m/s
 inline const static double GOTO_BALL_WITH_ENEMY_MAX_SPEED = 3.0;    // m/s
 inline const static double GOTO_BALL_WITH_ENEMY_ACCELERATION = 5.0; // m/s]
 
-} //moving_profile
+} // namespace moving_profile
 
 // NOLINTEND(*comment*)
 } // namespace navigation

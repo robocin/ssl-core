@@ -2,12 +2,12 @@
 
 #include "navigation/messaging/receiver/payload.h"
 
+#include <google/protobuf/timestamp.pb.h>
 #include <protocols/behavior/behavior_unification.pb.h>
 #include <protocols/behavior/motion.pb.h>
-#include <protocols/navigation/navigation.pb.h>
 #include <protocols/behavior/planning.pb.h>
+#include <protocols/navigation/navigation.pb.h>
 #include <protocols/perception/detection.pb.h>
-#include <google/protobuf/timestamp.pb.h>
 #include <protocols/referee/game_status.pb.h>
 #include <ranges>
 #include <utility>
@@ -18,21 +18,21 @@ namespace parameters = ::robocin::parameters;
 
 namespace rc {
 
-  using ::protocols::behavior::unification::Behavior;
-  using ::protocols::behavior::unification::MotionList;
-  using ::protocols::behavior::unification::PlanningList;
-  using ::protocols::behavior::unification::NavigationList;
-  using ::protocols::perception::Detection;
-  using ::protocols::navigation::Navigation;
-  using ::protocols::navigation::Output;
-  using ::protocols::behavior::Planning;
-  using ::protocols::perception::Robot;
-  using ::protocols::behavior::GoToPoint;
-  using ::protocols::common::RobotId;
-  using ::protocols::common::PeripheralActuation;
-  using ::protocols::common::Point2Df;
-  using ::protocols::common::RobotPose;
-  using ::protocols::referee::GameStatus;
+using ::protocols::behavior::GoToPoint;
+using ::protocols::behavior::Planning;
+using ::protocols::behavior::unification::Behavior;
+using ::protocols::behavior::unification::MotionList;
+using ::protocols::behavior::unification::NavigationList;
+using ::protocols::behavior::unification::PlanningList;
+using ::protocols::common::PeripheralActuation;
+using ::protocols::common::Point2Df;
+using ::protocols::common::RobotId;
+using ::protocols::common::RobotPose;
+using ::protocols::navigation::Navigation;
+using ::protocols::navigation::Output;
+using ::protocols::perception::Detection;
+using ::protocols::perception::Robot;
+using ::protocols::referee::GameStatus;
 
 } // namespace rc
 
@@ -55,16 +55,16 @@ std::vector<rc::GameStatus> gameStatusFromPayloads(std::span<const Payload> payl
 
 } // namespace
 
-NavigationProcessor::NavigationProcessor(std::unique_ptr<GoToPointParser> go_to_point_parser,
-                                         std::unique_ptr<RotateInPointParser> rotate_in_point_parser,
-                                         std::unique_ptr<RotateOnSelfParser> rotate_on_self_parser) :
+NavigationProcessor::NavigationProcessor(
+    std::unique_ptr<GoToPointParser> go_to_point_parser,
+    std::unique_ptr<RotateInPointParser> rotate_in_point_parser,
+    std::unique_ptr<RotateOnSelfParser> rotate_on_self_parser) :
 
     go_to_point_parser_(std::move(go_to_point_parser)),
     rotate_in_point_parser_(std::move(rotate_in_point_parser)),
     rotate_on_self_parser_(std::move(rotate_on_self_parser)) {}
 
-NavigationProcessor::NavigationProcessor(
-    std::unique_ptr<GoToPointParser> go_to_point_parser) :
+NavigationProcessor::NavigationProcessor(std::unique_ptr<GoToPointParser> go_to_point_parser) :
     go_to_point_parser_(std::move(go_to_point_parser)) {}
 
 std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Payload> payloads) {
@@ -81,23 +81,18 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
   const rc::Detection last_detection = detections.back();
   const rc::GameStatus last_game_status = game_statuses.back();
 
-  if (behaviors.empty()) {
-    return std::nullopt;
-  }
-  rc::Behavior last_behavior = behaviors.back();
-  
   switch (last_behavior.output_case()) {
     case rc::Behavior::kMotion: {
       const rc::Motion& motion = last_behavior.motion();
       if (motion.has_go_to_point()) {
-        RobotMove robot_move = go_to_point_parser_->parse(motion,last_game_status,last_detection);
-        return robot_move; // Criar objeto do protobuf navigation aqui
+        go_to_point_parser_->setID(last_behavior.id().number());
+        RobotMove robot_move = go_to_point_parser_->parse(motion, last_game_status, last_detection);
       } else if (motion.has_rotate_in_point()) {
-        RobotMove robot_move = rotate_in_point_parser_->parse(motion,last_game_status,last_detection);
-        return robot_move; // Criar objeto do protobuf navigation aqui
+        RobotMove robot_move
+            = rotate_in_point_parser_->parse(motion, last_game_status, last_detection);
       } else if (motion.has_rotate_on_self()) {
-        RobotMove robot_move = rotate_on_self_parser_->parse(motion,last_game_status,last_detection);
-        return robot_move; // Criar objeto do protobuf navigation aqui
+        RobotMove robot_move
+            = rotate_on_self_parser_->parse(motion, last_game_status, last_detection);
       } else {
         // RobotMove robot_move = go_to_point_with_trajectory_parser_->parse(motion);
         return std::nullopt; // Criar objeto do protobuf navigation aqui
@@ -121,7 +116,7 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
       //     timestamp->set_seconds(seconds.time_since_epoch().count());
       //     timestamp->set_nanos(nanoseconds.count());
 
-      //     output.set_custom_command(1); 
+      //     output.set_custom_command(1);
       //     output.set_sequence_number(2);
 
       //     rc::Point2Df* global_velocity = output.mutable_output_global_linear_velocity();
@@ -148,7 +143,6 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
       // }
 
       return navigation_output; // Criar objeto do protobuf navigation aqui
-
     }
     case rc::Behavior::kPlanning: {
       robocin::ilog("Planning: {}", last_behavior.planning().DebugString());
@@ -158,18 +152,18 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
     }
     case rc::Behavior::kNavigation: {
       robocin::ilog("Navigation: {}", last_behavior.navigation().DebugString());
-      const rc::NavigationList& navigationList = last_behavior_.navigation();
+      const rc::NavigationList& navigationList = last_behavior.navigation();
       // Adicione aqui o processamento específico para Navigation
       break;
     }
     case rc::Behavior::OUTPUT_NOT_SET: {
       robocin::ilog("Output not set");
-      rc::Output output;         
-      rc::RobotId *robot_id = output.mutable_id();
+      rc::Output output;
+      rc::RobotId* robot_id = output.mutable_id();
       robot_id->CopyFrom(last_behavior.id());
       *navigation_output.add_output() = output;
-      return navigation_output; 
-    } 
+      return navigation_output;
+    }
   }
 
   return std::nullopt;

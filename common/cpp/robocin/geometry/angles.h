@@ -5,7 +5,7 @@
 #include <concepts>
 #include <type_traits>
 #include <cmath>
-#include "math/math_lib.h"
+#include "mathematics.h"
 
 #ifndef M_PI
   #define M_PI 3.14159265358979323846
@@ -22,7 +22,7 @@ static constexpr bool isNullable(std::integral auto i) {
 }
 
 namespace angles {
-  static constexpr double PI = M_PI;
+  static constexpr double kPi = M_PI;
 
   /*!
    * @tparam T floating point type.
@@ -31,7 +31,7 @@ namespace angles {
    */
   template <class T>
   constexpr std::enable_if_t<std::is_floating_point_v<T>, T> radiansToDegrees(T radians) {
-    return radians * (static_cast<T>(180) / static_cast<T>(PI));
+    return radians * (static_cast<T>(180) / static_cast<T>(kPi));
   }
 
   /*!
@@ -51,7 +51,7 @@ namespace angles {
    */
   template <class T>
   constexpr std::enable_if_t<std::is_floating_point_v<T>, T> degreesToRadians(T degrees) {
-    return (degrees * static_cast<T>(PI)) / static_cast<T>(180);
+    return (degrees * static_cast<T>(kPi)) / static_cast<T>(180);
   }
 
   /*!
@@ -73,13 +73,13 @@ namespace angles {
   template <class T>
   constexpr std::enable_if_t<std::is_floating_point_v<T>, T> smallestAngleDiff(const T& lhs,
                                                                                const T& rhs) {
-    T angle = math::modularize<T>(rhs - lhs, static_cast<T>(2) * PI);
-    if (angle >= PI) {
-      return angle - static_cast<T>(2) * PI;
+    T angle = math::modularize<T>(rhs - lhs, static_cast<T>(2) * kPi);
+    if (angle >= kPi) {
+      return angle - static_cast<T>(2) * kPi;
     }
     
-    if (angle < -PI) {
-      return angle + static_cast<T>(2) * PI;
+    if (angle < -kPi) {
+      return angle + static_cast<T>(2) * kPi;
     }
     return angle;
   }
@@ -89,7 +89,7 @@ namespace angles {
    * @return Returns the value in radians.
    */
   constexpr auto operator"" _degrees(long double value) {
-    return geometry::degreesToRadians(value);
+    return degreesToRadians(value);
   }
 
   /*!
@@ -97,7 +97,7 @@ namespace angles {
    * @return Returns the value in radians.
    */
   constexpr auto operator"" _degrees(unsigned long long value) {
-    return geometry::degreesToRadians(value);
+    return degreesToRadians(value);
   }
 
   /*!
@@ -129,7 +129,7 @@ namespace angles {
    */
   template <class T>
   constexpr std::enable_if_t<std::is_floating_point_v<T>, T> normalizeInPI(const T& radians) {
-    return normalizeAngle<T>(radians, 0, static_cast<T>(PI));
+    return normalizeAngle<T>(radians, 0, static_cast<T>(kPi));
   }
 
   /*!

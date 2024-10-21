@@ -3,7 +3,7 @@
 
 #include <type_traits>
 #include <stdexcept>
-#include <math.h>
+#include "mathematics.h"
 #include <ostream>
 
 namespace robocin {
