@@ -11,6 +11,7 @@
 #include <protocols/third_party/game_controller/referee.pb.h>
 #include <robocin/memory/object_ptr.h>
 #include <utility>
+#include <ranges>
 
 namespace communication {
 namespace {
@@ -21,9 +22,12 @@ using ::robocin::object_ptr;
 namespace rc {
     
 using ::protocols::navigation::Navigation;
+
 using ::protocols::communication::RobotInfo;
+using ::protocols::communication::Output;
 using ::protocols::communication::Command;
 using ::protocols::communication::Flags;
+
 using ::protocols::common::RobotId;
 using ::protocols::common::MessageType;
 using ::protocols::common::RobotVelocity;
@@ -42,43 +46,48 @@ using ::protocols::third_party::game_controller::Referee;
 
 RobotCommandMapper::RobotCommandMapper(){}
 
-rc::RobotInfo RobotCommandMapper::fromNavigationAndReferee(const tp::Referee& referee, const rc::Navigation& navigation) {
-    rc::RobotInfo result;
-    rc::Command* command = result.mutable_command();
-    rc::RobotId* robot_id = command->mutable_robot_id();
-    rc::RobotVelocity robot_velocity;
-    rc::RobotKick::KickCommand kick_command;
-    rc::RobotDribbler::DribblerCommand dribbler_command;
-    rc::Flags robot_flag;
-
-    command->set_msg_type(rc::MessageType::SSL_SPEED);
+rc::Output RobotCommandMapper::fromNavigationAndReferee(const tp::Referee& referee, const rc::Navigation& navigation) {
+    rc::Output output;
     
-    robot_id->CopyFrom(navigation.output(navigation.output_size() - 1).robot_id());
+    for(const auto& robot : navigation.output()) {
+        rc::Command command;
+        rc::RobotId* robot_id = command.mutable_robot_id();
+        rc::RobotVelocity robot_velocity;
+        rc::RobotKick::KickCommand kick_command;
+        rc::RobotDribbler::DribblerCommand dribbler_command;
+        rc::Flags robot_flag;
+        
+        command.set_msg_type(rc::MessageType::SSL_SPEED);
+        robot_id->CopyFrom(robot.robot_id());
+        robot_id->CopyFrom(navigation.output(navigation.output_size() - 1).robot_id());
 
-    // *command->mutable_ref_command()->CopyFrom(referee.ref_command());
+        // *command->mutable_ref_command()->CopyFrom(referee.ref_command());
 
-    robot_velocity.mutable_velocity()->set_x(navigation.output(navigation.output_size() - 1).forward_velocity());
-    robot_velocity.mutable_velocity()->set_y(navigation.output(navigation.output_size() - 1).left_velocity());
-    robot_velocity.set_angular_velocity(navigation.output(navigation.output_size() - 1).angular_velocity());
-    *command->mutable_robot_velocity() = robot_velocity;
+        robot_velocity.mutable_velocity()->set_x(robot.forward_velocity());
+        robot_velocity.mutable_velocity()->set_y(robot.left_velocity());
+        robot_velocity.set_angular_velocity(robot.angular_velocity());
+        *command.mutable_robot_velocity() = robot_velocity;
 
-    kick_command.set_kick_strength(5.0);
-    kick_command.set_is_front(false);
-    kick_command.set_is_chip(false);
-    kick_command.set_charge_capacitor(false);
-    kick_command.set_is_bypass_ir(false);
-    *command->mutable_kick_command() = kick_command;
+        kick_command.set_kick_strength(5.0);
+        kick_command.set_is_front(false);
+        kick_command.set_is_chip(false);
+        kick_command.set_charge_capacitor(false);
+        kick_command.set_is_bypass_ir(false);
+        *command.mutable_kick_command() = kick_command;
 
-    dribbler_command.set_dribbler_speed(0);
-    dribbler_command.set_is_active(false);
-    *command->mutable_dribbler_command() = dribbler_command;
+        dribbler_command.set_dribbler_speed(0);
+        dribbler_command.set_is_active(false);
+        *command.mutable_dribbler_command() = dribbler_command;
 
-    robot_flag.set_robot_locked(false);
-    robot_flag.set_critical_move(false);
-    robot_flag.set_global_speed(false);
-    *command->mutable_robot_flags() = robot_flag;
+        robot_flag.set_robot_locked(false);
+        robot_flag.set_critical_move(false);
+        robot_flag.set_global_speed(false);
+        *command.mutable_robot_flags() = robot_flag;
 
-    return result;
+        output.add_command()->CopyFrom(command);
+    }
+
+    return output;
 }
 
 } // namespace communication

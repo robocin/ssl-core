@@ -17,6 +17,7 @@ namespace {
 namespace rc {
 
 using ::protocols::communication::RobotInfo;
+using ::protocols::communication::Output;
 using ::protocols::navigation::Navigation;
 
 } // namespace rc
@@ -48,7 +49,6 @@ CommunicationProcessor::CommunicationProcessor(
 
 std::optional<rc::RobotInfo> CommunicationProcessor::process(std::span<const Payload> payloads) {
     rc::RobotInfo communication_output;
-
     if(std::vector<tp::Referee> referees = refereeFromPayloads(payloads); !referees.empty()) {
         last_game_controller_referee_ = std::move(referees.back());
     }
@@ -62,6 +62,13 @@ std::optional<rc::RobotInfo> CommunicationProcessor::process(std::span<const Pay
         return std::nullopt;
     }
     rc::Navigation last_navigation_ = navigation.back();
+
+    if(last_navigation_.output_size() == 0) {
+        return std::nullopt;
+    }
+
+    rc::Output* output = communication_output.mutable_output();
+    output->CopyFrom(robot_command_mapper_->fromNavigationAndReferee(*last_game_controller_referee_, last_navigation_));
 
     return communication_output;
 }
