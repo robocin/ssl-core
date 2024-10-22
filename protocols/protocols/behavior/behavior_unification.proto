@@ -3,6 +3,7 @@ syntax = "proto3";
 package protocols.behavior.unification;
 
 import "protocols/common/peripheral_actuation.proto";
+import "protocols/common/robot_id.proto";
 
 import "protocols/behavior/motion.proto";
 import "protocols/navigation/navigation.proto";
@@ -14,9 +15,14 @@ import "protocols/behavior/planning.proto";
 */
 
 message Behavior {
-    repeated Motion motion = 1;
-    repeated Planning planning = 2;
-    repeated navigation.Navigation navigation = 1;
+    repeated Output output = 1;
+}
+
+message Output {
+    common.RobotId robot_id = 1;
+    repeated Motion motion = 2;
+    repeated Planning planning = 3;
+    repeated navigation.Navigation navigation = 4;
 }
 
 message Motion {
