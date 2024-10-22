@@ -41,7 +41,7 @@ using ::robocin::ilog;
 
 std::unique_ptr<IMessageReceiver> makeMessageReceiver() {
   static constexpr std::array kBehaviorTopics = {
-      service_discovery::kBehaviorTopic,
+      service_discovery::kBehaviorUnificationTopic,
   };
 
   static constexpr std::array kPerceptionTopics = {
