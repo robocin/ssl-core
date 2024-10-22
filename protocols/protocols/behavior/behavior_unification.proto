@@ -6,7 +6,6 @@ import "protocols/common/peripheral_actuation.proto";
 import "protocols/common/robot_id.proto";
 
 import "protocols/behavior/motion.proto";
-import "protocols/navigation/navigation.proto";
 import "protocols/behavior/planning.proto";
 
 /* 
@@ -22,7 +21,6 @@ message Output {
     common.RobotId robot_id = 1;
     Motion motion = 2;
     Planning planning = 3;
-    navigation.Navigation navigation = 4;
 }
 
 message Motion {
