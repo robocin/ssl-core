@@ -53,7 +53,7 @@ rc::RobotInfo RobotCommandMapper::fromNavigationAndReferee(const tp::Referee& re
 
     command->set_msg_type(rc::MessageType::SSL_SPEED);
     
-    robot_id->CopyFrom(navigation.output(navigation.output_size() - 1).id());
+    robot_id->CopyFrom(navigation.output(navigation.output_size() - 1).robot_id());
 
     // *command->mutable_ref_command()->CopyFrom(referee.ref_command());
 

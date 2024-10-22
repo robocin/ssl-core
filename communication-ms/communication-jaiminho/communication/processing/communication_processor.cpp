@@ -47,9 +47,14 @@ CommunicationProcessor::CommunicationProcessor(
     robot_command_mapper_{std::move(robot_command_mapper)} {}
 
 std::optional<rc::RobotInfo> CommunicationProcessor::process(std::span<const Payload> payloads) {
+    rc::RobotInfo communication_output;
 
     if(std::vector<tp::Referee> referees = refereeFromPayloads(payloads); !referees.empty()) {
         last_game_controller_referee_ = std::move(referees.back());
+    }
+
+    if(!last_game_controller_referee_) {
+        return std::nullopt;
     }
 
     std::vector<rc::Navigation> navigation = navigationFromPayloads(payloads);
@@ -58,7 +63,7 @@ std::optional<rc::RobotInfo> CommunicationProcessor::process(std::span<const Pay
     }
     rc::Navigation last_navigation_ = navigation.back();
 
-    return robot_command_mapper_->fromNavigationAndReferee(*last_game_controller_referee_, last_navigation_);
+    return communication_output;
 }
 
 } // namespace communication
