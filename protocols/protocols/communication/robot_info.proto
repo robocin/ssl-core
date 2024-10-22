@@ -11,10 +11,12 @@ import "protocols/common/robot_kick.proto";
 import "protocols/common/robot_dribbler.proto";
 
 message RobotInfo {
-    oneof type {
-        Command command = 1;
-        common.Feedback feedback = 2;
-    }
+    Output output = 1;
+}
+
+message Output {
+    repeated Command command = 1;
+    repeated common.Feedback feedback = 2;
 }
 
 message Command {
