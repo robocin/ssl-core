@@ -2,12 +2,10 @@
 
 namespace navigation {
 
-RobotMove::RobotMove(rc::Point2Df velocity, double angularVelocity) :
+RobotMove::RobotMove(robocin::Point2Dd velocity, double angularVelocity) :
     velocity_(velocity),
     angularVelocity_(angularVelocity) {}
 
-RobotMove::RobotMove(double angularVelocity) :
-    velocity_(0, 0),
-    angularVelocity_(angularVelocity) {}
+RobotMove::RobotMove(double angularVelocity) : velocity_(0, 0), angularVelocity_(angularVelocity) {}
 
 } // namespace navigation

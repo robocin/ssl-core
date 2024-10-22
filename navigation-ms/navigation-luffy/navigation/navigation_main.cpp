@@ -6,11 +6,9 @@
 #include <robocin/memory/object_ptr.h>
 #include <robocin/network/zmq_poller.h>
 #include <robocin/network/zmq_subscriber_socket.h>
-#include <robocin/parameters/parameters.h>
 #include <robocin/wip/service_discovery/addresses.h>
 #include <thread>
 
-namespace parameters = ::robocin::parameters;
 namespace service_discovery = robocin::service_discovery;
 
 using navigation::ConsumerController;

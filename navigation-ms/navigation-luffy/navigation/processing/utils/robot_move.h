@@ -5,15 +5,15 @@
 namespace navigation {
 
 class RobotMove {
-  ::robocin::Point2Df velocity_;
+  ::robocin::Point2Dd velocity_;
   double angularVelocity_;
 
-  public:
-    RobotMove(::robocin::Point2Df velocity, double angularVelocity);
-    explicit RobotMove(double angularVelocity);
+ public:
+  RobotMove(::robocin::Point2Dd velocity, double angularVelocity);
+  explicit RobotMove(double angularVelocity);
 
-    [[nodiscard]] ::robocin::Point2Df velocity() const { return velocity_; }
-    [[nodiscard]] double angularVelocity() const { return angularVelocity_; }
+  [[nodiscard]] ::robocin::Point2Dd velocity() const { return velocity_; }
+  [[nodiscard]] double angularVelocity() const { return angularVelocity_; }
 };
 
 } // namespace navigation

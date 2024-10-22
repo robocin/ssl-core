@@ -4,82 +4,89 @@ namespace navigation {
 
 namespace rc {
 using ::protocols::behavior::GoToPoint;
+using ::protocols::behavior::PathNode;
 using ::protocols::common::GameCommand;
-using ::protocols::navigation::PathNode;
 using ::protocols::perception::Robot;
-using ::robocin::detection_util;
 using ::robocin::Point2Df;
 } // namespace rc
 
-inline static bool MoveTaskState::refereeRequestFinish(const rc::GameCommand& command) {
-  return std::holds_alternative<GameStatus::StateType::Halt>(command);
+bool MoveTaskState::refereeRequestFinish(const rc::GameCommand& command) {
+  return command.has_halt();
 }
 
-inline static bool MoveTaskState::checkFinishState(const rc::Point2Df& allyPosition,
-                                                   const rc::GoToPoint& goToPointTask,
-                                                   const rc::Point2Df& lastPosition) {
+bool MoveTaskState::checkFinishState(const rc::Point2Df& allyPosition,
+                                     const rc::GoToPoint& goToPointTask,
+                                     const rc::Point2Df& lastPosition) {
+
+  rc::Point2Df target = {goToPointTask.target().x(), goToPointTask.target().y()};
   bool robotCloseToDestinationInTask
-      = goToPointTask.target().distanceTo(allyPosition) < TOLERANCE_TO_CONSIDER_SAME_TARGET;
+      = target.distanceTo(allyPosition) < TOLERANCE_TO_CONSIDER_SAME_TARGET;
   bool finishPathToTask = lastPosition.distanceTo(allyPosition) < TOLERANCE_TO_CONSIDER_SAME_TARGET;
 
   return robotCloseToDestinationInTask || finishPathToTask;
 }
 
-[[nodiscard]] inline bool
-MoveTaskState::checkChangeTarget(const rc::GoToPoint& goToPointTask) const {
+[[nodiscard]] bool MoveTaskState::checkChangeTarget(const rc::GoToPoint& goToPointTask) {
 
-  return currentDesiredTarget().distanceTo(goToPointTask.target())
-         > TOLERANCE_TO_CONSIDER_SAME_TARGET;
+  rc::Point2Df target = {goToPointTask.target().x(), goToPointTask.target().y()};
+  return currentDesiredTarget_.distanceTo(target) > TOLERANCE_TO_CONSIDER_SAME_TARGET;
 }
 
-inline void MoveTaskState::updateState(const rc::Robot& ally,
-                                       const rc::GameCommand& command,
-                                       const rc::GoToPoint& goToPointTask,
-                                       const rc::PathNode& lastNode) {
+void MoveTaskState::updateState(const rc::Robot& ally,
+                                const rc::GameCommand& command,
+                                const rc::GoToPoint& goToPointTask,
+                                const rc::PathNode& lastNode) {
 
-  rc::Point2Df lastPositionInPath = lastNode.position() * M_TO_MM();
+  rc::Point2Df last_node_pos = {lastNode.position().x(), lastNode.position().y()};
+  rc::Point2Df lastPositionInPath = last_node_pos * M_to_MM;
 
   if (!refereeRequestFinish(command)) {
-    if (m_state != SkillMoveState::Unknown
-        && checkFinishState(ally.position(), goToPointTask, lastPositionInPath)) {
-      m_state = SkillMoveState::Finished;
-      set_currentDesiredTarget(std::nullopt);
+    if (state_ != SkillMoveState::Unknown
+        && checkFinishState(rc::Point2Df(ally.position().x(), ally.position().y()),
+                            goToPointTask,
+                            lastPositionInPath)) {
+      state_ = SkillMoveState::Finished;
+      currentDesiredTarget_ = {0, 0};
     } else {
-      if (!has_currentDesiredTarget()) {
-        m_state = SkillMoveState::Started;
-        set_currentTarget(lastNode.position());
-        set_estimateTimeToTarget(lastNode.time());
-        runningToTarget.restart();
-        set_currentDesiredTarget(goToPointTask.target());
-        globalRunningToTarget.restart();
+      if (currentDesiredTarget_.x == 0 and currentDesiredTarget_.y == 0) {
+
+        state_ = SkillMoveState::Started;
+        currentTarget_ = last_node_pos;
+        estimateTimeToTarget_ = lastNode.time();
+        runningToTarget_.restart();
+        currentDesiredTarget_ = {goToPointTask.target().x(), goToPointTask.target().y()};
+        globalRunningToTarget_.restart();
+
       } else if (checkChangeTarget(goToPointTask)) {
-        m_state = SkillMoveState::ChangedTarget;
-        set_currentDesiredTarget(goToPointTask.target());
+
+        state_ = SkillMoveState::ChangedTarget;
+        currentDesiredTarget_ = {goToPointTask.target().x(), goToPointTask.target().y()};
+
       } else {
-        m_state = SkillMoveState::Running;
+        state_ = SkillMoveState::Running;
       }
     }
   } else {
-    m_state = SkillMoveState::Unknown;
+    state_ = SkillMoveState::Unknown;
   }
 }
 
-[[nodiscard]] inline SkillMoveState MoveTaskState::currentState() const { return m_state; }
+[[nodiscard]] SkillMoveState MoveTaskState::currentState() { return state_; }
 
-inline void initialSetupState(rc::PathNode lastNode) {
-  set_currentTarget(lastNode.position());
-  set_estimateTimeToTarget(lastNode.time());
-  runningToTarget.restart();
+void MoveTaskState::initialSetupState(const rc::PathNode& lastNode) {
+  currentTarget_ = {lastNode.position().x(), lastNode.position().y()};
+  estimateTimeToTarget_ = lastNode.time();
+  runningToTarget_.restart();
 };
 
-inline void MoveTaskState::resetRunningToTargetTimer() {
-  if (runningToTarget.isValid()) {
-    runningToTarget.invalidate();
+void MoveTaskState::resetRunningToTargetTimer() {
+  if (runningToTarget_.isValid()) {
+    runningToTarget_.invalidate();
   }
 }
 
-inline double MoveTaskState::executionTimeError(const rc::PathNode& lastNode) {
-  return estimateTimeToTarget()
-         - (static_cast<double>(runningToTarget.elapsed()) / 1e9 + lastNode.time());
+double MoveTaskState::executionTimeError(const rc::PathNode& lastNode) {
+  return estimateTimeToTarget_
+         - (static_cast<double>(runningToTarget_.elapsed().frames()) / 1e9 + lastNode.time());
 }
 } // namespace navigation
