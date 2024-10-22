@@ -13,7 +13,7 @@ message Navigation {
 }
 
 message Output {
-	common.RobotId id = 1;
+	common.RobotId robot_id = 1;
 	common.PeripheralActuation peripheral_actuation = 2;
 	google.protobuf.Timestamp timestamp = 3;
 	double forward_velocity = 4;
