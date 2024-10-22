@@ -20,9 +20,9 @@ message Behavior {
 
 message Output {
     common.RobotId robot_id = 1;
-    repeated Motion motion = 2;
-    repeated Planning planning = 3;
-    repeated navigation.Navigation navigation = 4;
+    Motion motion = 2;
+    Planning planning = 3;
+    navigation.Navigation navigation = 4;
 }
 
 message Motion {
