@@ -67,7 +67,8 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
   }
 
   std::vector<rc::Detection> detection_messages = detectionFromPayloads(payloads);
-  if(!last_decision_) {
+  if(detection_messages.empty()) {
+    // a new package must be generated only when a new detection is received.
     return std::nullopt;
   }
   const rc::Detection last_detection = detection_messages.back();
