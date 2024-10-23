@@ -1,5 +1,6 @@
-#include "decision/controller/producer_controller.h"
 #include "decision/controller/consumer_controller.h"
+#include "decision/controller/producer_controller.h"
+#include "decision_output/mappers/decision_output_mapper.h"
 
 #include <memory>
 #include <print>
@@ -16,19 +17,22 @@ namespace detection_util = ::robocin::detection_util;
 namespace service_discovery = robocin::service_discovery;
 
 using decision::ConsumerController;
+using decision::DecisionOutputMapper;
+using decision::DecisionProcessor;
 using decision::IController;
+using decision::IDecisionOutputMapper;
+using decision::IDecisionProcessor;
 using decision::IMessageReceiver;
 using decision::IMessageSender;
 using decision::IPayloadMapper;
-using decision::IDecisionProcessor;
 using decision::MessageReceiver;
 using decision::MessageSender;
 using decision::Payload;
 using decision::PayloadMapper;
 using decision::ProducerController;
-using decision::DecisionProcessor;
 using ::robocin::ConditionVariableConcurrentQueue;
 using ::robocin::IConcurrentQueue;
+using ::robocin::ilog;
 using ::robocin::IZmqPoller;
 using ::robocin::IZmqPublisherSocket;
 using ::robocin::IZmqSubscriberSocket;
@@ -36,7 +40,6 @@ using ::robocin::object_ptr;
 using ::robocin::ZmqPoller;
 using ::robocin::ZmqPublisherSocket;
 using ::robocin::ZmqSubscriberSocket;
-using ::robocin::ilog;
 
 std::unique_ptr<IMessageReceiver> makeMessageReceiver() {
   static constexpr std::array kPerceptionTopics = {
@@ -70,9 +73,13 @@ std::unique_ptr<IController> makeProducer(object_ptr<IConcurrentQueue<Payload>> 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
+std::unique_ptr<IDecisionOutputMapper> makeDecisionOutputMapper() {
+  return std::make_unique<DecisionOutputMapper>();
+}
+
 std::unique_ptr<IDecisionProcessor> makeDecisionProcessor() {
-  return std::make_unique<DecisionProcessor>(
-      std::make_unique<parameters::HandlerEngine>());
+  return std::make_unique<DecisionProcessor>(std::make_unique<parameters::HandlerEngine>(),
+                                             makeDecisionOutputMapper());
 }
 
 std::unique_ptr<IMessageSender> makeMessageSender() {

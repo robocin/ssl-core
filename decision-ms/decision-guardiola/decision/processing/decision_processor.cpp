@@ -42,8 +42,10 @@ std::vector<rc::GameStatus> gameStatusFromPayloads(std::span<const Payload> payl
 } // namespace
 
 DecisionProcessor::DecisionProcessor(
-    std::unique_ptr<parameters::IHandlerEngine> parameters_handler_engine) :
-    parameters_handler_engine_{std::move(parameters_handler_engine)} {}
+    std::unique_ptr<parameters::IHandlerEngine> parameters_handler_engine,
+    std::unique_ptr<IDecisionOutputMapper> decision_output_mapper) :
+    parameters_handler_engine_{std::move(parameters_handler_engine)},
+    decision_output_mapper_{std::move(decision_output_mapper)} {}
 
 std::optional<rc::Decision> DecisionProcessor::process(std::span<const Payload> payloads) {
   rc::Decision decision_output;
@@ -65,10 +67,7 @@ std::optional<rc::Decision> DecisionProcessor::process(std::span<const Payload> 
 
   const rc::Detection last_detection = detections.back();
 
-  rc::Behavior behavior_one;
-  rc::Behavior behavior_two;
-
-  return decision_output;
+  return decision_output_mapper_->map();
 }
 
 } // namespace decision

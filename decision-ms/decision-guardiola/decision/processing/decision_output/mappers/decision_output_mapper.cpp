@@ -57,6 +57,15 @@ rc::OffensivePlan getOffensivePlan() { return rc::OffensivePlan{}; }
 rc::Decision DecisionOutputMapper::map() {
   rc::Decision decision_output;
 
+  rc::Behavior& behavior_one = *decision_output.add_behavior();
+  behavior_one = getBehavior();
+
+  rc::Behavior& behavior_two = *decision_output.add_behavior();
+  behavior_two = getBehavior();
+
+  rc::TacticalPlan& plan = *decision_output.mutable_plan();
+  plan = getTacticalPlan();
+
   return decision_output;
 }
 } // namespace decision
