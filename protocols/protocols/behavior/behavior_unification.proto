@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntax = "proto2";
 
 package protocols.behavior.unification;
 
@@ -18,16 +18,16 @@ message Behavior {
 }
 
 message Output {
-    common.RobotId robot_id = 1;
-    Motion motion = 2;
-    Planning planning = 3;
+    required common.RobotId robot_id = 1;
+    required Motion motion = 2;
+    required Planning planning = 3;
 }
 
 message Motion {
-    GoToPoint go_to_point = 1;
-    GoToPointWithTrajectory go_to_point_with_trajectory = 2;
-    RotateInPoint rotate_in_point = 3;
-    RotateOnSelf rotate_on_self = 4;
-    common.PeripheralActuation peripheral_actuation = 5;
+    optional GoToPoint go_to_point = 1;
+    optional GoToPointWithTrajectory go_to_point_with_trajectory = 2;
+    optional RotateInPoint rotate_in_point = 3;
+    optional RotateOnSelf rotate_on_self = 4;
+    required common.PeripheralActuation peripheral_actuation = 5;
 }
 

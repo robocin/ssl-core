@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntax = "proto2";
 
 package protocols.behavior;
 
@@ -6,9 +6,9 @@ import "protocols/behavior/motion.proto";
 import "protocols/common/peripheral_actuation.proto";
 
 message Planning {
-    DiscretizedPath discretized_path = 1;
-    GoToPoint go_to_point = 2;
-    RotateInPoint rotate_in_point = 3;
-    RotateOnSelf rotate_on_self = 4;
-    common.PeripheralActuation peripheral_actuation = 5;
+    optional DiscretizedPath discretized_path = 1;
+    optional GoToPoint go_to_point = 2;
+    optional RotateInPoint rotate_in_point = 3;
+    optional RotateOnSelf rotate_on_self = 4;
+    required common.PeripheralActuation peripheral_actuation = 5;
 }

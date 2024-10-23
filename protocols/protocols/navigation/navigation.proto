@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntax = "proto2";
 
 package protocols.navigation;
 
@@ -13,17 +13,17 @@ message Navigation {
 }
 
 message Output {
-	common.RobotId robot_id = 1;
-	common.PeripheralActuation peripheral_actuation = 2;
-	google.protobuf.Timestamp timestamp = 3;
-	double forward_velocity = 4;
-	double left_velocity = 5;
-	double angular_velocity = 6;
+	required common.RobotId robot_id = 1;
+	required common.PeripheralActuation peripheral_actuation = 2;
+	required google.protobuf.Timestamp timestamp = 3;
+	required double forward_velocity = 4;
+	required double left_velocity = 5;
+	required double angular_velocity = 6;
 	
-	uint32 custom_command = 7;
+	required uint32 custom_command = 7;
 	
-	uint32 sequence_number = 8;
-	common.Point2Df output_global_linear_velocity = 9;
+	required uint32 sequence_number = 8;
+	required common.Point2Df output_global_linear_velocity = 9;
 	
-	common.RobotPose robot_pose = 13;
+	required common.RobotPose robot_pose = 13;
 }
