@@ -11,6 +11,21 @@ services:
       - .ssl-core:/tmp/.ssl-core
     network_mode: host
 
+  autoref-tigers:
+    container_name: autoref-tigers
+    image: tigersmannheim/auto-referee:1.2.0
+    restart: unless-stopped
+    command:
+      - "-a"
+      - "-visionAddress"
+      - "224.5.23.2:10006"
+      - "-refereeAddress"
+      - "224.5.23.1:11003"
+    logging:
+      driver: none
+    network_mode: host
+    attach: false
+
   game-controller:
     container_name: game-controller
     image: robocupssl/ssl-game-controller:3.9.0
@@ -29,6 +44,8 @@ services:
       - 8081:8081
     logging:
       driver: none
+    depends_on:
+      - autoref-tigers
     network_mode: host
 
   perception-ms:
