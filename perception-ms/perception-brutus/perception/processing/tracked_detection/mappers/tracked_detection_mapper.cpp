@@ -58,6 +58,7 @@ rc::Robot robotFromTrackedRobot(const tp::TrackedRobot& tracked_robot) {
   position.set_x(tracked_robot.pos().x() * kMetersToMillimeters);
   position.set_y(tracked_robot.pos().y() * kMetersToMillimeters);
 
+  //robocin::ilog("orientation received: {}", tracked_robot.orientation());
   robot.set_angle(tracked_robot.orientation());
 
   if (rc::Point2Df& velocity = *robot.mutable_velocity(); tracked_robot.has_vel()) {

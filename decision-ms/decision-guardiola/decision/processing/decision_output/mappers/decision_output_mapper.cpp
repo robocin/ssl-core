@@ -20,7 +20,7 @@ using ::protocols::decision::TacticalPlan;
 // TODO(fnap): refactor function name to behaviorFromSomething when something is stablished
 rc::Behavior getBehavior() {
   rc::Behavior behavior;
-  behavior.set_id(199);
+  behavior.set_id(0);
 
   rc::RobotId& robot_id = *behavior.mutable_robot_id();
   robot_id.set_number(4);

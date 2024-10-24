@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntax = "proto2";
 
 package protocols.common;
 
@@ -14,5 +14,5 @@ message RobotId {
   // The color of the robot.
   optional Color color = 1;
   // The number of the robot.
-  optional uint32 number = 2;
+  required uint32 number = 2;
 }

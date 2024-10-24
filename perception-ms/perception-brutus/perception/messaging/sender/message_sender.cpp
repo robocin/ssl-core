@@ -25,7 +25,7 @@ MessageSender::MessageSender(std::unique_ptr<::robocin::IZmqPublisherSocket> det
     detection_socket_{std::move(detection_socket)} {}
 
 void MessageSender::send(const rc::Detection& detection) {
-  // ilog("sending... {}", detection.DebugString());
+  ilog("sending... {}", detection.DebugString());
 
   detection_socket_->send({
       service_discovery::kPerceptionDetectionTopic,
