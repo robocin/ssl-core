@@ -7,7 +7,7 @@
 namespace decision {
 class DefensivePlanMessage : public IProtoConvertible<protocols::decision::DefensivePlan> {
  public:
-  explicit DefensivePlanMessage();
+  DefensivePlanMessage() = default;
 
   [[nodiscard]] protocols::decision::DefensivePlan toProto() const override {
     return protocols::decision::DefensivePlan{};
@@ -16,7 +16,7 @@ class DefensivePlanMessage : public IProtoConvertible<protocols::decision::Defen
 
 class OffensivePlanMessage : public IProtoConvertible<protocols::decision::OffensivePlan> {
  public:
-  explicit OffensivePlanMessage();
+  OffensivePlanMessage() = default;
 
   [[nodiscard]] protocols::decision::OffensivePlan toProto() const override {
     return protocols::decision::OffensivePlan{};
@@ -25,7 +25,8 @@ class OffensivePlanMessage : public IProtoConvertible<protocols::decision::Offen
 
 class TacticalPlanMessage : public IProtoConvertible<protocols::decision::TacticalPlan> {
  public:
-  explicit TacticalPlanMessage(OffensivePlanMessage offensive, DefensivePlanMessage defensive);
+  TacticalPlanMessage(OffensivePlanMessage offensive = OffensivePlanMessage{},
+                      DefensivePlanMessage defensive = DefensivePlanMessage{});
 
   OffensivePlanMessage offensive;
   DefensivePlanMessage defensive;
@@ -37,7 +38,7 @@ class TacticalPlanMessage : public IProtoConvertible<protocols::decision::Tactic
 
 class DecisionMessage : public IProtoConvertible<protocols::decision::Decision> {
  public:
-  explicit DecisionMessage(std::vector<BehaviorMessage>& behavior, TacticalPlanMessage plan);
+  DecisionMessage(/*std::vector<BehaviorMessage>& behavior, TacticalPlanMessage plan*/) = default;
 
   std::vector<BehaviorMessage> behavior;
   TacticalPlanMessage plan;

@@ -1,6 +1,7 @@
 #include "decision/processing/decision_processor.h"
 
 #include "decision/messaging/receiver/payload.h"
+#include "decision/processing/messages/decision/decision_message.h"
 
 #include <protocols/common/robot_id.pb.h>
 #include <protocols/decision/decision.pb.h>
@@ -18,6 +19,7 @@ using ::robocin::ilog;
 
 namespace rc {
 
+using ::protocols::common::RobotId;
 using ::protocols::decision::Behavior;
 using ::protocols::decision::Decision;
 using ::protocols::decision::DefensivePlan;
@@ -64,25 +66,9 @@ std::optional<rc::Decision> DecisionProcessor::process(std::span<const Payload> 
 
   const rc::Detection last_detection = detections.back();
 
-  ///////////////////////////////////////////////////////////////////////////////////
+  DecisionMessage decision;
 
-  // TODO: Implement the logic to generate the decision based on the last detection and the last
-  // game status.
-  for (const auto& robot : last_detection.robots()) {
-    rc::Behavior* behavior = decision_output.add_behavior();
-
-    behavior->set_id(0);
-    behavior->mutable_robot_id()->CopyFrom(robot.robot_id());
-  }
-
-  rc::TacticalPlan* tplan = decision_output.mutable_plan();
-
-  rc::OffensivePlan* ofPlan = tplan->mutable_offensive();
-  rc::DefensivePlan* dfPlan = tplan->mutable_defensive();
-
-  ///////////////////////////////////////////////////////////////////////////////////
-
-  return decision_output;
+  return decision.toProto();
 }
 
 } // namespace decision

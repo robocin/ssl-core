@@ -209,6 +209,7 @@ services:
       dockerfile: navigation-ms/navigation-luffy/navigation-luffy.Dockerfile
     volumes:
       - .ssl-core:/tmp/.ssl-core
+    attach: false
 
   decision-ms:
     container_name: decision-ms
@@ -220,6 +221,7 @@ services:
     depends_on:
       - perception-ms
       - referee-ms
+    attach: true
 
   behavior-ms:
     container_name: behavior-ms
@@ -228,6 +230,7 @@ services:
       dockerfile: behavior-ms/behavior-zidane/behavior-zidane.Dockerfile
     volumes:
       - .ssl-core:/tmp/.ssl-core
+    attach: false
   
   communication-ms:
     container_name: communication-ms
@@ -239,6 +242,7 @@ services:
     depends_on:
       - gateway
     network_mode: "host"
+    attach: false
 
 
 volumes:
