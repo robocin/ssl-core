@@ -18,4 +18,5 @@ robocin_cpp_library(
           motion/motion_message.cpp
           planning/planning_message.cpp
      DEPS common::output
+          protocols::protobufs
 )

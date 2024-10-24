@@ -52,11 +52,18 @@ class GoToPointMessage : public IProtoConvertible<protocols::behavior::GoToPoint
     NORMAL = 1,
   };
 
-  GoToPointMessage(robocin::Point2D<float> target,
-                   double target_angle,
-                   MovingProfile moving_profile,
-                   PrecisionToTarget precision_to_target,
-                   bool sync_rotate_with_linear_movement);
+  GoToPointMessage(std::optional<robocin::Point2D<float>> target = std::nullopt,
+                   std::optional<double> target_angle = std::nullopt,
+                   std::optional<MovingProfile> moving_profile = std::nullopt,
+                   std::optional<PrecisionToTarget> precision_to_target = std::nullopt,
+                   std::optional<bool> sync_rotate_with_linear_movement = std::nullopt);
+
+  std::optional<robocin::Point2D<float>> target;
+  std::optional<double> target_angle;
+  std::optional<MovingProfile> moving_profile;
+  std::optional<PrecisionToTarget> precision_to_target;
+  std::optional<bool> sync_rotate_with_linear_movement;
+
   [[nodiscard]] protocols::behavior::GoToPoint toProto() const override {
     return protocols::behavior::GoToPoint{};
   };
@@ -89,10 +96,11 @@ class RotateOnSelfMessage : public IProtoConvertible<protocols::behavior::Rotate
 
 class MotionMessage : public IProtoConvertible<protocols::behavior::unification::Motion> {
  public:
-  MotionMessage(std::optional<GoToPointMessage> go_to_point,
-                std::optional<GoToPointWithTrajectoryMessage> go_to_point_with_trajectory,
-                std::optional<RotateInPointMessage> rotate_in_point,
-                std::optional<RotateOnSelfMessage> rotate_on_self);
+  MotionMessage(std::optional<GoToPointMessage> go_to_point = std::nullopt,
+                std::optional<GoToPointWithTrajectoryMessage> go_to_point_with_trajectory
+                = std::nullopt,
+                std::optional<RotateInPointMessage> rotate_in_point = std::nullopt,
+                std::optional<RotateOnSelfMessage> rotate_on_self = std::nullopt);
 
   std::optional<GoToPointMessage> go_to_point;
   std::optional<GoToPointWithTrajectoryMessage> go_to_point_with_trajectory;

@@ -3,9 +3,11 @@
 
 #include "decision/processing/messages/iproto_convertible.h"
 
+#include <cstdint>
 #include <protocols/common/robot_id.pb.h>
 
 namespace decision {
+constexpr uint32_t kRobotIdMessageNumber = 0;
 
 class RobotIdMessage : public IProtoConvertible<protocols::common::RobotId> {
   enum Color {
@@ -15,7 +17,8 @@ class RobotIdMessage : public IProtoConvertible<protocols::common::RobotId> {
   };
 
  public:
-  explicit RobotIdMessage(std::optional<Color> color, uint32_t number);
+  RobotIdMessage(uint32_t number = kRobotIdMessageNumber,
+                 std::optional<Color> color = std::nullopt);
   std::optional<Color> color;
   uint32_t number;
 

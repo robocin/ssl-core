@@ -6,12 +6,11 @@
 #include <protocols/behavior/planning.pb.h>
 #include <protocols/common/robot_id.pb.h>
 #include <sys/types.h>
-#include <vector>
 
 namespace decision {
 class PlanningMessage : public IProtoConvertible<protocols::behavior::Planning> {
  public:
-  explicit PlanningMessage();
+  PlanningMessage();
 
   [[nodiscard]] protocols::behavior::Planning toProto() const override {
     return protocols::behavior::Planning{};

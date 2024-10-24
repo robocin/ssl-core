@@ -38,7 +38,8 @@ class TacticalPlanMessage : public IProtoConvertible<protocols::decision::Tactic
 
 class DecisionMessage : public IProtoConvertible<protocols::decision::Decision> {
  public:
-  DecisionMessage(/*std::vector<BehaviorMessage>& behavior, TacticalPlanMessage plan*/) = default;
+  DecisionMessage(std::vector<BehaviorMessage> behavior = std::vector<BehaviorMessage>{},
+                  TacticalPlanMessage plan = TacticalPlanMessage{});
 
   std::vector<BehaviorMessage> behavior;
   TacticalPlanMessage plan;

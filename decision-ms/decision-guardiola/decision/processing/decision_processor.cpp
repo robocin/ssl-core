@@ -1,6 +1,7 @@
 #include "decision/processing/decision_processor.h"
 
 #include "decision/messaging/receiver/payload.h"
+#include "decision/processing/messages/behavior/behavior_message.h"
 #include "decision/processing/messages/decision/decision_message.h"
 
 #include <protocols/common/robot_id.pb.h>
@@ -67,8 +68,9 @@ std::optional<rc::Decision> DecisionProcessor::process(std::span<const Payload> 
   const rc::Detection last_detection = detections.back();
 
   DecisionMessage decision;
+  BehaviorMessage behavior;
 
-  return decision.toProto();
+  return rc::Decision{};
 }
 
 } // namespace decision

@@ -5,8 +5,8 @@
 #include "decision/processing/messages/iproto_convertible.h"
 #include "decision/processing/messages/motion/motion_message.h"
 #include "decision/processing/messages/planning/planning_message.h"
-#include "protocols/behavior/behavior_unification.pb.h"
 
+#include <protocols/behavior/behavior_unification.pb.h>
 #include <protocols/behavior/planning.pb.h>
 #include <protocols/common/robot_id.pb.h>
 #include <sys/types.h>
@@ -15,9 +15,9 @@ namespace decision {
 
 class OutputMessage : public IProtoConvertible<protocols::behavior::unification::Output> {
  public:
-  explicit OutputMessage(RobotIdMessage& robot_id,
-                         MotionMessage& motion,
-                         PlanningMessage& planning);
+  OutputMessage(RobotIdMessage robot_id = RobotIdMessage{},
+                MotionMessage motion = MotionMessage{},
+                PlanningMessage planning = PlanningMessage{});
 
   RobotIdMessage robot_id;
   MotionMessage motion;
@@ -30,7 +30,7 @@ class OutputMessage : public IProtoConvertible<protocols::behavior::unification:
 
 class BehaviorMessage : public IProtoConvertible<protocols::behavior::unification::Behavior> {
  public:
-  explicit BehaviorMessage(OutputMessage& output);
+  BehaviorMessage(OutputMessage output = OutputMessage{});
   OutputMessage output;
 
   [[nodiscard]] protocols::behavior::unification::Behavior toProto() const override {
