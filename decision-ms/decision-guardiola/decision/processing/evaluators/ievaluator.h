@@ -14,6 +14,9 @@ class IEvaluator {
   IEvaluator& operator=(IEvaluator&&) = default;
 
   virtual ~IEvaluator() = default;
+
+  virtual void process() = 0;
+  virtual void reset() = 0;
 };
 
 } // namespace decision
