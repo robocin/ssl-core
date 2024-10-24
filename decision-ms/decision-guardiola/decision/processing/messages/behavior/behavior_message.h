@@ -6,9 +6,12 @@
 #include "decision/processing/messages/motion/motion_message.h"
 #include "decision/processing/messages/planning/planning_message.h"
 
+#include <cstdint>
 #include <protocols/behavior/behavior_unification.pb.h>
 #include <protocols/behavior/planning.pb.h>
 #include <protocols/common/robot_id.pb.h>
+#include <protocols/decision/decision.pb.h>
+#include <robocin/geometry/point2d.h>
 #include <sys/types.h>
 
 namespace decision {
@@ -28,13 +31,28 @@ class OutputMessage : public IProtoConvertible<protocols::behavior::unification:
   };
 };
 
-class BehaviorMessage : public IProtoConvertible<protocols::behavior::unification::Behavior> {
+class BehaviorUnificationMessage
+    : public IProtoConvertible<protocols::behavior::unification::Behavior> {
  public:
-  BehaviorMessage(OutputMessage output = OutputMessage{});
+  BehaviorUnificationMessage(OutputMessage output = OutputMessage{});
   OutputMessage output;
 
   [[nodiscard]] protocols::behavior::unification::Behavior toProto() const override {
     return protocols::behavior::unification::Behavior{};
+  }
+};
+
+class BehaviorMessage : public IProtoConvertible<protocols::decision::Behavior> {
+ public:
+  BehaviorMessage(std::optional<uint32_t> id = std::nullopt,
+                  std::optional<RobotIdMessage> robot_id = std::nullopt,
+                  std::optional<robocin::Point2D<float>> target = std::nullopt);
+  std::optional<uint32_t> id;
+  std::optional<RobotIdMessage> robot_id;
+  std::optional<robocin::Point2D<float>> target;
+
+  [[nodiscard]] protocols::decision::Behavior toProto() const override {
+    return protocols::decision::Behavior{};
   }
 };
 

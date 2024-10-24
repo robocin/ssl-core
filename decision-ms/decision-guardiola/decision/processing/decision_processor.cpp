@@ -69,6 +69,7 @@ std::optional<rc::Decision> DecisionProcessor::process(std::span<const Payload> 
 
   DecisionMessage decision;
   BehaviorMessage behavior;
+  OutputMessage output;
 
   return rc::Decision{};
 }
