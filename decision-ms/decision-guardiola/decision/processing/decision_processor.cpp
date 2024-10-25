@@ -2,8 +2,9 @@
 
 #include "decision/messaging/receiver/payload.h"
 
-#include <protocols/decision/decision.pb.h>
+#include <memory>
 #include <protocols/common/robot_id.pb.h>
+#include <protocols/decision/decision.pb.h>
 #include <protocols/perception/detection.pb.h>
 #include <protocols/referee/game_status.pb.h>
 #include <ranges>
@@ -18,14 +19,14 @@ using ::robocin::ilog;
 
 namespace rc {
 
-using ::protocols::decision::Decision;
-using ::protocols::perception::Detection;
-using ::protocols::referee::GameStatus;
-using ::protocols::decision::Behavior;
 using ::protocols::common::RobotId;
-using ::protocols::decision::TacticalPlan;
+using ::protocols::decision::Behavior;
+using ::protocols::decision::Decision;
 using ::protocols::decision::DefensivePlan;
 using ::protocols::decision::OffensivePlan;
+using ::protocols::decision::TacticalPlan;
+using ::protocols::perception::Detection;
+using ::protocols::referee::GameStatus;
 
 } // namespace rc
 
@@ -42,8 +43,10 @@ std::vector<rc::GameStatus> gameStatusFromPayloads(std::span<const Payload> payl
 } // namespace
 
 DecisionProcessor::DecisionProcessor(
-    std::unique_ptr<parameters::IHandlerEngine> parameters_handler_engine) :
-    parameters_handler_engine_{std::move(parameters_handler_engine)} {}
+    std::unique_ptr<parameters::IHandlerEngine> parameters_handler_engine,
+    std::unique_ptr<Coach> coach) :
+    parameters_handler_engine_{std::move(parameters_handler_engine)},
+    coach_(std::move(coach)) {}
 
 std::optional<rc::Decision> DecisionProcessor::process(std::span<const Payload> payloads) {
   rc::Decision decision_output;
@@ -53,7 +56,7 @@ std::optional<rc::Decision> DecisionProcessor::process(std::span<const Payload> 
     last_game_status_ = gameStatus.back();
   }
 
-  if(!last_game_status_) {
+  if (!last_game_status_) {
     return std::nullopt;
   }
 
@@ -67,16 +70,19 @@ std::optional<rc::Decision> DecisionProcessor::process(std::span<const Payload> 
 
   ///////////////////////////////////////////////////////////////////////////////////
 
-  // TODO: Implement the logic to generate the decision based on the last detection and the last game status.
-  for(const auto& robot : last_detection.robots()) {
+  // TODO: Implement the logic to generate the decision based on the last detection and the last
+  // game status.
+  TacticalPlan tacticalPlan = coach_->process();
+
+  for (const auto& robot : last_detection.robots()) {
     rc::Behavior* behavior = decision_output.add_behavior();
 
-    behavior->set_id(0);    
+    behavior->set_id(0);
     behavior->mutable_robot_id()->CopyFrom(robot.robot_id());
   }
 
   rc::TacticalPlan* tplan = decision_output.mutable_plan();
-  
+
   rc::OffensivePlan* ofPlan = tplan->mutable_offensive();
   rc::DefensivePlan* dfPlan = tplan->mutable_defensive();
 
