@@ -24,6 +24,7 @@ class ICoach {
 
   [[nodiscard]] TacticalPlan process() const;
   void reset();
+  void removeInvalidEvaluators();
 
  protected:
   [[nodiscard]] virtual TacticalPlan getTacticalPlan() const = 0;
@@ -31,7 +32,7 @@ class ICoach {
   template <std::derived_from<IEvaluator> T, class... Args>
   [[nodiscard]] std::unique_ptr<T> makeEvaluator(Args&&... args) {
     auto evaluator = std::make_unique<T>(std::forward<Args>(args)...);
-    evaluators_.emplace_back(evaluator);
+    evaluators_.emplace_back(evaluator.get());
     return std::move(evaluator);
   }
 

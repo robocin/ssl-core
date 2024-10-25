@@ -2,8 +2,14 @@
 
 namespace decision {
 
-Coach::Coach() = default;
+Coach::Coach() { example_evaluator_ = makeEvaluator<ExampleEvaluator>(); }
 
-TacticalPlan Coach::getTacticalPlan() const { return TacticalPlan{}; }
+TacticalPlan Coach::getTacticalPlan() const {
+  TacticalPlan tactical_plan = TacticalPlan{};
+
+  tactical_plan.setExampleEvaluatorResult(example_evaluator_->getExampleEvaluatorResult());
+
+  return tactical_plan;
+}
 
 } // namespace decision
