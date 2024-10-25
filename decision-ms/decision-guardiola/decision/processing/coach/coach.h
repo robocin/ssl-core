@@ -3,6 +3,8 @@
 
 #include "decision/processing/coach/icoach.h"
 
+#include <memory>
+
 namespace decision {
 
 class Coach : public ICoach {
@@ -10,6 +12,9 @@ class Coach : public ICoach {
   Coach();
 
   [[nodiscard]] TacticalPlan getTacticalPlan() const override;
+
+ private:
+  std::unique_ptr<ExampleEvaluator> example_evaluator_;
 };
 
 } // namespace decision
