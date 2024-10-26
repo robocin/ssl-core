@@ -1,4 +1,4 @@
-#include "decision/processing/messages/perception/detection_message.h"
+#include "decision/processing/messages/perception/robot/robot_message.h"
 
 namespace decision {
 

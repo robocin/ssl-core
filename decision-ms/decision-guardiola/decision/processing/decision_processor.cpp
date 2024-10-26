@@ -1,6 +1,7 @@
 #include "decision/processing/decision_processor.h"
 
 #include "decision/messaging/receiver/payload.h"
+#include "decision/processing/entities/world.h"
 #include "decision/processing/messages/behavior/behavior_message.h"
 #include "decision/processing/messages/decision/decision_message.h"
 
@@ -67,15 +68,7 @@ std::optional<rc::Decision> DecisionProcessor::process(std::span<const Payload> 
 
   const rc::Detection last_detection = detections.back();
 
-  DecisionMessage decision;
-
-  BehaviorMessage behavior_one;
-  behavior_one.id = 10;
-
-  BehaviorMessage behavior_two;
-  behavior_two.robot_id = 20;
-
-  decision.behavior.push_back(std::move(behavior_one));
+  World world;
 
   return rc::Decision{};
 }

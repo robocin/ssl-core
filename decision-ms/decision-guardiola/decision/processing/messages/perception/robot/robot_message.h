@@ -1,5 +1,5 @@
-#ifndef DECISION_PROCESSING_MESSAGES_DETECTION_MESSAGE_H
-#define DECISION_PROCESSING_MESSAGES_DETECTION_MESSAGE_H
+#ifndef DECISION_PROCESSING_MESSAGES_PERCEPTION_ROBOT_ROBOT_MESSAGE_H
+#define DECISION_PROCESSING_MESSAGES_PERCEPTION_ROBOT_ROBOT_MESSAGE_H
 
 #include "decision/processing/messages/common/robot_id/robot_id.h"
 #include "decision/processing/messages/iproto_convertible.h"
@@ -11,7 +11,7 @@
 
 namespace decision {
 
-class Wheel : IProtoConvertible<protocols::perception::Robot::Feedback::Wheel> {
+class Wheel : public IProtoConvertible<protocols::perception::Robot::Feedback::Wheel> {
  public:
   std::optional<uint32_t> wheel_id;
   std::optional<float> motor_speed;
@@ -26,7 +26,7 @@ class Wheel : IProtoConvertible<protocols::perception::Robot::Feedback::Wheel> {
   inline void fromProto(const protocols::perception::Robot& robot_proto) {};
 };
 
-class FeedbackMessage : IProtoConvertible<protocols::perception::Robot::Feedback> {
+class FeedbackMessage : public IProtoConvertible<protocols::perception::Robot::Feedback> {
  public:
   std::optional<bool> dribbler_ball_contact;
   std::optional<float> kick_charge_percentage;
@@ -78,4 +78,4 @@ class RobotMessage : public IProtoConvertible<protocols::perception::Robot> {
 };
 } // namespace decision
 
-#endif // DECISION_PROCESSING_MESSAGES_DETECTION_MESSAGE_H
+#endif // DECISION_PROCESSING_MESSAGES_PERCEPTION_ROBOT_ROBOT_MESSAGE_H

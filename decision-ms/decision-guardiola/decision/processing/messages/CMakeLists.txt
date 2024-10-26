@@ -8,7 +8,9 @@ robocin_cpp_library(
           decision/decision_message.h
           motion/motion_message.h
           planning/planning_message.h
-          perception/detection_message.h
+          perception/robot/robot_message.h
+          perception/ball/ball_message.h
+          perception/field/field_message.h
      SRCS iproto_convertible.cpp
           iproto_convertible.cpp
           behavior/behavior_message.cpp
@@ -18,7 +20,9 @@ robocin_cpp_library(
           decision/decision_message.cpp
           motion/motion_message.cpp
           planning/planning_message.cpp
-          perception/detection_message.cpp
+          perception/robot/robot_message.cpp
+          perception/ball/ball_message.cpp
+          perception/field/field_message.cpp
      DEPS common::output
           protocols::protobufs
 )
