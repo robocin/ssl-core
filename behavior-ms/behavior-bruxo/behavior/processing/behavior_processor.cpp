@@ -82,7 +82,7 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
     
     behavior_message.output.emplace_back(
       OutputMessage{
-        RobotIdMessage{std::nullopt, robot.robot_id().number()},
+        RobotIdMessage{},
         MotionMessage{},
         PlanningMessage{}
      });

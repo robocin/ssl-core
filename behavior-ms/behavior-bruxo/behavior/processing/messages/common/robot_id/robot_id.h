@@ -16,12 +16,12 @@ class RobotIdMessage : public robocin::IProtoConvertible<protocols::common::Robo
 
   public:
     explicit RobotIdMessage(std::optional<Color> color = std::nullopt,
-                            uint32_t number = 0);
+                            std::optional<uint32_t> number = 0);
 
     [[nodiscard]] protocols::common::RobotId toProto() const override {
         protocols::common::RobotId robot_id;
         robot_id.set_color(static_cast<::protocols::common::RobotId_Color>(color.value_or(Color::COLOR_UNSPECIFIED)));
-        robot_id.set_number(number);
+        robot_id.set_number(number.value_or(0));
     
         return robot_id;
     };
@@ -32,7 +32,8 @@ class RobotIdMessage : public robocin::IProtoConvertible<protocols::common::Robo
     };
 
     std::optional<Color> color;
-    uint32_t number;
+    std::optional<uint32_t> number;
+
 };
 
 } // namespace behavior

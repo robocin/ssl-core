@@ -2,7 +2,7 @@
 
 namespace behavior {
 
-RobotIdMessage::RobotIdMessage(std::optional<Color> color, uint32_t number) :
+RobotIdMessage::RobotIdMessage(std::optional<Color> color, std::optional<uint32_t> number) :
     color{std::move(color)},
     number{std::move(number)} {}
 
