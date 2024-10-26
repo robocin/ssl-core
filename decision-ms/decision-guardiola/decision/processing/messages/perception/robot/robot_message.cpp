@@ -1,10 +1,21 @@
 #include "decision/processing/messages/perception/robot/robot_message.h"
 
-namespace decision {
+#include <protocols/perception/detection.pb.h>
+#include <robocin/geometry/point2d.h>
 
+namespace decision {
+namespace {
+namespace rc {
+using protocols::perception::Robot;
+}
+} // namespace
+
+///////////////////////////////////////////// Wheel /////////////////////////////////////////////
 Wheel::Wheel(std::optional<uint32_t> wheel_id, std::optional<float> motor_speed) :
     wheel_id(wheel_id),
     motor_speed(motor_speed) {};
+
+//////////////////////////////////////////// Feedback ///////////////////////////////////////////
 
 FeedbackMessage::FeedbackMessage(std::optional<bool> dribbler_ball_contact,
                                  std::optional<float> kick_charge_percentage,
@@ -14,6 +25,18 @@ FeedbackMessage::FeedbackMessage(std::optional<bool> dribbler_ball_contact,
     kick_charge_percentage(kick_charge_percentage),
     battery_percentage(battery_percentage),
     wheels(std::move(wheels)) {};
+
+FeedbackMessage::FeedbackMessage(const rc::Robot::Feedback& feedback_proto) {
+  fromProto(feedback_proto);
+};
+
+void FeedbackMessage::fromProto(const rc::Robot::Feedback& feedback_proto) {
+  dribbler_ball_contact = feedback_proto.dribbler_ball_contact();
+  kick_charge_percentage = feedback_proto.kick_charge_percentage();
+  battery_percentage = feedback_proto.battery_percentage();
+};
+
+///////////////////////////////////////////// Robot /////////////////////////////////////////////
 
 RobotMessage::RobotMessage(std::optional<float> confidence,
                            std::optional<RobotIdMessage> robot_id,
@@ -35,4 +58,24 @@ RobotMessage::RobotMessage(std::optional<float> confidence,
     height(height),
     dribbler_width(dribbler_width),
     feedback(std::move(feedback)) {};
+
+void RobotMessage::fromProto(const rc::Robot& robot_proto) {
+
+  confidence = robot_proto.confidence();
+  position = robocin::Point2Df(robot_proto.position().x(), robot_proto.position().y());
+  angle = robot_proto.angle();
+  velocity = robocin::Point2Df(robot_proto.velocity().x(), robot_proto.velocity().y());
+  angular_velocity = robot_proto.angular_velocity();
+  radius = robot_proto.radius();
+  height = robot_proto.height();
+  dribbler_width = robot_proto.dribbler_width();
+
+  if (robot_proto.has_robot_id()) {
+    robot_id->fromProto(robot_proto.robot_id());
+  }
+
+  if (robot_proto.has_feedback()) {
+    feedback->fromProto(robot_proto.feedback());
+  }
+};
 } // namespace decision

@@ -1,7 +1,7 @@
 #ifndef DECISION_PROCESSING_MESSAGES_PERCEPTION_ROBOT_ROBOT_MESSAGE_H
 #define DECISION_PROCESSING_MESSAGES_PERCEPTION_ROBOT_ROBOT_MESSAGE_H
 
-#include "decision/processing/messages/common/robot_id/robot_id.h"
+#include "decision/processing/messages/common/robot_id/robot_id_message.h"
 #include "decision/processing/messages/iproto_convertible.h"
 
 #include <cstdint>
@@ -23,7 +23,7 @@ class Wheel : public IProtoConvertible<protocols::perception::Robot::Feedback::W
     return protocols::perception::Robot::Feedback::Wheel{};
   }
 
-  inline void fromProto(const protocols::perception::Robot& robot_proto) {};
+  inline void fromProto(const protocols::perception::Robot::Feedback::Wheel& wheel_proto) {};
 };
 
 class FeedbackMessage : public IProtoConvertible<protocols::perception::Robot::Feedback> {
@@ -39,11 +39,13 @@ class FeedbackMessage : public IProtoConvertible<protocols::perception::Robot::F
                            std::optional<float> battery_percentage = std::nullopt,
                            std::vector<Wheel> wheels = {});
 
+  explicit FeedbackMessage(const protocols::perception::Robot::Feedback& feedback_proto);
+
   [[nodiscard]] protocols::perception::Robot::Feedback toProto() const override {
     return protocols::perception::Robot::Feedback{};
   }
 
-  inline void fromProto(const protocols::perception::Robot& robot_proto) {};
+  void fromProto(const protocols::perception::Robot::Feedback& feedback_proto);
 };
 
 class RobotMessage : public IProtoConvertible<protocols::perception::Robot> {
@@ -74,7 +76,7 @@ class RobotMessage : public IProtoConvertible<protocols::perception::Robot> {
     return protocols::perception::Robot{};
   }
 
-  inline void fromProto(const protocols::perception::Robot& robot_proto) {};
+  void fromProto(const protocols::perception::Robot& robot_proto);
 };
 } // namespace decision
 

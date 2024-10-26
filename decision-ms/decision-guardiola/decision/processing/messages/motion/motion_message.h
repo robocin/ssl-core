@@ -1,7 +1,7 @@
 #ifndef DECISION_PROCESSING_MESSAGES_MOTION_MOTION_MESSAGE_H
 #define DECISION_PROCESSING_MESSAGES_MOTION_MOTION_MESSAGE_H
 
-#include "decision/processing/messages/common/robot_id/robot_id.h"
+#include "decision/processing/messages/common/robot_id/robot_id_message.h"
 #include "decision/processing/messages/iproto_convertible.h"
 #include "protocols/behavior/behavior_unification.pb.h"
 #include "robocin/geometry/point2d.h"

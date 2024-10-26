@@ -1,6 +1,6 @@
 #include "decision/processing/messages/behavior/behavior_message.h"
 
-#include "decision/processing/messages/common/robot_id/robot_id.h"
+#include "decision/processing/messages/common/robot_id/robot_id_message.h"
 #include "decision/processing/messages/planning/planning_message.h"
 
 #include <algorithm>

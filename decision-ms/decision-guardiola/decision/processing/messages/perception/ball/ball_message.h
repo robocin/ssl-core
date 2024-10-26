@@ -1,7 +1,7 @@
 #ifndef DECISION_PROCESSING_MESSAGES_PERCEPTION_BALL_BALL_MESSAGE_H
 #define DECISION_PROCESSING_MESSAGES_PERCEPTION_BALL_BALL_MESSAGE_H
 
-#include "decision/processing/messages/common/robot_id/robot_id.h"
+#include "decision/processing/messages/common/robot_id/robot_id_message.h"
 
 #include <cstdint>
 #include <google/protobuf/timestamp.pb.h>
