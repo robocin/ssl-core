@@ -23,6 +23,8 @@ class Coach : public ICoach {
  private:
   std::vector<IEvaluator*> evaluators_;
   TacticalPlan tactical_plan_;
+
+  std::unique_ptr<ExampleEvaluator> example_evaluator_;
 };
 
 } // namespace decision

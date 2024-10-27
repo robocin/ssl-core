@@ -2,7 +2,7 @@
 
 namespace decision {
 
-Coach::Coach() = default;
+Coach::Coach() { example_evaluator_ = makeEvaluator<ExampleEvaluator>(); }
 
 void Coach::process() {
   for (auto evaluator : evaluators_) {
@@ -20,6 +20,8 @@ void Coach::reset() {
 
 TacticalPlan Coach::getTacticalPlan() { return tactical_plan_; }
 
-void Coach::setTacticalPlan() { tactical_plan_; }
+void Coach::setTacticalPlan() {
+  tactical_plan_.example_evaluator_result_ = example_evaluator_->getExampleEvaluatorResult();
+}
 
 } // namespace decision

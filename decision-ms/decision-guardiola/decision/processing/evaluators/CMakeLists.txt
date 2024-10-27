@@ -1,7 +1,7 @@
 robocin_cpp_library(
   NAME evaluators
   HDRS ievaluator.h
-       evaluator_result.h
+       example_evaluator.h
   SRCS ievaluator.cpp
-       evaluator_result.cpp
+       example_evaluator.cpp
 )
