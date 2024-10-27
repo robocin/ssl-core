@@ -2,7 +2,13 @@
 #define COMMUNICATION_PROCESSING_COMMUNICATION_PROCESSOR_H
 
 #include "communication/messaging/receiver/payload.h"
-#include "communication/processing/robot_command/robot_command_mapper.h"
+#include "communication/processing/messages/common/message_type/message_type.h"
+#include "communication/processing/messages/common/robot_dribbler/robot_dribbler.h"
+#include "communication/processing/messages/common/robot_id/robot_id.h"
+#include "communication/processing/messages/common/robot_kick/robot_kick.h"
+#include "communication/processing/messages/common/robot_velocity/robot_velocity.h"
+#include "communication/processing/messages/communication/communication_message.h"
+#include "communication/processing/messages/flags/flags.h"
 
 #include <protocols/communication/robot_info.pb.h>
 #include <robocin/parameters/parameters.h>
@@ -20,22 +26,20 @@ class ICommunicationProcessor {
 
   virtual ~ICommunicationProcessor() = default;
 
-  virtual std::optional<::protocols::communication::RobotInfo> process(std::span<const Payload> payloads)
-      = 0;
+  virtual std::optional<::protocols::communication::RobotInfo>
+  process(std::span<const Payload> payloads) = 0;
 };
 
 class CommunicationProcessor : public ICommunicationProcessor {
  public:
   explicit CommunicationProcessor(
-      std::unique_ptr<::robocin::parameters::IHandlerEngine> parameters_handler_engine,
-      std::unique_ptr<IRobotCommandMapper> robot_command_mapper);
+      std::unique_ptr<::robocin::parameters::IHandlerEngine> parameters_handler_engine);
 
   std::optional<::protocols::communication::RobotInfo>
   process(std::span<const Payload> payloads) override;
 
  private:
   std::unique_ptr<::robocin::parameters::IHandlerEngine> parameters_handler_engine_;
-  std::unique_ptr<IRobotCommandMapper> robot_command_mapper_;
 
   std::optional<::protocols::third_party::game_controller::Referee> last_game_controller_referee_;
 };
