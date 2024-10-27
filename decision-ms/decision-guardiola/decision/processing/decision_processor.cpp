@@ -42,8 +42,10 @@ std::vector<rc::GameStatus> gameStatusFromPayloads(std::span<const Payload> payl
 } // namespace
 
 DecisionProcessor::DecisionProcessor(
-    std::unique_ptr<parameters::IHandlerEngine> parameters_handler_engine) :
-    parameters_handler_engine_{std::move(parameters_handler_engine)} {}
+    std::unique_ptr<parameters::IHandlerEngine> parameters_handler_engine,
+    std::unique_ptr<Coach> coach) :
+    parameters_handler_engine_{std::move(parameters_handler_engine)},
+    coach_(std::move(coach)) {}
 
 std::optional<rc::Decision> DecisionProcessor::process(std::span<const Payload> payloads) {
   rc::Decision decision_output;
@@ -69,6 +71,10 @@ std::optional<rc::Decision> DecisionProcessor::process(std::span<const Payload> 
 
   // TODO: Implement the logic to generate the decision based on the last detection and the last
   // game status.
+
+  coach_->process();
+  TacticalPlan tacticalPlan = coach_->getTacticalPlan();
+
   for (const auto& robot : last_detection.robots()) {
     rc::Behavior* behavior = decision_output.add_behavior();
 
