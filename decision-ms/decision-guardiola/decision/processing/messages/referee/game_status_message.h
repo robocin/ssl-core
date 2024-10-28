@@ -84,6 +84,8 @@ class TeamMessage : public IProtoConvertible<protocols::referee::GameStatus::Tea
                        std::optional<uint32_t> robot_substitutions_left = std::nullopt,
                        std::optional<uint32_t> robot_substitution_time_left = std::nullopt);
 
+  explicit TeamMessage(const protocols::referee::GameStatus::Team& team_proto);
+
   [[nodiscard]] protocols::referee::GameStatus::Team toProto() const override {
     return protocols::referee::GameStatus::Team{};
   };
@@ -120,17 +122,17 @@ class GameStatusMessage : public IProtoConvertible<protocols::referee::GameStatu
 
   std::optional<std::string> source_id;
   std::optional<std::string> description;
-  std::optional<google::protobuf::Timestamp> timestamp;
+  std::optional<uint32_t> timestamp; // todo(fnap): discuss how to use timestamp
   std::optional<MatchType> match_type;
 
-  std::optional<Team> home_team;
-  std::optional<Team> away_team;
+  std::optional<TeamMessage> home_team;
+  std::optional<TeamMessage> away_team;
 
   std::optional<GameStage> game_stage;
-  std::optional<google::protobuf::Duration> game_stage_time_left;
+  std::optional<uint32_t> game_stage_time_left; // todo(fnap): discuss how to use duration
 
   std::optional<uint64_t> total_commands_issued;
-  std::optional<google::protobuf::Timestamp> command_issued_timestamp;
+  std::optional<uint32_t> command_issued_timestamp; // todo(fnap): discuss how to use timestamp
   std::optional<GameCommandMessage> command;
   std::optional<GameCommandMessage> next_command;
 
@@ -139,20 +141,20 @@ class GameStatusMessage : public IProtoConvertible<protocols::referee::GameStatu
 
   explicit GameStatusMessage(std::optional<std::string> source_id = std::nullopt,
                              std::optional<std::string> description = std::nullopt,
-                             std::optional<google::protobuf::Timestamp> timestamp = std::nullopt,
+                             std::optional<uint32_t> timestamp = std::nullopt,
                              std::optional<MatchType> match_type = std::nullopt,
-                             std::optional<Team> home_team = std::nullopt,
-                             std::optional<Team> away_team = std::nullopt,
+                             std::optional<TeamMessage> home_team = std::nullopt,
+                             std::optional<TeamMessage> away_team = std::nullopt,
                              std::optional<GameStage> game_stage = std::nullopt,
-                             std::optional<google::protobuf::Duration> game_stage_time_left
-                             = std::nullopt,
+                             std::optional<uint32_t> game_stage_time_left = std::nullopt,
                              std::optional<uint64_t> total_commands_issued = std::nullopt,
-                             std::optional<google::protobuf::Timestamp> command_issued_timestamp
-                             = std::nullopt,
+                             std::optional<uint32_t> command_issued_timestamp = std::nullopt,
                              std::optional<GameCommandMessage> command = std::nullopt,
                              std::optional<GameCommandMessage> next_command = std::nullopt,
                              std::vector<GameEventMessage> game_events = {},
                              std::vector<GameEventsProposalMessage> game_events_proposals = {});
+
+  explicit GameStatusMessage(const protocols::referee::GameStatus& game_status_proto);
 
   [[nodiscard]] protocols::referee::GameStatus toProto() const override {
     return protocols::referee::GameStatus{};
