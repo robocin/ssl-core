@@ -34,11 +34,14 @@ class KickInformationMessage
                                   = std::nullopt,
                                   std::optional<uint32_t> predicted_stop_timestamp = std::nullopt);
 
+  explicit KickInformationMessage(
+      const protocols::perception::Ball::KickInformation& kick_information_proto);
+
   [[nodiscard]] protocols::perception::Ball::KickInformation toProto() const override {
     return protocols::perception::Ball::KickInformation{};
   }
 
-  inline void fromProto(const protocols::perception::Ball& ball_proto) {};
+  void fromProto(const protocols::perception::Ball::KickInformation& kick_information_proto);
 };
 
 class BallMessage : public IProtoConvertible<protocols::perception::Ball> {
@@ -53,11 +56,13 @@ class BallMessage : public IProtoConvertible<protocols::perception::Ball> {
                        std::optional<robocin::Point3Df> velocity = std::nullopt,
                        std::optional<KickInformationMessage> kick_information = std::nullopt);
 
+  explicit BallMessage(const protocols::perception::Ball& ball_proto);
+
   [[nodiscard]] protocols::perception::Ball toProto() const override {
     return protocols::perception::Ball{};
   }
 
-  inline void fromProto(const protocols::perception::Ball& ball_proto) {};
+  void fromProto(const protocols::perception::Ball& ball_proto);
 };
 } // namespace decision
 

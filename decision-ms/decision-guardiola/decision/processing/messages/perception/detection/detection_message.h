@@ -28,11 +28,10 @@ class DetectionMessage : public IProtoConvertible<protocols::perception::Detecti
                             std::vector<RobotMessage> robots = {},
                             std::optional<FieldMessage> field = std::nullopt);
 
-  [[nodiscard]] protocols::perception::Detection toProto() const override {
-    return protocols::perception::Detection{};
-  }
+  explicit DetectionMessage(const protocols::perception::Detection& detection_proto);
 
-  inline void fromProto(const protocols::perception::Detection& detection_proto) {};
+  [[nodiscard]] protocols::perception::Detection toProto() const override;
+  void fromProto(const protocols::perception::Detection& detection_proto);
 };
 
 } // namespace decision

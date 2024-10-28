@@ -11,14 +11,13 @@
 #include <protocols/perception/detection.pb.h>
 #include <protocols/referee/game_status.pb.h>
 #include <ranges>
+#include <robocin/output/log.h>
 
 namespace decision {
 
 namespace parameters = ::robocin::parameters;
 
 namespace {
-
-using ::robocin::ilog;
 
 namespace rc {
 
@@ -67,9 +66,13 @@ std::optional<rc::Decision> DecisionProcessor::process(std::span<const Payload> 
     return std::nullopt;
   }
 
-  const rc::Detection last_detection = detections.back();
+  DetectionMessage last_detection_message(detections.back());
 
-  DetectionMessage detection_message;
+  robocin::ilog("serial_id {}", last_detection_message.serial_id.value());
+  robocin::ilog("created_at {}", last_detection_message.serial_id.value());
+  robocin::ilog("framerate {}", last_detection_message.serial_id.value());
+  robocin::ilog("ball {}", last_detection_message.serial_id.value());
+  robocin::ilog("serial_id {}", last_detection_message.serial_id.value());
 
   return rc::Decision{};
 }

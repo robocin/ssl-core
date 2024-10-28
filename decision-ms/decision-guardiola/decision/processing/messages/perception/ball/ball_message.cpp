@@ -1,5 +1,9 @@
 #include "decision/processing/messages/perception/ball/ball_message.h"
 
+#include "decision/processing/messages/common/robot_id/robot_id_message.h"
+
+#include <robocin/geometry/point2d.h>
+
 namespace decision {
 
 KickInformationMessage::KickInformationMessage(
@@ -16,6 +20,41 @@ KickInformationMessage::KickInformationMessage(
     predicted_stop_position(predicted_stop_position),
     predicted_stop_timestamp(predicted_stop_timestamp) {}
 
+KickInformationMessage::KickInformationMessage(
+    const protocols::perception::Ball::KickInformation& kick_information_proto) {
+  KickInformationMessage::fromProto(kick_information_proto);
+}
+
+void KickInformationMessage::fromProto(
+    const protocols::perception::Ball::KickInformation& kick_information_proto) {
+  if (kick_information_proto.has_robot_id()) {
+    this->robot_id = RobotIdMessage(kick_information_proto.robot_id());
+  }
+
+  if (kick_information_proto.has_start_position()) {
+    this->start_position = robocin::Point2Df(kick_information_proto.start_position().x(),
+                                             kick_information_proto.start_position().y());
+  }
+
+  if (kick_information_proto.has_start_velocity()) {
+    this->start_velocity = robocin::Point3Df(kick_information_proto.start_velocity().x(),
+                                             kick_information_proto.start_velocity().y(),
+                                             kick_information_proto.start_velocity().z());
+  }
+
+  if (kick_information_proto.has_predicted_stop_position()) {
+    this->predicted_stop_position
+        = robocin::Point2Df(kick_information_proto.predicted_stop_position().x(),
+                            kick_information_proto.predicted_stop_position().y());
+  }
+
+  this->start_timestamp = kick_information_proto.start_timestamp()
+                              .seconds(); // todo(fnap): discuss how to use this field
+
+  this->predicted_stop_timestamp = kick_information_proto.predicted_stop_timestamp()
+                                       .seconds(); // todo(fnap): discuss how to use this field
+}
+
 BallMessage::BallMessage(std::optional<float> confidence,
                          std::optional<robocin::Point3Df> position,
                          std::optional<robocin::Point3Df> velocity,
@@ -24,4 +63,23 @@ BallMessage::BallMessage(std::optional<float> confidence,
     position(position),
     velocity(velocity),
     kick_information(std::move(kick_information)) {}
+
+BallMessage::BallMessage(const protocols::perception::Ball& ball_proto) {
+  BallMessage::fromProto(ball_proto);
+}
+
+void BallMessage::fromProto(const protocols::perception::Ball& ball_proto) {
+  this->confidence = ball_proto.confidence();
+  this->position = robocin::Point3Df(ball_proto.position().x(),
+                                     ball_proto.position().y(),
+                                     ball_proto.position().z());
+
+  this->velocity = robocin::Point3Df(ball_proto.velocity().x(),
+                                     ball_proto.velocity().y(),
+                                     ball_proto.velocity().z());
+
+  if (ball_proto.has_kick_information()) {
+    this->kick_information = KickInformationMessage(ball_proto.kick_information());
+  }
+};
 } // namespace decision
