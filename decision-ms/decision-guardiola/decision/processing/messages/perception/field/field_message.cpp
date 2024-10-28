@@ -21,6 +21,8 @@ FieldMessage::FieldMessage(std::optional<uint64_t> serial_id,
     goal_center_to_penalty_mark(goal_center_to_penalty_mark) {}
 
 void FieldMessage::fromProto(const protocols::perception::Field& field_proto) {
+  // std::cout << "SERIAL ID: " << field_proto.serial_id() << std::endl;
+  this->serial_id = field_proto.serial_id();
   this->length = field_proto.length();
   this->width = field_proto.width();
   this->goal_depth = field_proto.goal_depth();

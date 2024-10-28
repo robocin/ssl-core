@@ -32,7 +32,11 @@ void DetectionMessage::fromProto(const rc::Detection& detection_proto) {
   this->framerate = detection_proto.framerate();
 
   if (detection_proto.has_field()) {
-    this->field = FieldMessage(detection_proto.field());
+    // Checking for std::nullopt FieldMessage
+    if (!this->field.has_value()) {
+      this->field.emplace();
+    }
+    this->field->fromProto(detection_proto.field());
   }
 
   for (const auto& ball_proto : detection_proto.balls()) {

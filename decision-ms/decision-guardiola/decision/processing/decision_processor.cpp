@@ -68,12 +68,6 @@ std::optional<rc::Decision> DecisionProcessor::process(std::span<const Payload> 
 
   DetectionMessage last_detection_message(detections.back());
 
-  robocin::ilog("serial_id {}", last_detection_message.serial_id.value());
-  robocin::ilog("created_at {}", last_detection_message.serial_id.value());
-  robocin::ilog("framerate {}", last_detection_message.serial_id.value());
-  robocin::ilog("ball {}", last_detection_message.serial_id.value());
-  robocin::ilog("serial_id {}", last_detection_message.serial_id.value());
-
   return rc::Decision{};
 }
 

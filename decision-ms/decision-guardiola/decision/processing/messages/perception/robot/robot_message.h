@@ -23,7 +23,7 @@ class Wheel : public IProtoConvertible<protocols::perception::Robot::Feedback::W
     return protocols::perception::Robot::Feedback::Wheel{};
   }
 
-  inline void fromProto(const protocols::perception::Robot::Feedback::Wheel& wheel_proto) {};
+  void fromProto(const protocols::perception::Robot::Feedback::Wheel& wheel_proto) {};
 };
 
 class FeedbackMessage : public IProtoConvertible<protocols::perception::Robot::Feedback> {
@@ -71,6 +71,8 @@ class RobotMessage : public IProtoConvertible<protocols::perception::Robot> {
                         std::optional<float> height = std::nullopt,
                         std::optional<float> dribbler_width = std::nullopt,
                         std::optional<FeedbackMessage> feedback = std::nullopt);
+
+  explicit RobotMessage(const protocols::perception::Robot& robot_proto);
 
   [[nodiscard]] protocols::perception::Robot toProto() const override {
     return protocols::perception::Robot{};

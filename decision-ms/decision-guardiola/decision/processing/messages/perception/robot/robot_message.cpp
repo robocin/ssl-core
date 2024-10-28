@@ -60,7 +60,6 @@ RobotMessage::RobotMessage(std::optional<float> confidence,
     feedback(std::move(feedback)) {};
 
 void RobotMessage::fromProto(const rc::Robot& robot_proto) {
-
   confidence = robot_proto.confidence();
   position = robocin::Point2Df(robot_proto.position().x(), robot_proto.position().y());
   angle = robot_proto.angle();
@@ -78,4 +77,7 @@ void RobotMessage::fromProto(const rc::Robot& robot_proto) {
     feedback->fromProto(robot_proto.feedback());
   }
 };
+
+RobotMessage::RobotMessage(const rc::Robot& robot_proto) { RobotMessage::fromProto(robot_proto); }
+
 } // namespace decision
