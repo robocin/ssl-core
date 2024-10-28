@@ -22,15 +22,15 @@ FieldMessage::FieldMessage(std::optional<uint64_t> serial_id,
 
 void FieldMessage::fromProto(const protocols::perception::Field& field_proto) {
   // std::cout << "SERIAL ID: " << field_proto.serial_id() << std::endl;
-  this->serial_id = field_proto.serial_id();
-  this->length = field_proto.length();
-  this->width = field_proto.width();
-  this->goal_depth = field_proto.goal_depth();
-  this->goal_width = field_proto.goal_width();
-  this->penalty_area_depth = field_proto.penalty_area_depth();
-  this->penalty_area_width = field_proto.penalty_area_width();
-  this->boundary_width = field_proto.boundary_width();
-  this->goal_center_to_penalty_mark = field_proto.goal_center_to_penalty_mark();
+  serial_id = field_proto.serial_id();
+  length = field_proto.length();
+  width = field_proto.width();
+  goal_depth = field_proto.goal_depth();
+  goal_width = field_proto.goal_width();
+  penalty_area_depth = field_proto.penalty_area_depth();
+  penalty_area_width = field_proto.penalty_area_width();
+  boundary_width = field_proto.boundary_width();
+  goal_center_to_penalty_mark = field_proto.goal_center_to_penalty_mark();
 }
 
 FieldMessage::FieldMessage(const protocols::perception::Field& field_proto) {

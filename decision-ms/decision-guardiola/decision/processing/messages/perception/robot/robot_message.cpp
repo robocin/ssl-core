@@ -70,10 +70,18 @@ void RobotMessage::fromProto(const rc::Robot& robot_proto) {
   dribbler_width = robot_proto.dribbler_width();
 
   if (robot_proto.has_robot_id()) {
+    if (!robot_id.has_value()) {
+      robot_id.emplace();
+    }
+
     robot_id->fromProto(robot_proto.robot_id());
   }
 
   if (robot_proto.has_feedback()) {
+    if (!feedback.has_value()) {
+      feedback.emplace();
+    }
+
     feedback->fromProto(robot_proto.feedback());
   }
 };

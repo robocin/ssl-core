@@ -26,17 +26,17 @@ rc::Detection DetectionMessage::toProto() const { return rc::Detection{}; };
 
 void DetectionMessage::fromProto(const rc::Detection& detection_proto) {
 
-  this->serial_id = detection_proto.serial_id();
-  this->created_at
+  serial_id = detection_proto.serial_id();
+  created_at
       = detection_proto.created_at().seconds(); // todo(fnap): discuss the usage of this field
-  this->framerate = detection_proto.framerate();
+  framerate = detection_proto.framerate();
 
   if (detection_proto.has_field()) {
     // Checking for std::nullopt FieldMessage
-    if (!this->field.has_value()) {
-      this->field.emplace();
+    if (!field.has_value()) {
+      field.emplace();
     }
-    this->field->fromProto(detection_proto.field());
+    field->fromProto(detection_proto.field());
   }
 
   for (const auto& ball_proto : detection_proto.balls()) {

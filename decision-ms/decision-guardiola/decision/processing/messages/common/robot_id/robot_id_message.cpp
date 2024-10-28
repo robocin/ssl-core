@@ -23,7 +23,7 @@ RobotIdMessage::RobotIdMessage(const rc::RobotId& robot_id_proto) { fromProto(ro
 
 void RobotIdMessage::fromProto(const rc::RobotId& robot_id_proto) {
   if (robot_id_proto.has_color()) {
-    this->color = getColor(robot_id_proto.color());
+    color = getColor(robot_id_proto.color());
   }
 
   number = robot_id_proto.number();
