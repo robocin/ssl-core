@@ -1,88 +1,163 @@
 #ifndef DECISION_PROCESSING_MESSAGES_COMMON_GAME_COMMAND_GAME_COMMAND_MESSAGE_H
 #define DECISION_PROCESSING_MESSAGES_COMMON_GAME_COMMAND_GAME_COMMAND_MESSAGE_H
 
+#include "decision/processing/messages/iproto_convertible.h"
+
 #include <cstdint>
 #include <google/protobuf/duration.pb.h>
 #include <optional>
+#include <protocols/common/game_command.pb.h>
 #include <robocin/geometry/point2d.h>
 
 namespace decision {
 
-class GameCommandMessage {
+class GameCommandMessage : public IProtoConvertible<protocols::common::GameCommand> {
  public:
   // Inner command classes
-  class HaltMessage {
+  class HaltMessage : public IProtoConvertible<protocols::common::GameCommand::Halt> {
    public:
-    HaltMessage() = default;
+    explicit HaltMessage();
+
+    [[nodiscard]] protocols::common::GameCommand::Halt toProto() const override {
+      return protocols::common::GameCommand::Halt{};
+    };
+
+    void fromProto(const protocols::common::GameCommand::Halt& halt_proto);
   };
 
-  class InGameMessage {
+  class InGameMessage : public IProtoConvertible<protocols::common::GameCommand::InGame> {
    public:
-    InGameMessage() = default;
+    explicit InGameMessage();
+
+    [[nodiscard]] protocols::common::GameCommand::InGame toProto() const override {
+      return protocols::common::GameCommand::InGame{};
+    };
+
+    void fromProto(const protocols::common::GameCommand::InGame& in_game_proto);
   };
 
-  class StopMessage {
+  class StopMessage : public IProtoConvertible<protocols::common::GameCommand::Stop> {
    public:
-    StopMessage() = default;
+    explicit StopMessage();
+
+    [[nodiscard]] protocols::common::GameCommand::Stop toProto() const override {
+      return protocols::common::GameCommand::Stop{};
+    };
+
+    void fromProto(const protocols::common::GameCommand::Stop& stop_proto);
   };
 
-  class BallPlacementMessage {
+  class BallPlacementMessage
+      : public IProtoConvertible<protocols::common::GameCommand::BallPlacement> {
    public:
     std::optional<robocin::Point2Df> position;
     std::optional<uint32_t> remaining_time; // todo(fnap): discuss what to use with duration
 
-    BallPlacementMessage() = default;
-    BallPlacementMessage(const robocin::Point2Df& position, const uint32_t& time) :
-        position(position),
-        remaining_time(time) {}
+    explicit BallPlacementMessage(std::optional<robocin::Point2Df> position = std::nullopt,
+                                  std::optional<uint32_t> remaining_time = std::nullopt);
+
+    [[nodiscard]] protocols::common::GameCommand::BallPlacement toProto() const override {
+      return protocols::common::GameCommand::BallPlacement{};
+    };
+
+    void fromProto(const protocols::common::GameCommand::BallPlacement& ball_placement_proto);
   };
 
-  class PrepareKickoffMessage {
+  class PrepareKickoffMessage
+      : public IProtoConvertible<protocols::common::GameCommand::PrepareKickoff> {
    public:
-    PrepareKickoffMessage() = default;
+    explicit PrepareKickoffMessage();
+
+    [[nodiscard]] protocols::common::GameCommand::PrepareKickoff toProto() const override {
+      return protocols::common::GameCommand::PrepareKickoff{};
+    };
+
+    void fromProto(const protocols::common::GameCommand::PrepareKickoff& prepare_kick_off_proto);
   };
 
-  class KickoffMessage {
-   public:
-    std::optional<google::protobuf::Duration> remaining_time;
-
-    explicit KickoffMessage(const google::protobuf::Duration& time) : remaining_time(time) {}
-  };
-
-  class PreparePenaltyMessage {
-   public:
-    PreparePenaltyMessage() = default;
-  };
-
-  class PenaltyMessage {
-   public:
-    std::optional<google::protobuf::Duration> remaining_time;
-
-    PenaltyMessage() = default;
-    explicit PenaltyMessage(const google::protobuf::Duration& time) : remaining_time(time) {}
-  };
-
-  class PrepareDirectFreeKickMessage {
-   public:
-    PrepareDirectFreeKickMessage() = default;
-  };
-
-  class DirectFreeKickMessage {
+  class KickoffMessage : public IProtoConvertible<protocols::common::GameCommand::Kickoff> {
    public:
     std::optional<google::protobuf::Duration> remaining_time;
 
-    DirectFreeKickMessage() = default;
-    explicit DirectFreeKickMessage(const google::protobuf::Duration& time) : remaining_time(time) {}
+    explicit KickoffMessage(const google::protobuf::Duration& time);
+
+    [[nodiscard]] protocols::common::GameCommand::Kickoff toProto() const override {
+      return protocols::common::GameCommand::Kickoff{};
+    };
+
+    void fromProto(const protocols::common::GameCommand::Kickoff& kick_off_proto);
   };
 
-  class TimeoutMessage {
+  class PreparePenaltyMessage
+      : public IProtoConvertible<protocols::common::GameCommand::PreparePenalty> {
    public:
-    TimeoutMessage() = default;
+    explicit PreparePenaltyMessage();
+
+    [[nodiscard]] protocols::common::GameCommand::PreparePenalty toProto() const override {
+      return protocols::common::GameCommand::PreparePenalty{};
+    };
+
+    void fromProto(const protocols::common::GameCommand::PreparePenalty& prepare_penalty_proto);
   };
 
-  class IntervalMessage {
+  class PenaltyMessage : public IProtoConvertible<protocols::common::GameCommand::Penalty> {
    public:
-    IntervalMessage() = default;
+    std::optional<google::protobuf::Duration> remaining_time;
+
+    explicit PenaltyMessage(const google::protobuf::Duration& time);
+
+    [[nodiscard]] protocols::common::GameCommand::Penalty toProto() const override {
+      return protocols::common::GameCommand::Penalty{};
+    };
+
+    void fromProto(const protocols::common::GameCommand::Penalty& penalty_proto);
+  };
+
+  class PrepareDirectFreeKickMessage
+      : public IProtoConvertible<protocols::common::GameCommand::PrepareDirectFreeKick> {
+   public:
+    explicit PrepareDirectFreeKickMessage();
+
+    [[nodiscard]] protocols::common::GameCommand::PrepareDirectFreeKick toProto() const override {
+      return protocols::common::GameCommand::PrepareDirectFreeKick{};
+    };
+
+    void fromProto(const protocols::common::GameCommand::PrepareDirectFreeKick& penalty_proto);
+  };
+
+  class DirectFreeKickMessage
+      : public IProtoConvertible<protocols::common::GameCommand::DirectFreeKick> {
+   public:
+    std::optional<google::protobuf::Duration> remaining_time;
+    explicit DirectFreeKickMessage(const google::protobuf::Duration& time);
+
+    [[nodiscard]] protocols::common::GameCommand::DirectFreeKick toProto() const override {
+      return protocols::common::GameCommand::DirectFreeKick{};
+    };
+
+    void fromProto(const protocols::common::GameCommand::DirectFreeKick& direct_free_kick_proto);
+  };
+
+  class TimeoutMessage : public IProtoConvertible<protocols::common::GameCommand::Timeout> {
+   public:
+    explicit TimeoutMessage();
+
+    [[nodiscard]] protocols::common::GameCommand::Timeout toProto() const override {
+      return protocols::common::GameCommand::Timeout{};
+    };
+
+    void fromProto(const protocols::common::GameCommand::Timeout& timeout_proto);
+  };
+
+  class IntervalMessage : public IProtoConvertible<protocols::common::GameCommand::Interval> {
+   public:
+    explicit IntervalMessage();
+
+    [[nodiscard]] protocols::common::GameCommand::Interval toProto() const override {
+      return protocols::common::GameCommand::Interval{};
+    };
+
+    void fromProto(const protocols::common::GameCommand::Interval& timeout_proto);
   };
 
   // Optional fields for each command type
@@ -114,6 +189,12 @@ class GameCommandMessage {
   std::optional<TimeoutMessage> away_timeout;
 
   std::optional<IntervalMessage> interval;
+
+  [[nodiscard]] protocols::common::GameCommand toProto() const override {
+    return protocols::common::GameCommand{};
+  };
+
+  void fromProto(const protocols::common::GameCommand& game_command_proto);
 };
 
 } // namespace decision

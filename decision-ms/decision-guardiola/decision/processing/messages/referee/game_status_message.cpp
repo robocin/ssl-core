@@ -3,11 +3,15 @@
 #include <utility>
 
 namespace decision {
+
+/////////////////////////////////// GameEventsProposalMessage ///////////////////////////////////
 GameEventsProposalMessage::GameEventsProposalMessage(std::optional<std::string> proposal_id,
                                                      std::vector<GameEventMessage> game_events,
                                                      std::optional<bool> was_accepted) :
     proposal_id(std::move(proposal_id)),
     was_accepted(was_accepted) {};
+
+/////////////////////////////////// TeamMessage ///////////////////////////////////
 
 TeamMessage::TeamMessage(std::optional<std::string> name,
                          std::optional<uint32_t> score,
@@ -45,6 +49,8 @@ TeamMessage::TeamMessage(std::optional<std::string> name,
     is_robot_substitution_allowed(is_robot_substitution_allowed),
     robot_substitutions_left(robot_substitutions_left),
     robot_substitution_time_left(robot_substitution_time_left) {}
+
+/////////////////////////////////// GameStatusMessage ///////////////////////////////////
 
 GameStatusMessage::GameStatusMessage(
     std::optional<std::string> source_id,
