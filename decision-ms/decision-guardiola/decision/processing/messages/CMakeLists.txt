@@ -13,7 +13,7 @@ robocin_cpp_library(
           perception/robot/robot_message.h
           perception/ball/ball_message.h
           perception/field/field_message.h
-          referee/game_status/game_status_message.h
+          referee/game_status_message.h
      SRCS iproto_convertible.cpp
           iproto_convertible.cpp
           behavior/behavior_message.cpp
@@ -28,7 +28,7 @@ robocin_cpp_library(
           perception/robot/robot_message.cpp
           perception/ball/ball_message.cpp
           perception/field/field_message.cpp
-          referee/game_status/game_status_message.cpp
+          referee/game_status_message.cpp
      DEPS common::output
           protocols::protobufs
 )
