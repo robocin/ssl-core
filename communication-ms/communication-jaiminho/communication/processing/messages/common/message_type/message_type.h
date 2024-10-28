@@ -19,15 +19,11 @@ class MessageTypeMessage : public robocin::IProtoConvertible<protocols::common::
  public:
   explicit MessageTypeMessage(std::optional<Message> message_type = std::nullopt);
 
-  [[nodiscard]] protocols::common::MessageType toProto() const override {
-    return static_cast<::protocols::common::MessageType>(message_type.value_or(Message::UNKNOWN));
-  };
+  [[nodiscard]] protocols::common::MessageType toProto() const override;
 
-  void fromProto(protocols::common::MessageType message_type) override {
-    this->message_type = static_cast<Message>(message_type);
-  };
+  void fromProto(protocols::common::MessageType message_type) override;
 
-  std::optional<Message> message_type;
+  std::optional<Message> message_type_;
 };
 
 } // namespace communication
