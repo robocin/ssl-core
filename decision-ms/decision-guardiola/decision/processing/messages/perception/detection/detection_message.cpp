@@ -1,5 +1,7 @@
 #include "decision/processing/messages/perception/detection/detection_message.h"
 
+#include "decision/processing/messages/perception/field/field_message.h"
+
 namespace decision {
 namespace {
 namespace rc {
@@ -29,8 +31,16 @@ void DetectionMessage::fromProto(const rc::Detection& detection_proto) {
       = detection_proto.created_at().seconds(); // todo(fnap): discuss the usage of this field
   this->framerate = detection_proto.framerate();
 
+  if (detection_proto.has_field()) {
+    this->field = FieldMessage(detection_proto.field());
+  }
+
   for (const auto& ball_proto : detection_proto.balls()) {
     balls.emplace_back(ball_proto);
+  }
+
+  for (const auto& robot_proto : detection_proto.robots()) {
+    robots.emplace_back(robot_proto);
   }
 };
 

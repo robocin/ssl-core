@@ -31,11 +31,13 @@ class FieldMessage : public IProtoConvertible<protocols::perception::Field> {
                         std::optional<float> boundary_width = std::nullopt,
                         std::optional<float> goal_center_to_penalty_mark = std::nullopt);
 
+  explicit FieldMessage(const protocols::perception::Field& field_proto);
+
   [[nodiscard]] protocols::perception::Field toProto() const override {
     return protocols::perception::Field{};
   }
 
-  inline void fromProto(const protocols::perception::Ball& ball_proto) {};
+  void fromProto(const protocols::perception::Field& field_proto);
 };
 } // namespace decision
 #endif // DECISION_PROCESSING_MESSAGES_PERCEPTION_FIELD_FIELD_MESSAGE_H

@@ -20,4 +20,19 @@ FieldMessage::FieldMessage(std::optional<uint64_t> serial_id,
     boundary_width(boundary_width),
     goal_center_to_penalty_mark(goal_center_to_penalty_mark) {}
 
+void FieldMessage::fromProto(const protocols::perception::Field& field_proto) {
+  this->length = field_proto.length();
+  this->width = field_proto.width();
+  this->goal_depth = field_proto.goal_depth();
+  this->goal_width = field_proto.goal_width();
+  this->penalty_area_depth = field_proto.penalty_area_depth();
+  this->penalty_area_width = field_proto.penalty_area_width();
+  this->boundary_width = field_proto.boundary_width();
+  this->goal_center_to_penalty_mark = field_proto.goal_center_to_penalty_mark();
+}
+
+FieldMessage::FieldMessage(const protocols::perception::Field& field_proto) {
+  FieldMessage::fromProto(field_proto);
+}
+
 } // namespace decision
