@@ -1,5 +1,6 @@
 #include "decision/processing/messages/referee/game_status_message.h"
 
+#include <protocols/common/game_stage.pb.h>
 #include <protocols/common/match_type.pb.h>
 #include <protocols/referee/game_status.pb.h>
 #include <sys/types.h>
@@ -8,8 +9,9 @@
 namespace decision {
 namespace {
 namespace rc {
+using ::protocols::common::GameStage;
 using ::protocols::common::MatchType;
-}
+} // namespace rc
 } // namespace
 
 /////////////////////////////////// GameEventsProposalMessage ///////////////////////////////////
@@ -150,6 +152,40 @@ GameStatusMessage::MatchType getMatchType(rc::MatchType match_type_proto) {
   }
 }
 
+GameStatusMessage::GameStage getGameStage(rc::GameStage game_stage_proto) {
+  switch (game_stage_proto) {
+    case protocols::common::GameStage::GAME_STAGE_NORMAL_FIRST_HALF_PRE:
+      return GameStatusMessage::GAME_STAGE_NORMAL_FIRST_HALF_PRE;
+    case protocols::common::GameStage::GAME_STAGE_NORMAL_FIRST_HALF:
+      return GameStatusMessage::GAME_STAGE_NORMAL_FIRST_HALF;
+    case protocols::common::GameStage::GAME_STAGE_NORMAL_HALF_TIME:
+      return GameStatusMessage::GAME_STAGE_NORMAL_HALF_TIME;
+    case protocols::common::GameStage::GAME_STAGE_NORMAL_SECOND_HALF_PRE:
+      return GameStatusMessage::GAME_STAGE_NORMAL_SECOND_HALF_PRE;
+    case protocols::common::GameStage::GAME_STAGE_NORMAL_SECOND_HALF:
+      return GameStatusMessage::GAME_STAGE_NORMAL_SECOND_HALF;
+    case protocols::common::GameStage::GAME_STAGE_EXTRA_TIME_BREAK:
+      return GameStatusMessage::GAME_STAGE_EXTRA_TIME_BREAK;
+    case protocols::common::GameStage::GAME_STAGE_EXTRA_FIRST_HALF_PRE:
+      return GameStatusMessage::GAME_STAGE_EXTRA_FIRST_HALF_PRE;
+    case protocols::common::GameStage::GAME_STAGE_EXTRA_FIRST_HALF:
+      return GameStatusMessage::GAME_STAGE_EXTRA_FIRST_HALF;
+    case protocols::common::GameStage::GAME_STAGE_EXTRA_HALF_TIME:
+      return GameStatusMessage::GAME_STAGE_EXTRA_HALF_TIME;
+    case protocols::common::GameStage::GAME_STAGE_EXTRA_SECOND_HALF_PRE:
+      return GameStatusMessage::GAME_STAGE_EXTRA_SECOND_HALF_PRE;
+    case protocols::common::GameStage::GAME_STAGE_EXTRA_SECOND_HALF:
+      return GameStatusMessage::GAME_STAGE_EXTRA_SECOND_HALF;
+    case protocols::common::GameStage::GAME_STAGE_PENALTY_SHOOTOUT_BREAK:
+      return GameStatusMessage::GAME_STAGE_PENALTY_SHOOTOUT_BREAK;
+    case protocols::common::GameStage::GAME_STAGE_PENALTY_SHOOTOUT:
+      return GameStatusMessage::GAME_STAGE_PENALTY_SHOOTOUT;
+    case protocols::common::GameStage::GAME_STAGE_POST_GAME:
+      return GameStatusMessage::GAME_STAGE_POST_GAME;
+    default: return GameStatusMessage::GameStage::GAME_STAGE_UNSPECIFIED;
+  }
+}
+
 void GameStatusMessage::fromProto(const protocols::referee::GameStatus& game_status_proto) {
   source_id = game_status_proto.source_id();
   description = game_status_proto.description();
@@ -172,7 +208,7 @@ void GameStatusMessage::fromProto(const protocols::referee::GameStatus& game_sta
     away_team->fromProto(game_status_proto.away_team());
   }
 
-  // GameStage
+  game_stage = getGameStage(game_status_proto.game_stage());
 
   if (game_status_proto.has_game_stage_time_left()) {
     game_stage_time_left = game_status_proto.game_stage_time_left()
@@ -188,7 +224,7 @@ void GameStatusMessage::fromProto(const protocols::referee::GameStatus& game_sta
       command.emplace();
     }
 
-    // implement
+    // implement, always returns empty command
     command->fromProto(game_status_proto.command());
   }
 
