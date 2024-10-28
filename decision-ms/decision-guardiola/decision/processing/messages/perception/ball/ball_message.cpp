@@ -79,6 +79,9 @@ void BallMessage::fromProto(const protocols::perception::Ball& ball_proto) {
                                      ball_proto.velocity().z());
 
   if (ball_proto.has_kick_information()) {
+    if (!this->kick_information.has_value()) {
+      this->kick_information.emplace();
+    }
     this->kick_information = KickInformationMessage(ball_proto.kick_information());
   }
 };
