@@ -140,7 +140,7 @@ services:
     container_name: behavior-ms
     build:
       context: .
-      dockerfile: behavior-ms/behavior-zidane/behavior-zidane.Dockerfile
+      dockerfile: behavior-ms/behavior-bruxo/behavior-bruxo.Dockerfile
     volumes:
       - .ssl-core:/tmp/.ssl-core
     depends_on:
@@ -167,10 +167,9 @@ services:
       - .ssl-core:/tmp/.ssl-core
     depends_on:
       - gateway
-    network_mode: "host"
-    depends_on:
       - perception-ms
       - navigation-ms
+    network_mode: "host"
 
 volumes:
   .ssl-core:
