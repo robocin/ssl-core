@@ -10,6 +10,7 @@
 #include <protocols/common/game_event.pb.h>
 #include <protocols/referee/game_status.pb.h>
 #include <robocin/geometry/point2d.h>
+#include <robocin/utility/iproto_convertible.h>
 #include <string>
 #include <sys/types.h>
 #include <vector>
@@ -22,7 +23,8 @@ enum Team {
   TEAM_AWAY = 2,
 };
 
-class BallLeftFieldMessage : public IProtoConvertible<protocols::common::GameEvent::BallLeftField> {
+class BallLeftFieldMessage
+    : public robocin::IProtoConvertible<protocols::common::GameEvent::BallLeftField> {
  public:
   std::optional<Team> by_team;
   std::optional<RobotIdMessage> by_robot;
@@ -37,11 +39,11 @@ class BallLeftFieldMessage : public IProtoConvertible<protocols::common::GameEve
     return protocols::common::GameEvent::BallLeftField{};
   };
 
-  void fromProto(const protocols::common::GameEvent::BallLeftField& ball_left_field_proto);
+  void fromProto(const protocols::common::GameEvent::BallLeftField& ball_left_field_proto) override;
 };
 
 class BallLeftFieldBoundaryMessage
-    : public IProtoConvertible<protocols::common::GameEvent::BallLeftFieldBoundary> {
+    : public robocin::IProtoConvertible<protocols::common::GameEvent::BallLeftFieldBoundary> {
  public:
   std::optional<Team> by_team;
   std::optional<robocin::Point2Df> left_field_boundary_position;
@@ -54,11 +56,12 @@ class BallLeftFieldBoundaryMessage
     return protocols::common::GameEvent::BallLeftFieldBoundary{};
   };
 
-  void fromProto(
-      const protocols::common::GameEvent::BallLeftFieldBoundary& ball_left_field_boundary_proto);
+  void fromProto(const protocols::common::GameEvent::BallLeftFieldBoundary&
+                     ball_left_field_boundary_proto) override;
 };
 
-class AimlessKickMessage : public IProtoConvertible<protocols::common::GameEvent::AimlessKick> {
+class AimlessKickMessage
+    : public robocin::IProtoConvertible<protocols::common::GameEvent::AimlessKick> {
  public:
   std::optional<Team> by_team;
   std::optional<RobotIdMessage> by_robot;
@@ -74,11 +77,11 @@ class AimlessKickMessage : public IProtoConvertible<protocols::common::GameEvent
     return protocols::common::GameEvent::AimlessKick{};
   };
 
-  void fromProto(const protocols::common::GameEvent::AimlessKick& aimless_kick_proto);
+  void fromProto(const protocols::common::GameEvent::AimlessKick& aimless_kick_proto) override;
 };
 
 class GoalkeeperHeldBallMessage
-    : public IProtoConvertible<protocols::common::GameEvent::GoalkeeperHeldBall> {
+    : public robocin::IProtoConvertible<protocols::common::GameEvent::GoalkeeperHeldBall> {
  public:
   std::optional<Team> by_team;
   std::optional<robocin::Point2Df> ball_position;
@@ -92,12 +95,12 @@ class GoalkeeperHeldBallMessage
     return protocols::common::GameEvent::GoalkeeperHeldBall{};
   };
 
-  void
-  fromProto(const protocols::common::GameEvent::GoalkeeperHeldBall& goalkeeper_held_ball_proto);
+  void fromProto(
+      const protocols::common::GameEvent::GoalkeeperHeldBall& goalkeeper_held_ball_proto) override;
 };
 
 class RobotTooCloseToDefenseAreaMessage
-    : public IProtoConvertible<protocols::common::GameEvent::RobotTooCloseToDefenseArea> {
+    : public robocin::IProtoConvertible<protocols::common::GameEvent::RobotTooCloseToDefenseArea> {
  public:
   std::optional<Team> by_team;
   std::optional<RobotIdMessage> by_robot;
@@ -117,11 +120,11 @@ class RobotTooCloseToDefenseAreaMessage
   };
 
   void fromProto(const protocols::common::GameEvent::RobotTooCloseToDefenseArea&
-                     robot_too_close_to_defense_area_proto);
+                     robot_too_close_to_defense_area_proto) override;
 };
 
 class RobotInDefenseAreaMessage
-    : public IProtoConvertible<protocols::common::GameEvent::RobotInDefenseArea> {
+    : public robocin::IProtoConvertible<protocols::common::GameEvent::RobotInDefenseArea> {
  public:
   std::optional<Team> by_team;
   std::optional<RobotIdMessage> by_robot;
@@ -138,12 +141,12 @@ class RobotInDefenseAreaMessage
     return protocols::common::GameEvent::RobotInDefenseArea{};
   };
 
-  void
-  fromProto(const protocols::common::GameEvent::RobotInDefenseArea& robot_in_defense_area_proto);
+  void fromProto(
+      const protocols::common::GameEvent::RobotInDefenseArea& robot_in_defense_area_proto) override;
 };
 
 class RobotPushedRobotMessage
-    : public IProtoConvertible<protocols::common::GameEvent::RobotPushedRobot> {
+    : public robocin::IProtoConvertible<protocols::common::GameEvent::RobotPushedRobot> {
  public:
   std::optional<Team> by_team;
   std::optional<RobotIdMessage> violator_robot;
@@ -161,11 +164,12 @@ class RobotPushedRobotMessage
     return protocols::common::GameEvent::RobotPushedRobot{};
   };
 
-  void fromProto(const protocols::common::GameEvent::RobotPushedRobot& robot_pushed_robot_proto);
+  void fromProto(
+      const protocols::common::GameEvent::RobotPushedRobot& robot_pushed_robot_proto) override;
 };
 
 class RobotHeldBallDeliberatelyMessage
-    : public IProtoConvertible<protocols::common::GameEvent::RobotHeldBallDeliberately> {
+    : public robocin::IProtoConvertible<protocols::common::GameEvent::RobotHeldBallDeliberately> {
  public:
   std::optional<Team> by_team;
   std::optional<RobotIdMessage> by_robot;
@@ -183,11 +187,11 @@ class RobotHeldBallDeliberatelyMessage
   };
 
   void fromProto(const protocols::common::GameEvent::RobotHeldBallDeliberately&
-                     robot_held_ball_deliberately_proto);
+                     robot_held_ball_deliberately_proto) override;
 };
 
 class RobotDribbledBallTooFarMessage
-    : public IProtoConvertible<protocols::common::GameEvent::RobotDribbledBallTooFar> {
+    : public robocin::IProtoConvertible<protocols::common::GameEvent::RobotDribbledBallTooFar> {
  public:
   std::optional<Team> by_team;
   std::optional<RobotIdMessage> by_robot;
@@ -206,11 +210,11 @@ class RobotDribbledBallTooFarMessage
   };
 
   void fromProto(const protocols::common::GameEvent::RobotDribbledBallTooFar&
-                     robot_dribbled_ball_too_far_proto);
+                     robot_dribbled_ball_too_far_proto) override;
 };
 
 class RobotTippedOverMessage
-    : public IProtoConvertible<protocols::common::GameEvent::RobotTippedOver> {
+    : public robocin::IProtoConvertible<protocols::common::GameEvent::RobotTippedOver> {
  public:
   std::optional<Team> by_team;
   std::optional<RobotIdMessage> by_robot;
@@ -226,10 +230,11 @@ class RobotTippedOverMessage
     return protocols::common::GameEvent::RobotTippedOver{};
   };
 
-  void fromProto(const protocols::common::GameEvent::RobotTippedOver& robot_tipped_over_proto);
+  void
+  fromProto(const protocols::common::GameEvent::RobotTippedOver& robot_tipped_over_proto) override;
 };
 
-class GoalMessage : public IProtoConvertible<protocols::common::GameEvent::Goal> {
+class GoalMessage : public robocin::IProtoConvertible<protocols::common::GameEvent::Goal> {
  public:
   std::optional<Team> by_team;
   std::optional<Team> kicking_team;
@@ -256,10 +261,10 @@ class GoalMessage : public IProtoConvertible<protocols::common::GameEvent::Goal>
     return protocols::common::GameEvent::Goal{};
   };
 
-  void fromProto(const protocols::common::GameEvent::Goal& goal_proto);
+  void fromProto(const protocols::common::GameEvent::Goal& goal_proto) override;
 };
 
-class GameEventMessage : public IProtoConvertible<protocols::common::GameEvent> {
+class GameEventMessage : public robocin::IProtoConvertible<protocols::common::GameEvent> {
  public:
   std::vector<std::string> sources;
   std::optional<uint32_t> timestamp; // todo(fnap): discuss how to use timestamp
@@ -301,7 +306,7 @@ class GameEventMessage : public IProtoConvertible<protocols::common::GameEvent> 
     return protocols::common::GameEvent{};
   };
 
-  void fromProto(const protocols::common::GameEvent& goal_proto);
+  void fromProto(const protocols::common::GameEvent& goal_proto) override;
 };
 
 } // namespace decision

@@ -1,15 +1,14 @@
 #ifndef DECISION_PROCESSING_MESSAGES_COMMON_ROBOT_ID_H
 #define DECISION_PROCESSING_MESSAGES_COMMON_ROBOT_ID_H
 
-#include "decision/processing/messages/iproto_convertible.h"
-
 #include <cstdint>
 #include <protocols/common/robot_id.pb.h>
+#include <robocin/utility/iproto_convertible.h>
 
 namespace decision {
 constexpr uint32_t kRobotIdMessageNumber = 0;
 
-class RobotIdMessage : public IProtoConvertible<protocols::common::RobotId> {
+class RobotIdMessage : public robocin::IProtoConvertible<protocols::common::RobotId> {
  public:
   enum Color {
     COLOR_UNSPECIFIED = 0,
@@ -28,7 +27,7 @@ class RobotIdMessage : public IProtoConvertible<protocols::common::RobotId> {
     return protocols::common::RobotId{};
   };
 
-  void fromProto(const protocols::common::RobotId& robot_id_proto);
+  void fromProto(const protocols::common::RobotId& robot_id_proto) override;
 };
 } // namespace decision
 

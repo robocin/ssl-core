@@ -1,15 +1,14 @@
 #ifndef DECISION_PROCESSING_MESSAGES_PERCEPTION_FIELD_FIELD_MESSAGE_H
 #define DECISION_PROCESSING_MESSAGES_PERCEPTION_FIELD_FIELD_MESSAGE_H
 
-#include "decision/processing/messages/iproto_convertible.h"
-
 #include <cstdint>
 #include <optional>
 #include <protocols/perception/detection.pb.h>
+#include <robocin/utility/iproto_convertible.h>
 
 namespace decision {
 
-class FieldMessage : public IProtoConvertible<protocols::perception::Field> {
+class FieldMessage : public robocin::IProtoConvertible<protocols::perception::Field> {
  public:
   std::optional<uint64_t> serial_id;
   std::optional<float> length;
@@ -37,7 +36,7 @@ class FieldMessage : public IProtoConvertible<protocols::perception::Field> {
     return protocols::perception::Field{};
   }
 
-  void fromProto(const protocols::perception::Field& field_proto);
+  void fromProto(const protocols::perception::Field& field_proto) override;
 };
 } // namespace decision
 #endif // DECISION_PROCESSING_MESSAGES_PERCEPTION_FIELD_FIELD_MESSAGE_H

@@ -2,7 +2,6 @@
 #define DECISION_PROCESSING_MESSAGES_MOTION_MOTION_MESSAGE_H
 
 #include "decision/processing/messages/common/robot_id/robot_id_message.h"
-#include "decision/processing/messages/iproto_convertible.h"
 #include "protocols/behavior/behavior_unification.pb.h"
 #include "robocin/geometry/point2d.h"
 
@@ -10,11 +9,12 @@
 #include <protocols/behavior/motion.pb.h>
 #include <protocols/behavior/planning.pb.h>
 #include <protocols/common/robot_id.pb.h>
+#include <robocin/utility/iproto_convertible.h>
 #include <sys/types.h>
 
 namespace decision {
 
-class GoToPointMessage : public IProtoConvertible<protocols::behavior::GoToPoint> {
+class GoToPointMessage : public robocin::IProtoConvertible<protocols::behavior::GoToPoint> {
  public:
   enum MovingProfile {
     // Move safely profile
@@ -67,34 +67,42 @@ class GoToPointMessage : public IProtoConvertible<protocols::behavior::GoToPoint
   [[nodiscard]] protocols::behavior::GoToPoint toProto() const override {
     return protocols::behavior::GoToPoint{};
   };
+
+  void fromProto(const protocols::behavior::GoToPoint& go_to_point_proto) override;
 };
 
 class GoToPointWithTrajectoryMessage
-    : public IProtoConvertible<protocols::behavior::GoToPointWithTrajectory> {
+    : public robocin::IProtoConvertible<protocols::behavior::GoToPointWithTrajectory> {
  public:
   GoToPointWithTrajectoryMessage();
   [[nodiscard]] protocols::behavior::GoToPointWithTrajectory toProto() const override {
     return protocols::behavior::GoToPointWithTrajectory{};
   };
+  void fromProto(const protocols::behavior::GoToPointWithTrajectory&
+                     go_to_point_with_trajectory_proto) override;
 };
 
-class RotateInPointMessage : public IProtoConvertible<protocols::behavior::RotateInPoint> {
+class RotateInPointMessage : public robocin::IProtoConvertible<protocols::behavior::RotateInPoint> {
  public:
   RotateInPointMessage();
   [[nodiscard]] protocols::behavior::RotateInPoint toProto() const override {
     return protocols::behavior::RotateInPoint{};
   };
+
+  void fromProto(const protocols::behavior::RotateInPoint& rotate_in_point_proto) override;
 };
 
-class RotateOnSelfMessage : public IProtoConvertible<protocols::behavior::RotateOnSelf> {
+class RotateOnSelfMessage : public robocin::IProtoConvertible<protocols::behavior::RotateOnSelf> {
  public:
   RotateOnSelfMessage();
   [[nodiscard]] protocols::behavior::RotateOnSelf toProto() const override {
     return protocols::behavior::RotateOnSelf{};
   };
+
+  void fromProto(const protocols::behavior::RotateOnSelf& rotate_on_self_proto) override;
 };
 
-class MotionMessage : public IProtoConvertible<protocols::behavior::unification::Motion> {
+class MotionMessage : public robocin::IProtoConvertible<protocols::behavior::unification::Motion> {
  public:
   MotionMessage(std::optional<GoToPointMessage> go_to_point = std::nullopt,
                 std::optional<GoToPointWithTrajectoryMessage> go_to_point_with_trajectory
@@ -110,6 +118,8 @@ class MotionMessage : public IProtoConvertible<protocols::behavior::unification:
   [[nodiscard]] protocols::behavior::unification::Motion toProto() const override {
     return protocols::behavior::unification::Motion{};
   };
+
+  void fromProto(const protocols::behavior::unification::Motion& motion_proto) override;
 };
 } // namespace decision
 

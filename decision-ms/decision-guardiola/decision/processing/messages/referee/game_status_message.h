@@ -4,17 +4,17 @@
 #include "decision/processing/messages/common/game_command/game_command_message.h"
 #include "decision/processing/messages/common/game_event/game_event_message.h"
 #include "decision/processing/messages/common/robot_id/robot_id_message.h"
-#include "decision/processing/messages/iproto_convertible.h"
 
 #include <cstdint>
 #include <optional>
 #include <protocols/referee/game_status.pb.h>
+#include <robocin/utility/iproto_convertible.h>
 #include <utility>
 
 namespace decision {
 
 class GameEventsProposalMessage
-    : public IProtoConvertible<protocols::referee::GameStatus::GameEventsProposal> {
+    : public robocin::IProtoConvertible<protocols::referee::GameStatus::GameEventsProposal> {
  public:
   std::optional<std::string> proposal_id;
   std::vector<GameEventMessage> game_events;
@@ -31,11 +31,11 @@ class GameEventsProposalMessage
     return protocols::referee::GameStatus::GameEventsProposal{};
   };
 
-  void
-  fromProto(const protocols::referee::GameStatus::GameEventsProposal& game_events_proposal_proto);
+  void fromProto(const protocols::referee::GameStatus::GameEventsProposal&
+                     game_events_proposal_proto) override;
 };
 
-class TeamMessage : public IProtoConvertible<protocols::referee::GameStatus::Team> {
+class TeamMessage : public robocin::IProtoConvertible<protocols::referee::GameStatus::Team> {
  public:
   std::optional<std::string> name;
   std::optional<uint32_t> score;
@@ -93,10 +93,10 @@ class TeamMessage : public IProtoConvertible<protocols::referee::GameStatus::Tea
     return protocols::referee::GameStatus::Team{};
   };
 
-  void fromProto(const protocols::referee::GameStatus::Team& team_proto);
+  void fromProto(const protocols::referee::GameStatus::Team& team_proto) override;
 };
 
-class GameStatusMessage : public IProtoConvertible<protocols::referee::GameStatus> {
+class GameStatusMessage : public robocin::IProtoConvertible<protocols::referee::GameStatus> {
  public:
   enum GameStage {
     GAME_STAGE_UNSPECIFIED = 0,
@@ -163,7 +163,7 @@ class GameStatusMessage : public IProtoConvertible<protocols::referee::GameStatu
     return protocols::referee::GameStatus{};
   };
 
-  void fromProto(const protocols::referee::GameStatus& game_status_proto);
+  void fromProto(const protocols::referee::GameStatus& game_status_proto) override;
 };
 } // namespace decision
 

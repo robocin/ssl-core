@@ -9,13 +9,14 @@
 #include <protocols/perception/detection.pb.h>
 #include <robocin/geometry/point2d.h>
 #include <robocin/geometry/point3d.h>
+#include <robocin/utility/iproto_convertible.h>
 #include <sys/types.h>
 #include <vector>
 
 namespace decision {
 
 class KickInformationMessage
-    : public IProtoConvertible<protocols::perception::Ball::KickInformation> {
+    : public robocin::IProtoConvertible<protocols::perception::Ball::KickInformation> {
  public:
   std::optional<RobotIdMessage> robot_id;
   std::optional<robocin::Point2Df> start_position;
@@ -41,10 +42,11 @@ class KickInformationMessage
     return protocols::perception::Ball::KickInformation{};
   }
 
-  void fromProto(const protocols::perception::Ball::KickInformation& kick_information_proto);
+  void
+  fromProto(const protocols::perception::Ball::KickInformation& kick_information_proto) override;
 };
 
-class BallMessage : public IProtoConvertible<protocols::perception::Ball> {
+class BallMessage : public robocin::IProtoConvertible<protocols::perception::Ball> {
  public:
   std::optional<float> confidence;
   std::optional<robocin::Point3Df> position;
@@ -62,7 +64,7 @@ class BallMessage : public IProtoConvertible<protocols::perception::Ball> {
     return protocols::perception::Ball{};
   }
 
-  void fromProto(const protocols::perception::Ball& ball_proto);
+  void fromProto(const protocols::perception::Ball& ball_proto) override;
 };
 } // namespace decision
 

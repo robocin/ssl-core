@@ -2,16 +2,16 @@
 #define DECISION_PROCESSING_MESSAGES_PERCEPTION_ROBOT_ROBOT_MESSAGE_H
 
 #include "decision/processing/messages/common/robot_id/robot_id_message.h"
-#include "decision/processing/messages/iproto_convertible.h"
 
 #include <cstdint>
 #include <protocols/perception/detection.pb.h>
 #include <robocin/geometry/point2d.h>
+#include <robocin/utility/iproto_convertible.h>
 #include <utility>
 
 namespace decision {
 
-class Wheel : public IProtoConvertible<protocols::perception::Robot::Feedback::Wheel> {
+class Wheel : public robocin::IProtoConvertible<protocols::perception::Robot::Feedback::Wheel> {
  public:
   std::optional<uint32_t> wheel_id;
   std::optional<float> motor_speed;
@@ -23,10 +23,10 @@ class Wheel : public IProtoConvertible<protocols::perception::Robot::Feedback::W
     return protocols::perception::Robot::Feedback::Wheel{};
   }
 
-  void fromProto(const protocols::perception::Robot::Feedback::Wheel& wheel_proto) {};
+  void fromProto(const protocols::perception::Robot::Feedback::Wheel& wheel_proto) override {};
 };
 
-class FeedbackMessage : public IProtoConvertible<protocols::perception::Robot::Feedback> {
+class FeedbackMessage : public robocin::IProtoConvertible<protocols::perception::Robot::Feedback> {
  public:
   std::optional<bool> dribbler_ball_contact;
   std::optional<float> kick_charge_percentage;
@@ -45,10 +45,10 @@ class FeedbackMessage : public IProtoConvertible<protocols::perception::Robot::F
     return protocols::perception::Robot::Feedback{};
   }
 
-  void fromProto(const protocols::perception::Robot::Feedback& feedback_proto);
+  void fromProto(const protocols::perception::Robot::Feedback& feedback_proto) override;
 };
 
-class RobotMessage : public IProtoConvertible<protocols::perception::Robot> {
+class RobotMessage : public robocin::IProtoConvertible<protocols::perception::Robot> {
  public:
   std::optional<float> confidence;
   std::optional<RobotIdMessage> robot_id;
@@ -78,7 +78,7 @@ class RobotMessage : public IProtoConvertible<protocols::perception::Robot> {
     return protocols::perception::Robot{};
   }
 
-  void fromProto(const protocols::perception::Robot& robot_proto);
+  void fromProto(const protocols::perception::Robot& robot_proto) override;
 };
 } // namespace decision
 

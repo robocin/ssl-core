@@ -1,7 +1,6 @@
 robocin_cpp_library(
      NAME messages
-     HDRS iproto_convertible.h
-          behavior/behavior_message.h
+     HDRS behavior/behavior_message.h
           common/peripheral_actuation/peripheral_actuation.h
           common/robot_id/robot_id_message.h
           common/robot_kick/kick_command.h
@@ -15,9 +14,7 @@ robocin_cpp_library(
           perception/field/field_message.h
           perception/detection/detection_message.h
           referee/game_status_message.h
-     SRCS iproto_convertible.cpp
-          iproto_convertible.cpp
-          behavior/behavior_message.cpp
+     SRCS behavior/behavior_message.cpp
           common/peripheral_actuation/peripheral_actuation.cpp
           common/robot_id/robot_id_message.cpp
           common/robot_kick/kick_command.cpp
@@ -31,6 +28,7 @@ robocin_cpp_library(
           perception/field/field_message.cpp
           perception/detection/detection_message.cpp
           referee/game_status_message.cpp
-     DEPS common::output
+     DEPS common::utility
+          common::output
           protocols::protobufs
 )

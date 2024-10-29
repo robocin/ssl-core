@@ -1,7 +1,6 @@
 #ifndef DECISION_PROCESSING_MESSAGES_PERCEPTION_DETECTION_DETECTION_MESSAGE_H
 #define DECISION_PROCESSING_MESSAGES_PERCEPTION_DETECTION_DETECTION_MESSAGE_H
 
-#include "decision/processing/messages/iproto_convertible.h"
 #include "decision/processing/messages/perception/ball/ball_message.h"
 #include "decision/processing/messages/perception/field/field_message.h"
 #include "decision/processing/messages/perception/robot/robot_message.h"
@@ -9,10 +8,11 @@
 #include <cstdint>
 #include <optional>
 #include <protocols/perception/detection.pb.h>
+#include <robocin/utility/iproto_convertible.h>
 
 namespace decision {
 
-class DetectionMessage : public IProtoConvertible<protocols::perception::Detection> {
+class DetectionMessage : public robocin::IProtoConvertible<protocols::perception::Detection> {
  public:
   std::optional<uint64_t> serial_id;
   std::optional<uint32_t> created_at; // todo(fnap): discuss what to do with timestamp
@@ -31,7 +31,7 @@ class DetectionMessage : public IProtoConvertible<protocols::perception::Detecti
   explicit DetectionMessage(const protocols::perception::Detection& detection_proto);
 
   [[nodiscard]] protocols::perception::Detection toProto() const override;
-  void fromProto(const protocols::perception::Detection& detection_proto);
+  void fromProto(const protocols::perception::Detection& detection_proto) override;
 };
 
 } // namespace decision
