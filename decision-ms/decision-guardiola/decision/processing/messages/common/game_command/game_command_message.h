@@ -190,6 +190,9 @@ class GameCommandMessage : public IProtoConvertible<protocols::common::GameComma
 
   std::optional<IntervalMessage> interval;
 
+  // todo(fnap): implement
+  explicit GameCommandMessage();
+
   [[nodiscard]] protocols::common::GameCommand toProto() const override {
     return protocols::common::GameCommand{};
   };

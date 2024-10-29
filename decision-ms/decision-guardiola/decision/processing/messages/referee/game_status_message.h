@@ -24,12 +24,15 @@ class GameEventsProposalMessage
                                      std::vector<GameEventMessage> game_events,
                                      std::optional<bool> was_accepted);
 
+  explicit GameEventsProposalMessage(
+      const protocols::referee::GameStatus::GameEventsProposal& game_events_proposal_proto);
+
   [[nodiscard]] protocols::referee::GameStatus::GameEventsProposal toProto() const override {
     return protocols::referee::GameStatus::GameEventsProposal{};
   };
 
   void
-  fromProto(const protocols::referee::GameStatus::GameEventsProposal& game_eventts_proposal_proto);
+  fromProto(const protocols::referee::GameStatus::GameEventsProposal& game_events_proposal_proto);
 };
 
 class TeamMessage : public IProtoConvertible<protocols::referee::GameStatus::Team> {

@@ -128,10 +128,11 @@ class RobotInDefenseAreaMessage
   std::optional<robocin::Point2Df> robot_position;
   std::optional<float> distance_to_nearest_point_outside_area;
 
-  explicit RobotInDefenseAreaMessage(std::optional<Team> by_team,
-                                     std::optional<RobotIdMessage> by_robot,
-                                     std::optional<robocin::Point2Df> robot_position,
-                                     std::optional<float> distance_to_nearest_point_outside_area);
+  explicit RobotInDefenseAreaMessage(std::optional<Team> by_team = std::nullopt,
+                                     std::optional<RobotIdMessage> by_robot = std::nullopt,
+                                     std::optional<robocin::Point2Df> robot_position = std::nullopt,
+                                     std::optional<float> distance_to_nearest_point_outside_area
+                                     = std::nullopt);
 
   [[nodiscard]] protocols::common::GameEvent::RobotInDefenseArea toProto() const override {
     return protocols::common::GameEvent::RobotInDefenseArea{};
@@ -216,10 +217,10 @@ class RobotTippedOverMessage
   std::optional<robocin::Point2Df> robot_position;
   std::optional<robocin::Point2Df> ball_position;
 
-  explicit RobotTippedOverMessage(std::optional<Team> by_team,
-                                  std::optional<RobotIdMessage> by_robot,
-                                  std::optional<robocin::Point2Df> robot_position,
-                                  std::optional<robocin::Point2Df> ball_position);
+  explicit RobotTippedOverMessage(std::optional<Team> by_team = std::nullopt,
+                                  std::optional<RobotIdMessage> by_robot = std::nullopt,
+                                  std::optional<robocin::Point2Df> robot_position = std::nullopt,
+                                  std::optional<robocin::Point2Df> ball_position = std::nullopt);
 
   [[nodiscard]] protocols::common::GameEvent::RobotTippedOver toProto() const override {
     return protocols::common::GameEvent::RobotTippedOver{};
@@ -264,7 +265,8 @@ class GameEventMessage : public IProtoConvertible<protocols::common::GameEvent> 
   std::optional<uint32_t> timestamp; // todo(fnap): discuss how to use timestamp
 
   // Oneof event fields as separate optionals
-  std::optional<BallLeftFieldMessage> ball_left_field;
+  std::optional<BallLeftFieldMessage> ball_left_field_touch_line;
+  std::optional<BallLeftFieldMessage> ball_left_field_goal_line;
   std::optional<BallLeftFieldBoundaryMessage> ball_left_field_boundary;
   std::optional<AimlessKickMessage> aimless_kick;
   std::optional<GoalkeeperHeldBallMessage> goalkeeper_held_ball;
@@ -279,7 +281,8 @@ class GameEventMessage : public IProtoConvertible<protocols::common::GameEvent> 
   explicit GameEventMessage(
       std::vector<std::string> sources = {},
       std::optional<uint32_t> timestamp = std::nullopt,
-      std::optional<BallLeftFieldMessage> ball_left_field = std::nullopt,
+      std::optional<BallLeftFieldMessage> ball_left_field_touch_line = std::nullopt,
+      std::optional<BallLeftFieldMessage> ball_left_field_goal_line = std::nullopt,
       std::optional<BallLeftFieldBoundaryMessage> ball_left_field_boundary = std::nullopt,
       std::optional<AimlessKickMessage> aimless_kick = std::nullopt,
       std::optional<GoalkeeperHeldBallMessage> goalkeeper_held_ball = std::nullopt,
@@ -291,6 +294,8 @@ class GameEventMessage : public IProtoConvertible<protocols::common::GameEvent> 
       std::optional<RobotDribbledBallTooFarMessage> robot_dribbled_ball_too_far = std::nullopt,
       std::optional<RobotTippedOverMessage> robot_tipped_over = std::nullopt,
       std::optional<GoalMessage> goal = std::nullopt);
+
+  explicit GameEventMessage(const protocols::common::GameEvent& game_event_proto);
 
   [[nodiscard]] protocols::common::GameEvent toProto() const override {
     return protocols::common::GameEvent{};

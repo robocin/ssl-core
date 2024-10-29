@@ -21,6 +21,21 @@ GameEventsProposalMessage::GameEventsProposalMessage(std::optional<std::string> 
     proposal_id(std::move(proposal_id)),
     was_accepted(was_accepted) {};
 
+void GameEventsProposalMessage::fromProto(
+    const protocols::referee::GameStatus::GameEventsProposal& game_events_proposal_proto) {
+  proposal_id = game_events_proposal_proto.proposal_id();
+  was_accepted = game_events_proposal_proto.was_accepted();
+
+  for (const auto& game_event : game_events_proposal_proto.game_events()) {
+    game_events.emplace_back(game_event);
+  }
+}
+
+GameEventsProposalMessage::GameEventsProposalMessage(
+    const protocols::referee::GameStatus::GameEventsProposal& game_events_proposal_proto) {
+  GameEventsProposalMessage::fromProto(game_events_proposal_proto);
+}
+
 /////////////////////////////////// TeamMessage ///////////////////////////////////
 
 TeamMessage::TeamMessage(std::optional<std::string> name,
