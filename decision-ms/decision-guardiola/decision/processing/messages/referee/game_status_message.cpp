@@ -252,12 +252,10 @@ void GameStatusMessage::fromProto(const protocols::referee::GameStatus& game_sta
     next_command->fromProto(game_status_proto.next_command());
   }
 
-  // implement constructor
   for (const auto& game_event : game_status_proto.game_events()) {
     game_events.emplace_back(game_event);
   }
 
-  // implement constructor
   for (const auto& game_events_proposal : game_status_proto.game_events_proposals()) {
     game_events_proposals.emplace_back(game_events_proposal);
   }
