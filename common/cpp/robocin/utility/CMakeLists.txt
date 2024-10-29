@@ -27,10 +27,12 @@ robocin_cpp_library(
        concepts.h
        fuzzy_compare.h
        singleton.h
+       iproto_convertible.h
   SRCS type_traits.cpp
        concepts.cpp
        fuzzy_compare.cpp
        singleton.cpp
+       iproto_convertible.cpp
   CONFIGS epsilon.h.in
 )
 
@@ -51,4 +53,18 @@ robocin_cpp_test(
   HDRS internal/test/epsilon_injector.h
   SRCS fuzzy_compare_test.cpp
   DEPS utility
+)
+
+robocin_cpp_library(
+  NAME angular
+  HDRS angular.h
+  SRCS angular.cpp
+  DEPS utility
+)
+
+robocin_cpp_test(
+  NAME angular_test
+  HDRS internal/test/epsilon_injector.h
+  SRCS angular_test.cpp
+  DEPS angular
 )
