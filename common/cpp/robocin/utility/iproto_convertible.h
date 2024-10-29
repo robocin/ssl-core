@@ -16,7 +16,7 @@ class IProtoConvertible {
   virtual ~IProtoConvertible() = default;
 
   virtual T toProto() const = 0;
-  virtual void fromProto(T proto) = 0;
+  virtual void fromProto(const T& proto) = 0;
 };
 
 } // namespace robocin
