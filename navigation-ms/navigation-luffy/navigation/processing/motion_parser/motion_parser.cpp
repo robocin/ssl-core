@@ -1,4 +1,5 @@
 #include "navigation/processing/motion_parser/motion_parser.h"
+#include "motion_parser.h"
 
 #include <cstdlib>
 #include <navigation/parameters/parameters.h>
@@ -36,7 +37,7 @@ RobotMove MotionParser::fromGoToPoint(const ::protocols::behavior::GoToPoint& go
             SMALL_TOLERANCE_TO_DESIRED_POSITION_M :
             DEFAULT_TOLERANCE_TO_DESIRED_POSITION_M;
 
-  const double d_theta
+  const double delta_theta
       = ::robocin::smallestAngleDiff<double>(robot.angle(), go_to_point.target_angle());
 
   if (deltaS.length() > tolerance_to_target) {
@@ -47,7 +48,7 @@ RobotMove MotionParser::fromGoToPoint(const ::protocols::behavior::GoToPoint& go
     double acc_prop = moving_profile::ROBOT_DEFAULT_LINEAR_ACCELERATION;
     auto v0 = robocin::Point2Dd(robot.velocity().x(), robot.velocity().y()) / M_to_MM;
     auto v = robocin::Point2D<double>::fromPolar(maxVelocity, theta);
-    const double v0_decay = std::abs(v.angleTo(v0)) > 60 ? ROBOT_VEL_BREAK_DECAY_FACTOR :
+    const double v0_decay = std::abs(v.angleTo(v0)) > PI/3 ? ROBOT_VEL_BREAK_DECAY_FACTOR :
                                                            ROBOT_VEL_FAVORABLE_DECAY_FACTOR;
 
     // v = v0 + a*t
@@ -56,7 +57,7 @@ RobotMove MotionParser::fromGoToPoint(const ::protocols::behavior::GoToPoint& go
     auto acceleration_required
         = robocin::Point2D((v.x - v0.x) / CYCLE_STEP, (v.y - v0.y) / CYCLE_STEP);
 
-    double alpha = mathematics::map(std::abs(d_theta), 0.0, std::numbers::pi, 0.0, 1.0);
+    double alpha = mathematics::map(std::abs(delta_theta), 0.0, std::numbers::pi, 0.0, 1.0);
     // -x^2 +1
     // double propFactor = (-(alpha * alpha) + 1);
 
@@ -76,23 +77,25 @@ RobotMove MotionParser::fromGoToPoint(const ::protocols::behavior::GoToPoint& go
     }
 
     // debug
-    ::protocols::common::Point2Df* tmp_point = nullptr;
+
     ::protocols::behavior::PathNode new_path_node;
 
     new_path_node.set_time(0);
 
-    tmp_point->set_x(0);
-    tmp_point->set_y(0);
-    new_path_node.set_allocated_velocity(tmp_point);
+    ::protocols::common::Point2Df* velocity_ptr = nullptr;
+    velocity_ptr->set_x(0);
+    velocity_ptr->set_y(0);
+    new_path_node.set_allocated_velocity(velocity_ptr);
 
-    tmp_point->set_x(go_to_point.target().x());
-    tmp_point->set_y(go_to_point.target().y());
-    new_path_node.set_allocated_position(tmp_point);
+    ::protocols::common::Point2Df* position_ptr = nullptr;
+    position_ptr->set_x(go_to_point.target().x());
+    position_ptr->set_y(go_to_point.target().y());
+    new_path_node.set_allocated_position(position_ptr);
 
-    return RobotMove{new_velocity, std::clamp(kp * d_theta, -maxAngularVel, maxAngularVel)};
+    return RobotMove{new_velocity, std::clamp(kp * delta_theta, -maxAngularVel, maxAngularVel)};
   }
 
-  return RobotMove{{0, 0}, std::clamp(kp * d_theta, -maxAngularVel, maxAngularVel)};
+  return RobotMove{{0, 0}, std::clamp(kp * delta_theta, -maxAngularVel, maxAngularVel)};
 }
 
 RobotMove
