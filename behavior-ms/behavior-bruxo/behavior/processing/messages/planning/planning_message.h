@@ -1,23 +1,22 @@
 #ifndef BEHAVIOR_PROCESSING_MESSAGES_PLANNING_PLANNING_MESSAGE_H
 #define BEHAVIOR_PROCESSING_MESSAGES_PLANNING_PLANNING_MESSAGE_H
 
-#include <robocin/utility/iproto_convertible.h>
-
 #include <protocols/behavior/planning.pb.h>
+#include <robocin/utility/iproto_convertible.h>
 
 namespace behavior {
 class PlanningMessage : public robocin::IProtoConvertible<protocols::behavior::Planning> {
-  public:
-    PlanningMessage() {};
+ public:
+  PlanningMessage() {};
 
-    [[nodiscard]] protocols::behavior::Planning toProto() const override {
-        protocols::behavior::Planning planning;
-        return planning;
-    };
+  [[nodiscard]] protocols::behavior::Planning toProto() const override {
+    protocols::behavior::Planning planning;
+    return planning;
+  };
 
-    void fromProto(protocols::behavior::Planning planning) override {
-        // Implementação específica para converter de proto para RobotIdMessage
-    };
+  void fromProto(const protocols::behavior::Planning& planning) override {
+    // Implementação específica para converter de proto para RobotIdMessage
+  };
 };
 
 } // namespace behavior
