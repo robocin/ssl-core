@@ -29,4 +29,5 @@ void World::update(std::optional<std::span<RobotMessage>>& allies,
     this->game_status = std::move(game_status.value());
   }
 }
+
 } // namespace decision
