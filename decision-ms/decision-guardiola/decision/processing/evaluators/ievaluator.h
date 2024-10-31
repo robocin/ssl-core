@@ -3,6 +3,7 @@
 
 namespace decision {
 
+template <class T>
 class IEvaluator {
  public:
   IEvaluator() = default;
@@ -17,6 +18,7 @@ class IEvaluator {
 
   virtual void process() = 0;
   virtual void reset() = 0;
+  virtual T getResult() = 0;
 };
 
 } // namespace decision
