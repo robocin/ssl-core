@@ -2,6 +2,7 @@
 
 #include "behavior/messaging/receiver/payload.h"
 #include "behavior/parameters/parameters.h"
+#include "state_machine/goalkeeper/goalkeeper_state_machine.h"
 
 #include <protocols/behavior/behavior_unification.pb.h>
 #include <protocols/behavior/motion.pb.h>
@@ -68,19 +69,10 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
   }
   const rc::Detection last_detection = detection_messages.back();
 
-  // TODO: implement the logic to generate the behavior based on the last detection and the last
-  // decision
-  ///////////////////////////////////////////////////////////////////////////////////
-
   BehaviorMessage behavior_message;
 
-  for (const auto& robot : last_detection.robots()) {
-
-    behavior_message.output.emplace_back(
-        OutputMessage{RobotIdMessage{}, MotionMessage{}, PlanningMessage{}});
-  }
-
-  ///////////////////////////////////////////////////////////////////////////////////
+  GoalkeeperStateMachine gsm;
+  gsm.run();
 
   return behavior_message.toProto();
 }

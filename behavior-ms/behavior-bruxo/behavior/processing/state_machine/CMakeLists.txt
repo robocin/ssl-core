@@ -1,8 +1,10 @@
 robocin_cpp_library(
-    NAME istate
-    HDRS istate.h
-         context.h
-    SRCS istate.cpp
-         context.cpp
+    NAME state_machine
+    HDRS istate_machine.h
+         goalkeeper/goalkeeper_state_machine.h
+         goalkeeper/states/guard.h
+    SRCS istate_machine.cpp
+         goalkeeper/goalkeeper_state_machine.cpp
+         goalkeeper/states/guard.cpp
     DEPS common::output
 )

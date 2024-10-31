@@ -4,4 +4,5 @@ robocin_cpp_library(
     SRCS behavior_processor.cpp
     DEPS common::output
          messages
+         state_machine
 )

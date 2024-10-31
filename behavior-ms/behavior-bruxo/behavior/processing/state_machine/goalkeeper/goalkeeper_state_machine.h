@@ -1,36 +1,29 @@
 #ifndef BEHAVIOR_STATE_MACHINE_GOALKEEPER_STATE_MACHINE_H
 #define BEHAVIOR_STATE_MACHINE_GOALKEEPER_STATE_MACHINE_H
 
-/**
- * @class IState
- * @brief An interface for state classes in the behavior service.
- *
- * This base State class declares methods that all Concrete State should
- * implement and also provides a backreference to the Context object, associated
- * with the State. Context objects are by design Role classes.
- */
-namespace decision {
+#include "behavior/processing/state_machine/goalkeeper/states/guard.h"
+#include "behavior/processing/state_machine/istate_machine.h"
 
-template <class T>
-class GoalkeeperStateMachine {
+#include <robocin/output/log.h>
+
+/**
+ * @class GoalkeeperStateMachine
+ * @brief An class that holds behaviors for the Goalkeeper role.
+ */
+namespace behavior {
+
+class GoalkeeperStateMachine : IStateMachine {
  private:
-  IState<GoalkeeperStateMachine> guard_{};
+  IState* current_state_;
+  Guard guard_state_;
 
  public:
-  IState() = default;
+  explicit GoalkeeperStateMachine();
 
-  IState(const IState&) = delete;
-  IState& operator=(const IState&) = delete;
-  IState(IState&&) noexcept = default;
-  IState& operator=(IState&&) noexcept = default;
-
-  virtual ~IState() = default;
-
-  void setContext(T* context) { context_ = context; }
-
-  virtual void run() = 0;
+  void transitionTo(IState* state) override { current_state_ = state; }
+  void run() override;
 };
 
-} // namespace decision
+} // namespace behavior
 
 #endif // BEHAVIOR_STATE_MACHINE_GOALKEEPER_STATE_MACHINE_H
