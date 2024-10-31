@@ -1,7 +1,7 @@
 #ifndef BEHAVIOR_STATE_MACHINE_ISTATE_H
 #define BEHAVIOR_STATE_MACHINE_ISTATE_H
 
-#include "behavior/processing/state_machine/context.h"
+#include "behavior/processing/state_machine/icontext.h"
 
 namespace decision {
 
