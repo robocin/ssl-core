@@ -66,6 +66,8 @@ std::optional<rc::Decision> DecisionProcessor::process(std::span<const Payload> 
     return std::nullopt;
   }
 
+  const rc::Detection last_detection = detections.back();
+
   return rc::Decision{};
 }
 
