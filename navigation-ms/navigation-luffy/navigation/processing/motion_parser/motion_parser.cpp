@@ -1,14 +1,27 @@
 #include "navigation/processing/motion_parser/motion_parser.h"
 
+#include <cstdlib>
+#include <navigation/parameters/parameters.h>
+#include <navigation/processing/entities/robot_move.h>
+#include <robocin/geometry/mathematics.h>
 #include <robocin/geometry/point2d.h>
 #include <robocin/utility/angular.h>
 
 namespace navigation {
 
+namespace {
+namespace rc {
+using ::protocols::behavior::GoToPoint;
+using ::protocols::behavior::RotateInPoint;
+using ::protocols::behavior::RotateOnSelf;
+using ::protocols::perception::Robot;
+} // namespace rc
+
+} // namespace
+
 MotionParser::MotionParser() {}
 
-RobotMove MotionParser::fromGoToPoint(const ::protocols::behavior::GoToPoint& go_to_point,
-                                      const ::protocols::perception::Robot& robot) {
+RobotMove MotionParser::fromGoToPoint(const rc::GoToPoint& go_to_point, const rc::Robot& robot) {
 
   robocin::Point2D robot_position = robocin::Point2D(robot.position().x(), robot.position().y());
   robocin::Point2D target_position
@@ -47,22 +60,22 @@ RobotMove MotionParser::fromGoToPoint(const ::protocols::behavior::GoToPoint& go
   }
 }
 
-RobotMove
-MotionParser::fromRotateInPoint(const ::protocols::behavior::RotateInPoint& rotate_in_point,
-                                const ::protocols::perception::Robot& robot) {
+RobotMove MotionParser::fromRotateInPoint(const rc::RotateInPoint& rotate_in_point,
+                                          const rc::Robot& robot) {
 
   // PROCESSAMENTO DO ROTATEINPOINT
   return RobotMove{};
 }
 
-RobotMove MotionParser::fromRotateOnSelf(const ::protocols::behavior::RotateOnSelf& rotate_on_self,
-                                         const ::protocols::perception::Robot& robot) {
+RobotMove MotionParser::fromRotateOnSelf(const rc::RotateOnSelf& rotate_on_self,
+                                         const rc::Robot& robot) {
 
-  auto d_theta = robocin::smallestAngleDiff<double>(robot.angle(), rotate_on_self.target_angle());
+  auto delta_theta
+      = robocin::smallestAngleDiff<double>(robot.angle(), rotate_on_self.target_angle());
   robocin::Point2Dd velocity
       = robocin::Point2Dd{rotate_on_self.velocity().x(), rotate_on_self.velocity().y()};
 
-  return RobotMove{velocity, rotate_on_self.kp() * d_theta};
+  return RobotMove{velocity, rotate_on_self.kp() * delta_theta};
 }
 
 } // namespace navigation
