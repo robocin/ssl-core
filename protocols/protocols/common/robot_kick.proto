@@ -3,10 +3,8 @@ syntax = "proto3";
 package protocols.common;
 
 message RobotKick {
-  oneof kick {
-    KickCommand kick_command = 1;
-    KickInfo kick_info = 2;
-  }
+  KickCommand kick_command = 1;
+  KickInfo kick_info = 2;
 
   message KickCommand {
     double kick_strength = 1;
