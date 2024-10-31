@@ -1,6 +1,7 @@
 #include "communication/processing/communication_processor.h"
 
 #include "communication/messaging/receiver/payload.h"
+#include "communication/processing/messages/common/message_type/message_type.h"
 
 #include <cstddef>
 #include <protocols/communication/robot_info.pb.h>
@@ -15,6 +16,7 @@ namespace {
 
 namespace rc {
 
+using ::protocols::communication::Output;
 using ::protocols::communication::RobotInfo;
 using ::protocols::navigation::Navigation;
 
@@ -39,13 +41,10 @@ std::vector<tp::Referee> refereeFromPayloads(std::span<const Payload> payloads) 
 } // namespace
 
 CommunicationProcessor::CommunicationProcessor(
-    std::unique_ptr<parameters::IHandlerEngine> parameters_handler_engine,
-    std::unique_ptr<IRobotCommandMapper> robot_command_mapper) :
-    parameters_handler_engine_{std::move(parameters_handler_engine)},
-    robot_command_mapper_{std::move(robot_command_mapper)} {}
+    std::unique_ptr<parameters::IHandlerEngine> parameters_handler_engine) :
+    parameters_handler_engine_{std::move(parameters_handler_engine)} {}
 
 std::optional<rc::RobotInfo> CommunicationProcessor::process(std::span<const Payload> payloads) {
-  rc::RobotInfo communication_output;
 
   if (std::vector<tp::Referee> referees = refereeFromPayloads(payloads); !referees.empty()) {
     last_game_controller_referee_ = std::move(referees.back());
@@ -61,7 +60,20 @@ std::optional<rc::RobotInfo> CommunicationProcessor::process(std::span<const Pay
   }
   rc::Navigation last_navigation_ = navigation.back();
 
-  return communication_output;
+  ///////////////////////////////////////////////////////////////////////////
+  CommunicationMessage communication_message;
+
+  for (const auto& navigation : navigation) {
+    communication_message.output_messages.emplace_back(
+        OutputMessage{CommandMessage{MessageTypeMessage{},
+                                     RobotIdMessage{},
+                                     RobotVelocityMessage{},
+                                     RobotKickMessage{},
+                                     RobotDribblerMessage{},
+                                     FlagsMessage{}}});
+  }
+  ///////////////////////////////////////////////////////////////////////////
+  return communication_message.toProto();
 }
 
 } // namespace communication

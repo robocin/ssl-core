@@ -5,4 +5,5 @@ robocin_cpp_library(
   DEPS protocols::protobufs
        navigation_entities
        angular
+       navigation_utils
 )
