@@ -52,7 +52,7 @@ rc::RobotInfo RobotCommandMapper::fromNavigationAndReferee(const tp::Referee& re
   rc::RobotDribbler::DribblerCommand dribbler_command;
   rc::Flags robot_flag;
 
-  command->set_msg_type(rc::MessageType::SSL_SPEED);
+  command->set_msg_type(rc::MessageType::MESSAGE_TYPE_SSL_SPEED);
 
   robot_id->CopyFrom(navigation.output(navigation.output_size() - 1).robot_id());
 

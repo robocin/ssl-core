@@ -49,10 +49,8 @@ void ConsumerController::exec(std::span<const Payload> payloads) {
 
   if (std::optional<rc::RobotInfo> robot_command = communication_processor_->process(payloads);
       robot_command != std::nullopt) {
-    if (robot_command->has_command()) {
-      //   ilog("command: {} sent.", robot_command->command().DebugString());
-      message_sender_->send(*robot_command);
-    }
+    //   ilog("command: {} sent.", robot_command->command().DebugString());
+    message_sender_->send(*robot_command);
   }
 }
 
