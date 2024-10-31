@@ -1,12 +1,17 @@
 #include "decision/processing/decision_processor.h"
 
 #include "decision/messaging/receiver/payload.h"
+#include "decision/processing/entities/world.h"
+#include "decision/processing/messages/behavior/behavior_message.h"
+#include "decision/processing/messages/decision/decision_message.h"
+#include "decision/processing/messages/perception/detection/detection_message.h"
 
-#include <protocols/decision/decision.pb.h>
 #include <protocols/common/robot_id.pb.h>
+#include <protocols/decision/decision.pb.h>
 #include <protocols/perception/detection.pb.h>
 #include <protocols/referee/game_status.pb.h>
 #include <ranges>
+#include <robocin/output/log.h>
 
 namespace decision {
 
@@ -14,18 +19,16 @@ namespace parameters = ::robocin::parameters;
 
 namespace {
 
-using ::robocin::ilog;
-
 namespace rc {
 
-using ::protocols::decision::Decision;
-using ::protocols::perception::Detection;
-using ::protocols::referee::GameStatus;
-using ::protocols::decision::Behavior;
 using ::protocols::common::RobotId;
-using ::protocols::decision::TacticalPlan;
+using ::protocols::decision::Behavior;
+using ::protocols::decision::Decision;
 using ::protocols::decision::DefensivePlan;
 using ::protocols::decision::OffensivePlan;
+using ::protocols::decision::TacticalPlan;
+using ::protocols::perception::Detection;
+using ::protocols::referee::GameStatus;
 
 } // namespace rc
 
@@ -53,7 +56,7 @@ std::optional<rc::Decision> DecisionProcessor::process(std::span<const Payload> 
     last_game_status_ = gameStatus.back();
   }
 
-  if(!last_game_status_) {
+  if (!last_game_status_) {
     return std::nullopt;
   }
 
@@ -65,24 +68,7 @@ std::optional<rc::Decision> DecisionProcessor::process(std::span<const Payload> 
 
   const rc::Detection last_detection = detections.back();
 
-  ///////////////////////////////////////////////////////////////////////////////////
-
-  // TODO: Implement the logic to generate the decision based on the last detection and the last game status.
-  for(const auto& robot : last_detection.robots()) {
-    rc::Behavior* behavior = decision_output.add_behavior();
-
-    behavior->set_id(0);    
-    behavior->mutable_robot_id()->CopyFrom(robot.robot_id());
-  }
-
-  rc::TacticalPlan* tplan = decision_output.mutable_plan();
-  
-  rc::OffensivePlan* ofPlan = tplan->mutable_offensive();
-  rc::DefensivePlan* dfPlan = tplan->mutable_defensive();
-
-  ///////////////////////////////////////////////////////////////////////////////////
-
-  return decision_output;
+  return rc::Decision{};
 }
 
 } // namespace decision
