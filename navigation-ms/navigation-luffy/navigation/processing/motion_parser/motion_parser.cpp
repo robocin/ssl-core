@@ -1,16 +1,31 @@
 #include "navigation/processing/motion_parser/motion_parser.h"
 
+#include <cstdlib>
 #include <navigation/parameters/parameters.h>
 #include <navigation/processing/entities/robot_move.h>
+#include <robocin/geometry/mathematics.h>
 #include <robocin/geometry/point2d.h>
 #include <robocin/utility/angular.h>
 
 namespace navigation {
 
-MotionParser::MotionParser() = default;
+namespace {
+namespace rc {
+using ::protocols::behavior::GoToPoint;
+using ::protocols::behavior::PathNode;
+using ::protocols::behavior::PrecisionToTarget;
+using ::protocols::behavior::RotateInPoint;
+using ::protocols::behavior::RotateOnSelf;
+using ::protocols::common::Point2Df;
+using ::protocols::perception::Robot;
+} // namespace rc
 
-RobotMove MotionParser::fromGoToPoint(const ::protocols::behavior::GoToPoint& go_to_point,
-                                      const ::protocols::perception::Robot& robot) {
+} // namespace
+
+MotionParser::MotionParser() {}
+
+RobotMove MotionParser::fromGoToPoint(const rc::GoToPoint& go_to_point,
+                                      const rc::Robot& robot) {
 
   robocin::Point2D robot_position = robocin::Point2D(robot.position().x(), robot.position().y());
   robocin::Point2D target_position
@@ -49,9 +64,8 @@ RobotMove MotionParser::fromGoToPoint(const ::protocols::behavior::GoToPoint& go
   }
 }
 
-RobotMove
-MotionParser::fromRotateInPoint(const ::protocols::behavior::RotateInPoint& rotate_in_point,
-                                const ::protocols::perception::Robot& robot) {
+RobotMove MotionParser::fromRotateInPoint(const rc::RotateInPoint& rotate_in_point,
+                                          const rc::Robot& robot) {
 
   const double velocity = [&]() {
     double velocity = rotate_in_point.rotate_velocity();
@@ -63,7 +77,7 @@ MotionParser::fromRotateInPoint(const ::protocols::behavior::RotateInPoint& rota
   ::robocin::Point2Dd robot_pos = {robot.position().x(), robot.position().y()};
 
   const double robot_radius = (robot_pos.distanceTo(target)) / M_to_MM;
-  const double d_theta = robocin::smallestAngleDiff(robot.angle(), rotate_in_point.target_angle());
+  const double delta_theta = robocin::smallestAngleDiff(robot.angle(), rotate_in_point.target_angle());
   const double approach_kp = rotate_in_point.approach_kp();
   const double angle_kp = rotate_in_point.angle_kp();
 
@@ -75,12 +89,13 @@ MotionParser::fromRotateInPoint(const ::protocols::behavior::RotateInPoint& rota
   const robocin::Point2Dd rotated_coordinates = coordinates.rotatedCounterClockWise(robot.angle());
   const double angular_velocity
       = ((-(orientation_factor * velocity) / (rotate_in_point.orbit_radius() / M_to_MM))
-         + (angle_kp * d_theta));
+         + (angle_kp * delta_theta));
 
   return RobotMove{rotated_coordinates, angular_velocity};
 }
-RobotMove MotionParser::fromRotateOnSelf(const ::protocols::behavior::RotateOnSelf& rotate_on_self,
-                                         const ::protocols::perception::Robot& robot) {
+
+RobotMove MotionParser::fromRotateOnSelf(const rc::RotateOnSelf& rotate_on_self,
+                                         const rc::Robot& robot) {
 
   // PROCESSAMENTO DO ROTATEINPOINT
   return RobotMove{};
