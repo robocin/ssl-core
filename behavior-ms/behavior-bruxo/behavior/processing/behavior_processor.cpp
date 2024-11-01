@@ -71,9 +71,6 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
 
   BehaviorMessage behavior_message;
 
-  GoalkeeperStateMachine gsm;
-  gsm.run();
-
   return behavior_message.toProto();
 }
 
