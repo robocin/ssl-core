@@ -1,5 +1,6 @@
 #include "behavior/controller/consumer_controller.h"
 #include "behavior/controller/producer_controller.h"
+#include "processing/state_machine/goalkeeper/goalkeeper_state_machine.h"
 
 #include <memory>
 #include <print>
@@ -72,7 +73,9 @@ std::unique_ptr<IController> makeProducer(object_ptr<IConcurrentQueue<Payload>> 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 std::unique_ptr<IBehaviorProcessor> makeBehaviorProcessor() {
-  return std::make_unique<BehaviorProcessor>(std::make_unique<parameters::HandlerEngine>());
+
+  return std::make_unique<BehaviorProcessor>(std::make_unique<parameters::HandlerEngine>(),
+                                             std::make_unique<behavior::GoalkeeperStateMachine>());
 }
 
 std::unique_ptr<IMessageSender> makeMessageSender() {
