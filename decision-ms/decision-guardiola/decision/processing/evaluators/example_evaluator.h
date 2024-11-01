@@ -1,11 +1,12 @@
 #ifndef DECISION_PROCESSING_EVALUATORS_EXAMPLE_EVALUATOR_H
 #define DECISION_PROCESSING_EVALUATORS_EXAMPLE_EVALUATOR_H
 
+#include "decision/processing/evaluators/evaluator_result.h"
 #include "decision/processing/evaluators/ievaluator.h"
 
 namespace decision {
 
-class ExampleEvaluatorResult {
+class ExampleEvaluatorResult : public EvaluatorResult {
  public:
   ExampleEvaluatorResult();
 };
@@ -16,8 +17,7 @@ class ExampleEvaluator : public IEvaluator {
 
   void process() override;
   void reset() override;
-
-  [[nodiscard]] ExampleEvaluatorResult getExampleEvaluatorResult() const;
+  EvaluatorResult& getResult() override;
 
  private:
   ExampleEvaluatorResult example_evaluator_result_;

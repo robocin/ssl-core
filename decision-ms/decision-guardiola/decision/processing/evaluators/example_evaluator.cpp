@@ -12,9 +12,9 @@ void ExampleEvaluator::process() { robocin::ilog("EXAMPLE EVALUATOR WORKING"); }
 
 void ExampleEvaluator::reset() { example_evaluator_result_ = ExampleEvaluatorResult{}; }
 
-ExampleEvaluatorResult ExampleEvaluator::getExampleEvaluatorResult() const {
+EvaluatorResult& ExampleEvaluator::getResult() {
   //   return example_evaluator_result_;
-  return {};
+  return example_evaluator_result_;
 }
 
 } // namespace decision
