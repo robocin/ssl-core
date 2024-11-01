@@ -13,12 +13,6 @@ class Coach : public ICoach {
   void reset() override;
   TacticalPlan getTacticalPlan() override;
   void setTacticalPlan();
-  template <std::derived_from<IEvaluator> T, class... Args>
-  [[nodiscard]] std::unique_ptr<T> makeEvaluator(Args&&... args) {
-    auto evaluator = std::make_unique<T>(std::forward<Args>(args)...);
-    evaluators_.emplace_back(evaluator.get());
-    return std::move(evaluator);
-  }
 
  private:
   std::vector<IEvaluator*> evaluators_;
