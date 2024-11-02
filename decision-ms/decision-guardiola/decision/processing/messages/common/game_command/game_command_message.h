@@ -35,9 +35,7 @@ class GameCommandMessage : public robocin::IProtoConvertible<protocols::common::
    public:
     explicit StopMessage();
 
-    [[nodiscard]] protocols::common::GameCommand::Stop toProto() const override {
-      return protocols::common::GameCommand::Stop{};
-    };
+    [[nodiscard]] protocols::common::GameCommand::Stop toProto() const override;
 
     void fromProto(const protocols::common::GameCommand::Stop& stop_proto) override;
   };
@@ -51,9 +49,7 @@ class GameCommandMessage : public robocin::IProtoConvertible<protocols::common::
     explicit BallPlacementMessage(std::optional<robocin::Point2Df> position = std::nullopt,
                                   std::optional<uint32_t> remaining_time = std::nullopt);
 
-    [[nodiscard]] protocols::common::GameCommand::BallPlacement toProto() const override {
-      return protocols::common::GameCommand::BallPlacement{};
-    };
+    [[nodiscard]] protocols::common::GameCommand::BallPlacement toProto() const override;
 
     void
     fromProto(const protocols::common::GameCommand::BallPlacement& ball_placement_proto) override;
