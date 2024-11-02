@@ -26,9 +26,7 @@ class GameCommandMessage : public robocin::IProtoConvertible<protocols::common::
    public:
     explicit InGameMessage();
 
-    [[nodiscard]] protocols::common::GameCommand::InGame toProto() const override {
-      return protocols::common::GameCommand::InGame{};
-    };
+    [[nodiscard]] protocols::common::GameCommand::InGame toProto() const override;
 
     void fromProto(const protocols::common::GameCommand::InGame& in_game_proto) override;
   };
