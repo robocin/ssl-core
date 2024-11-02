@@ -38,4 +38,14 @@ GameCommandMessage::BallPlacementMessage::toProto() const {
 };
 
 void fromProto(const protocols::common::GameCommand::BallPlacement& ball_placement_proto) {};
+
+// PrepareKickOff
+protocols::common::GameCommand::PrepareKickoff
+GameCommandMessage::PrepareKickoffMessage::toProto() const {
+  return protocols::common::GameCommand::PrepareKickoff{};
+};
+
+void GameCommandMessage::PrepareKickoffMessage::fromProto(
+    const protocols::common::GameCommand::PrepareKickoff& prepare_kick_off_proto) {};
+
 } // namespace decision

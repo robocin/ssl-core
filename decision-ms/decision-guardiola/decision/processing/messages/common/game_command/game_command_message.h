@@ -60,9 +60,7 @@ class GameCommandMessage : public robocin::IProtoConvertible<protocols::common::
    public:
     explicit PrepareKickoffMessage();
 
-    [[nodiscard]] protocols::common::GameCommand::PrepareKickoff toProto() const override {
-      return protocols::common::GameCommand::PrepareKickoff{};
-    };
+    [[nodiscard]] protocols::common::GameCommand::PrepareKickoff toProto() const override;
 
     void fromProto(
         const protocols::common::GameCommand::PrepareKickoff& prepare_kick_off_proto) override;
