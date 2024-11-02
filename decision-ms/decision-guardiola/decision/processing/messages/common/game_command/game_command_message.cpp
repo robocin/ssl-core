@@ -73,4 +73,13 @@ protocols::common::GameCommand::Penalty GameCommandMessage::PenaltyMessage::toPr
 void GameCommandMessage::PenaltyMessage::fromProto(
     const protocols::common::GameCommand::Penalty& penalty_proto) {};
 
+// PrepareDirectFreeKick
+protocols::common::GameCommand::PrepareDirectFreeKick
+GameCommandMessage::PrepareDirectFreeKickMessage::toProto() const {
+  return protocols::common::GameCommand::PrepareDirectFreeKick{};
+};
+
+void GameCommandMessage::PrepareDirectFreeKickMessage::fromProto(
+    const protocols::common::GameCommand::PrepareDirectFreeKick& penalty_proto) {};
+
 }; // namespace decision

@@ -106,9 +106,7 @@ class GameCommandMessage : public robocin::IProtoConvertible<protocols::common::
    public:
     explicit PrepareDirectFreeKickMessage();
 
-    [[nodiscard]] protocols::common::GameCommand::PrepareDirectFreeKick toProto() const override {
-      return protocols::common::GameCommand::PrepareDirectFreeKick{};
-    };
+    [[nodiscard]] protocols::common::GameCommand::PrepareDirectFreeKick toProto() const override;
 
     void
     fromProto(const protocols::common::GameCommand::PrepareDirectFreeKick& penalty_proto) override;
