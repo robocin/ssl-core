@@ -118,9 +118,7 @@ class GameCommandMessage : public robocin::IProtoConvertible<protocols::common::
     std::optional<google::protobuf::Duration> remaining_time;
     explicit DirectFreeKickMessage(const google::protobuf::Duration& time);
 
-    [[nodiscard]] protocols::common::GameCommand::DirectFreeKick toProto() const override {
-      return protocols::common::GameCommand::DirectFreeKick{};
-    };
+    [[nodiscard]] protocols::common::GameCommand::DirectFreeKick toProto() const override;
 
     void fromProto(
         const protocols::common::GameCommand::DirectFreeKick& direct_free_kick_proto) override;

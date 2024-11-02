@@ -82,4 +82,12 @@ GameCommandMessage::PrepareDirectFreeKickMessage::toProto() const {
 void GameCommandMessage::PrepareDirectFreeKickMessage::fromProto(
     const protocols::common::GameCommand::PrepareDirectFreeKick& penalty_proto) {};
 
+// DirectFreeKick
+protocols::common::GameCommand::DirectFreeKick
+GameCommandMessage::DirectFreeKickMessage::toProto() const {
+  return protocols::common::GameCommand::DirectFreeKick{};
+};
+
+void GameCommandMessage::DirectFreeKickMessage::fromProto(
+    const protocols::common::GameCommand::DirectFreeKick& direct_free_kick_proto) {};
 }; // namespace decision
