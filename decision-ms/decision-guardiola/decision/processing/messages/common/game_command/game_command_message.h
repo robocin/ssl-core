@@ -83,9 +83,7 @@ class GameCommandMessage : public robocin::IProtoConvertible<protocols::common::
    public:
     explicit PreparePenaltyMessage();
 
-    [[nodiscard]] protocols::common::GameCommand::PreparePenalty toProto() const override {
-      return protocols::common::GameCommand::PreparePenalty{};
-    };
+    [[nodiscard]] protocols::common::GameCommand::PreparePenalty toProto() const override;
 
     void
     fromProto(const protocols::common::GameCommand::PreparePenalty& prepare_penalty_proto) override;

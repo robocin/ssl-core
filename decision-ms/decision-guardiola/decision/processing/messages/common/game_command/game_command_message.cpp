@@ -56,4 +56,13 @@ protocols::common::GameCommand::Kickoff GameCommandMessage::KickoffMessage::toPr
 void GameCommandMessage::KickoffMessage::fromProto(
     const protocols::common::GameCommand::Kickoff& kick_off_proto) {};
 
+// PreparePenalty
+protocols::common::GameCommand::PreparePenalty
+GameCommandMessage::PreparePenaltyMessage::toProto() const {
+  return protocols::common::GameCommand::PreparePenalty{};
+};
+
+void GameCommandMessage::PreparePenaltyMessage::fromProto(
+    const protocols::common::GameCommand::PreparePenalty& prepare_penalty_proto) {};
+
 }; // namespace decision
