@@ -99,4 +99,19 @@ protocols::common::GameCommand::Timeout GameCommandMessage::TimeoutMessage::toPr
 void GameCommandMessage::TimeoutMessage::fromProto(
     const protocols::common::GameCommand::Timeout& timeout_proto) {};
 
+// Interval
+protocols::common::GameCommand::Interval GameCommandMessage::IntervalMessage::toProto() const {
+  return protocols::common::GameCommand::Interval{};
+};
+
+void GameCommandMessage::IntervalMessage::fromProto(
+    const protocols::common::GameCommand::Interval& timeout_proto) {};
+
+// GameCommand
+protocols::common::GameCommand GameCommandMessage::toProto() const {
+  return protocols::common::GameCommand{};
+};
+
+void GameCommandMessage::fromProto(const protocols::common::GameCommand& game_command_proto) {};
+
 }; // namespace decision

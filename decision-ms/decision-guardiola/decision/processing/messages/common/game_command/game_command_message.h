@@ -139,9 +139,7 @@ class GameCommandMessage : public robocin::IProtoConvertible<protocols::common::
    public:
     explicit IntervalMessage();
 
-    [[nodiscard]] protocols::common::GameCommand::Interval toProto() const override {
-      return protocols::common::GameCommand::Interval{};
-    };
+    [[nodiscard]] protocols::common::GameCommand::Interval toProto() const override;
 
     void fromProto(const protocols::common::GameCommand::Interval& timeout_proto) override;
   };
@@ -179,9 +177,7 @@ class GameCommandMessage : public robocin::IProtoConvertible<protocols::common::
   // todo(fnap): implement
   explicit GameCommandMessage() = default;
 
-  [[nodiscard]] protocols::common::GameCommand toProto() const override {
-    return protocols::common::GameCommand{};
-  };
+  [[nodiscard]] protocols::common::GameCommand toProto() const override;
 
   void fromProto(const protocols::common::GameCommand& game_command_proto) override;
 };
