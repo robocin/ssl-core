@@ -51,9 +51,9 @@ DecisionProcessor::DecisionProcessor(
 std::optional<rc::Decision> DecisionProcessor::process(std::span<const Payload> payloads) {
   rc::Decision decision_output;
 
-  if (std::vector<rc::GameStatus> gameStatus = gameStatusFromPayloads(payloads);
-      !gameStatus.empty()) {
-    last_game_status_ = gameStatus.back();
+  if (std::vector<rc::GameStatus> game_status = gameStatusFromPayloads(payloads);
+      !game_status.empty()) {
+    last_game_status_ = GameStatusMessage(game_status.back());
   }
 
   if (!last_game_status_) {

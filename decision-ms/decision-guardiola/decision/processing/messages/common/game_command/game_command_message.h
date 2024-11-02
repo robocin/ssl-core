@@ -17,9 +17,7 @@ class GameCommandMessage : public robocin::IProtoConvertible<protocols::common::
    public:
     explicit HaltMessage();
 
-    [[nodiscard]] protocols::common::GameCommand::Halt toProto() const override {
-      return protocols::common::GameCommand::Halt{};
-    };
+    [[nodiscard]] protocols::common::GameCommand::Halt toProto() const override;
 
     void fromProto(const protocols::common::GameCommand::Halt& halt_proto) override;
   };
@@ -199,7 +197,7 @@ class GameCommandMessage : public robocin::IProtoConvertible<protocols::common::
   std::optional<IntervalMessage> interval;
 
   // todo(fnap): implement
-  explicit GameCommandMessage();
+  explicit GameCommandMessage() = default;
 
   [[nodiscard]] protocols::common::GameCommand toProto() const override {
     return protocols::common::GameCommand{};
