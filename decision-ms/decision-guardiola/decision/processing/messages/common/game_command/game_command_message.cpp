@@ -31,13 +31,13 @@ void GameCommandMessage::StopMessage::fromProto(
     const protocols::common::GameCommand::Stop& stop_proto) {};
 
 // BallPlacement
-
 protocols::common::GameCommand::BallPlacement
 GameCommandMessage::BallPlacementMessage::toProto() const {
   return protocols::common::GameCommand::BallPlacement{};
 };
 
-void fromProto(const protocols::common::GameCommand::BallPlacement& ball_placement_proto) {};
+void GameCommandMessage::BallPlacementMessage::fromProto(
+    const protocols::common::GameCommand::BallPlacement& ball_placement_proto) {};
 
 // PrepareKickOff
 protocols::common::GameCommand::PrepareKickoff
