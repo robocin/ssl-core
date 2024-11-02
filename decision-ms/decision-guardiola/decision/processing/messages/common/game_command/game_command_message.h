@@ -96,9 +96,7 @@ class GameCommandMessage : public robocin::IProtoConvertible<protocols::common::
 
     explicit PenaltyMessage(const google::protobuf::Duration& time);
 
-    [[nodiscard]] protocols::common::GameCommand::Penalty toProto() const override {
-      return protocols::common::GameCommand::Penalty{};
-    };
+    [[nodiscard]] protocols::common::GameCommand::Penalty toProto() const override;
 
     void fromProto(const protocols::common::GameCommand::Penalty& penalty_proto) override;
   };

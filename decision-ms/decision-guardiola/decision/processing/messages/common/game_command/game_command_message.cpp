@@ -65,4 +65,12 @@ GameCommandMessage::PreparePenaltyMessage::toProto() const {
 void GameCommandMessage::PreparePenaltyMessage::fromProto(
     const protocols::common::GameCommand::PreparePenalty& prepare_penalty_proto) {};
 
+// Penalty
+protocols::common::GameCommand::Penalty GameCommandMessage::PenaltyMessage::toProto() const {
+  return protocols::common::GameCommand::Penalty{};
+};
+
+void GameCommandMessage::PenaltyMessage::fromProto(
+    const protocols::common::GameCommand::Penalty& penalty_proto) {};
+
 }; // namespace decision
