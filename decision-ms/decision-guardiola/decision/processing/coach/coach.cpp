@@ -1,28 +1,27 @@
 #include "decision/processing/coach/coach.h"
 
+#include <robocin/output/log.h>
+
 namespace decision {
 
-Coach::Coach() { example_evaluator_ = makeEvaluator<ExampleEvaluator>(); }
+Coach::Coach() { example_evaluator_ = ExampleEvaluator{}; }
 
 void Coach::process() {
-  for (auto evaluator : evaluators_) {
-    evaluator->process();
-  }
-
-  setTacticalPlan();
+  robocin::ilog("COACH PROCESSING");
+  Coach::processEvaluators();
+  Coach::updateTacticalPlan();
 }
 
 void Coach::reset() {
-  for (auto evaluator : evaluators_) {
+  for (auto* evaluator : evaluators_) {
     evaluator->reset();
   }
 }
 
-TacticalPlan Coach::getTacticalPlan() { return tactical_plan_; }
+void Coach::processEvaluators() { example_evaluator_.process(); }
 
-void Coach::setTacticalPlan() {
-  tactical_plan_.example_evaluator_result_
-      = *dynamic_cast<ExampleEvaluatorResult*>(&example_evaluator_->getResult());
+void Coach::updateTacticalPlan() {
+  tactical_plan.example_evaluator_result_ = example_evaluator_.result;
 }
 
 } // namespace decision

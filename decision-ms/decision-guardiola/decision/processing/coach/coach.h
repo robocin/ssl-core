@@ -7,24 +7,19 @@ namespace decision {
 
 class Coach : public ICoach {
  public:
+  TacticalPlan tactical_plan;
+
   Coach();
 
   void process() override;
   void reset() override;
-  TacticalPlan getTacticalPlan() override;
-  void setTacticalPlan();
-  template <std::derived_from<IEvaluator> T, class... Args>
-  [[nodiscard]] std::unique_ptr<T> makeEvaluator(Args&&... args) {
-    auto evaluator = std::make_unique<T>(std::forward<Args>(args)...);
-    evaluators_.emplace_back(evaluator.get());
-    return std::move(evaluator);
-  }
+  void updateTacticalPlan();
 
  private:
   std::vector<IEvaluator*> evaluators_;
-  TacticalPlan tactical_plan_;
+  ExampleEvaluator example_evaluator_;
 
-  std::unique_ptr<ExampleEvaluator> example_evaluator_;
+  void processEvaluators();
 };
 
 } // namespace decision

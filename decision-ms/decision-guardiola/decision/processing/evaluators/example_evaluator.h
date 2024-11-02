@@ -13,14 +13,12 @@ class ExampleEvaluatorResult : public EvaluatorResult {
 
 class ExampleEvaluator : public IEvaluator {
  public:
+  ExampleEvaluatorResult result;
+
   ExampleEvaluator();
 
   void process() override;
   void reset() override;
-  EvaluatorResult& getResult() override;
-
- private:
-  ExampleEvaluatorResult example_evaluator_result_;
 };
 
 } // namespace decision
