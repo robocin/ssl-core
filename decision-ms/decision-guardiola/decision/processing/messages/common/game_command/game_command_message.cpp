@@ -90,4 +90,13 @@ GameCommandMessage::DirectFreeKickMessage::toProto() const {
 
 void GameCommandMessage::DirectFreeKickMessage::fromProto(
     const protocols::common::GameCommand::DirectFreeKick& direct_free_kick_proto) {};
+
+// Timeout
+protocols::common::GameCommand::Timeout GameCommandMessage::TimeoutMessage::toProto() const {
+  return protocols::common::GameCommand::Timeout{};
+};
+
+void GameCommandMessage::TimeoutMessage::fromProto(
+    const protocols::common::GameCommand::Timeout& timeout_proto) {};
+
 }; // namespace decision

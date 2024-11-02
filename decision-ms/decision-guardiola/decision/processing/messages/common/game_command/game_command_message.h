@@ -129,9 +129,7 @@ class GameCommandMessage : public robocin::IProtoConvertible<protocols::common::
    public:
     explicit TimeoutMessage();
 
-    [[nodiscard]] protocols::common::GameCommand::Timeout toProto() const override {
-      return protocols::common::GameCommand::Timeout{};
-    };
+    [[nodiscard]] protocols::common::GameCommand::Timeout toProto() const override;
 
     void fromProto(const protocols::common::GameCommand::Timeout& timeout_proto) override;
   };
