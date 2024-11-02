@@ -73,9 +73,7 @@ class GameCommandMessage : public robocin::IProtoConvertible<protocols::common::
 
     explicit KickoffMessage(const google::protobuf::Duration& time);
 
-    [[nodiscard]] protocols::common::GameCommand::Kickoff toProto() const override {
-      return protocols::common::GameCommand::Kickoff{};
-    };
+    [[nodiscard]] protocols::common::GameCommand::Kickoff toProto() const override;
 
     void fromProto(const protocols::common::GameCommand::Kickoff& kick_off_proto) override;
   };

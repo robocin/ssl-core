@@ -48,4 +48,12 @@ GameCommandMessage::PrepareKickoffMessage::toProto() const {
 void GameCommandMessage::PrepareKickoffMessage::fromProto(
     const protocols::common::GameCommand::PrepareKickoff& prepare_kick_off_proto) {};
 
-} // namespace decision
+// KickOffMessage
+protocols::common::GameCommand::Kickoff GameCommandMessage::KickoffMessage::toProto() const {
+  return protocols::common::GameCommand::Kickoff{};
+}
+
+void GameCommandMessage::KickoffMessage::fromProto(
+    const protocols::common::GameCommand::Kickoff& kick_off_proto) {};
+
+}; // namespace decision
