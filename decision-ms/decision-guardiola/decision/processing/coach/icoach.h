@@ -15,7 +15,6 @@ class ICoach {
 
   ICoach(const ICoach&) = delete;
   ICoach& operator=(const ICoach&) = delete;
-
   ICoach(ICoach&&) = default;
   ICoach& operator=(ICoach&&) = default;
 
