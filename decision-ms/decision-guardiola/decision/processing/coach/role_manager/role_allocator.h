@@ -1,11 +1,11 @@
-#ifndef DECISION_PROCESSING_ROLE_ALLOCATOR_H
-#define DECISION_PROCESSING_ROLE_ALLOCATOR_H
+#ifndef DECISION_PROCESSING_ROLE_MANAGER_H
+#define DECISION_PROCESSING_ROLE_MANAGER_H
 
 #include "decision/processing/entities/world.h"
 #include "decision/processing/messages/perception/robot/robot_message.h"
 
 namespace decision {
-class RoleAllocator {
+class RoleManager {
  public:
   World world;
   RobotMessage goalkeeper;
@@ -16,14 +16,14 @@ class RoleAllocator {
   std::vector<RobotMessage> wingers;
   std::vector<RobotMessage> forwards;
 
-  explicit RoleAllocator(World& world);
+  explicit RoleManager(World& world);
 
-  RoleAllocator(const RoleAllocator&) = delete;
-  RoleAllocator& operator=(const RoleAllocator&) = delete;
-  RoleAllocator(RoleAllocator&&) = default;
-  RoleAllocator& operator=(RoleAllocator&&) = default;
+  RoleManager(const RoleManager&) = delete;
+  RoleManager& operator=(const RoleManager&) = delete;
+  RoleManager(RoleManager&&) = default;
+  RoleManager& operator=(RoleManager&&) = default;
 
-  virtual ~RoleAllocator() = default;
+  virtual ~RoleManager() = default;
 
   void chooseGoalkeeper();
   void chooseCentralBacks();
@@ -35,4 +35,4 @@ class RoleAllocator {
 };
 } // namespace decision
 
-#endif // DECISION_PROCESSING_ROLE_ALLOCATOR_H
+#endif // DECISION_PROCESSING_ROLE_MANAGER_H
