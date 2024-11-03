@@ -10,6 +10,8 @@
 #include <protocols/behavior/behavior_unification.pb.h>
 #include <protocols/decision/decision.pb.h>
 #include <protocols/perception/detection.pb.h>
+#include <protocols/referee/game_status.pb.h>
+#include <vector>
 
 namespace behavior {
 
@@ -26,7 +28,7 @@ class World {
 
   BallMessage ball;
   DecisionMessage decision;
-  //   GameStatusMessage game_status;
+  GameStatusMessage game_status;
 
   std::vector<RobotMessage> allies;
   std::vector<RobotMessage> enemies;
@@ -37,7 +39,14 @@ class World {
 
   void update(const protocols::decision::Decision& decision,
               const std::vector<protocols::perception::Robot>& robots,
-              const protocols::perception::Ball& ball);
+              const std::vector<protocols::perception::Ball>& balls,
+              const protocols::referee::GameStatus& game_status);
+
+ private:
+  void takeBallHighConfidence(const std::vector<protocols::perception::Ball>& balls);
+  void takeAlliesAndEnemies(const std::vector<protocols::perception::Robot>& robots);
+  void takeDecision(const protocols::decision::Decision& decision);
+  void takeGameStatus(const protocols::referee::GameStatus& game_status);
 };
 
 } // namespace behavior

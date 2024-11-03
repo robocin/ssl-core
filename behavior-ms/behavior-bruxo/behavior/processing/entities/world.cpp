@@ -1,5 +1,10 @@
 #include "behavior/processing/entities/world.h"
 
+#include "world.h"
+
+#include <protocols/perception/detection.pb.h>
+#include <vector>
+
 namespace behavior {
 
 // void World::update(std::optional<DecisionMessage>& decision,
@@ -34,11 +39,23 @@ namespace behavior {
 //   // }
 // }
 
-void World::update(const protocols::decision::Decision& decision,
-                   const std::vector<protocols::perception::Robot>& robots,
-                   const protocols::perception::Ball& ball) {
-  this->decision.fromProto(decision);
+void World::takeBallHighConfidence(const std::vector<protocols::perception::Ball>& balls) {
+  if (balls.empty()) {
+    return;
+  }
 
+  auto max_ball
+      = std::max_element(balls.begin(), balls.end(), [](const auto& ball1, const auto& ball2) {
+          return ball1.confidence() < ball2.confidence();
+        });
+
+  this->ball.fromProto(*max_ball);
+}
+
+void World::takeAlliesAndEnemies(const std::vector<protocols::perception::Robot>& robots) {
+  if (robots.empty()) {
+    return;
+  }
   for (const auto& robot : robots) {
     RobotMessage robot_message;
     robot_message.fromProto(robot);
@@ -51,8 +68,25 @@ void World::update(const protocols::decision::Decision& decision,
       this->enemies.emplace_back(std::move(robot_message));
     }
   }
+}
 
-  this->ball.fromProto(ball);
+void World::takeDecision(const protocols::decision::Decision& decision) {
+  this->decision.fromProto(decision);
+}
+
+void World::takeGameStatus(const protocols::referee::GameStatus& game_status) {
+  this->game_status.fromProto(game_status);
+}
+
+void World::update(const protocols::decision::Decision& decision,
+                   const std::vector<protocols::perception::Robot>& robots,
+                   const std::vector<protocols::perception::Ball>& balls,
+                   const protocols::referee::GameStatus& game_status) {
+
+  this->takeDecision(decision);
+  this->takeAlliesAndEnemies(robots);
+  this->takeBallHighConfidence(balls);
+  this->takeGameStatus(game_status);
 }
 
 } // namespace behavior
