@@ -6,6 +6,8 @@
 #include "decision/processing/messages/referee/game_status_message.h"
 #include "perception/robot/robot_message.h"
 #include "world.h"
+#include "decision/processing/coach/coach.h"
+
 
 #include <memory>
 #include <protocols/decision/decision.pb.h>
@@ -37,7 +39,8 @@ class DecisionProcessor : public IDecisionProcessor {
   };
 
   explicit DecisionProcessor(
-      std::unique_ptr<::robocin::parameters::IHandlerEngine> parameters_handler_engine);
+      std::unique_ptr<::robocin::parameters::IHandlerEngine> parameters_handler_engine,
+      std::unique_ptr<Coach> coach);
 
   std::optional<::protocols::decision::Decision>
   process(std::span<const Payload> payloads) override;
@@ -52,6 +55,9 @@ class DecisionProcessor : public IDecisionProcessor {
   bool update(std::span<const Payload>& payloads);
   void takeMostAccurateBall(std::vector<BallMessage>& balls, World& world);
   void takeAlliesAndEnemies(std::vector<RobotMessage>& robots, World& world);
+  
+  std::optional<::protocols::referee::GameStatus> last_game_status_;
+  std::unique_ptr<Coach> coach_;
 };
 
 } // namespace decision
