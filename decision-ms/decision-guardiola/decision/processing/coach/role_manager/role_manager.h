@@ -9,7 +9,7 @@ class RoleManager {
  public:  
   World world;
   RobotMessage goalkeeper;
-  std::vector<RobotMessage> central_backs;
+  std::vector<RobotMessage> center_backs;
   std::vector<RobotMessage> full_backs;
   std::vector<RobotMessage> defensive_midfielders;
   std::vector<RobotMessage> offensive_midfielders;
