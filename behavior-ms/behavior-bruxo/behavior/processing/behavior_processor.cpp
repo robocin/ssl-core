@@ -2,6 +2,7 @@
 
 #include "behavior/messaging/receiver/payload.h"
 #include "behavior/parameters/parameters.h"
+#include "state_machine/goalkeeper/goalkeeper_state_machine.h"
 
 #include <optional>
 #include <protocols/behavior/behavior_unification.pb.h>
@@ -57,8 +58,10 @@ std::vector<rc::GameStatus> gameStatusFromPayloads(std::span<const Payload> payl
 } // namespace
 
 BehaviorProcessor::BehaviorProcessor(
-    std::unique_ptr<parameters::IHandlerEngine> parameters_handler_engine) :
-    parameters_handler_engine_{std::move(parameters_handler_engine)} {}
+    std::unique_ptr<parameters::IHandlerEngine> parameters_handler_engine,
+    std::unique_ptr<::behavior::GoalkeeperStateMachine> goalkeeper_state_machine) :
+    parameters_handler_engine_{std::move(parameters_handler_engine)},
+    goalkeeper_state_machine_{std::move(goalkeeper_state_machine)} {}
 
 std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> payloads) {
 
@@ -87,19 +90,9 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
   }
   const rc::Detection last_detection = detection_messages.back();
 
-  // TODO: implement the logic to generate the behavior based on the last detection and the last
-  // decision
-  ///////////////////////////////////////////////////////////////////////////////////
-
   BehaviorMessage behavior_message;
 
-  for (const auto& robot : last_detection.robots()) {
-
-    behavior_message.output.emplace_back(
-        OutputMessage{RobotIdMessage{}, MotionMessage{}, PlanningMessage{}});
-  }
-
-  ///////////////////////////////////////////////////////////////////////////////////
+  goalkeeper_state_machine_->run();
 
   return behavior_message.toProto();
 }
