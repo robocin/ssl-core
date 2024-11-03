@@ -6,5 +6,8 @@ namespace behavior {
 
 Other::Other() = default;
 
-void Other::exec() { robocin::ilog("Exec other state"); }
+void Other::exec() {
+  robocin::ilog("Exec other state and go back");
+  state_machine_->transitionTo(new Guard);
+}
 } // namespace behavior

@@ -1,6 +1,7 @@
 #ifndef BEHAVIOR_STATE_MACHINE_OTHER_H
 #define BEHAVIOR_STATE_MACHINE_OTHER_H
 
+#include "behavior/processing/state_machine/goalkeeper/states/guard.h"
 #include "behavior/processing/state_machine/istate_machine.h"
 
 #include <robocin/output/log.h>
