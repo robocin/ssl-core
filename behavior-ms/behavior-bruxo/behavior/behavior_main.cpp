@@ -1,5 +1,6 @@
 #include "behavior/controller/consumer_controller.h"
 #include "behavior/controller/producer_controller.h"
+#include "processing/state_machine/goalkeeper/goalkeeper_state_machine.h"
 
 #include <memory>
 #include <print>
@@ -46,6 +47,9 @@ std::unique_ptr<IMessageReceiver> makeMessageReceiver() {
   static constexpr std::array kDecisionTopics = {
       service_discovery::kDecisionTopic,
   };
+  static constexpr std::array kRefereeTopics = {
+      service_discovery::kRefereeGameStatusTopic,
+  };
 
   std::unique_ptr<IZmqSubscriberSocket> perception_socket = std::make_unique<ZmqSubscriberSocket>();
   perception_socket->connect(service_discovery::kPerceptionAddress, kPerceptionTopics);
@@ -53,14 +57,19 @@ std::unique_ptr<IMessageReceiver> makeMessageReceiver() {
   std::unique_ptr<IZmqSubscriberSocket> decision_socket = std::make_unique<ZmqSubscriberSocket>();
   decision_socket->connect(service_discovery::kDecisionAddress, kDecisionTopics);
 
+  std::unique_ptr<IZmqSubscriberSocket> referee_socket = std::make_unique<ZmqSubscriberSocket>();
+  referee_socket->connect(service_discovery::kRefereeAddress, kRefereeTopics);
+
   std::unique_ptr<IZmqPoller> zmq_poller = std::make_unique<ZmqPoller>();
   zmq_poller->push(*perception_socket);
   zmq_poller->push(*decision_socket);
+  zmq_poller->push(*referee_socket);
 
   std::unique_ptr<IPayloadMapper> payload_mapper = std::make_unique<PayloadMapper>();
 
   return std::make_unique<MessageReceiver>(std::move(perception_socket),
                                            std::move(decision_socket),
+                                           std::move(referee_socket),
                                            std::move(zmq_poller),
                                            std::move(payload_mapper));
 }
@@ -72,7 +81,9 @@ std::unique_ptr<IController> makeProducer(object_ptr<IConcurrentQueue<Payload>> 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 std::unique_ptr<IBehaviorProcessor> makeBehaviorProcessor() {
-  return std::make_unique<BehaviorProcessor>(std::make_unique<parameters::HandlerEngine>());
+
+  return std::make_unique<BehaviorProcessor>(std::make_unique<parameters::HandlerEngine>(),
+                                             std::make_unique<behavior::GoalkeeperStateMachine>());
 }
 
 std::unique_ptr<IMessageSender> makeMessageSender() {

@@ -83,7 +83,8 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
       if (behavior_.has_motion()) {
         RobotMove move;
         if (behavior_.motion().has_go_to_point()) {
-          move = motion_parser_->fromGoToPoint(behavior_.motion().go_to_point(), ally);
+          move = motion_parser_->fromGoToPoint(behavior_.motion().go_to_point(),
+                                               ally);
         } else if (behavior_.motion().has_rotate_in_point()) {
           move = motion_parser_->fromRotateInPoint(behavior_.motion().rotate_in_point(), ally);
         } else if (behavior_.motion().has_rotate_on_self()) {

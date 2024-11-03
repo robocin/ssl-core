@@ -1,3 +1,6 @@
+#ifndef BEHAVIOR_PROCESSING_MESSAGES_BEHAVIOR_BEHAVIOR_MESSAGE_H
+#define BEHAVIOR_PROCESSING_MESSAGES_BEHAVIOR_BEHAVIOR_MESSAGE_H
+
 #include "behavior/processing/messages/common/robot_id/robot_id.h"
 #include "behavior/processing/messages/motion/motion_message.h"
 #include "behavior/processing/messages/planning/planning_message.h"
@@ -50,3 +53,5 @@ class BehaviorMessage
 };
 
 } // namespace behavior
+
+#endif // BEHAVIOR_PROCESSING_MESSAGES_BEHAVIOR_BEHAVIOR_MESSAGE_H
