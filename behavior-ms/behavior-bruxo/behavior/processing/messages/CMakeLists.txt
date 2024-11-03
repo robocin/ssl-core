@@ -12,6 +12,8 @@ robocin_cpp_library(
          perception/field/field_message.h
          perception/detection/detection_message.h
          referee/game_status_message.h
+         common/robot_kick/kick_command.h
+         common/peripheral_actuation/peripheral_actuation.h
     SRCS behavior/behavior_message.cpp
          common/robot_id/robot_id.cpp
          common/game_command/game_command_message.cpp
@@ -24,6 +26,8 @@ robocin_cpp_library(
          perception/field/field_message.cpp
          perception/detection/detection_message.cpp
          referee/game_status_message.cpp
+         common/robot_kick/kick_command.cpp
+         common/peripheral_actuation/peripheral_actuation.cpp
     DEPS common::utility
          common::output
          common::geometry

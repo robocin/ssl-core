@@ -10,7 +10,7 @@
 #include <protocols/perception/detection.pb.h>
 #include <robocin/utility/iproto_convertible.h>
 
-namespace decision {
+namespace behavior {
 
 class DetectionMessage : public robocin::IProtoConvertible<protocols::perception::Detection> {
  public:
