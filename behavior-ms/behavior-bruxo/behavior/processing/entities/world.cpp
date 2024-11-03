@@ -16,9 +16,9 @@ void World::update(std::optional<DecisionMessage>& decision,
                     || (!pIsYellow() && robot.robot_id->color == Color::COLOR_BLUE);
 
       if (isAlly) {
-        this->allies.push_back(robot_message);
+        this->allies.emplace_back(std::move(robot));
       } else {
-        this->enemies.push_back(robot_message);
+        this->enemies.emplace_back(std::move(robot));
       }
     }
   }
@@ -28,14 +28,14 @@ void World::update(std::optional<DecisionMessage>& decision,
     this->ball = std::move(ball.value());
   }
 
-  if (game_status.has_value()) {
-    // TODO(ersa): get last game status
-    this->game_status = std::move(game_status.value());
-  }
+  // if (game_status.has_value()) {
+  //   // TODO(ersa): get last game status
+  //   this->game_status = std::move(game_status.value());
+  // }
 }
 
 void World::update(const protocols::decision::Decision& decision,
-                   const std::vector<protocols::perception::Detection>& robots,
+                   const std::vector<protocols::perception::Robot>& robots,
                    const protocols::perception::Ball& ball) {
   this->decision.fromProto(decision);
 
@@ -46,9 +46,9 @@ void World::update(const protocols::decision::Decision& decision,
                   || (!pIsYellow() && robot_message.robot_id->color == Color::COLOR_BLUE);
 
     if (isAlly) {
-      this->allies.push_back(robot_message);
+      this->allies.emplace_back(std::move(robot_message));
     } else {
-      this->enemies.push_back(robot_message);
+      this->enemies.emplace_back(std::move(robot_message));
     }
   }
 

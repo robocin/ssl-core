@@ -28,15 +28,15 @@ class World {
   DecisionMessage decision;
   //   GameStatusMessage game_status;
 
-  std::span<RobotMessage> allies;
-  std::span<RobotMessage> enemies;
+  std::vector<RobotMessage> allies;
+  std::vector<RobotMessage> enemies;
 
   void update(std::optional<DecisionMessage>& decision,
-              std::optional<std::span<RobotMessage>>& robots,
+              std::optional<std::vector<RobotMessage>>& robots,
               std::optional<BallMessage>& ball);
 
   void update(const protocols::decision::Decision& decision,
-              const std::vector<protocols::perception::Detection>& robots,
+              const std::vector<protocols::perception::Robot>& robots,
               const protocols::perception::Ball& ball);
 };
 
