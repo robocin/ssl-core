@@ -44,7 +44,7 @@ class World {
   void takeDecision(const protocols::decision::Decision& decision);
   void takeGameStatus(const protocols::referee::GameStatus& game_status);
 
-  [[nodiscard]] bool isAlly(const protocols::perception::Robot& robot) const;
+  [[nodiscard]] bool isAlly(const RobotMessage& robot) const;
 };
 
 } // namespace behavior

@@ -46,9 +46,9 @@ void World::takeGameStatus(const protocols::referee::GameStatus& game_status) {
   this->game_status.fromProto(game_status);
 }
 
-[[nodiscard]] bool World::isAlly(const RobotMessaget& robot) const {
-  return (pIsYellow() && robot.color == Color::COLOR_YELLOW)
-         || (!pIsYellow() && robot.color == Color::COLOR_BLUE);
+[[nodiscard]] bool World::isAlly(const RobotMessage& robot) const {
+  return (pIsYellow() && robot.robot_id->color == Color::COLOR_YELLOW)
+         || (!pIsYellow() && robot.robot_id->color == Color::COLOR_BLUE);
 }
 
 void World::update(const protocols::decision::Decision& decision,
