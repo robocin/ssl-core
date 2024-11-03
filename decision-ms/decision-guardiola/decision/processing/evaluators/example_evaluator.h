@@ -17,7 +17,7 @@ class ExampleEvaluator : public IEvaluator {
 
   ExampleEvaluator();
 
-  void process() override;
+  void process(World& world) override;
   void reset() override;
 };
 
