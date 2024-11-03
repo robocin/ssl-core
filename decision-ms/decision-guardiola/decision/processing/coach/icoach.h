@@ -22,7 +22,6 @@ class ICoach {
 
   virtual void process() = 0;
   virtual void reset() = 0;
-  virtual TacticalPlan getTacticalPlan() = 0;
 };
 
 } // namespace decision

@@ -2,6 +2,8 @@
 #define DECISION_PROCESSING_EVALUATORS_IEVALUATOR_H
 
 #include "decision/processing/evaluators/evaluator_result.h"
+#include <robocin/output/log.h>
+
 namespace decision {
 
 class IEvaluator {
@@ -18,7 +20,6 @@ class IEvaluator {
 
   virtual void process() = 0;
   virtual void reset() = 0;
-  virtual EvaluatorResult& getResult() = 0;
 };
 
 } // namespace decision

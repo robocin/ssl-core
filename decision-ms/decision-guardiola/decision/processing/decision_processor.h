@@ -4,7 +4,9 @@
 #include "decision/messaging/receiver/payload.h"
 #include "decision/processing/messages/perception/detection/detection_message.h"
 #include "decision/processing/messages/referee/game_status_message.h"
+#include "decision/processing/coach/coach.h"
 
+#include <memory>
 #include <protocols/decision/decision.pb.h>
 #include <protocols/perception/detection.pb.h>
 #include <robocin/parameters/parameters.h>
@@ -29,7 +31,8 @@ class IDecisionProcessor {
 class DecisionProcessor : public IDecisionProcessor {
  public:
   explicit DecisionProcessor(
-      std::unique_ptr<::robocin::parameters::IHandlerEngine> parameters_handler_engine);
+      std::unique_ptr<::robocin::parameters::IHandlerEngine> parameters_handler_engine,
+      std::unique_ptr<Coach> coach);
 
   std::optional<::protocols::decision::Decision>
   process(std::span<const Payload> payloads) override;
@@ -38,6 +41,7 @@ class DecisionProcessor : public IDecisionProcessor {
   std::unique_ptr<::robocin::parameters::IHandlerEngine> parameters_handler_engine_;
   std::optional<GameStatusMessage> last_game_status_;
   std::optional<DetectionMessage> last_detection_;
+  std::unique_ptr<Coach> coach_;
 };
 
 } // namespace decision
