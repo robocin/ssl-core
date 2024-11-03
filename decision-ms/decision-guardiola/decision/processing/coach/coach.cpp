@@ -12,11 +12,7 @@ void Coach::process() {
   Coach::updateTacticalPlan();
 }
 
-void Coach::reset() {
-  for (auto* evaluator : evaluators_) {
-    evaluator->reset();
-  }
-}
+void Coach::reset() { example_evaluator_.reset(); }
 
 void Coach::processEvaluators() { example_evaluator_.process(); }
 

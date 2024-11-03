@@ -16,7 +16,6 @@ class Coach : public ICoach {
   void updateTacticalPlan();
 
  private:
-  std::vector<IEvaluator*> evaluators_;
   ExampleEvaluator example_evaluator_;
 
   void processEvaluators();
