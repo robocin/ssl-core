@@ -12,8 +12,11 @@ namespace navigation {
 namespace {
 namespace rc {
 using ::protocols::behavior::GoToPoint;
+using ::protocols::behavior::PathNode;
+using ::protocols::behavior::PrecisionToTarget;
 using ::protocols::behavior::RotateInPoint;
 using ::protocols::behavior::RotateOnSelf;
+using ::protocols::common::Point2Df;
 using ::protocols::perception::Robot;
 } // namespace rc
 
@@ -21,8 +24,8 @@ using ::protocols::perception::Robot;
 
 MotionParser::MotionParser() {}
 
-RobotMove MotionParser::fromGoToPoint(const rc::GoToPoint& go_to_point, const rc::Robot& robot) {
-
+RobotMove MotionParser::fromGoToPoint(const rc::GoToPoint& go_to_point,
+                                      const rc::Robot& robot) {
   robocin::Point2D robot_position = robocin::Point2D(robot.position().x(), robot.position().y());
   robocin::Point2D target_position
       = robocin::Point2D(go_to_point.target().x(), go_to_point.target().y());
@@ -63,8 +66,31 @@ RobotMove MotionParser::fromGoToPoint(const rc::GoToPoint& go_to_point, const rc
 RobotMove MotionParser::fromRotateInPoint(const rc::RotateInPoint& rotate_in_point,
                                           const rc::Robot& robot) {
 
-  // PROCESSAMENTO DO ROTATEINPOINT
-  return RobotMove{};
+  const double velocity = [&]() {
+    double velocity = rotate_in_point.rotate_velocity();
+    velocity *= rotate_in_point.min_velocity();
+
+    return velocity;
+  }();
+  ::robocin::Point2Dd target = {rotate_in_point.target().x(), rotate_in_point.target().y()};
+  ::robocin::Point2Dd robot_pos = {robot.position().x(), robot.position().y()};
+
+  const double robot_radius = (robot_pos.distanceTo(target)) / M_to_MM;
+  const double delta_theta = robocin::smallestAngleDiff(robot.angle(), rotate_in_point.target_angle());
+  const double approach_kp = rotate_in_point.approach_kp();
+  const double angle_kp = rotate_in_point.angle_kp();
+
+  // Rotate in the smaller angle
+  const double orientation_factor = rotate_in_point.clockwise() ? 1.0 : -1.0;
+  const robocin::Point2Dd coordinates
+      = robocin::Point2Dd(approach_kp * (robot_radius - rotate_in_point.orbit_radius() / M_to_MM),
+                          orientation_factor * velocity);
+  const robocin::Point2Dd rotated_coordinates = coordinates.rotatedCounterClockWise(robot.angle());
+  const double angular_velocity
+      = ((-(orientation_factor * velocity) / (rotate_in_point.orbit_radius() / M_to_MM))
+         + (angle_kp * delta_theta));
+
+  return RobotMove{rotated_coordinates, angular_velocity};
 }
 
 RobotMove MotionParser::fromRotateOnSelf(const rc::RotateOnSelf& rotate_on_self,
