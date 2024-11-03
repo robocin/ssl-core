@@ -26,7 +26,6 @@ using communication::MessageSender;
 using communication::Payload;
 using communication::PayloadMapper;
 using communication::ProducerController;
-using communication::RobotCommandMapper;
 using ::robocin::ConditionVariableConcurrentQueue;
 using ::robocin::IConcurrentQueue;
 using ::robocin::IUdpMulticastSocketSender;
@@ -70,8 +69,7 @@ std::unique_ptr<IController> makeProducer(object_ptr<IConcurrentQueue<Payload>> 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 std::unique_ptr<ICommunicationProcessor> makeCommunicationProcessor() {
-  return std::make_unique<CommunicationProcessor>(std::make_unique<parameters::HandlerEngine>(),
-                                                  std::make_unique<RobotCommandMapper>());
+  return std::make_unique<CommunicationProcessor>(std::make_unique<parameters::HandlerEngine>());
 }
 
 std::unique_ptr<IMessageSender> makeMessageSender() {
