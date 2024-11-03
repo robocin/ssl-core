@@ -221,7 +221,7 @@ services:
     depends_on:
       - perception-ms
       - referee-ms
-    attach: true
+    attach: false
 
   behavior-ms:
     container_name: behavior-ms
@@ -230,7 +230,7 @@ services:
       dockerfile: behavior-ms/behavior-bruxo/behavior-bruxo.Dockerfile
     volumes:
       - .ssl-core:/tmp/.ssl-core
-    attach: true
+    attach: false
   
   communication-ms:
     container_name: communication-ms
