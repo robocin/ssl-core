@@ -9,6 +9,7 @@
 #include <protocols/behavior/behavior_unification.pb.h>
 #include <protocols/decision/decision.pb.h>
 #include <protocols/perception/detection.pb.h>
+#include <protocols/referee/game_status.pb.h>
 #include <robocin/parameters/parameters.h>
 
 namespace behavior {
@@ -39,6 +40,7 @@ class BehaviorProcessor : public IBehaviorProcessor {
  private:
   std::unique_ptr<::robocin::parameters::IHandlerEngine> parameters_handler_engine_;
   std::optional<::protocols::decision::Decision> last_decision_;
+  std::optional<::protocols::referee::GameStatus> last_game_status_;
 };
 
 } // namespace behavior

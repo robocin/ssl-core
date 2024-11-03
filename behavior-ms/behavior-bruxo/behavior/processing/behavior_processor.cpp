@@ -3,13 +3,16 @@
 #include "behavior/messaging/receiver/payload.h"
 #include "behavior/parameters/parameters.h"
 
+#include <optional>
 #include <protocols/behavior/behavior_unification.pb.h>
 #include <protocols/behavior/motion.pb.h>
 #include <protocols/decision/decision.pb.h>
 #include <protocols/perception/detection.pb.h>
+#include <protocols/referee/game_status.pb.h>
 #include <ranges>
 #include <robocin/memory/object_ptr.h>
 #include <robocin/output/log.h>
+#include <vector>
 
 namespace behavior {
 
@@ -32,6 +35,8 @@ using ::protocols::behavior::unification::Behavior;
 using ::protocols::behavior::unification::Motion;
 using ::protocols::behavior::unification::Output;
 
+using ::protocols::referee::GameStatus;
+
 } // namespace rc
 
 std::vector<rc::Detection> detectionFromPayloads(std::span<const Payload> payloads) {
@@ -41,6 +46,11 @@ std::vector<rc::Detection> detectionFromPayloads(std::span<const Payload> payloa
 
 std::vector<rc::Decision> decisionfromPayloads(std::span<const Payload> payloads) {
   return payloads | std::views::transform(&Payload::getDecisionMessages) | std::views::join
+         | std::ranges::to<std::vector>();
+}
+
+std::vector<rc::GameStatus> gameStatusFromPayloads(std::span<const Payload> payloads) {
+  return payloads | std::views::transform(&Payload::getGameStatusMessages) | std::views::join
          | std::ranges::to<std::vector>();
 }
 
@@ -58,6 +68,15 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
   }
 
   if (!last_decision_) {
+    return std::nullopt;
+  }
+
+  if (std::vector<rc::GameStatus> game_status_messages = gameStatusFromPayloads(payloads);
+      !game_status_messages.empty()) {
+    last_game_status_ = game_status_messages.back();
+  }
+
+  if (!last_game_status_) {
     return std::nullopt;
   }
 

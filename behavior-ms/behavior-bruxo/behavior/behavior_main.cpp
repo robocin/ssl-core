@@ -46,6 +46,9 @@ std::unique_ptr<IMessageReceiver> makeMessageReceiver() {
   static constexpr std::array kDecisionTopics = {
       service_discovery::kDecisionTopic,
   };
+  static constexpr std::array kRefereeTopics = {
+      service_discovery::kRefereeGameStatusTopic,
+  };
 
   std::unique_ptr<IZmqSubscriberSocket> perception_socket = std::make_unique<ZmqSubscriberSocket>();
   perception_socket->connect(service_discovery::kPerceptionAddress, kPerceptionTopics);
@@ -53,14 +56,19 @@ std::unique_ptr<IMessageReceiver> makeMessageReceiver() {
   std::unique_ptr<IZmqSubscriberSocket> decision_socket = std::make_unique<ZmqSubscriberSocket>();
   decision_socket->connect(service_discovery::kDecisionAddress, kDecisionTopics);
 
+  std::unique_ptr<IZmqSubscriberSocket> referee_socket = std::make_unique<ZmqSubscriberSocket>();
+  referee_socket->connect(service_discovery::kRefereeAddress, kRefereeTopics);
+
   std::unique_ptr<IZmqPoller> zmq_poller = std::make_unique<ZmqPoller>();
   zmq_poller->push(*perception_socket);
   zmq_poller->push(*decision_socket);
+  zmq_poller->push(*referee_socket);
 
   std::unique_ptr<IPayloadMapper> payload_mapper = std::make_unique<PayloadMapper>();
 
   return std::make_unique<MessageReceiver>(std::move(perception_socket),
                                            std::move(decision_socket),
+                                           std::move(referee_socket),
                                            std::move(zmq_poller),
                                            std::move(payload_mapper));
 }
