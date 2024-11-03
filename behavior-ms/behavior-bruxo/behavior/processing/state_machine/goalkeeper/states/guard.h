@@ -1,6 +1,7 @@
 #ifndef BEHAVIOR_STATE_MACHINE_GUARD_H
 #define BEHAVIOR_STATE_MACHINE_GUARD_H
 
+#include "behavior/processing/messages/behavior/behavior_message.h"
 #include "behavior/processing/state_machine/goalkeeper/states/other.h"
 #include "behavior/processing/state_machine/istate_machine.h"
 
@@ -16,7 +17,7 @@ class Guard : public IState {
   explicit Guard();
 
   void setStateMachine(IStateMachine* state_machine) override { state_machine_ = state_machine; };
-  void exec() override;
+  OutputMessage exec() override;
 };
 
 } // namespace behavior

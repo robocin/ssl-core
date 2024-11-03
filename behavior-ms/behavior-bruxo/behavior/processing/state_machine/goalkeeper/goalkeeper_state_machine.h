@@ -1,6 +1,7 @@
 #ifndef BEHAVIOR_STATE_MACHINE_GOALKEEPER_STATE_MACHINE_H
 #define BEHAVIOR_STATE_MACHINE_GOALKEEPER_STATE_MACHINE_H
 
+#include "behavior/processing/messages/behavior/behavior_message.h"
 #include "behavior/processing/state_machine/istate_machine.h"
 
 #include <robocin/output/log.h>
@@ -14,6 +15,7 @@ namespace behavior {
 class GoalkeeperStateMachine : IStateMachine {
  private:
   IState* current_state_;
+  OutputMessage output;
 
  public:
   explicit GoalkeeperStateMachine();

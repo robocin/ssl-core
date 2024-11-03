@@ -1,6 +1,8 @@
 #ifndef BEHAVIOR_STATE_MACHINE_ISTATE_MACHINE_H
 #define BEHAVIOR_STATE_MACHINE_ISTATE_MACHINE_H
 
+#include "behavior/processing/messages/behavior/behavior_message.h"
+
 namespace behavior {
 
 class IState;
@@ -44,7 +46,7 @@ class IState {
   virtual ~IState() = default;
 
   virtual void setStateMachine(IStateMachine* state_machine) = 0;
-  virtual void exec() = 0;
+  virtual OutputMessage exec() = 0;
 };
 
 } // namespace behavior

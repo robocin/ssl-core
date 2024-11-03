@@ -1,7 +1,6 @@
 #include "behavior/processing/state_machine/goalkeeper/goalkeeper_state_machine.h"
 
 #include "behavior/processing/state_machine/goalkeeper/states/guard.h"
-#include "behavior/processing/state_machine/goalkeeper/goalkeeper_state_machine.h"
 
 #include <stdio.h>
 
@@ -22,6 +21,6 @@ void GoalkeeperStateMachine::transitionTo(IState* state) {
 
 void GoalkeeperStateMachine::run() {
   robocin::ilog("GoalkeeperStateMachine running!");
-  current_state_->exec();
+  output = current_state_->exec();
 }
 } // namespace behavior
