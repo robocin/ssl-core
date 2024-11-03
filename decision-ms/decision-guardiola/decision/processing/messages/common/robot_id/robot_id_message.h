@@ -23,9 +23,7 @@ class RobotIdMessage : public robocin::IProtoConvertible<protocols::common::Robo
 
   explicit RobotIdMessage(const protocols::common::RobotId& robot_id_proto);
 
-  [[nodiscard]] protocols::common::RobotId toProto() const override {
-    return protocols::common::RobotId{};
-  };
+  [[nodiscard]] protocols::common::RobotId toProto() const override;
 
   void fromProto(const protocols::common::RobotId& robot_id_proto) override;
 };

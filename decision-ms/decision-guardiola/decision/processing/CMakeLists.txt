@@ -6,4 +6,6 @@ robocin_cpp_library(
          coach
          evaluators
          messages
+         entities
+         coach
 )

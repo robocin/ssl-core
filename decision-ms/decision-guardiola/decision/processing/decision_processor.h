@@ -3,6 +3,10 @@
 
 #include "decision/messaging/receiver/payload.h"
 #include "decision/processing/coach/coach.h"
+#include "decision/processing/messages/perception/detection/detection_message.h"
+#include "decision/processing/messages/referee/game_status_message.h"
+#include "perception/robot/robot_message.h"
+#include "world.h"
 
 #include <memory>
 #include <protocols/decision/decision.pb.h>
@@ -28,6 +32,11 @@ class IDecisionProcessor {
 
 class DecisionProcessor : public IDecisionProcessor {
  public:
+  struct AlliesAndEnemies {
+    std::vector<RobotMessage> allies;
+    std::vector<RobotMessage> enemies;
+  };
+
   explicit DecisionProcessor(
       std::unique_ptr<::robocin::parameters::IHandlerEngine> parameters_handler_engine,
       std::unique_ptr<Coach> coach);
@@ -37,8 +46,14 @@ class DecisionProcessor : public IDecisionProcessor {
 
  private:
   std::unique_ptr<::robocin::parameters::IHandlerEngine> parameters_handler_engine_;
-  std::optional<::protocols::referee::GameStatus> last_game_status_;
+  std::optional<GameStatusMessage> last_game_status_;
+  std::optional<DetectionMessage> last_detection_;
   std::unique_ptr<Coach> coach_;
+  World world_;
+
+  bool update(std::span<const Payload>& payloads);
+  void takeMostAccurateBall(std::vector<BallMessage>& balls, World& world);
+  void takeAlliesAndEnemies(std::vector<RobotMessage>& robots, World& world);
 };
 
 } // namespace decision

@@ -15,33 +15,27 @@ class GameCommandMessage : public robocin::IProtoConvertible<protocols::common::
   // Inner command classes
   class HaltMessage : public robocin::IProtoConvertible<protocols::common::GameCommand::Halt> {
    public:
-    explicit HaltMessage();
+    explicit HaltMessage() = default;
 
-    [[nodiscard]] protocols::common::GameCommand::Halt toProto() const override {
-      return protocols::common::GameCommand::Halt{};
-    };
+    [[nodiscard]] protocols::common::GameCommand::Halt toProto() const override;
 
     void fromProto(const protocols::common::GameCommand::Halt& halt_proto) override;
   };
 
   class InGameMessage : public robocin::IProtoConvertible<protocols::common::GameCommand::InGame> {
    public:
-    explicit InGameMessage();
+    explicit InGameMessage() = default;
 
-    [[nodiscard]] protocols::common::GameCommand::InGame toProto() const override {
-      return protocols::common::GameCommand::InGame{};
-    };
+    [[nodiscard]] protocols::common::GameCommand::InGame toProto() const override;
 
     void fromProto(const protocols::common::GameCommand::InGame& in_game_proto) override;
   };
 
   class StopMessage : public robocin::IProtoConvertible<protocols::common::GameCommand::Stop> {
    public:
-    explicit StopMessage();
+    explicit StopMessage() = default;
 
-    [[nodiscard]] protocols::common::GameCommand::Stop toProto() const override {
-      return protocols::common::GameCommand::Stop{};
-    };
+    [[nodiscard]] protocols::common::GameCommand::Stop toProto() const override;
 
     void fromProto(const protocols::common::GameCommand::Stop& stop_proto) override;
   };
@@ -55,9 +49,7 @@ class GameCommandMessage : public robocin::IProtoConvertible<protocols::common::
     explicit BallPlacementMessage(std::optional<robocin::Point2Df> position = std::nullopt,
                                   std::optional<uint32_t> remaining_time = std::nullopt);
 
-    [[nodiscard]] protocols::common::GameCommand::BallPlacement toProto() const override {
-      return protocols::common::GameCommand::BallPlacement{};
-    };
+    [[nodiscard]] protocols::common::GameCommand::BallPlacement toProto() const override;
 
     void
     fromProto(const protocols::common::GameCommand::BallPlacement& ball_placement_proto) override;
@@ -66,11 +58,9 @@ class GameCommandMessage : public robocin::IProtoConvertible<protocols::common::
   class PrepareKickoffMessage
       : public robocin::IProtoConvertible<protocols::common::GameCommand::PrepareKickoff> {
    public:
-    explicit PrepareKickoffMessage();
+    explicit PrepareKickoffMessage() = default;
 
-    [[nodiscard]] protocols::common::GameCommand::PrepareKickoff toProto() const override {
-      return protocols::common::GameCommand::PrepareKickoff{};
-    };
+    [[nodiscard]] protocols::common::GameCommand::PrepareKickoff toProto() const override;
 
     void fromProto(
         const protocols::common::GameCommand::PrepareKickoff& prepare_kick_off_proto) override;
@@ -79,13 +69,11 @@ class GameCommandMessage : public robocin::IProtoConvertible<protocols::common::
   class KickoffMessage
       : public robocin::IProtoConvertible<protocols::common::GameCommand::Kickoff> {
    public:
-    std::optional<google::protobuf::Duration> remaining_time;
+    std::optional<uint32_t> remaining_time;
 
-    explicit KickoffMessage(const google::protobuf::Duration& time);
+    explicit KickoffMessage(const uint32_t& time);
 
-    [[nodiscard]] protocols::common::GameCommand::Kickoff toProto() const override {
-      return protocols::common::GameCommand::Kickoff{};
-    };
+    [[nodiscard]] protocols::common::GameCommand::Kickoff toProto() const override;
 
     void fromProto(const protocols::common::GameCommand::Kickoff& kick_off_proto) override;
   };
@@ -93,11 +81,9 @@ class GameCommandMessage : public robocin::IProtoConvertible<protocols::common::
   class PreparePenaltyMessage
       : public robocin::IProtoConvertible<protocols::common::GameCommand::PreparePenalty> {
    public:
-    explicit PreparePenaltyMessage();
+    explicit PreparePenaltyMessage() = default;
 
-    [[nodiscard]] protocols::common::GameCommand::PreparePenalty toProto() const override {
-      return protocols::common::GameCommand::PreparePenalty{};
-    };
+    [[nodiscard]] protocols::common::GameCommand::PreparePenalty toProto() const override;
 
     void
     fromProto(const protocols::common::GameCommand::PreparePenalty& prepare_penalty_proto) override;
@@ -106,13 +92,11 @@ class GameCommandMessage : public robocin::IProtoConvertible<protocols::common::
   class PenaltyMessage
       : public robocin::IProtoConvertible<protocols::common::GameCommand::Penalty> {
    public:
-    std::optional<google::protobuf::Duration> remaining_time;
+    std::optional<uint32_t> remaining_time;
 
-    explicit PenaltyMessage(const google::protobuf::Duration& time);
+    explicit PenaltyMessage(const uint32_t& time);
 
-    [[nodiscard]] protocols::common::GameCommand::Penalty toProto() const override {
-      return protocols::common::GameCommand::Penalty{};
-    };
+    [[nodiscard]] protocols::common::GameCommand::Penalty toProto() const override;
 
     void fromProto(const protocols::common::GameCommand::Penalty& penalty_proto) override;
   };
@@ -120,11 +104,9 @@ class GameCommandMessage : public robocin::IProtoConvertible<protocols::common::
   class PrepareDirectFreeKickMessage
       : public robocin::IProtoConvertible<protocols::common::GameCommand::PrepareDirectFreeKick> {
    public:
-    explicit PrepareDirectFreeKickMessage();
+    explicit PrepareDirectFreeKickMessage() = default;
 
-    [[nodiscard]] protocols::common::GameCommand::PrepareDirectFreeKick toProto() const override {
-      return protocols::common::GameCommand::PrepareDirectFreeKick{};
-    };
+    [[nodiscard]] protocols::common::GameCommand::PrepareDirectFreeKick toProto() const override;
 
     void
     fromProto(const protocols::common::GameCommand::PrepareDirectFreeKick& penalty_proto) override;
@@ -133,12 +115,10 @@ class GameCommandMessage : public robocin::IProtoConvertible<protocols::common::
   class DirectFreeKickMessage
       : public robocin::IProtoConvertible<protocols::common::GameCommand::DirectFreeKick> {
    public:
-    std::optional<google::protobuf::Duration> remaining_time;
-    explicit DirectFreeKickMessage(const google::protobuf::Duration& time);
+    std::optional<uint32_t> remaining_time;
+    explicit DirectFreeKickMessage(const uint32_t& time);
 
-    [[nodiscard]] protocols::common::GameCommand::DirectFreeKick toProto() const override {
-      return protocols::common::GameCommand::DirectFreeKick{};
-    };
+    [[nodiscard]] protocols::common::GameCommand::DirectFreeKick toProto() const override;
 
     void fromProto(
         const protocols::common::GameCommand::DirectFreeKick& direct_free_kick_proto) override;
@@ -147,11 +127,9 @@ class GameCommandMessage : public robocin::IProtoConvertible<protocols::common::
   class TimeoutMessage
       : public robocin::IProtoConvertible<protocols::common::GameCommand::Timeout> {
    public:
-    explicit TimeoutMessage();
+    explicit TimeoutMessage() = default;
 
-    [[nodiscard]] protocols::common::GameCommand::Timeout toProto() const override {
-      return protocols::common::GameCommand::Timeout{};
-    };
+    [[nodiscard]] protocols::common::GameCommand::Timeout toProto() const override;
 
     void fromProto(const protocols::common::GameCommand::Timeout& timeout_proto) override;
   };
@@ -159,11 +137,9 @@ class GameCommandMessage : public robocin::IProtoConvertible<protocols::common::
   class IntervalMessage
       : public robocin::IProtoConvertible<protocols::common::GameCommand::Interval> {
    public:
-    explicit IntervalMessage();
+    explicit IntervalMessage() = default;
 
-    [[nodiscard]] protocols::common::GameCommand::Interval toProto() const override {
-      return protocols::common::GameCommand::Interval{};
-    };
+    [[nodiscard]] protocols::common::GameCommand::Interval toProto() const override;
 
     void fromProto(const protocols::common::GameCommand::Interval& timeout_proto) override;
   };
@@ -199,11 +175,9 @@ class GameCommandMessage : public robocin::IProtoConvertible<protocols::common::
   std::optional<IntervalMessage> interval;
 
   // todo(fnap): implement
-  explicit GameCommandMessage();
+  explicit GameCommandMessage() = default;
 
-  [[nodiscard]] protocols::common::GameCommand toProto() const override {
-    return protocols::common::GameCommand{};
-  };
+  [[nodiscard]] protocols::common::GameCommand toProto() const override;
 
   void fromProto(const protocols::common::GameCommand& game_command_proto) override;
 };
