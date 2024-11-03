@@ -31,9 +31,9 @@ class World {
   std::vector<RobotMessage> allies;
   std::vector<RobotMessage> enemies;
 
-  void update(std::optional<DecisionMessage>& decision,
-              std::optional<std::span<RobotMessage>>& robots,
-              std::optional<BallMessage>& ball);
+  //   void update(std::optional<DecisionMessage>& decision,
+  //               std::optional<std::span<RobotMessage>>& robots,
+  //               std::optional<BallMessage>& ball);
 
   void update(const protocols::decision::Decision& decision,
               const std::vector<protocols::perception::Robot>& robots,
