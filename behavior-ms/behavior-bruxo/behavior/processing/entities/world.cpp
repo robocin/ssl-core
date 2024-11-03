@@ -2,6 +2,7 @@
 
 #include "world.h"
 
+#include <protocols/common/robot_id.pb.h>
 #include <protocols/perception/detection.pb.h>
 #include <vector>
 
@@ -45,9 +46,9 @@ void World::takeGameStatus(const protocols::referee::GameStatus& game_status) {
   this->game_status.fromProto(game_status);
 }
 
-[[nodiscard]] bool World::isAlly(const protocols::perception::Robot& robot) const {
-  return (pIsYellow() && robot.color() == protocols::perception::Color::COLOR_YELLOW)
-         || (!pIsYellow() && robot.color() == protocols::perception::Color::COLOR_BLUE);
+[[nodiscard]] bool World::isAlly(const RobotMessaget& robot) const {
+  return (pIsYellow() && robot.color == Color::COLOR_YELLOW)
+         || (!pIsYellow() && robot.color == Color::COLOR_BLUE);
 }
 
 void World::update(const protocols::decision::Decision& decision,
