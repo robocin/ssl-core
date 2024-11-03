@@ -1,6 +1,7 @@
 #ifndef BEHAVIOR_PROCESSING_ENTITIES_WORLD_H
 #define BEHAVIOR_PROCESSING_ENTITIES_WORLD_H
 
+#include "behavior/parameters/parameters.h"
 #include "behavior/processing/messages/decision/decision_message.h"
 #include "behavior/processing/messages/perception/ball/ball_message.h"
 #include "behavior/processing/messages/perception/robot/robot_message.h"
@@ -9,7 +10,6 @@
 #include <protocols/behavior/behavior_unification.pb.h>
 #include <protocols/decision/decision.pb.h>
 #include <protocols/perception/detection.pb.h>
-#include <robocin/parameters/parameters.h>
 
 namespace behavior {
 
