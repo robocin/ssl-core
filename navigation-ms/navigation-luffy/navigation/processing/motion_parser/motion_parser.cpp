@@ -26,7 +26,6 @@ MotionParser::MotionParser() {}
 
 RobotMove MotionParser::fromGoToPoint(const rc::GoToPoint& go_to_point,
                                       const rc::Robot& robot) {
-
   robocin::Point2D robot_position = robocin::Point2D(robot.position().x(), robot.position().y());
   robocin::Point2D target_position
       = robocin::Point2D(go_to_point.target().x(), go_to_point.target().y());
@@ -97,8 +96,12 @@ RobotMove MotionParser::fromRotateInPoint(const rc::RotateInPoint& rotate_in_poi
 RobotMove MotionParser::fromRotateOnSelf(const rc::RotateOnSelf& rotate_on_self,
                                          const rc::Robot& robot) {
 
-  // PROCESSAMENTO DO ROTATEINPOINT
-  return RobotMove{};
+  auto delta_theta
+      = robocin::smallestAngleDiff<double>(robot.angle(), rotate_on_self.target_angle());
+  robocin::Point2Dd velocity
+      = robocin::Point2Dd{rotate_on_self.velocity().x(), rotate_on_self.velocity().y()};
+
+  return RobotMove{velocity, rotate_on_self.kp() * delta_theta};
 }
 
 } // namespace navigation
