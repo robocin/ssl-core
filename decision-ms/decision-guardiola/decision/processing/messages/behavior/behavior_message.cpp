@@ -27,4 +27,10 @@ BehaviorMessage::BehaviorMessage(std::optional<BehaviorId> id,
     robot_id(std::move(robot_id)),
     target(target) {}
 
+protocols::decision::Behavior BehaviorMessage::toProto() const {
+  return protocols::decision::Behavior{};
+}
+
+void BehaviorMessage::fromProto(const protocols::decision::Behavior& behavior_proto) {};
+
 } // namespace decision

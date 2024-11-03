@@ -7,7 +7,7 @@ namespace decision {
 class GoalkeeperRole {
  public:
   explicit GoalkeeperRole(int evaluation);
-  ~GoalkeeperRole();
+  ~GoalkeeperRole() = default;
 
   BehaviorMessage chooseBehavior();
 

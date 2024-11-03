@@ -46,11 +46,11 @@ class TacticalPlanMessage : public robocin::IProtoConvertible<protocols::decisio
 };
 class DecisionMessage : public robocin::IProtoConvertible<protocols::decision::Decision> {
  public:
-  explicit DecisionMessage(BehaviorMessage behavior = BehaviorMessage{},
-                           TacticalPlanMessage plan = TacticalPlanMessage{});
+  explicit DecisionMessage(std::optional<BehaviorMessage> behavior = std::nullopt,
+                           std::optional<TacticalPlanMessage> plan = std::nullopt);
 
-  BehaviorMessage behavior;
-  TacticalPlanMessage plan;
+  std::optional<BehaviorMessage> behavior;
+  std::optional<TacticalPlanMessage> plan;
 
   [[nodiscard]] protocols::decision::Decision toProto() const override {
     return protocols::decision::Decision{};

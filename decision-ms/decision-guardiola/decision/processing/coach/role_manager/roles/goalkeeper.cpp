@@ -6,6 +6,6 @@ namespace decision {
 GoalkeeperRole::GoalkeeperRole(int evaluation) : evaluation_(evaluation) {}
 
 BehaviorMessage GoalkeeperRole::chooseBehavior() {
-  return {BehaviorMessage::GOALKEEPER, std::nullopt, std::nullopt};
+  return BehaviorMessage{BehaviorMessage::GOALKEEPER, std::nullopt, std::nullopt};
 };
 } // namespace decision

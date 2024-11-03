@@ -9,7 +9,8 @@ TacticalPlanMessage::TacticalPlanMessage(OffensivePlanMessage offensive,
     offensive(std::move(offensive)),
     defensive(std::move(defensive)) {}
 
-DecisionMessage::DecisionMessage(BehaviorMessage behavior, TacticalPlanMessage plan) :
+DecisionMessage::DecisionMessage(std::optional<BehaviorMessage> behavior,
+                                 std::optional<TacticalPlanMessage> plan) :
     behavior(std::move(behavior)),
     plan(std::move(plan)) {}
 
