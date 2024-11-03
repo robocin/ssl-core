@@ -35,9 +35,7 @@ class BallLeftFieldMessage
                                 std::optional<robocin::Point2Df> left_field_position
                                 = std::nullopt);
 
-  [[nodiscard]] protocols::common::GameEvent::BallLeftField toProto() const override {
-    return protocols::common::GameEvent::BallLeftField{};
-  };
+  [[nodiscard]] protocols::common::GameEvent::BallLeftField toProto() const override;
 
   void fromProto(const protocols::common::GameEvent::BallLeftField& ball_left_field_proto) override;
 };
@@ -52,9 +50,7 @@ class BallLeftFieldBoundaryMessage
       std::optional<Team> by_team = std::nullopt,
       std::optional<robocin::Point2Df> left_field_boundary_position = std::nullopt);
 
-  [[nodiscard]] protocols::common::GameEvent::BallLeftFieldBoundary toProto() const override {
-    return protocols::common::GameEvent::BallLeftFieldBoundary{};
-  };
+  [[nodiscard]] protocols::common::GameEvent::BallLeftFieldBoundary toProto() const override;
 
   void fromProto(const protocols::common::GameEvent::BallLeftFieldBoundary&
                      ball_left_field_boundary_proto) override;
@@ -73,9 +69,7 @@ class AimlessKickMessage
                               std::optional<robocin::Point2Df> left_field_position = std::nullopt,
                               std::optional<robocin::Point2Df> kick_position = std::nullopt);
 
-  [[nodiscard]] protocols::common::GameEvent::AimlessKick toProto() const override {
-    return protocols::common::GameEvent::AimlessKick{};
-  };
+  [[nodiscard]] protocols::common::GameEvent::AimlessKick toProto() const override;
 
   void fromProto(const protocols::common::GameEvent::AimlessKick& aimless_kick_proto) override;
 };
@@ -91,9 +85,7 @@ class GoalkeeperHeldBallMessage
                                      std::optional<robocin::Point2Df> ball_position = std::nullopt,
                                      std::optional<uint32_t> duration = std::nullopt);
 
-  [[nodiscard]] protocols::common::GameEvent::GoalkeeperHeldBall toProto() const override {
-    return protocols::common::GameEvent::GoalkeeperHeldBall{};
-  };
+  [[nodiscard]] protocols::common::GameEvent::GoalkeeperHeldBall toProto() const override;
 
   void fromProto(
       const protocols::common::GameEvent::GoalkeeperHeldBall& goalkeeper_held_ball_proto) override;
@@ -115,9 +107,7 @@ class RobotTooCloseToDefenseAreaMessage
       std::optional<float> distance_to_defense_area = std::nullopt,
       std::optional<robocin::Point2Df> ball_position = std::nullopt);
 
-  [[nodiscard]] protocols::common::GameEvent::RobotTooCloseToDefenseArea toProto() const override {
-    return protocols::common::GameEvent::RobotTooCloseToDefenseArea{};
-  };
+  [[nodiscard]] protocols::common::GameEvent::RobotTooCloseToDefenseArea toProto() const override;
 
   void fromProto(const protocols::common::GameEvent::RobotTooCloseToDefenseArea&
                      robot_too_close_to_defense_area_proto) override;
@@ -137,9 +127,7 @@ class RobotInDefenseAreaMessage
                                      std::optional<float> distance_to_nearest_point_outside_area
                                      = std::nullopt);
 
-  [[nodiscard]] protocols::common::GameEvent::RobotInDefenseArea toProto() const override {
-    return protocols::common::GameEvent::RobotInDefenseArea{};
-  };
+  [[nodiscard]] protocols::common::GameEvent::RobotInDefenseArea toProto() const override;
 
   void fromProto(
       const protocols::common::GameEvent::RobotInDefenseArea& robot_in_defense_area_proto) override;
@@ -160,9 +148,7 @@ class RobotPushedRobotMessage
                                    std::optional<robocin::Point2Df> position = std::nullopt,
                                    std::optional<float> pushed_distance = std::nullopt);
 
-  [[nodiscard]] protocols::common::GameEvent::RobotPushedRobot toProto() const override {
-    return protocols::common::GameEvent::RobotPushedRobot{};
-  };
+  [[nodiscard]] protocols::common::GameEvent::RobotPushedRobot toProto() const override;
 
   void fromProto(
       const protocols::common::GameEvent::RobotPushedRobot& robot_pushed_robot_proto) override;
@@ -182,9 +168,7 @@ class RobotHeldBallDeliberatelyMessage
                                             = std::nullopt,
                                             std::optional<uint32_t> duration = std::nullopt);
 
-  [[nodiscard]] protocols::common::GameEvent::RobotHeldBallDeliberately toProto() const override {
-    return protocols::common::GameEvent::RobotHeldBallDeliberately{};
-  };
+  [[nodiscard]] protocols::common::GameEvent::RobotHeldBallDeliberately toProto() const override;
 
   void fromProto(const protocols::common::GameEvent::RobotHeldBallDeliberately&
                      robot_held_ball_deliberately_proto) override;
@@ -205,9 +189,7 @@ class RobotDribbledBallTooFarMessage
                                           std::optional<robocin::Point2Df> end_position
                                           = std::nullopt);
 
-  [[nodiscard]] protocols::common::GameEvent::RobotDribbledBallTooFar toProto() const override {
-    return protocols::common::GameEvent::RobotDribbledBallTooFar{};
-  };
+  [[nodiscard]] protocols::common::GameEvent::RobotDribbledBallTooFar toProto() const override;
 
   void fromProto(const protocols::common::GameEvent::RobotDribbledBallTooFar&
                      robot_dribbled_ball_too_far_proto) override;
@@ -226,9 +208,7 @@ class RobotTippedOverMessage
                                   std::optional<robocin::Point2Df> robot_position = std::nullopt,
                                   std::optional<robocin::Point2Df> ball_position = std::nullopt);
 
-  [[nodiscard]] protocols::common::GameEvent::RobotTippedOver toProto() const override {
-    return protocols::common::GameEvent::RobotTippedOver{};
-  };
+  [[nodiscard]] protocols::common::GameEvent::RobotTippedOver toProto() const override;
 
   void
   fromProto(const protocols::common::GameEvent::RobotTippedOver& robot_tipped_over_proto) override;
@@ -257,9 +237,7 @@ class GoalMessage : public robocin::IProtoConvertible<protocols::common::GameEve
                        std::optional<uint32_t> last_touch_by_scoring_team_timestamp = std::nullopt,
                        std::optional<std::string> message = std::nullopt);
 
-  [[nodiscard]] protocols::common::GameEvent::Goal toProto() const override {
-    return protocols::common::GameEvent::Goal{};
-  };
+  [[nodiscard]] protocols::common::GameEvent::Goal toProto() const override;
 
   void fromProto(const protocols::common::GameEvent::Goal& goal_proto) override;
 };

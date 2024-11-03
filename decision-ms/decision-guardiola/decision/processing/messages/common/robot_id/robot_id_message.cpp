@@ -21,6 +21,8 @@ RobotIdMessage::Color getColor(rc::RobotId_Color color_proto) {
 
 RobotIdMessage::RobotIdMessage(const rc::RobotId& robot_id_proto) { fromProto(robot_id_proto); };
 
+protocols::common::RobotId RobotIdMessage::toProto() const { return protocols::common::RobotId{}; };
+
 void RobotIdMessage::fromProto(const rc::RobotId& robot_id_proto) {
   if (robot_id_proto.has_color()) {
     color = getColor(robot_id_proto.color());
@@ -32,4 +34,5 @@ void RobotIdMessage::fromProto(const rc::RobotId& robot_id_proto) {
 RobotIdMessage::RobotIdMessage(uint32_t number, std::optional<Color> color) :
     number(number),
     color(color) {}
+
 }; // namespace decision
