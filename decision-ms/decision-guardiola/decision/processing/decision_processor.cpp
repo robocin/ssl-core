@@ -8,6 +8,7 @@
 #include "decision/processing/messages/decision/decision_message.h"
 #include "decision/processing/messages/perception/detection/detection_message.h"
 #include "perception/ball/ball_message.h"
+#include "perception/field/field_message.h"
 #include "perception/robot/robot_message.h"
 #include "referee/game_status_message.h"
 
@@ -59,6 +60,7 @@ std::optional<rc::Decision> DecisionProcessor::process(std::span<const Payload> 
   rc::Decision decision_output;
 
   DecisionProcessor::update(payloads);
+  // robocin::ilog("{}", *(world_.field.width));
 
   coach_->process(world_);
   TacticalPlan tactical_plan = coach_->tactical_plan;
@@ -128,6 +130,7 @@ bool DecisionProcessor::update(std::span<const Payload>& payloads) {
   }
 
   last_detection_ = DetectionMessage(detections.back());
+  world_.field = std::move(last_detection_->field.value());
 
   DecisionProcessor::takeMostAccurateBall(last_detection_->balls, world_);
   DecisionProcessor::takeAlliesAndEnemies(last_detection_->robots, world_);
