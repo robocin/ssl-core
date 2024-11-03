@@ -23,6 +23,8 @@ class RobotIdMessage : public robocin::IProtoConvertible<protocols::common::Robo
   explicit RobotIdMessage(std::optional<Color> color = std::nullopt,
                           std::optional<uint32_t> number = 0);
 
+  explicit RobotIdMessage(const protocols::common::RobotId& robot_id_proto);
+
   [[nodiscard]] protocols::common::RobotId toProto() const override;
 
   void fromProto(const protocols::common::RobotId& robot_id) override;

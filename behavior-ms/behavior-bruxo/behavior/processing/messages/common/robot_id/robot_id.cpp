@@ -7,6 +7,10 @@ RobotIdMessage::RobotIdMessage(std::optional<Color> color, std::optional<uint32_
     color{std::move(color)},
     number{std::move(number)} {}
 
+RobotIdMessage::RobotIdMessage(const protocols::common::RobotId& robot_id_proto) {
+  fromProto(robot_id_proto);
+};
+
 protocols::common::RobotId RobotIdMessage::toProto() const {
   protocols::common::RobotId robot_id;
 

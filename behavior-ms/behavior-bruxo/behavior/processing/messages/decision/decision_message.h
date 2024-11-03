@@ -7,9 +7,9 @@
 
 namespace behavior {
 
-class BehaviorMessage : public robocin::IProtoConvertible<protocols::decision::Behavior> {
+class BehaviorDecisionMessage : public robocin::IProtoConvertible<protocols::decision::Behavior> {
  public:
-  BehaviorMessage();
+  BehaviorDecisionMessage();
 
   [[nodiscard]] protocols::decision::Behavior toProto() const override;
 
@@ -22,13 +22,16 @@ class BehaviorMessage : public robocin::IProtoConvertible<protocols::decision::B
 
 class DecisionMessage : public robocin::IProtoConvertible<protocols::decision::Decision> {
  public:
-  DecisionMessage(std::vector<BehaviorMessage> behavior = std::vector<BehaviorMessage>{});
+  explicit DecisionMessage(std::vector<BehaviorDecisionMessage> behavior
+                           = std::vector<BehaviorDecisionMessage>{});
+
+  explicit DecisionMessage(const protocols::decision::Decision& decision);
 
   [[nodiscard]] protocols::decision::Decision toProto() const override;
 
   void fromProto(const protocols::decision::Decision& decision) override;
 
-  std::vector<BehaviorMessage> behavior;
+  std::vector<BehaviorDecisionMessage> behavior;
 };
 
 } // namespace behavior

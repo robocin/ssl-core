@@ -17,7 +17,9 @@ DetectionMessage::DetectionMessage(std::optional<uint64_t> serial_id,
     robots(std::move(robots)),
     field(std::move(field)) {};
 
-protocols::perception::Detection DetectionMessage::toProto() const { return rc::Detection{}; };
+protocols::perception::Detection DetectionMessage::toProto() const {
+  return protocols::perception::Detection{};
+};
 
 void DetectionMessage::fromProto(const protocols::perception::Detection& detection_proto) {
 
