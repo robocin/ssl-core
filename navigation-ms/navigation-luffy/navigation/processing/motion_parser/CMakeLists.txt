@@ -8,3 +8,4 @@ robocin_cpp_library(
        navigation_utils
        navigation_entities
        parameters
+)
