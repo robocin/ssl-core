@@ -5,6 +5,11 @@
 #include <robocin/utility/iproto_convertible.h>
 
 namespace behavior {
+enum Color {
+  COLOR_UNSPECIFIED = 0,
+  COLOR_YELLOW = 1,
+  COLOR_BLUE = 2,
+};
 
 /**
  * @class RobotIdMessage
@@ -13,11 +18,6 @@ namespace behavior {
  * This class is used to represent the robot id. It contains the color and the number of the robot.
  */
 class RobotIdMessage : public robocin::IProtoConvertible<protocols::common::RobotId> {
-  enum Color {
-    COLOR_UNSPECIFIED = 0,
-    COLOR_YELLOW = 1,
-    COLOR_BLUE = 2,
-  };
 
  public:
   explicit RobotIdMessage(std::optional<Color> color = std::nullopt,
