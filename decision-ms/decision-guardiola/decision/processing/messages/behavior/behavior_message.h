@@ -49,10 +49,22 @@ class BehaviorUnificationMessage
 
 class BehaviorMessage : public robocin::IProtoConvertible<protocols::decision::Behavior> {
  public:
-  BehaviorMessage(std::optional<uint32_t> id = std::nullopt,
+  enum BehaviorId {
+    UNSPECIFIED = 0,
+    GOALKEEPER = 1,
+    LINE_GOALKEEPER = 3,
+    FULL_BACK = 4,
+    CENTER_BACK = 5,
+    DEFENSIVE_MIDFIELDER = 6,
+    OFFENSIVE_MIDFIELDER = 7,
+    WINGER = 8,
+    FORWARD = 9
+  };
+
+  BehaviorMessage(std::optional<BehaviorId> id = std::nullopt,
                   std::optional<RobotIdMessage> robot_id = std::nullopt,
                   std::optional<robocin::Point2D<float>> target = std::nullopt);
-  std::optional<uint32_t> id;
+  std::optional<BehaviorId> id;
   std::optional<RobotIdMessage> robot_id;
   std::optional<robocin::Point2D<float>> target;
 

@@ -1,5 +1,7 @@
 #include "decision/processing/messages/decision/decision_message.h"
 
+#include "decision/processing/messages/behavior/behavior_message.h"
+
 namespace decision {
 
 TacticalPlanMessage::TacticalPlanMessage(OffensivePlanMessage offensive,
@@ -7,7 +9,7 @@ TacticalPlanMessage::TacticalPlanMessage(OffensivePlanMessage offensive,
     offensive(std::move(offensive)),
     defensive(std::move(defensive)) {}
 
-DecisionMessage::DecisionMessage(std::vector<BehaviorMessage> behavior, TacticalPlanMessage plan) :
+DecisionMessage::DecisionMessage(BehaviorMessage behavior, TacticalPlanMessage plan) :
     behavior(std::move(behavior)),
     plan(std::move(plan)) {}
 

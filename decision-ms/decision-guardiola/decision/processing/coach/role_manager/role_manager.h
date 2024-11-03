@@ -6,7 +6,7 @@
 
 namespace decision {
 class RoleManager {
- public:  
+ public:
   World world;
   RobotMessage goalkeeper;
   std::vector<RobotMessage> center_backs;
