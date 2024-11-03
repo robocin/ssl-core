@@ -7,16 +7,18 @@ namespace decision {
 
 class Coach : public ICoach {
  public:
+  TacticalPlan tactical_plan;
+
   Coach();
 
   void process() override;
   void reset() override;
-  TacticalPlan getTacticalPlan() override;
-  void setTacticalPlan();
+  void updateTacticalPlan();
 
  private:
-  std::vector<IEvaluator*> evaluators_;
-  TacticalPlan tactical_plan_;
+  ExampleEvaluator example_evaluator_;
+
+  void processEvaluators();
 };
 
 } // namespace decision
