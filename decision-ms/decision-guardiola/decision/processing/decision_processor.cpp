@@ -5,6 +5,7 @@
 #include "decision/processing/messages/behavior/behavior_message.h"
 #include "decision/processing/messages/decision/decision_message.h"
 #include "decision/processing/messages/perception/detection/detection_message.h"
+#include "referee/game_status_message.h"
 
 #include <protocols/common/robot_id.pb.h>
 #include <protocols/decision/decision.pb.h>
@@ -58,6 +59,10 @@ std::optional<rc::Decision> DecisionProcessor::process(std::span<const Payload> 
 
   if (!last_game_status_) {
     return std::nullopt;
+  }
+
+  if (last_game_status_->command->halt.has_value()) {
+    robocin::ilog("HALT");
   }
 
   std::vector<rc::Detection> detections = detectionFromPayloads(payloads);

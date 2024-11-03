@@ -1,7 +1,10 @@
 #include "decision/processing/messages/common/game_command/game_command_message.h"
 
+#include "decision/processing/messages/common/robot_kick/kick_command.h"
+
 #include <protocols/common/game_command.pb.h>
 #include <protocols/referee/game_status.pb.h>
+#include <robocin/geometry/point2d.h>
 
 namespace decision {
 // todo(fnap): implement
@@ -39,6 +42,12 @@ GameCommandMessage::BallPlacementMessage::toProto() const {
 void GameCommandMessage::BallPlacementMessage::fromProto(
     const protocols::common::GameCommand::BallPlacement& ball_placement_proto) {};
 
+GameCommandMessage::BallPlacementMessage::BallPlacementMessage(
+    std::optional<robocin::Point2Df> position,
+    std::optional<uint32_t> remaining_time) :
+    position(std::move(position)),
+    remaining_time(std::move(remaining_time)) {}
+
 // PrepareKickOff
 protocols::common::GameCommand::PrepareKickoff
 GameCommandMessage::PrepareKickoffMessage::toProto() const {
@@ -56,6 +65,8 @@ protocols::common::GameCommand::Kickoff GameCommandMessage::KickoffMessage::toPr
 void GameCommandMessage::KickoffMessage::fromProto(
     const protocols::common::GameCommand::Kickoff& kick_off_proto) {};
 
+GameCommandMessage::KickoffMessage::KickoffMessage(const uint32_t& time) : remaining_time(time) {}
+
 // PreparePenalty
 protocols::common::GameCommand::PreparePenalty
 GameCommandMessage::PreparePenaltyMessage::toProto() const {
@@ -71,7 +82,17 @@ protocols::common::GameCommand::Penalty GameCommandMessage::PenaltyMessage::toPr
 };
 
 void GameCommandMessage::PenaltyMessage::fromProto(
-    const protocols::common::GameCommand::Penalty& penalty_proto) {};
+    const protocols::common::GameCommand::Penalty& penalty_proto) {
+  if (penalty_proto.has_remaining_time()) {
+    if (!remaining_time.has_value()) {
+      remaining_time.emplace();
+    }
+
+    remaining_time = penalty_proto.remaining_time().seconds();
+  }
+};
+
+GameCommandMessage::PenaltyMessage::PenaltyMessage(const uint32_t& time) : remaining_time(time) {}
 
 // PrepareDirectFreeKick
 protocols::common::GameCommand::PrepareDirectFreeKick
@@ -90,6 +111,9 @@ GameCommandMessage::DirectFreeKickMessage::toProto() const {
 
 void GameCommandMessage::DirectFreeKickMessage::fromProto(
     const protocols::common::GameCommand::DirectFreeKick& direct_free_kick_proto) {};
+
+GameCommandMessage::DirectFreeKickMessage::DirectFreeKickMessage(const uint32_t& time) :
+    remaining_time(time) {}
 
 // Timeout
 protocols::common::GameCommand::Timeout GameCommandMessage::TimeoutMessage::toProto() const {
@@ -112,6 +136,74 @@ protocols::common::GameCommand GameCommandMessage::toProto() const {
   return protocols::common::GameCommand{};
 };
 
-void GameCommandMessage::fromProto(const protocols::common::GameCommand& game_command_proto) {};
+void GameCommandMessage::fromProto(const protocols::common::GameCommand& game_command_proto) {
+  if (game_command_proto.has_halt()) {
+    halt = HaltMessage();
+  }
+
+  if (game_command_proto.has_in_game()) {
+    in_game = InGameMessage();
+  }
+
+  if (game_command_proto.has_stop()) {
+    stop = StopMessage();
+  }
+
+  if (game_command_proto.has_home_ball_placement()) {
+    home_ball_placement = BallPlacementMessage(
+        robocin::Point2Df(game_command_proto.home_ball_placement().position().x(),
+                          game_command_proto.home_ball_placement().position().y()),
+        game_command_proto.home_ball_placement().remaining_time().seconds());
+  }
+
+  if (game_command_proto.has_away_ball_placement()) {
+    away_ball_placement = BallPlacementMessage(
+        robocin::Point2Df(game_command_proto.away_ball_placement().position().x(),
+                          game_command_proto.away_ball_placement().position().y()),
+        game_command_proto.away_ball_placement().remaining_time().seconds());
+  }
+
+  if (game_command_proto.has_home_kickoff()) {
+    home_kickoff = KickoffMessage(game_command_proto.home_kickoff().remaining_time().seconds());
+  }
+
+  if (game_command_proto.has_away_kickoff()) {
+    away_kickoff = KickoffMessage(game_command_proto.home_kickoff().remaining_time().seconds());
+  }
+
+  if (game_command_proto.has_home_prepare_penalty()) {
+    home_prepare_penalty = PreparePenaltyMessage();
+  }
+
+  if (game_command_proto.has_away_prepare_penalty()) {
+    away_prepare_penalty = PreparePenaltyMessage();
+  }
+
+  if (game_command_proto.has_home_penalty()) {
+    home_penalty = PenaltyMessage(game_command_proto.home_penalty().remaining_time().seconds());
+  }
+
+  if (game_command_proto.has_away_penalty()) {
+    away_penalty = PenaltyMessage(game_command_proto.home_penalty().remaining_time().seconds());
+  }
+
+  if (game_command_proto.has_home_prepare_direct_free_kick()) {
+    home_prepare_direct_free_kick = PrepareDirectFreeKickMessage();
+  }
+
+  if (game_command_proto.has_away_prepare_direct_free_kick()) {
+    away_prepare_direct_free_kick = PrepareDirectFreeKickMessage();
+  }
+
+  if (game_command_proto.has_home_direct_free_kick()) {
+    home_direct_free_kick = DirectFreeKickMessage(
+        game_command_proto.home_direct_free_kick().remaining_time().seconds());
+  }
+
+  if (game_command_proto.has_away_direct_free_kick()) {
+    away_direct_free_kick = DirectFreeKickMessage(
+        game_command_proto.home_direct_free_kick().remaining_time().seconds());
+  }
+};
 
 }; // namespace decision
