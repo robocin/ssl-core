@@ -30,5 +30,6 @@ robocin_cpp_library(
           referee/game_status_message.cpp
      DEPS common::utility
           common::output
+          common::geometry
           protocols::protobufs
 )
