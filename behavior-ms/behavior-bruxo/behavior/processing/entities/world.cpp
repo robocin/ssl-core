@@ -12,8 +12,8 @@ void World::update(std::optional<DecisionMessage>& decision,
 
   if (robots.has_value()) {
     for (const auto& robot : robots.value()) {
-      bool isAlly = (pIsYellow() && robot.robot_id->color == RobotIdMessage::Color::COLOR_YELLOW)
-                    || (!pIsYellow() && robot.robot_id->color == RobotIdMessage::Color::COLOR_BLUE);
+      bool isAlly = (pIsYellow() && robot.robot_id->color == Color::COLOR_YELLOW)
+                    || (!pIsYellow() && robot.robot_id->color == Color::COLOR_BLUE);
 
       if (isAlly) {
         this->allies.push_back(robot_message);
@@ -42,9 +42,8 @@ void World::update(const protocols::decision::Decision& decision,
   for (const auto& robot : robots) {
     RobotMessage robot_message;
     robot_message.fromProto(robot);
-    bool isAlly
-        = (pIsYellow() && robot.robot_id->color == RobotIdMessage::Color::COLOR_YELLOW)
-          || (!pIsYellow() && robot_message.robot_id->color == RobotIdMessage::Color::COLOR_BLUE);
+    bool isAlly = (pIsYellow() && robot_message.robot_id->color == Color::COLOR_YELLOW)
+                  || (!pIsYellow() && robot_message.robot_id->color == Color::COLOR_BLUE);
 
     if (isAlly) {
       this->allies.push_back(robot_message);
