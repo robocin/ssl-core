@@ -5,6 +5,9 @@
 #include "behavior/processing/messages/behavior/behavior_message.h"
 #include "behavior/processing/messages/common/robot_id/robot_id.h"
 #include "behavior/processing/messages/motion/motion_message.h"
+#include "behavior/processing/messages/perception/ball/ball_message.h"
+#include "behavior/processing/messages/perception/robot/robot_message.h"
+#include "behavior/processing/messages/referee/game_status_message.h"
 
 #include <protocols/behavior/behavior_unification.pb.h>
 #include <protocols/decision/decision.pb.h>

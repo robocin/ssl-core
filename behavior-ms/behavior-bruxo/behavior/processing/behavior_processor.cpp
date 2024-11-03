@@ -68,11 +68,11 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
   }
   const rc::Detection last_detection = detection_messages.back();
 
+  BehaviorMessage behavior_message;
+
   // TODO: implement the logic to generate the behavior based on the last detection and the last
   // decision
   ///////////////////////////////////////////////////////////////////////////////////
-
-  BehaviorMessage behavior_message;
 
   for (const auto& robot : last_detection.robots()) {
 

@@ -1,14 +1,11 @@
 #include "behavior/processing/messages/perception/robot/robot_message.h"
 
+#include "robot_message.h"
+
 #include <protocols/perception/detection.pb.h>
 #include <robocin/geometry/point2d.h>
 
 namespace behavior {
-namespace {
-namespace rc {
-using protocols::perception::Robot;
-}
-} // namespace
 
 ///////////////////////////////////////////// Wheel /////////////////////////////////////////////
 Wheel::Wheel(std::optional<uint32_t> wheel_id, std::optional<float> motor_speed) :
@@ -26,11 +23,25 @@ FeedbackMessage::FeedbackMessage(std::optional<bool> dribbler_ball_contact,
     battery_percentage(battery_percentage),
     wheels(std::move(wheels)) {};
 
-FeedbackMessage::FeedbackMessage(const rc::Robot::Feedback& feedback_proto) {
+FeedbackMessage::FeedbackMessage(const protocols::perception::Robot::Feedback& feedback_proto) {
   fromProto(feedback_proto);
 };
 
-void FeedbackMessage::fromProto(const rc::Robot::Feedback& feedback_proto) {
+protocols::perception::Robot::Feedback FeedbackMessage::toProto() const {
+  protocols::perception::Robot::Feedback feedback_proto;
+
+  // feedback_proto.set_dribbler_ball_contact(dribbler_ball_contact.value());
+  // feedback_proto.set_kick_charge_percentage(kick_charge_percentage.value());
+  // feedback_proto.set_battery_percentage(battery_percentage.value());
+
+  // for (const auto& wheel : wheels) {
+  //   feedback_proto.add_wheels()->CopyFrom(wheel.toProto());
+  // }
+
+  return feedback_proto;
+};
+
+void FeedbackMessage::fromProto(const protocols::perception::Robot::Feedback& feedback_proto) {
   dribbler_ball_contact = feedback_proto.dribbler_ball_contact();
   kick_charge_percentage = feedback_proto.kick_charge_percentage();
   battery_percentage = feedback_proto.battery_percentage();
@@ -59,7 +70,7 @@ RobotMessage::RobotMessage(std::optional<float> confidence,
     dribbler_width(dribbler_width),
     feedback(std::move(feedback)) {};
 
-void RobotMessage::fromProto(const rc::Robot& robot_proto) {
+void RobotMessage::fromProto(const protocols::perception::Robot& robot_proto) {
   confidence = robot_proto.confidence();
   position = robocin::Point2Df(robot_proto.position().x(), robot_proto.position().y());
   angle = robot_proto.angle();
@@ -86,6 +97,33 @@ void RobotMessage::fromProto(const rc::Robot& robot_proto) {
   }
 };
 
-RobotMessage::RobotMessage(const rc::Robot& robot_proto) { RobotMessage::fromProto(robot_proto); }
+protocols::perception::Robot RobotMessage::toProto() const {
+  protocols::perception::Robot robot_proto;
+
+  // robot_proto.set_confidence(confidence.value());
+  // robot_proto.mutable_position()->set_x(position->x);
+  // robot_proto.mutable_position()->set_y(position->y);
+  // robot_proto.set_angle(angle.value());
+  // robot_proto.mutable_velocity()->set_x(velocity->x);
+  // robot_proto.mutable_velocity()->set_y(velocity->y);
+  // robot_proto.set_angular_velocity(angular_velocity.value());
+  // robot_proto.set_radius(radius.value());
+  // robot_proto.set_height(height.value());
+  // robot_proto.set_dribbler_width(dribbler_width.value());
+
+  // if (robot_id.has_value()) {
+  //   robot_proto.mutable_robot_id()->CopyFrom(robot_id->toProto());
+  // }
+
+  // if (feedback.has_value()) {
+  //   robot_proto.mutable_feedback()->CopyFrom(feedback->toProto());
+  // }
+
+  return robot_proto;
+};
+
+RobotMessage::RobotMessage(const protocols::perception::Robot& robot_proto) {
+  RobotMessage::fromProto(robot_proto);
+};
 
 } // namespace behavior
