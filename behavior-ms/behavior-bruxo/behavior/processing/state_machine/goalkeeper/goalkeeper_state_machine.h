@@ -7,7 +7,7 @@
 
 /**
  * @class GoalkeeperStateMachine
- * @brief An class that holds behaviors for the Goalkeeper role.
+ * @brief A class that holds behaviors for the Goalkeeper role.
  */
 namespace behavior {
 
