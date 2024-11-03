@@ -2,6 +2,7 @@
 #define DECISION_PROCESSING_DECISION_PROCESSOR_H
 
 #include "decision/messaging/receiver/payload.h"
+#include "decision/processing/messages/perception/detection/detection_message.h"
 #include "decision/processing/messages/referee/game_status_message.h"
 
 #include <protocols/decision/decision.pb.h>
@@ -36,6 +37,7 @@ class DecisionProcessor : public IDecisionProcessor {
  private:
   std::unique_ptr<::robocin::parameters::IHandlerEngine> parameters_handler_engine_;
   std::optional<GameStatusMessage> last_game_status_;
+  std::optional<DetectionMessage> last_detection_;
 };
 
 } // namespace decision

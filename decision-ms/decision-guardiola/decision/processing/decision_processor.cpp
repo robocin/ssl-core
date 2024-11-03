@@ -61,17 +61,13 @@ std::optional<rc::Decision> DecisionProcessor::process(std::span<const Payload> 
     return std::nullopt;
   }
 
-  if (last_game_status_->command->halt.has_value()) {
-    robocin::ilog("HALT");
-  }
-
   std::vector<rc::Detection> detections = detectionFromPayloads(payloads);
   if (detections.empty()) {
     // a new package must be generated only when a new detection is received.
     return std::nullopt;
   }
 
-  const rc::Detection last_detection = detections.back();
+  last_detection_ = DetectionMessage(detections.back());
 
   return rc::Decision{};
 }
