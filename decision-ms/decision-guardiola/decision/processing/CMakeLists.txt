@@ -5,4 +5,5 @@ robocin_cpp_library(
     DEPS common::output
          coach
          evaluators
+         messages
 )

@@ -2,8 +2,8 @@
 #define DECISION_PROCESSING_EVALUATORS_IEVALUATOR_H
 
 #include "decision/processing/evaluators/evaluator_result.h"
-
 #include <robocin/output/log.h>
+
 namespace decision {
 
 class IEvaluator {

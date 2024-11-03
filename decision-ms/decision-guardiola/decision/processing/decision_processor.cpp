@@ -1,20 +1,23 @@
 #include "decision/processing/decision_processor.h"
 
 #include "decision/messaging/receiver/payload.h"
+#include "decision/processing/entities/world.h"
+#include "decision/processing/messages/behavior/behavior_message.h"
+#include "decision/processing/messages/decision/decision_message.h"
+#include "decision/processing/messages/perception/detection/detection_message.h"
 
 #include <protocols/common/robot_id.pb.h>
 #include <protocols/decision/decision.pb.h>
 #include <protocols/perception/detection.pb.h>
 #include <protocols/referee/game_status.pb.h>
 #include <ranges>
+#include <robocin/output/log.h>
 
 namespace decision {
 
 namespace parameters = ::robocin::parameters;
 
 namespace {
-
-using ::robocin::ilog;
 
 namespace rc {
 
@@ -71,7 +74,6 @@ std::optional<rc::Decision> DecisionProcessor::process(std::span<const Payload> 
 
   // TODO: Implement the logic to generate the decision based on the last detection and the last
   // game status.
-  robocin::ilog("PROCESSING");
   coach_->process();
   TacticalPlan tactical_plan = coach_->tactical_plan;
 
