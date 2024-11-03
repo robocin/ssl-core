@@ -28,8 +28,8 @@ void Coach::updateTacticalPlan() {
 }
 
 void Coach::updateBehavior() {
-  std::vector<BehaviorMessage> current_behaviors;
-  current_behaviors.emplace_back(role_manager_.goalkeeper_role.chooseBehavior());
+  behaviors.clear();
+  behaviors.emplace_back(role_manager_.goalkeeper_role.chooseBehavior());
 }
 
 } // namespace decision

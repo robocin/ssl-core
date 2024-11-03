@@ -62,6 +62,7 @@ std::optional<rc::Decision> DecisionProcessor::process(std::span<const Payload> 
 
   coach_->process(world_);
   TacticalPlan tactical_plan = coach_->tactical_plan;
+  robocin::ilog("TEMOS {} BEHAVIORS", coach_->behaviors.size());
 
   return rc::Decision{};
 }
