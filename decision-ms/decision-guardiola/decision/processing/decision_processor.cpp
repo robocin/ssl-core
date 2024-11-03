@@ -104,10 +104,10 @@ void DecisionProcessor::takeAlliesAndEnemies(std::vector<RobotMessage>& robots, 
   if (pAllyColor == RobotIdMessage::Color::COLOR_YELLOW) {
     world.allies = yellow;
     world.enemies = blue;
+  } else {
+    world.allies = blue;
+    world.enemies = yellow;
   }
-
-  world.allies = blue;
-  world.enemies = yellow;
 }
 
 bool DecisionProcessor::update(std::span<const Payload>& payloads) {
