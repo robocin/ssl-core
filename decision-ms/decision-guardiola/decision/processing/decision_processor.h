@@ -38,6 +38,8 @@ class DecisionProcessor : public IDecisionProcessor {
   std::unique_ptr<::robocin::parameters::IHandlerEngine> parameters_handler_engine_;
   std::optional<GameStatusMessage> last_game_status_;
   std::optional<DetectionMessage> last_detection_;
+
+  bool update(std::span<const Payload>& payloads);
 };
 
 } // namespace decision

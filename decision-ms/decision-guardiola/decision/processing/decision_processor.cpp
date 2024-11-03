@@ -52,24 +52,31 @@ DecisionProcessor::DecisionProcessor(
 std::optional<rc::Decision> DecisionProcessor::process(std::span<const Payload> payloads) {
   rc::Decision decision_output;
 
+  DecisionProcessor::update(payloads);
+
+  return rc::Decision{};
+}
+
+bool DecisionProcessor::update(std::span<const Payload>& payloads) {
+
   if (std::vector<rc::GameStatus> game_status = gameStatusFromPayloads(payloads);
       !game_status.empty()) {
     last_game_status_ = GameStatusMessage(game_status.back());
   }
 
   if (!last_game_status_) {
-    return std::nullopt;
+    return false;
   }
 
   std::vector<rc::Detection> detections = detectionFromPayloads(payloads);
   if (detections.empty()) {
     // a new package must be generated only when a new detection is received.
-    return std::nullopt;
+    return false;
   }
 
   last_detection_ = DetectionMessage(detections.back());
 
-  return rc::Decision{};
+  return true;
 }
 
 } // namespace decision
