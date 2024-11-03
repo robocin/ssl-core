@@ -6,6 +6,11 @@
 #include "behavior/processing/messages/perception/robot/robot_message.h"
 #include "behavior/processing/messages/referee/game_status_message.h"
 
+#include <protocols/behavior/behavior_unification.pb.h>
+#include <protocols/decision/decision.pb.h>
+#include <protocols/perception/detection.pb.h>
+#include <robocin/parameters/parameters.h>
+
 namespace behavior {
 
 class World {
@@ -29,6 +34,10 @@ class World {
   void update(std::optional<DecisionMessage>& decision,
               std::optional<std::span<RobotMessage>>& robots,
               std::optional<BallMessage>& ball);
+
+  void update(const protocols::decision::Decision& decision,
+              const std::vector<protocols::perception::Detection>& robots,
+              const protocols::perception::Ball& ball);
 };
 
 } // namespace behavior

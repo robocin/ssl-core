@@ -1,12 +1,6 @@
 #include "behavior/processing/entities/world.h"
 
-#include <robocin/output/log.h>
-
 namespace behavior {
-
-namespace {
-using robocin::ilog;
-} // namespace
 
 void World::update(std::optional<DecisionMessage>& decision,
                    std::optional<std::span<RobotMessage>>& robots,
@@ -17,21 +11,48 @@ void World::update(std::optional<DecisionMessage>& decision,
   }
 
   if (robots.has_value()) {
-    // TODO(ersa): implement the logic to separate allies and enemies
-    this->allies = robots.value();
+    for (const auto& robot : robots.value()) {
+      bool isAlly = (pIsYellow && robot.color() == RobotMessage::Color::Yellow)
+                    || (!pIsYellow && robot.color() == RobotMessage::Color::Blue);
+
+      if (isAlly) {
+        this->allies.push_back(robot_message);
+      } else {
+        this->enemies.push_back(robot_message);
+      }
+    }
   }
 
-  // if (enemies.has_value()) {
-  //   this->enemies = enemies.value();
-  // }
-
   if (ball.has_value()) {
+    // TODO(ersa): get ball with highest confidence
     this->ball = std::move(ball.value());
   }
 
-  // if (game_status.has_value()) {
-  //   this->game_status = std::move(game_status.value());
-  // }
+  if (game_status.has_value()) {
+    // TODO(ersa): get last game status
+    this->game_status = std::move(game_status.value());
+  }
+}
+
+void World::update(const protocols::decision::Decision& decision,
+                   const std::vector<protocols::perception::Detection>& robots,
+                   const protocols::perception::Ball& ball) {
+  this->decision.fromProto(decision);
+
+  for (const auto& robot : robots) {
+    RobotMessage robot_message;
+    robot_message.fromProto(robot);
+    bool isAlly = (pIsYellow && robot_message.color() == RobotMessage::Color::Yellow)
+                  || (!pIsYellow && robot_message.color() == RobotMessage::Color::Blue);
+
+    if (isAlly) {
+      this->allies.push_back(robot_message);
+    } else {
+      this->enemies.push_back(robot_message);
+    }
+  }
+
+  this->ball.fromProto(ball);
 }
 
 } // namespace behavior
