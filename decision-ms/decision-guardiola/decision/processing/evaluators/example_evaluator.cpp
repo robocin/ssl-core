@@ -8,7 +8,7 @@ ExampleEvaluatorResult::ExampleEvaluatorResult() = default;
 
 ExampleEvaluator::ExampleEvaluator() { reset(); }
 
-void ExampleEvaluator::process() { robocin::ilog("EXAMPLE EVALUATOR WORKING"); }
+void ExampleEvaluator::process(World& world) { robocin::ilog("EXAMPLE EVALUATOR WORKING"); }
 
 void ExampleEvaluator::reset() { result = ExampleEvaluatorResult{}; }
 

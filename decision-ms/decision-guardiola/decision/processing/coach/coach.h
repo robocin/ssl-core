@@ -11,14 +11,14 @@ class Coach : public ICoach {
 
   Coach();
 
-  void process() override;
+  void process(World& world) override;
   void reset() override;
   void updateTacticalPlan();
 
  private:
   ExampleEvaluator example_evaluator_;
 
-  void processEvaluators();
+  void processEvaluators(World& world);
 };
 
 } // namespace decision
