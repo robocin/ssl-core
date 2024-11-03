@@ -13,6 +13,7 @@ constinit const auto pDecisionPollerTimeoutMs
 
 constinit const auto pAllyColor = decision::RobotIdMessage::COLOR_YELLOW;
 
+constinit const auto isAttackingToRight = ::robocin::parameters::View<1>::asBool(true);
 // NOLINTEND(*comment*)
 } // namespace decision
 
