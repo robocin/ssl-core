@@ -1,7 +1,7 @@
 #include "behavior/processing/state_machine/goalkeeper/goalkeeper_state_machine.h"
 
 #include "behavior/processing/state_machine/goalkeeper/states/guard.h"
-#include "goalkeeper_state_machine.h"
+#include "behavior/processing/state_machine/goalkeeper/goalkeeper_state_machine.h"
 
 #include <stdio.h>
 
