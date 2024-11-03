@@ -9,6 +9,8 @@ namespace behavior {
 constinit const auto pBehaviorPollerTimeoutMs
     = ::robocin::parameters::View<1>::asInt32(10 /*ms ~= 100Hz*/);
 
+constinit const auto pIsYellow = ::robocin::parameters::View<1>::asBool(true);
+
 // NOLINTEND(*comment*)
 } // namespace behavior
 
