@@ -76,10 +76,10 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
 
   world_.update(last_decision_.value(),
                 {last_detection.robots().begin(), last_detection.robots().end()},
-                last_detection.ball());
+                {last_detection.balls().begin(), last_detection.balls().end()},
+                last_decision_.value());
 
   for (const auto& robot : world_.allies) {
-
     behavior_message.output.emplace_back(
         OutputMessage{RobotIdMessage{}, MotionMessage{}, PlanningMessage{}});
   }
