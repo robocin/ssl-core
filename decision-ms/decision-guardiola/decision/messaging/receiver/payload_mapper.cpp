@@ -32,12 +32,12 @@ Payload PayloadMapper::fromZmqDatagrams(std::span<const ZmqDatagram> messages) c
     if (zmq_datagram.topic() == service_discovery::kPerceptionDetectionTopic) {
       rc::Detection detection;
       detection.ParseFromString(std::string{zmq_datagram.message()});
+      robocin::ilog("{}", detection.DebugString());
       detections.emplace_back(std::move(detection));
 
     } else if (zmq_datagram.topic() == service_discovery::kRefereeGameStatusTopic) {
       rc::GameStatus game_status;
       game_status.ParseFromString(std::string{zmq_datagram.message()});
-      robocin::ilog("{}", game_status.DebugString());
       game_statuses.emplace_back(std::move(game_status));
     } else {
       // wlog("zmq_datagram with topic '{}' not processed.", zmq_datagram.topic());

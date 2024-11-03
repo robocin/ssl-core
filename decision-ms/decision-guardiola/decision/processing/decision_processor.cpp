@@ -1,10 +1,14 @@
 #include "decision/processing/decision_processor.h"
 
+#include "common/robot_id/robot_id_message.h"
 #include "decision/messaging/receiver/payload.h"
+#include "decision/parameters/parameters.h"
 #include "decision/processing/entities/world.h"
 #include "decision/processing/messages/behavior/behavior_message.h"
 #include "decision/processing/messages/decision/decision_message.h"
 #include "decision/processing/messages/perception/detection/detection_message.h"
+#include "perception/ball/ball_message.h"
+#include "perception/robot/robot_message.h"
 #include "referee/game_status_message.h"
 
 #include <protocols/common/robot_id.pb.h>
@@ -57,6 +61,49 @@ std::optional<rc::Decision> DecisionProcessor::process(std::span<const Payload> 
   return rc::Decision{};
 }
 
+void DecisionProcessor::takeMostAccurateBall(std::vector<BallMessage>& balls, World& world) {
+  BallMessage* most_accurate_ball = nullptr;
+  float most_accurate_confidence = 0.0;
+
+  for (auto& ball : balls) {
+    if (ball.confidence.value() >= most_accurate_confidence) {
+      most_accurate_confidence = ball.confidence.value();
+      most_accurate_ball = &ball;
+    }
+  }
+
+  world.ball = std::move(*most_accurate_ball);
+}
+
+void DecisionProcessor::takeAlliesAndEnemies(std::vector<RobotMessage>& robots, World& world) {
+  std::vector<RobotMessage> yellow;
+  std::vector<RobotMessage> blue;
+
+  for (auto& robot : robots) {
+    if (!robot.robot_id.has_value()) {
+      continue;
+    }
+
+    if (robot.robot_id->color == RobotIdMessage::Color::COLOR_YELLOW) {
+      yellow.emplace_back(std::move(robot));
+    }
+
+    if (robot.robot_id->color == RobotIdMessage::Color::COLOR_BLUE) {
+      blue.emplace_back(std::move(robot));
+    }
+
+    // todo: handle unspecified color
+  }
+
+  if (pAllyColor == RobotIdMessage::Color::COLOR_YELLOW) {
+    world.allies = yellow;
+    world.enemies = blue;
+  }
+
+  world.allies = blue;
+  world.enemies = yellow;
+}
+
 bool DecisionProcessor::update(std::span<const Payload>& payloads) {
 
   if (std::vector<rc::GameStatus> game_status = gameStatusFromPayloads(payloads);
@@ -75,6 +122,9 @@ bool DecisionProcessor::update(std::span<const Payload>& payloads) {
   }
 
   last_detection_ = DetectionMessage(detections.back());
+
+  DecisionProcessor::takeMostAccurateBall(last_detection_->balls, world_);
+  DecisionProcessor::takeAlliesAndEnemies(last_detection_->robots, world_);
 
   return true;
 }
