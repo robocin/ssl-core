@@ -9,12 +9,9 @@ class RoleManager {
  public:
   World world;
   RobotMessage goalkeeper;
-  std::vector<RobotMessage> central_backs;
-  std::vector<RobotMessage> full_backs;
-  std::vector<RobotMessage> defensive_midfielders;
-  std::vector<RobotMessage> offensive_midfielders;
-  std::vector<RobotMessage> wingers;
-  std::vector<RobotMessage> forwards;
+  std::vector<RobotMessage> defenders;
+  std::vector<RobotMessage> supports;
+  RobotMessage forward;
 
   explicit RoleManager(World& world);
 
@@ -25,13 +22,10 @@ class RoleManager {
 
   virtual ~RoleManager() = default;
 
-  void chooseGoalkeeper();
-  void chooseCentralBacks();
-  void chooseFullBacks();
-  void chooseDefensiveMidfielders();
-  void chooseAttackingMidfielders();
-  void chooseWingers();
-  void chooseForwards();
+  void takeGoalkeeper();
+  void takeDefenders();
+  void takeSupports();
+  void takeForward();
 };
 } // namespace decision
 
