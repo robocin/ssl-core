@@ -60,7 +60,7 @@ std::optional<rc::Decision> DecisionProcessor::process(std::span<const Payload> 
 
   DecisionProcessor::update(payloads);
 
-  coach_->process();
+  coach_->process(world_);
   TacticalPlan tactical_plan = coach_->tactical_plan;
 
   return rc::Decision{};
