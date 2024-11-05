@@ -2,14 +2,14 @@
 #define DECISION_PROCESSING_ROLE_MANAGER_ROLES_GOALKEEPER_H
 
 #include "decision/processing/messages/behavior/behavior_message.h"
+#include "decision/processing/role_manager/roles/irole.h"
 
 namespace decision {
-class GoalkeeperRole {
+class GoalkeeperRole : public IRole {
  public:
-  explicit GoalkeeperRole(int evaluation);
-  ~GoalkeeperRole() = default;
+  explicit GoalkeeperRole() = default;
 
-  BehaviorMessage chooseBehavior();
+  std::vector<BehaviorCandidate> exec() override;
 
  private:
   int evaluation_;

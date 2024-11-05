@@ -4,8 +4,8 @@ robocin_cpp_library(
     SRCS decision_processor.cpp
     DEPS common::output
          coach
+         role_manager
          evaluators
          messages
          entities
-         coach
 )
