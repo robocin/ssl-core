@@ -60,7 +60,6 @@ std::optional<rc::Decision> DecisionProcessor::process(std::span<const Payload> 
   rc::Decision decision_output;
 
   DecisionProcessor::update(payloads);
-  // robocin::ilog("{}", *(world_.field.width));
 
   coach_->process(world_);
   TacticalPlan tactical_plan = coach_->tactical_plan;
