@@ -26,6 +26,9 @@ void World::takeAlliesAndEnemies(const std::vector<protocols::perception::Robot>
     return;
   }
 
+  allies.clear();
+  enemies.clear();
+
   for (const auto& robot : robots) {
     RobotMessage robot_message;
     robot_message.fromProto(robot);
@@ -46,10 +49,7 @@ void World::takeGameStatus(const protocols::referee::GameStatus& game_status) {
   this->game_status.fromProto(game_status);
 }
 
-[[nodiscard]] bool World::isAlly(const RobotMessage& robot) const {
-  return (pIsYellow() && robot.robot_id->color == Color::COLOR_YELLOW)
-         || (!pIsYellow() && robot.robot_id->color == Color::COLOR_BLUE);
-}
+bool World::isAlly(const RobotMessage& robot) const { return robot.robot_id->color == pAllyColor; }
 
 void World::update(const protocols::decision::Decision& decision,
                    const std::vector<protocols::perception::Robot>& robots,
