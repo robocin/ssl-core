@@ -110,6 +110,8 @@ class MotionMessage : public robocin::IProtoConvertible<protocols::behavior::uni
                 std::optional<RotateInPointMessage> rotate_in_point = std::nullopt,
                 std::optional<RotateOnSelfMessage> rotate_on_self = std::nullopt);
 
+  explicit MotionMessage(protocols::behavior::unification::Motion& motion_proto);
+
   std::optional<GoToPointMessage> go_to_point;
   std::optional<GoToPointWithTrajectoryMessage> go_to_point_with_trajectory;
   std::optional<RotateInPointMessage> rotate_in_point;

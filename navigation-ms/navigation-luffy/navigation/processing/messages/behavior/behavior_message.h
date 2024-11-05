@@ -13,6 +13,7 @@
 #include <robocin/geometry/point2d.h>
 #include <robocin/utility/iproto_convertible.h>
 #include <sys/types.h>
+#include <vector>
 
 namespace navigation {
 
@@ -36,8 +37,10 @@ class OutputMessage : public robocin::IProtoConvertible<protocols::behavior::uni
 class BehaviorUnificationMessage
     : public robocin::IProtoConvertible<protocols::behavior::unification::Behavior> {
  public:
-  BehaviorUnificationMessage(OutputMessage output = OutputMessage{});
-  OutputMessage output;
+  explicit BehaviorUnificationMessage(
+      const protocols::behavior::unification::Behavior& unification_behavior_proto);
+
+  std::vector<OutputMessage> behavior_outputs;
 
   [[nodiscard]] protocols::behavior::unification::Behavior toProto() const override {
     return protocols::behavior::unification::Behavior{};

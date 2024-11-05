@@ -1,5 +1,8 @@
 #include "navigation/processing/navigation_processor.h"
 
+#include "messages/behavior/behavior_message.h"
+#include "messages/perception/detection/detection_message.h"
+#include "messages/referee/game_status_message.h"
 #include "navigation/messaging/receiver/payload.h"
 
 #include <protocols/behavior/behavior_unification.pb.h>
@@ -59,12 +62,12 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
   rc::Navigation navigation_output;
 
   if (std::vector<rc::Behavior> behaviors = behaviorFromPayloads(payloads); !behaviors.empty()) {
-    last_behavior_ = behaviors.back();
+    last_behavior_ = BehaviorUnificationMessage(behaviors.back());
   }
 
   if (std::vector<rc::GameStatus> game_statuses = gameStatusFromPayloads(payloads);
       !game_statuses.empty()) {
-    last_game_status_ = game_statuses.back();
+    last_game_status_ = GameStatusMessage(game_statuses.back());
   }
 
   if (!last_behavior_ or !last_game_status_) {
@@ -76,7 +79,7 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
     // a new package must be generated only when a new detection is received.
     return std::nullopt;
   }
-  rc::Detection last_detection = detections.back();
+  DetectionMessage last_detection = DetectionMessage(detections.back());
 
   ///////////////////////////////////////////////////////////////////////////
   for (const auto& behavior : last_behavior_->output()) {
