@@ -239,7 +239,6 @@ void GameStatusMessage::fromProto(const protocols::referee::GameStatus& game_sta
       command.emplace();
     }
 
-    // implement, always returns empty command
     command->fromProto(game_status_proto.command());
   }
 
@@ -248,7 +247,6 @@ void GameStatusMessage::fromProto(const protocols::referee::GameStatus& game_sta
       next_command.emplace();
     }
 
-    // implement
     next_command->fromProto(game_status_proto.next_command());
   }
 

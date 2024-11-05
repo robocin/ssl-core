@@ -92,15 +92,11 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
 
   BehaviorMessage behavior_message;
 
-  // TODO: implement the logic to generate the behavior based on the last detection and the last
-  // decision
-  ///////////////////////////////////////////////////////////////////////////////////
-
   world_.update(last_decision_.value(),
                 {last_detection.robots().begin(), last_detection.robots().end()},
                 {last_detection.balls().begin(), last_detection.balls().end()},
                 last_game_status_.value());
-
+  
   for (const auto& robot : world_.allies) {
     behavior_message.output.emplace_back(
         OutputMessage{RobotIdMessage{}, MotionMessage{}, PlanningMessage{}});

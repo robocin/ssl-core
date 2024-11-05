@@ -10,18 +10,14 @@ class RobotMove {
   double angularVelocity_;
 
  public:
-  RobotMove(::robocin::Point2Dd velocity, double angularVelocity) :
-      velocity_(velocity),
-      angularVelocity_(angularVelocity) {}
+  RobotMove(::robocin::Point2Dd velocity, double angularVelocity);
 
-  explicit RobotMove(double angularVelocity) :
-      velocity_(::robocin::Point2Dd(0.0, 0.0)),
-      angularVelocity_(angularVelocity) {}
+  explicit RobotMove(double angularVelocity);
 
-  RobotMove() : velocity_(::robocin::Point2Dd(0.0, 0.0)), angularVelocity_(0.0) {}
+  RobotMove();
 
-  [[nodiscard]] ::robocin::Point2Dd velocity() const { return velocity_; }
-  [[nodiscard]] double angularVelocity() const { return angularVelocity_; }
+  [[nodiscard]] ::robocin::Point2Dd velocity() const;
+  [[nodiscard]] double angularVelocity() const;
 };
 
 } // namespace navigation

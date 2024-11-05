@@ -3,5 +3,9 @@ robocin_cpp_library(
     HDRS decision_processor.h
     SRCS decision_processor.cpp
     DEPS common::output
+         coach
+         evaluators
+         analyzers
          messages
+         entities
 )

@@ -1,7 +1,9 @@
 #ifndef BEHAVIOR_PROCESSING_ENTITIES_WORLD_H
 #define BEHAVIOR_PROCESSING_ENTITIES_WORLD_H
 
+
 #include "behavior/parameters/parameters.h"
+
 #include "behavior/processing/messages/decision/decision_message.h"
 #include "behavior/processing/messages/perception/ball/ball_message.h"
 #include "behavior/processing/messages/perception/robot/robot_message.h"
@@ -45,6 +47,7 @@ class World {
   void takeGameStatus(const protocols::referee::GameStatus& game_status);
 
   [[nodiscard]] bool isAlly(const RobotMessage& robot) const;
+
 };
 
 } // namespace behavior

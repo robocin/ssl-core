@@ -5,6 +5,7 @@
 #include <robocin/network/zmq_datagram.h>
 #include <robocin/output/log.h>
 #include <robocin/wip/service_discovery/addresses.h>
+#include <vector>
 
 namespace behavior {
 namespace {
@@ -18,6 +19,7 @@ namespace rc {
 
 using ::protocols::decision::Decision;
 using ::protocols::perception::Detection;
+using ::protocols::referee::GameStatus;
 
 } // namespace rc
 
@@ -26,6 +28,7 @@ using ::protocols::perception::Detection;
 Payload PayloadMapper::fromZmqDatagrams(std::span<const ZmqDatagram> messages) const {
   std::vector<rc::Detection> detections;
   std::vector<rc::Decision> decisions;
+  std::vector<rc::GameStatus> game_status;
 
   for (const ZmqDatagram& zmq_datagram : messages) {
     if (zmq_datagram.topic() == service_discovery::kPerceptionDetectionTopic) {
@@ -38,12 +41,16 @@ Payload PayloadMapper::fromZmqDatagrams(std::span<const ZmqDatagram> messages) c
       decision.ParseFromString(std::string{zmq_datagram.message()});
       decisions.emplace_back(std::move(decision));
 
+    } else if (zmq_datagram.topic() == service_discovery::kRefereeGameStatusTopic) {
+      rc::GameStatus game_status_message;
+      game_status_message.ParseFromString(std::string{zmq_datagram.message()});
+      game_status.emplace_back(std::move(game_status_message));
+
     } else {
       // wlog("zmq_datagram with topic '{}' not processed.", zmq_datagram.topic());
     }
   }
-
-  return Payload{std::move(detections), std::move(decisions)};
+  return Payload{std::move(detections), std::move(decisions), std::move(game_status)};
 }
 
 } // namespace behavior

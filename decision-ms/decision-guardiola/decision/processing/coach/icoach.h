@@ -2,6 +2,7 @@
 #define DECISION_PROCESSING_COACH_ICOACH_H
 
 #include "decision/processing/coach/tactical_plan/tactical_plan.h"
+#include "decision/processing/entities/world.h"
 #include "decision/processing/evaluators/ievaluator.h"
 
 #include <memory>
@@ -15,15 +16,13 @@ class ICoach {
 
   ICoach(const ICoach&) = delete;
   ICoach& operator=(const ICoach&) = delete;
-
   ICoach(ICoach&&) = default;
   ICoach& operator=(ICoach&&) = default;
 
   virtual ~ICoach() = default;
 
-  virtual void process() = 0;
+  virtual void process(World& world) = 0;
   virtual void reset() = 0;
-  virtual TacticalPlan getTacticalPlan() = 0;
 };
 
 } // namespace decision

@@ -5,4 +5,5 @@ robocin_cpp_library(
     DEPS common::output
          messages
          entities
+         state_machine
 )

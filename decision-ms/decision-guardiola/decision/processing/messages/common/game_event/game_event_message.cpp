@@ -3,6 +3,210 @@
 #include <utility>
 
 namespace decision {
+// BallLeftFieldMessage
+protocols::common::GameEvent::BallLeftField BallLeftFieldMessage::toProto() const {
+  return protocols::common::GameEvent::BallLeftField{};
+};
+
+void BallLeftFieldMessage::fromProto(
+    const protocols::common::GameEvent::BallLeftField& ball_left_field_proto) {};
+
+BallLeftFieldMessage::BallLeftFieldMessage(std::optional<Team> by_team,
+                                           std::optional<RobotIdMessage> by_robot,
+                                           std::optional<robocin::Point2Df> left_field_position) :
+    by_team(std::move(by_team)),
+    by_robot(std::move(by_robot)),
+    left_field_position(std::move(left_field_position)) {}
+
+// BallLefFieldBoundaryMessage
+protocols::common::GameEvent::BallLeftFieldBoundary BallLeftFieldBoundaryMessage::toProto() const {
+  return protocols::common::GameEvent::BallLeftFieldBoundary{};
+};
+
+void BallLeftFieldBoundaryMessage::fromProto(
+    const protocols::common::GameEvent::BallLeftFieldBoundary& ball_left_field_boundary_proto) {};
+
+BallLeftFieldBoundaryMessage::BallLeftFieldBoundaryMessage(
+    std::optional<Team> by_team,
+    std::optional<robocin::Point2Df> left_field_boundary_position) :
+    by_team(std::move(by_team)),
+    left_field_boundary_position(std::move(left_field_boundary_position)) {}
+
+// AimlessKickMessage
+protocols::common::GameEvent::AimlessKick AimlessKickMessage::toProto() const {
+  return protocols::common::GameEvent::AimlessKick{};
+};
+
+void AimlessKickMessage::fromProto(
+    const protocols::common::GameEvent::AimlessKick& aimless_kick_proto) {};
+
+AimlessKickMessage::AimlessKickMessage(std::optional<Team> by_team,
+                                       std::optional<RobotIdMessage> by_robot,
+                                       std::optional<robocin::Point2Df> left_field_position,
+                                       std::optional<robocin::Point2Df> kick_position) :
+    by_team(std::move(by_team)),
+    by_robot(std::move(by_robot)),
+    left_field_position(std::move(left_field_position)),
+    kick_position(std::move(kick_position)) {}
+
+// GoalkeeperHeldBallMessage
+protocols::common::GameEvent::GoalkeeperHeldBall GoalkeeperHeldBallMessage::toProto() const {
+  return protocols::common::GameEvent::GoalkeeperHeldBall{};
+};
+
+void GoalkeeperHeldBallMessage::fromProto(
+    const protocols::common::GameEvent::GoalkeeperHeldBall& goalkeeper_held_ball_proto) {};
+
+GoalkeeperHeldBallMessage::GoalkeeperHeldBallMessage(std::optional<Team> by_team,
+                                                     std::optional<robocin::Point2Df> ball_position,
+                                                     std::optional<uint32_t> duration) :
+    by_team(std::move(by_team)),
+    ball_position(std::move(ball_position)),
+    duration(std::move(duration)) {}
+
+// RobotTooCloseToDefenseAreaMessage
+protocols::common::GameEvent::RobotTooCloseToDefenseArea
+RobotTooCloseToDefenseAreaMessage::toProto() const {
+  return protocols::common::GameEvent::RobotTooCloseToDefenseArea{};
+}
+
+void RobotTooCloseToDefenseAreaMessage::fromProto(
+    const protocols::common::GameEvent::RobotTooCloseToDefenseArea&
+        robot_too_close_to_defense_area_proto) {};
+
+RobotTooCloseToDefenseAreaMessage::RobotTooCloseToDefenseAreaMessage(
+    std::optional<Team> by_team,
+    std::optional<RobotIdMessage> by_robot,
+    std::optional<robocin::Point2Df> robot_position,
+    std::optional<float> distance_to_defense_area,
+    std::optional<robocin::Point2Df> ball_position) :
+    by_team(std::move(by_team)),
+    by_robot(std::move(by_robot)),
+    robot_position(std::move(robot_position)),
+    distance_to_defense_area(std::move(distance_to_defense_area)),
+    ball_position(std::move(ball_position)) {}
+
+// RobotInDefenseAreaMessage
+protocols::common::GameEvent::RobotInDefenseArea RobotInDefenseAreaMessage::toProto() const {
+  return protocols::common::GameEvent::RobotInDefenseArea{};
+};
+
+void RobotInDefenseAreaMessage::fromProto(
+    const protocols::common::GameEvent::RobotInDefenseArea& robot_in_defense_area_proto) {};
+
+RobotInDefenseAreaMessage::RobotInDefenseAreaMessage(
+    std::optional<Team> by_team,
+    std::optional<RobotIdMessage> by_robot,
+    std::optional<robocin::Point2Df> robot_position,
+    std::optional<float> distance_to_nearest_point_outside_area) :
+    by_team(std::move(by_team)),
+    by_robot(std::move(by_robot)),
+    robot_position(std::move(robot_position)),
+    distance_to_nearest_point_outside_area(std::move(distance_to_nearest_point_outside_area)) {}
+
+// RobotPushedRobotMessage
+protocols::common::GameEvent::RobotPushedRobot RobotPushedRobotMessage::toProto() const {
+  return protocols::common::GameEvent::RobotPushedRobot{};
+};
+
+void RobotPushedRobotMessage::fromProto(
+    const protocols::common::GameEvent::RobotPushedRobot& robot_pushed_robot_proto) {};
+
+RobotPushedRobotMessage::RobotPushedRobotMessage(std::optional<Team> by_team,
+                                                 std::optional<RobotIdMessage> violator_robot,
+                                                 std::optional<RobotIdMessage> victim_robot,
+                                                 std::optional<robocin::Point2Df> position,
+                                                 std::optional<float> pushed_distance) :
+    by_team(std::move(by_team)),
+    violator_robot(std::move(violator_robot)),
+    victim_robot(std::move(victim_robot)),
+    position(std::move(position)),
+    pushed_distance(std::move(pushed_distance)) {}
+
+// RobotHeldBallDeliberatelyMessage
+protocols::common::GameEvent::RobotHeldBallDeliberately
+RobotHeldBallDeliberatelyMessage::toProto() const {
+  return protocols::common::GameEvent::RobotHeldBallDeliberately{};
+};
+
+void RobotHeldBallDeliberatelyMessage::fromProto(
+    const protocols::common::GameEvent::RobotHeldBallDeliberately&
+        robot_held_ball_deliberately_proto) {};
+
+RobotHeldBallDeliberatelyMessage::RobotHeldBallDeliberatelyMessage(
+    std::optional<Team> by_team,
+    std::optional<RobotIdMessage> by_robot,
+    std::optional<robocin::Point2Df> ball_position,
+    std::optional<uint32_t> duration) :
+    by_team(std::move(by_team)),
+    by_robot(std::move(by_robot)),
+    ball_position(std::move(ball_position)),
+    duration(std::move(duration)) {}
+
+// RobotDribbledBallTooFarMessage
+protocols::common::GameEvent::RobotDribbledBallTooFar
+RobotDribbledBallTooFarMessage::toProto() const {
+  return protocols::common::GameEvent::RobotDribbledBallTooFar{};
+};
+
+void RobotDribbledBallTooFarMessage::fromProto(
+    const protocols::common::GameEvent::RobotDribbledBallTooFar&
+        robot_dribbled_ball_too_far_proto) {};
+
+RobotDribbledBallTooFarMessage::RobotDribbledBallTooFarMessage(
+    std::optional<Team> by_team,
+    std::optional<RobotIdMessage> by_robot,
+    std::optional<robocin::Point2Df> start_position,
+    std::optional<robocin::Point2Df> end_position) :
+    by_team(std::move(by_team)),
+    by_robot(std::move(by_robot)),
+    start_position(std::move(start_position)),
+    end_position(std::move(end_position)) {}
+
+// RobotTippedOverMessage
+protocols::common::GameEvent::RobotTippedOver RobotTippedOverMessage::toProto() const {
+  return protocols::common::GameEvent::RobotTippedOver{};
+};
+
+void RobotTippedOverMessage::fromProto(
+    const protocols::common::GameEvent::RobotTippedOver& robot_tipped_over_proto) {};
+
+RobotTippedOverMessage::RobotTippedOverMessage(std::optional<Team> by_team,
+                                               std::optional<RobotIdMessage> by_robot,
+                                               std::optional<robocin::Point2Df> robot_position,
+                                               std::optional<robocin::Point2Df> ball_position) :
+    by_team(std::move(by_team)),
+    by_robot(std::move(by_robot)),
+    robot_position(std::move(robot_position)),
+    ball_position(std::move(ball_position)) {}
+
+// GoalMessage
+protocols::common::GameEvent::Goal GoalMessage::toProto() const {
+  return protocols::common::GameEvent::Goal{};
+};
+
+void GoalMessage::fromProto(const protocols::common::GameEvent::Goal& goal_proto) {};
+
+GoalMessage::GoalMessage(std::optional<Team> by_team,
+                         std::optional<Team> kicking_team,
+                         std::optional<RobotIdMessage> kicking_robot,
+                         std::optional<robocin::Point2Df> ball_position_when_scored,
+                         std::optional<robocin::Point2Df> kick_position,
+                         std::optional<float> max_ball_height,
+                         std::optional<uint32_t> num_of_robots_of_scoring_team,
+                         std::optional<uint32_t> last_touch_by_scoring_team_timestamp,
+                         std::optional<std::string> message) :
+    by_team(std::move(by_team)),
+    kicking_team(std::move(kicking_team)),
+    kicking_robot(std::move(kicking_robot)),
+    ball_position_when_scored(std::move(ball_position_when_scored)),
+    kick_position(std::move(kick_position)),
+    max_ball_height(std::move(max_ball_height)),
+    num_of_robots_of_scoring_team(std::move(num_of_robots_of_scoring_team)),
+    last_touch_by_scoring_team_timestamp(std::move(last_touch_by_scoring_team_timestamp)),
+    message(std::move(message)) {}
+
+// GameEventMessage
 GameEventMessage::GameEventMessage(
     std::vector<std::string> sources,
     std::optional<uint32_t> timestamp,
