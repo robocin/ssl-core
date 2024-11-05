@@ -1,32 +1,65 @@
 #include "behavior/processing/entities/world.h"
 
+#include "world.h"
+
+#include <protocols/common/robot_id.pb.h>
+#include <protocols/perception/detection.pb.h>
+#include <vector>
+
 namespace behavior {
 
-void World::update(std::optional<DecisionMessage>& decision,
-                   std::optional<std::span<RobotMessage>>& allies,
-                   std::optional<std::span<RobotMessage>>& enemies,
-                   std::optional<BallMessage>& ball,
-                   std::optional<GameStatusMessage>& game_status) {
-
-  if (decision.has_value()) {
-    this->decision = std::move(decision.value());
+void World::takeBallHighConfidence(const std::vector<protocols::perception::Ball>& balls) {
+  if (balls.empty()) {
+    return;
   }
 
-  if (allies.has_value()) {
-    this->allies = allies.value();
+  auto max_ball
+      = std::max_element(balls.begin(), balls.end(), [](const auto& ball, const auto& candidate) {
+          return ball.confidence() < candidate.confidence();
+        });
+
+  this->ball.fromProto(*max_ball);
+}
+
+void World::takeAlliesAndEnemies(const std::vector<protocols::perception::Robot>& robots) {
+  if (robots.empty()) {
+    return;
   }
 
-  if (enemies.has_value()) {
-    this->enemies = enemies.value();
-  }
+  allies.clear();
+  enemies.clear();
 
-  if (ball.has_value()) {
-    this->ball = std::move(ball.value());
-  }
+  for (const auto& robot : robots) {
+    RobotMessage robot_message;
+    robot_message.fromProto(robot);
 
-  if (game_status.has_value()) {
-    this->game_status = std::move(game_status.value());
+    if (isAlly(robot_message)) {
+      this->allies.emplace_back(std::move(robot_message));
+    } else {
+      this->enemies.emplace_back(std::move(robot_message));
+    }
   }
+}
+
+void World::takeDecision(const protocols::decision::Decision& decision) {
+  this->decision.fromProto(decision);
+}
+
+void World::takeGameStatus(const protocols::referee::GameStatus& game_status) {
+  this->game_status.fromProto(game_status);
+}
+
+bool World::isAlly(const RobotMessage& robot) const { return robot.robot_id->color == pAllyColor; }
+
+void World::update(const protocols::decision::Decision& decision,
+                   const std::vector<protocols::perception::Robot>& robots,
+                   const std::vector<protocols::perception::Ball>& balls,
+                   const protocols::referee::GameStatus& game_status) {
+
+  World::takeDecision(decision);
+  World::takeAlliesAndEnemies(robots);
+  World::takeBallHighConfidence(balls);
+  World::takeGameStatus(game_status);
 }
 
 } // namespace behavior
