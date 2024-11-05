@@ -10,15 +10,15 @@ namespace decision {
 
 constexpr int kMaxPossibleCurrentRoles = 11;
 
-void RoleManager::process() {
-  std::vector<std::unique_ptr<IRole>> roles;
-  roles.reserve(kMaxPossibleCurrentRoles);
+RoleManager::RoleManager() { current_roles.reserve(kMaxPossibleCurrentRoles); }
 
-  RoleManager::chooseGoalkeeper(roles);
-  RoleManager::chooseForward(roles);
+void RoleManager::process() {
+  current_roles.clear();
+  RoleManager::chooseGoalkeeper();
+  RoleManager::chooseForward();
 
   behavior_candidates.clear();
-  for (const auto& role : roles) {
+  for (const auto& role : current_roles) {
     // Roles calculates multiple BehaviorCandidates and suggests to manager
     std::vector<BehaviorCandidate> exec_candidates = role->exec();
     behavior_candidates.insert(behavior_candidates.end(),
@@ -27,13 +27,17 @@ void RoleManager::process() {
   }
 }
 
-void RoleManager::chooseGoalkeeper(std::vector<std::unique_ptr<IRole>>& processing_roles) {
+void RoleManager::chooseGoalkeeper() {
   // Implement heuristic to choose role
-  processing_roles.emplace_back(std::make_unique<GoalkeeperRole>());
+  current_roles.emplace_back(std::make_unique<GoalkeeperRole>());
 }
 
-void RoleManager::chooseForward(std::vector<std::unique_ptr<IRole>>& processing_roles) {
-  // Implement heuristic to choose role
+void RoleManager::chooseForward() {
+  // todo: mplement heuristic to choose forward roles
+}
+
+void RoleManager::chooseSupports() {
+  // todo: implement heuristic to choose support roles
 }
 
 void RoleManager::assignRoles() {

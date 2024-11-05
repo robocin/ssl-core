@@ -14,12 +14,15 @@ class RoleManager {
   std::vector<std::unique_ptr<IRole>> current_roles;
   std::vector<BehaviorCandidate> behavior_candidates;
 
+  explicit RoleManager();
+  ~RoleManager() = default;
+
   void process();
 
  private:
-  void chooseGoalkeeper(std::vector<std::unique_ptr<IRole>>& processing_roles);
-  void chooseSupports(std::vector<std::unique_ptr<IRole>>& processing_roles);
-  void chooseForward(std::vector<std::unique_ptr<IRole>>& processing_roles);
+  void chooseGoalkeeper();
+  void chooseSupports();
+  void chooseForward();
   void assignRoles();
 };
 } // namespace decision
