@@ -2,7 +2,7 @@
 #define COMMUNICATION_PROCESSING_MESSAGES_FLAGS_H
 
 #include <optional>
-#include <protocols/communication/robot_info.pb.h>
+#include <protocols/communication/communication.pb.h>
 #include <robocin/utility/iproto_convertible.h>
 
 namespace communication {
