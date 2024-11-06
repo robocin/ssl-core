@@ -5,6 +5,7 @@
 #include <ostream>
 #include <stdexcept>
 #include <type_traits>
+#include <vector>
 
 namespace robocin {
 
@@ -252,6 +253,73 @@ struct Point2D {
     Point2D result{*this};
     result.reflectOntoLine(a, b);
     return result;
+  }
+
+  /*
+  Geometry2D::distancePointSegment
+  Geometry2D::distancePointLine
+  Geometry2D::pointInPolygon
+  Geometry2D::pointOnPolygon
+  */
+
+  /*!
+   * @param a, b form the line (a, b)
+   * @return Returns the distance between the point and its projection onto line defined by a and
+   * b.
+   * @note assuming a != b.
+   */
+  constexpr auto distanceToLine(const Point2D& a, const Point2D& b) {
+    return distanceTo(projectOntoLine(a, b));
+  }
+
+  /*!
+   * @param a, b form the line (a, b)
+   * @return Returns the distance between the point and its projection onto segment defined by a and
+   * b.
+   * @note assuming a != b.
+   */
+  constexpr auto distanceToSegment(const Point2D& a, const Point2D& b) {
+    return distanceTo(projectOntoSegment(a, b));
+  }
+
+  /*!
+   * @return Determines if point is in a possibly non-convex polygon (by William Randolph Franklin);
+   * returns 1 for strictly interior points, 0 for strictly exterior points, and 0 or 1 for the
+   * remaining points.
+   * @note It's possible to convert this into an *exact* test using integer arithmetic by taking
+   * care of the division appropriately (making sure to deal with signs properly) and then by
+   * writing exact tests for checking point on polygon boundary.
+   * @note Be careful: Because of this, this function allows integer point types.
+   */
+
+  bool pointInPolygon(const std::vector<Point2D>& polygon) {
+    int n = static_cast<int>(polygon.size());
+    bool c = false;
+    for (int i = 0; i < n; ++i) {
+      int j = (i + 1) % n;
+      if ((polygon[i].y <= y && y < polygon[j].y) || (polygon[j].y <= y && y < polygon[i].y)) {
+        if (x < (polygon[i].x
+                 + (polygon[j].x - polygon[i].x) * (y - polygon[i].y)
+                       / (polygon[j].y - polygon[i].y))) {
+          c = !c;
+        }
+      }
+    }
+    return c;
+  }
+
+  /*!
+   * @return Determines if point is on the boundary of a polygon.
+   */
+  bool pointOnPolygon(const std::vector<Point2D>& polygon) {
+    int n = static_cast<int>(polygon.size());
+    for (int i = 0; i < n; ++i) {
+      if (auto proj = projectedOntoSegment(polygon[i], polygon[(i + 1) % n]);
+          fuzzyIsNull(distanceSquaredTo(proj))) {
+        return true;
+      }
+    }
+    return false;
   }
 
   // Streams:

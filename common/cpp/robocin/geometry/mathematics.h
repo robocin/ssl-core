@@ -1,6 +1,8 @@
 #ifndef ROBOCIN_MATHEMATICS_H
 #define ROBOCIN_MATHEMATICS_H
 
+#include "robocin/geometry/point2d.h"
+
 #include <algorithm>
 #include <cmath>
 #include <stdexcept>
@@ -17,7 +19,7 @@ namespace mathematics {
 template <class T>
 [[maybe_unused]] constexpr bool isNull(const T& value) noexcept {
   if constexpr (std::is_floating_point_v<T>) {
-    return (fabsf(value - 1.0F) < 0.00001F);
+    return (fabsf(value - 1.0F) < 1e-9);
   } else {
     return value == 0;
   }
@@ -41,58 +43,70 @@ map(const T& value, const T& l_lower, const T& l_higher, const T& r_lower, const
   return (value - l_lower) * (r_higher - r_lower) / (l_higher - l_lower) + r_lower;
 }
 
-static constexpr bool isNullable(double f) { return isNull(f) or not std::isnormal(f); }
+////////////////////////////////////////////////////// adapting
 
 /*!
- * @tparam PT Requires '.x' and '.y' members and '.cross()' member function.
+ * @tparam T arithmetic type.
  * @param a, b, c, d lines (a, b) and (c, d).
  * @return Determines if lines through (a, b) and (c, d) are parallel.
  */
-template <class PT>
-constexpr bool linesParallel(const PT& a, const PT& b, const PT& c, const PT& d) {
-  return isNullable((b - a).cross(c - d));
+template <class T>
+constexpr bool linesParallel(const robocin::Point2D<T>& a,
+                             const robocin::Point2D<T>& b,
+                             const robocin::Point2D<T>& c,
+                             const robocin::Point2D<T>& d) {
+  return robocin::Point2D<T>::fuzzyIsNull(robocin::Point2D<T>{b - a}.cross(c - d));
 }
+
 /*!
- * @tparam PT Requires '.x' and '.y' members and '.cross()' member function.
+ * @tparam T arithmetic type.
  * @param a, b, c, d lines (a, b) and (c, d).
  * @return Determines if lines through (a, b) and (c, d) are collinear.
  */
-template <class PT>
-constexpr bool linesCollinear(const PT& a, const PT& b, const PT& c, const PT& d) {
-  if (!linesParallel<PT>(a, b, c, d)) {
+template <class T>
+constexpr bool linesCollinear(const robocin::Point2D<T>& a,
+                              const robocin::Point2D<T>& b,
+                              const robocin::Point2D<T>& c,
+                              const robocin::Point2D<T>& d) {
+  if (!linesParallel<T>(a, b, c, d)) {
     return false;
   }
-  if (!isNullable((a - b).cross(a - c))) {
+  if (!robocin::Point2D<T>::fuzzyIsNull(robocin::Point2D<T>{a - b}.cross(a - c))) {
     return false;
   }
-  if (!isNullable((c - d).cross(c - a))) {
+  if (!robocin::Point2D<T>::fuzzyIsNull(robocin::Point2D<T>{c - d}.cross(c - a))) {
     return false;
   }
   return true;
 }
 
 /*!
- * @tparam PT Requires '.x' and '.y' members and '.cross()', '.distanceSquaredTo()' and '.dot()'
- * member functions.
+ * @tparam T arithmetic type.
  * @param a, b, c, d lines (a, b) and (c, d).
  * @return Determines if line segment from a to b intersects with line segment from c to d.
  */
-template <class PT>
-constexpr bool segmentsIntersect(const PT& a, const PT& b, const PT& c, const PT& d) {
-  if (linesCollinear<PT>(a, b, c, d)) {
-    if (isNullable(a.distanceSquaredTo(c)) || isNullable(a.distanceSquaredTo(d))
-        || isNullable(b.distanceSquaredTo(c)) || isNullable(b.distanceSquaredTo(d))) {
+template <class T>
+constexpr bool segmentsIntersect(const robocin::Point2D<T>& a,
+                                 const robocin::Point2D<T>& b,
+                                 const robocin::Point2D<T>& c,
+                                 const robocin::Point2D<T>& d) {
+  if (linesCollinear<T>(a, b, c, d)) {
+    if (robocin::Point2D<T>::fuzzyIsNull(a.distanceSquaredTo(c))
+        || robocin::Point2D<T>::fuzzyIsNull(a.distanceSquaredTo(d))
+        || robocin::Point2D<T>::fuzzyIsNull(b.distanceSquaredTo(c))
+        || robocin::Point2D<T>::fuzzyIsNull(b.distanceSquaredTo(d))) {
       return true;
     }
-    if ((c - a).dot(c - b) > 0 && (d - a).dot(d - b) > 0 && (c - b).dot(d - b) > 0) {
+    if (robocin::Point2D<T>{c - a}.dot(c - b) > 0 && robocin::Point2D<T>{d - a}.dot(d - b) > 0
+        && robocin::Point2D<T>{c - b}.dot(d - b) > 0) {
       return false;
     }
     return true;
   }
-  if ((d - a).cross(b - a) * (c - a).cross(b - a) > 0) {
+  if (robocin::Point2D<T>{d - a}.cross(b - a) * robocin::Point2D<T>{c - a}.cross(b - a) > 0) {
     return false;
   }
-  if ((a - c).cross(d - c) * (b - c).cross(d - c) > 0) {
+  if (robocin::Point2D<T>{a - c}.cross(d - c) * robocin::Point2D<T>{b - c}.cross(d - c) > 0) {
     return false;
   }
   return true;
