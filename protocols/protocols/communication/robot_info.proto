@@ -38,3 +38,20 @@ message Flags {
   bool critical_move = 2;
   bool global_speed = 3;
 }
+
+message RobotCommand {
+  repeated RobotCommand robot_command = 1;
+}
+
+message CommandOutput {
+  uint32 id = 1;
+  double vx = 2;
+  double vy = 3;
+  double vw = 4;
+  bool front = 5;
+  bool chip = 6;
+  bool charge = 7;
+  double kick_strength = 8;
+  bool dribbler = 9;
+  double dribbler_speed = 10;
+}
