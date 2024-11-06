@@ -15,7 +15,7 @@ class FlagsMessage : public robocin::IProtoConvertible<protocols::communication:
 
   [[nodiscard]] protocols::communication::Flags toProto() const override;
 
-  void fromProto(protocols::communication::Flags flags) override;
+  void fromProto(const protocols::communication::Flags& flags) override;
 
   std::optional<bool> robot_locked;
   std::optional<bool> critical_move;
