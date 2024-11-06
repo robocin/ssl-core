@@ -2,6 +2,7 @@
 #define BEHAVIOR_PROCESSING_BEHAVIOR_PROCESSOR_H
 
 #include "behavior/messaging/receiver/payload.h"
+#include "behavior/processing/entities/world.h"
 #include "behavior/processing/messages/behavior/behavior_message.h"
 #include "behavior/processing/messages/common/robot_id/robot_id.h"
 #include "behavior/processing/messages/motion/motion_message.h"
@@ -45,6 +46,7 @@ class BehaviorProcessor : public IBehaviorProcessor {
   process(std::span<const Payload> payloads) override;
 
  private:
+  World world_;
   std::unique_ptr<::robocin::parameters::IHandlerEngine> parameters_handler_engine_;
   std::unique_ptr<behavior::GoalkeeperStateMachine> goalkeeper_state_machine_;
   std::optional<::protocols::decision::Decision> last_decision_;
