@@ -1,5 +1,7 @@
 #include "decision/processing/analyzer/ball_analyzer.h"
 
+#include "decision/parameters/parameters.h"
+
 #include <robocin/geometry/mathematics.h>
 #include <robocin/geometry/point2d.h>
 
@@ -7,22 +9,23 @@ namespace decision {
 
 bool BallAnalyzer::isBallStopped(BallMessage& ball) {
   robocin::Point2Df ball_velocity = robocin::Point2Df{ball.velocity->x, ball.velocity->y};
-  return ball_velocity.length() < 300;
+  return ball_velocity.length() < pBallIsMovingVelocity();
 }
 
 bool BallAnalyzer::isBallMovingFast(BallMessage& ball) {
   robocin::Point2Df ball_velocity = robocin::Point2Df{ball.velocity->x, ball.velocity->y};
-  return ball_velocity.length() > 850;
+  return ball_velocity.length() > pBallIsMovingFastVelocity();
 }
 
 bool BallAnalyzer::isBallMoving(BallMessage& ball) {
   robocin::Point2Df ball_velocity = robocin::Point2Df{ball.velocity->x, ball.velocity->y};
-  return ball_velocity.length() > 300;
+  return ball_velocity.length() > pBallIsMovingVelocity();
 }
 
 bool BallAnalyzer::isBallMovingSlowly(BallMessage& ball) {
   robocin::Point2Df ball_velocity = robocin::Point2Df{ball.velocity->x, ball.velocity->y};
-  return ball_velocity.length() > 300 && ball_velocity.length() < 850;
+  return ball_velocity.length() > pBallIsMovingVelocity()
+         && ball_velocity.length() < pBallIsMovingFastVelocity();
 }
 
 bool BallAnalyzer::isBallMovingWithVelocity(double min_velocity, BallMessage& ball) {
