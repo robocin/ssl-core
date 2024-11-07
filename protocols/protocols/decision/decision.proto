@@ -11,7 +11,32 @@ message Decision {
 }
 
 message Behavior {
-  uint32 id = 1;
+  enum BehaviorId {
+    UNSPECIFIED = 0;
+    GOALKEEPER = 1;
+
+    reserved 2;
+    reserved "LINE_GOALKEEPER";
+
+    reserved 3;
+    reserved "FULL_BACK";
+
+    reserved 4;
+    reserved "CENTER_BACK";
+
+    reserved 5;
+    reserved "DEFENSIVE_MIDFIELDER";
+
+    reserved 6;
+    reserved "OFFENSIVE_MIDFIELDER";
+
+    reserved 7;
+    reserved "WINGER";
+
+    FORWARD = 8;
+  }
+
+  BehaviorId id = 1;
   common.RobotId robot_id = 2;
   optional common.Point2Df target = 3;
 }

@@ -21,7 +21,7 @@ class MessageTypeMessage : public robocin::IProtoConvertible<protocols::common::
 
   [[nodiscard]] protocols::common::MessageType toProto() const override;
 
-  void fromProto(protocols::common::MessageType message_type) override;
+  void fromProto(const protocols::common::MessageType& message_type) override;
 
   std::optional<Message> message_type_;
 };

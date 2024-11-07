@@ -9,7 +9,7 @@ protocols::common::MessageType MessageTypeMessage::toProto() const {
   return static_cast<protocols::common::MessageType>(message_type_.value_or(Message::UNKNOWN));
 }
 
-void MessageTypeMessage::fromProto(protocols::common::MessageType message_type) {
+void MessageTypeMessage::fromProto(const protocols::common::MessageType& message_type) {
   this->message_type_ = static_cast<Message>(message_type);
 }
 

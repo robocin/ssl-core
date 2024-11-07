@@ -10,7 +10,6 @@ Coach::Coach() {
 }
 
 void Coach::process(World& world) {
-  // robocin::ilog("COACH PROCESSING");
   Coach::processEvaluators(world);
   Coach::updateTacticalPlan();
 }

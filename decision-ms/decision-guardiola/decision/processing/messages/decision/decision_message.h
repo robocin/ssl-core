@@ -1,6 +1,9 @@
 #include "decision/processing/messages/behavior/behavior_message.h"
+#include "decision/processing/messages/common/robot_id/robot_id_message.h"
 #include "protocols/decision/decision.pb.h"
 
+#include <optional>
+#include <robocin/geometry/point2d.h>
 #include <robocin/utility/iproto_convertible.h>
 #include <vector>
 
@@ -41,14 +44,13 @@ class TacticalPlanMessage : public robocin::IProtoConvertible<protocols::decisio
 
   void fromProto(const protocols::decision::TacticalPlan& tactical_plan_proto) override;
 };
-
 class DecisionMessage : public robocin::IProtoConvertible<protocols::decision::Decision> {
  public:
-  explicit DecisionMessage(std::vector<BehaviorMessage> behavior = std::vector<BehaviorMessage>{},
-                           TacticalPlanMessage plan = TacticalPlanMessage{});
+  explicit DecisionMessage(std::optional<BehaviorMessage> behavior = std::nullopt,
+                           std::optional<TacticalPlanMessage> plan = std::nullopt);
 
-  std::vector<BehaviorMessage> behavior;
-  TacticalPlanMessage plan;
+  std::optional<BehaviorMessage> behavior;
+  std::optional<TacticalPlanMessage> plan;
 
   [[nodiscard]] protocols::decision::Decision toProto() const override {
     return protocols::decision::Decision{};
