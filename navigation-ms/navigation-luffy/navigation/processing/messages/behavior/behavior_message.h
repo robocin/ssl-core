@@ -20,10 +20,10 @@ namespace navigation {
 
 class OutputMessage : public robocin::IProtoConvertible<protocols::behavior::unification::Output> {
  public:
-  ~OutputMessage() override;
-  OutputMessage(std::optional<RobotIdMessage> robot_id = std::nullopt,
-                std::optional<MotionMessage> motion = std::nullopt,
-                std::optional<PlanningMessage> planning = std::nullopt);
+  explicit OutputMessage(std::optional<RobotIdMessage> robot_id = std::nullopt,
+                         std::optional<MotionMessage> motion = std::nullopt,
+                         std::optional<PlanningMessage> planning = std::nullopt);
+
   explicit OutputMessage(const protocols::behavior::unification::Output& output_proto);
 
   std::optional<RobotIdMessage> robot_id;
@@ -55,17 +55,15 @@ class BehaviorUnificationMessage
 
 class BehaviorMessage : public robocin::IProtoConvertible<protocols::decision::Behavior> {
  public:
-  BehaviorMessage(std::optional<uint32_t> id,
-                  std::optional<RobotIdMessage> robot_id,
-                  std::optional<robocin::Point2D<float>> target);
+  explicit BehaviorMessage(std::optional<uint32_t> id = std::nullopt,
+                           std::optional<RobotIdMessage> robot_id = std::nullopt,
+                           std::optional<robocin::Point2D<float>> target = std::nullopt);
 
-  std::optional<uint32_t> id = std::nullopt;
-  std::optional<RobotIdMessage> robot_id = std::nullopt;
-  std::optional<robocin::Point2D<float>> target = std::nullopt;
+  std::optional<uint32_t> id;
+  std::optional<RobotIdMessage> robot_id;
+  std::optional<robocin::Point2D<float>> target;
 
-  [[nodiscard]] protocols::decision::Behavior toProto() const override {
-    return protocols::decision::Behavior{};
-  }
+  [[nodiscard]] protocols::decision::Behavior toProto() const override;
 
   void fromProto(const protocols::decision::Behavior& behavior_proto) override;
 };

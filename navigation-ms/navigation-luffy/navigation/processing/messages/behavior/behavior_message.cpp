@@ -9,10 +9,12 @@
 #include <utility>
 
 namespace navigation {
+
 BehaviorUnificationMessage::BehaviorUnificationMessage(
     const protocols::behavior::unification::Behavior& unification_behavior_proto) {
   BehaviorUnificationMessage::fromProto(unification_behavior_proto);
 }
+
 void BehaviorUnificationMessage::fromProto(
     const protocols::behavior::unification::Behavior& unification_behavior_proto) {
   for (const protocols::behavior::unification::Output& output :
@@ -22,6 +24,7 @@ void BehaviorUnificationMessage::fromProto(
                                   PlanningMessage(output.planning()));
   }
 }
+/////////////////////////////////////////////////////////////////////////////////////
 OutputMessage::OutputMessage(const protocols::behavior::unification::Output& output_proto) {
   OutputMessage::fromProto(output_proto);
 }
@@ -38,11 +41,22 @@ void OutputMessage::fromProto(const protocols::behavior::unification::Output& ou
   motion = MotionMessage(output_proto.motion());
   planning = PlanningMessage(output_proto.planning());
 }
+/////////////////////////////////////////////////////////////////////////////////////
 BehaviorMessage::BehaviorMessage(std::optional<uint32_t> id,
                                  std::optional<RobotIdMessage> robot_id,
                                  std::optional<robocin::Point2D<float>> target) :
     id(id),
     robot_id(std::move(robot_id)),
     target(target) {}
+
+protocols::decision::Behavior BehaviorMessage::toProto() const {
+  return protocols::decision::Behavior{};
+}
+
+void BehaviorMessage::fromProto(const protocols::decision::Behavior& behavior_proto) {
+  id = behavior_proto.id();
+  robot_id = RobotIdMessage(behavior_proto.robot_id());
+  target = robocin::Point2D<float>{behavior_proto.target().x(), behavior_proto.target().y()};
+}
 
 } // namespace navigation

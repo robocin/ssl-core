@@ -26,6 +26,8 @@ class RobotIdMessage : public robocin::IProtoConvertible<protocols::common::Robo
   [[nodiscard]] protocols::common::RobotId toProto() const override;
 
   void fromProto(const protocols::common::RobotId& robot_id_proto) override;
+
+  static Color getColor(protocols::common::RobotId_Color color_proto);
 };
 } // namespace navigation
 

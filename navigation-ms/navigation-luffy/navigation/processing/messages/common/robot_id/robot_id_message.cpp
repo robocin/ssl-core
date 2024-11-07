@@ -11,7 +11,7 @@ using protocols::common::RobotId_Color;
 } // namespace rc
 } // namespace
 
-RobotIdMessage::Color getColor(rc::RobotId_Color color_proto) {
+RobotIdMessage::Color RobotIdMessage::getColor(rc::RobotId_Color color_proto) {
   switch (color_proto) {
     case protocols::common::RobotId_Color_COLOR_YELLOW: return RobotIdMessage::Color::COLOR_YELLOW;
     case protocols::common::RobotId_Color_COLOR_BLUE: return RobotIdMessage::Color::COLOR_BLUE;
