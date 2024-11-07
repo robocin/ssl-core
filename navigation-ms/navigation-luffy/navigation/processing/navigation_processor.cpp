@@ -33,6 +33,11 @@ using ::protocols::common::RobotId;
 
 namespace {
 
+protocols::perception::Robot
+findMyRobot(int id, const google::protobuf::RepeatedPtrField<rc::Robot>& allies) { // implement
+  return protocols::perception::Robot{};
+}
+
 std::vector<rc::Behavior> behaviorFromPayloads(std::span<const Payload> payloads) {
   return payloads | std::views::transform(&Payload::getBehaviors) | std::views::join
          | std::ranges::to<std::vector>();
@@ -66,54 +71,16 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
   }
   rc::Detection last_detection = detections.back();
 
-  ///////////////////////////////////////////////////////////////////////////
-  for (const auto& behavior_ : last_behavior_->output()) {
-    rc::Output output;
-    rc::Robot ally;
-
-    for (const auto& robot : last_detection.robots()) {
-      if (robot.robot_id().number() == behavior_.robot_id().number()) {
-        ally = robot;
-        break;
-      }
+  RobotMove move;
+  for (const auto& behavior : last_behavior_->output()) {
+    if (behavior.has_motion()) {
+      // Mock only robot with I: 0
+      rc::Robot robot_mock{};
+      move = motion_parser_->fromGoToPoint(behavior.motion().go_to_point(),
+                                           findMyRobot(0, last_detection.robots()));
     }
-    if (ally.has_robot_id()) {
-      output.mutable_robot_id()->CopyFrom(ally.robot_id());
-
-      if (behavior_.has_motion()) {
-        RobotMove move;
-        if (behavior_.motion().has_go_to_point()) {
-          move = motion_parser_->fromGoToPoint(behavior_.motion().go_to_point(),
-                                               ally);
-        } else if (behavior_.motion().has_rotate_in_point()) {
-          move = motion_parser_->fromRotateInPoint(behavior_.motion().rotate_in_point(), ally);
-        } else if (behavior_.motion().has_rotate_on_self()) {
-          move = motion_parser_->fromRotateOnSelf(behavior_.motion().rotate_on_self(), ally);
-        } else {
-          // PROCESSAMENTO DO GO_TO_POINT_WITH_TRAJECTORY
-        }
-
-        output.set_left_velocity(move.velocity().y);
-        output.set_forward_velocity(move.velocity().x);
-        output.set_angular_velocity(move.angularVelocity());
-
-        if (behavior_.motion().has_peripheral_actuation()) {
-          output.mutable_peripheral_actuation()->CopyFrom(
-              behavior_.motion().peripheral_actuation());
-        }
-
-        // TODO: Add other fields to output
-
-      } else if (behavior_.has_planning()) {
-        // PROCESSAMENTO DO PLANNING
-      } else {
-        // PROCESSAMENTO DO NAVIGATION
-      }
-    }
-
-    navigation_output.add_output()->CopyFrom(output);
   }
-  ////////////////////////////////////////////////////////////////////////////
+
   return navigation_output;
 }
 
