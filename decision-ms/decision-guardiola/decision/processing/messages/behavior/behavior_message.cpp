@@ -7,11 +7,9 @@
 #include <utility>
 
 namespace decision {
-// BehaviorUnification (behavior service)
 BehaviorUnificationMessage::BehaviorUnificationMessage(OutputMessage output) :
     output(std::move(output)) {}
 
-// OutputMessage (behavior service)
 OutputMessage::OutputMessage(RobotIdMessage robot_id,
                              MotionMessage motion,
                              PlanningMessage planning) :
@@ -19,18 +17,11 @@ OutputMessage::OutputMessage(RobotIdMessage robot_id,
     motion(std::move(motion)),
     planning(std::move(planning)) {}
 
-// BehaviorMessage
-BehaviorMessage::BehaviorMessage(std::optional<BehaviorId> id,
+BehaviorMessage::BehaviorMessage(std::optional<uint32_t> id,
                                  std::optional<RobotIdMessage> robot_id,
                                  std::optional<robocin::Point2D<float>> target) :
     id(id),
     robot_id(std::move(robot_id)),
     target(target) {}
-
-protocols::decision::Behavior BehaviorMessage::toProto() const {
-  return protocols::decision::Behavior{};
-}
-
-void BehaviorMessage::fromProto(const protocols::decision::Behavior& behavior_proto) {};
 
 } // namespace decision

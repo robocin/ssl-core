@@ -7,6 +7,7 @@ namespace decision {
 Coach::Coach() { example_evaluator_ = ExampleEvaluator{}; }
 
 void Coach::process(World& world) {
+  robocin::ilog("COACH PROCESSING");
   Coach::processEvaluators(world);
   Coach::updateTacticalPlan();
 }

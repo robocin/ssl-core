@@ -2,7 +2,7 @@
 #define COMMUNICATION_PROCESSING_MESSAGES_FLAGS_H
 
 #include <optional>
-#include <protocols/communication/communication.pb.h>
+#include <protocols/communication/robot_info.pb.h>
 #include <robocin/utility/iproto_convertible.h>
 
 namespace communication {
@@ -15,7 +15,7 @@ class FlagsMessage : public robocin::IProtoConvertible<protocols::communication:
 
   [[nodiscard]] protocols::communication::Flags toProto() const override;
 
-  void fromProto(const protocols::communication::Flags& flags) override;
+  void fromProto(protocols::communication::Flags flags) override;
 
   std::optional<bool> robot_locked;
   std::optional<bool> critical_move;

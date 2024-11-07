@@ -8,54 +8,55 @@
 #include "communication/processing/messages/common/robot_velocity/robot_velocity.h"
 #include "communication/processing/messages/flags/flags.h"
 
-#include <protocols/communication/communication.pb.h>
+#include <protocols/communication/robot_info.pb.h>
 #include <robocin/output/log.h>
 #include <robocin/utility/iproto_convertible.h>
 #include <vector>
 
 namespace communication {
 
-class OutputRobotMessage
-    : public robocin::IProtoConvertible<protocols::communication::OutputRobot> {
+class CommandMessage : public robocin::IProtoConvertible<protocols::communication::Command> {
  public:
-  explicit OutputRobotMessage(uint32_t id = 0,
-                              double vx = 0,
-                              double vy = 0,
-                              double vw = 0,
-                              bool front = false,
-                              bool chip = false,
-                              bool charge = false,
-                              double kick_strength = 0,
-                              bool dribbler = false,
-                              double dribbler_speed = 0);
+  CommandMessage(MessageTypeMessage message_type = MessageTypeMessage{},
+                 RobotIdMessage robot_id = RobotIdMessage{},
+                 RobotVelocityMessage robot_velocity = RobotVelocityMessage{},
+                 RobotKickMessage robot_kick = RobotKickMessage{},
+                 RobotDribblerMessage robot_dribbler = RobotDribblerMessage{},
+                 FlagsMessage robot_flags = FlagsMessage{});
 
-  [[nodiscard]] protocols::communication::OutputRobot toProto() const override;
+  [[nodiscard]] protocols::communication::Command toProto() const override;
 
-  void fromProto(const protocols::communication::OutputRobot& command_output) override;
+  void fromProto(protocols::communication::Command command) override;
 
-  uint32_t id;
-  double vx;
-  double vy;
-  double vw;
-  bool front;
-  bool chip;
-  bool charge;
-  double kick_strength;
-  bool dribbler;
-  double dribbler_speed;
+  MessageTypeMessage message_type;
+  RobotIdMessage robot_id;
+  RobotVelocityMessage robot_velocity;
+  RobotKickMessage robot_kick;
+  RobotDribblerMessage robot_dribbler;
+  FlagsMessage robot_flags;
+};
+
+class OutputMessage : public robocin::IProtoConvertible<protocols::communication::Output> {
+ public:
+  OutputMessage(CommandMessage commands = CommandMessage{});
+
+  [[nodiscard]] protocols::communication::Output toProto() const override;
+
+  void fromProto(protocols::communication::Output output) override;
+
+  CommandMessage command;
 };
 
 class CommunicationMessage
-    : public robocin::IProtoConvertible<protocols::communication::Communication> {
+    : public robocin::IProtoConvertible<protocols::communication::RobotInfo> {
  public:
-  explicit CommunicationMessage(std::vector<OutputRobotMessage> commands
-                                = std::vector<OutputRobotMessage>{});
+  CommunicationMessage(std::vector<OutputMessage> output_messages = std::vector<OutputMessage>{});
 
-  [[nodiscard]] protocols::communication::Communication toProto() const override;
+  [[nodiscard]] protocols::communication::RobotInfo toProto() const override;
 
-  void fromProto(const protocols::communication::Communication& robot_command) override;
+  void fromProto(protocols::communication::RobotInfo robot_info) override;
 
-  std::vector<OutputRobotMessage> commands;
+  std::vector<OutputMessage> output_messages;
 };
 
 } // namespace communication

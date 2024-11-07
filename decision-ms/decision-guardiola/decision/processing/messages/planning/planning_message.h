@@ -15,7 +15,7 @@ class PlanningMessage : public robocin::IProtoConvertible<protocols::behavior::P
     return protocols::behavior::Planning{};
   };
 
-  void fromProto(const protocols::behavior::Planning& planning_proto) override {};
+  void fromProto(const protocols::behavior::Planning& planning_proto) override;
 };
 
 } // namespace decision

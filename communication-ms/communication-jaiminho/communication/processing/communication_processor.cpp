@@ -1,9 +1,10 @@
 #include "communication/processing/communication_processor.h"
 
-#include "communication/communication_message.h"
 #include "communication/messaging/receiver/payload.h"
 #include "communication/processing/messages/common/message_type/message_type.h"
 
+#include <cstddef>
+#include <protocols/communication/robot_info.pb.h>
 #include <protocols/navigation/navigation.pb.h>
 #include <ranges>
 
@@ -15,8 +16,8 @@ namespace {
 
 namespace rc {
 
-using ::protocols::communication::Communication;
-using ::protocols::communication::OutputRobot;
+using ::protocols::communication::Output;
+using ::protocols::communication::RobotInfo;
 using ::protocols::navigation::Navigation;
 
 } // namespace rc
@@ -43,8 +44,7 @@ CommunicationProcessor::CommunicationProcessor(
     std::unique_ptr<parameters::IHandlerEngine> parameters_handler_engine) :
     parameters_handler_engine_{std::move(parameters_handler_engine)} {}
 
-std::optional<rc::Communication>
-CommunicationProcessor::process(std::span<const Payload> payloads) {
+std::optional<rc::RobotInfo> CommunicationProcessor::process(std::span<const Payload> payloads) {
 
   if (std::vector<tp::Referee> referees = refereeFromPayloads(payloads); !referees.empty()) {
     last_game_controller_referee_ = std::move(referees.back());
@@ -58,13 +58,19 @@ CommunicationProcessor::process(std::span<const Payload> payloads) {
   if (navigation.empty()) {
     return std::nullopt;
   }
-  rc::Navigation last_navigation = navigation.back();
+  rc::Navigation last_navigation_ = navigation.back();
 
   ///////////////////////////////////////////////////////////////////////////
   CommunicationMessage communication_message;
 
-  for (const auto& navigation : last_navigation.output()) {
-    communication_message.commands.emplace_back(OutputRobotMessage{});
+  for (const auto& navigation : navigation) {
+    communication_message.output_messages.emplace_back(
+        OutputMessage{CommandMessage{MessageTypeMessage{},
+                                     RobotIdMessage{},
+                                     RobotVelocityMessage{},
+                                     RobotKickMessage{},
+                                     RobotDribblerMessage{},
+                                     FlagsMessage{}}});
   }
   ///////////////////////////////////////////////////////////////////////////
   return communication_message.toProto();

@@ -13,7 +13,7 @@ using ::robocin::ilog;
 
 namespace rc {
 
-using ::protocols::communication::Communication;
+using ::protocols::communication::RobotInfo;
 
 } // namespace rc
 
@@ -24,8 +24,8 @@ MessageSender::MessageSender(std::unique_ptr<::robocin::IZmqPublisherSocket> com
     communication_socket_{std::move(communication_socket)},
     robot_socket_{std::move(robot_socket)} {}
 
-void MessageSender::send(const rc::Communication& robot_command) {
-  ilog("sending... {}", robot_command.DebugString());
+void MessageSender::send(const rc::RobotInfo& robot_command) {
+  // ilog("sending... {}", robot_command.DebugString());
 
   communication_socket_->send({
       service_discovery::kCommunicationCommandTopic,

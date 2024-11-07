@@ -15,7 +15,7 @@ protocols::common::RobotId RobotIdMessage::toProto() const {
   return robot_id;
 }
 
-void RobotIdMessage::fromProto(const protocols::common::RobotId& robot_id) {
+void RobotIdMessage::fromProto(protocols::common::RobotId robot_id) {
   color = static_cast<Color>(robot_id.color());
   number = robot_id.number();
 }

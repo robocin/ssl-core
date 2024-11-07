@@ -10,7 +10,12 @@ BehaviorDecisionMessage::BehaviorDecisionMessage() :
 protocols::decision::Behavior BehaviorDecisionMessage::toProto() const {
   protocols::decision::Behavior behavior_proto;
 
-  return protocols::decision::Behavior{};
+  behavior_proto.set_id(id.value_or(0));
+  *behavior_proto.mutable_robot_id() = robot_id.value().toProto();
+  behavior_proto.mutable_target()->set_x(target->x);
+  behavior_proto.mutable_target()->set_y(target->y);
+
+  return behavior_proto;
 }
 
 void BehaviorDecisionMessage::fromProto(const protocols::decision::Behavior& behavior_proto) {

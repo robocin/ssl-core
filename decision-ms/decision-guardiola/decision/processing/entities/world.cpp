@@ -1,68 +1,33 @@
 #include "decision/processing/entities/world.h"
 
-#include "decision/parameters/parameters.h"
-#include "decision/processing/messages/perception/ball/ball_message.h"
-#include "decision/processing/messages/perception/robot/robot_message.h"
-
-#include <algorithm>
+#include "decision/processing/messages/referee/game_status_message.h"
 
 namespace decision {
 
-constexpr int kMaxRobotsInTeam = 11;
-
-World::World() {
-  allies.reserve(kMaxRobotsInTeam);
-  enemies.reserve(kMaxRobotsInTeam);
-}
-
-void World::update(std::vector<RobotMessage>& robots,
-                   std::vector<BallMessage>& balls,
-                   FieldMessage& field,
-                   GameStatusMessage& game_status) {
-
-  takeMostAccurateBall(balls);
-  takeAlliesAndEnemies(robots);
-
-  this->field = std::move(field);
-  this->game_status = std::move(game_status);
-}
-
-void World::takeMostAccurateBall(std::vector<BallMessage>& balls) {
-  if (balls.empty()) {
-    return;
+void World::update(std::optional<std::span<RobotMessage>>& allies,
+                   std::optional<std::span<RobotMessage>>& enemies,
+                   std::optional<BallMessage>& ball,
+                   std::optional<FieldMessage>& field,
+                   std::optional<GameStatusMessage>& game_status) {
+  if (allies.has_value()) {
+    this->allies = allies.value();
   }
 
-  auto most_accurate_ball
-      = std::max_element(balls.begin(),
-                         balls.end(),
-                         [](BallMessage& ball, BallMessage& other_ball) {
-                           return ball.confidence.value() < other_ball.confidence.value();
-                         });
-
-  ball = std::move(*most_accurate_ball);
-}
-
-void World::takeAlliesAndEnemies(std::vector<RobotMessage>& robots) {
-  if (robots.empty()) {
-    return;
+  if (enemies.has_value()) {
+    this->enemies = enemies.value();
   }
 
-  allies.clear();
-  enemies.clear();
+  if (ball.has_value()) {
+    this->ball = std::move(ball.value());
+  }
 
-  for (RobotMessage& robot : robots) {
-    if (!robot.robot_id.has_value()) {
-      continue;
-    }
+  if (field.has_value()) {
+    this->field = std::move(field.value());
+  }
 
-    if (isAlly(robot)) {
-      allies.emplace_back(std::move(robot));
-    } else {
-      enemies.emplace_back(std::move(robot));
-    }
+  if (game_status.has_value()) {
+    this->game_status = std::move(game_status.value());
   }
 }
-
-bool World::isAlly(const RobotMessage& robot) const { return robot.robot_id->color == pAllyColor; }
 
 } // namespace decision

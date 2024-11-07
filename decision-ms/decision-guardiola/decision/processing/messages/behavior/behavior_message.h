@@ -30,7 +30,7 @@ class OutputMessage : public robocin::IProtoConvertible<protocols::behavior::uni
     return protocols::behavior::unification::Output{};
   };
 
-  void fromProto(const protocols::behavior::unification::Output& output_proto) override {};
+  void fromProto(const protocols::behavior::unification::Output& output_proto) override;
 };
 
 class BehaviorUnificationMessage
@@ -44,32 +44,21 @@ class BehaviorUnificationMessage
   }
 
   void
-  fromProto(const protocols::behavior::unification::Behavior& unification_behavior_proto) override {
-  };
+  fromProto(const protocols::behavior::unification::Behavior& unification_behavior_proto) override;
 };
 
 class BehaviorMessage : public robocin::IProtoConvertible<protocols::decision::Behavior> {
  public:
-  enum BehaviorId {
-    UNSPECIFIED = 0,
-    GOALKEEPER = 1,
-    LINE_GOALKEEPER = 3,
-    FULL_BACK = 4,
-    CENTER_BACK = 5,
-    DEFENSIVE_MIDFIELDER = 6,
-    OFFENSIVE_MIDFIELDER = 7,
-    WINGER = 8,
-    FORWARD = 9
-  };
-
-  explicit BehaviorMessage(std::optional<BehaviorId> id = std::nullopt,
-                           std::optional<RobotIdMessage> robot_id = std::nullopt,
-                           std::optional<robocin::Point2D<float>> target = std::nullopt);
-  std::optional<BehaviorId> id;
+  BehaviorMessage(std::optional<uint32_t> id = std::nullopt,
+                  std::optional<RobotIdMessage> robot_id = std::nullopt,
+                  std::optional<robocin::Point2D<float>> target = std::nullopt);
+  std::optional<uint32_t> id;
   std::optional<RobotIdMessage> robot_id;
   std::optional<robocin::Point2D<float>> target;
 
-  [[nodiscard]] protocols::decision::Behavior toProto() const override;
+  [[nodiscard]] protocols::decision::Behavior toProto() const override {
+    return protocols::decision::Behavior{};
+  }
 
   void fromProto(const protocols::decision::Behavior& behavior_proto) override;
 };

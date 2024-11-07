@@ -68,7 +68,7 @@ class GoToPointMessage : public robocin::IProtoConvertible<protocols::behavior::
     return protocols::behavior::GoToPoint{};
   };
 
-  void fromProto(const protocols::behavior::GoToPoint& go_to_point_proto) override {};
+  void fromProto(const protocols::behavior::GoToPoint& go_to_point_proto) override;
 };
 
 class GoToPointWithTrajectoryMessage
@@ -79,7 +79,7 @@ class GoToPointWithTrajectoryMessage
     return protocols::behavior::GoToPointWithTrajectory{};
   };
   void fromProto(const protocols::behavior::GoToPointWithTrajectory&
-                     go_to_point_with_trajectory_proto) override {};
+                     go_to_point_with_trajectory_proto) override;
 };
 
 class RotateInPointMessage : public robocin::IProtoConvertible<protocols::behavior::RotateInPoint> {
@@ -89,7 +89,7 @@ class RotateInPointMessage : public robocin::IProtoConvertible<protocols::behavi
     return protocols::behavior::RotateInPoint{};
   };
 
-  void fromProto(const protocols::behavior::RotateInPoint& rotate_in_point_proto) override {};
+  void fromProto(const protocols::behavior::RotateInPoint& rotate_in_point_proto) override;
 };
 
 class RotateOnSelfMessage : public robocin::IProtoConvertible<protocols::behavior::RotateOnSelf> {
@@ -99,7 +99,7 @@ class RotateOnSelfMessage : public robocin::IProtoConvertible<protocols::behavio
     return protocols::behavior::RotateOnSelf{};
   };
 
-  void fromProto(const protocols::behavior::RotateOnSelf& rotate_on_self_proto) override {};
+  void fromProto(const protocols::behavior::RotateOnSelf& rotate_on_self_proto) override;
 };
 
 class MotionMessage : public robocin::IProtoConvertible<protocols::behavior::unification::Motion> {
@@ -119,7 +119,7 @@ class MotionMessage : public robocin::IProtoConvertible<protocols::behavior::uni
     return protocols::behavior::unification::Motion{};
   };
 
-  void fromProto(const protocols::behavior::unification::Motion& motion_proto) override {};
+  void fromProto(const protocols::behavior::unification::Motion& motion_proto) override;
 };
 } // namespace decision
 

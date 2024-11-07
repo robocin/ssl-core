@@ -16,7 +16,7 @@ protocols::common::RobotDribbler_DribblerCommand DribblerCommandMessage::toProto
 }
 
 void DribblerCommandMessage::fromProto(
-    const protocols::common::RobotDribbler_DribblerCommand& dribbler_command) {
+    protocols::common::RobotDribbler_DribblerCommand dribbler_command) {
   dribbler_speed = dribbler_command.dribbler_speed();
   is_active = dribbler_command.is_active();
 }
@@ -30,7 +30,7 @@ protocols::common::RobotDribbler RobotDribblerMessage::toProto() const {
   return robot_dribbler;
 }
 
-void RobotDribblerMessage::fromProto(const protocols::common::RobotDribbler& robot_dribbler) {
+void RobotDribblerMessage::fromProto(protocols::common::RobotDribbler robot_dribbler) {
   dribbler_command.fromProto(robot_dribbler.dribbler_command());
 }
 

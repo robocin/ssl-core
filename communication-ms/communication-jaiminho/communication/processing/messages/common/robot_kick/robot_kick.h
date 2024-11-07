@@ -18,7 +18,7 @@ class KickCommandMessage
 
   [[nodiscard]] protocols::common::RobotKick_KickCommand toProto() const override;
 
-  void fromProto(const protocols::common::RobotKick_KickCommand& kick_command) override;
+  void fromProto(protocols::common::RobotKick_KickCommand kick_command) override;
 
   std::optional<double> kick_strength;
   std::optional<bool> is_front;
@@ -33,7 +33,7 @@ class RobotKickMessage : public robocin::IProtoConvertible<protocols::common::Ro
 
   [[nodiscard]] protocols::common::RobotKick toProto() const override;
 
-  void fromProto(const protocols::common::RobotKick& robot_kick) override;
+  void fromProto(protocols::common::RobotKick robot_kick) override;
 
   KickCommandMessage kick_command;
 };

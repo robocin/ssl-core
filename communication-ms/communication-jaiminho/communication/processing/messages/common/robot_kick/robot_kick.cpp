@@ -24,7 +24,7 @@ protocols::common::RobotKick_KickCommand KickCommandMessage::toProto() const {
   return kick_command;
 }
 
-void KickCommandMessage::fromProto(const protocols::common::RobotKick_KickCommand& kick_command) {
+void KickCommandMessage::fromProto(protocols::common::RobotKick_KickCommand kick_command) {
   kick_strength = kick_command.kick_strength();
   is_front = kick_command.is_front();
   is_chip = kick_command.is_chip();
@@ -41,7 +41,7 @@ protocols::common::RobotKick RobotKickMessage::toProto() const {
   return robot_kick;
 }
 
-void RobotKickMessage::fromProto(const protocols::common::RobotKick& robot_kick) {
+void RobotKickMessage::fromProto(protocols::common::RobotKick robot_kick) {
   kick_command.fromProto(robot_kick.kick_command());
 }
 

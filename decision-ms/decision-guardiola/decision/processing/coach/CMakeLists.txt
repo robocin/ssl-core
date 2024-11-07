@@ -7,5 +7,4 @@ robocin_cpp_library(
        coach.cpp
        tactical_plan/tactical_plan.cpp
   DEPS evaluators
-       analyzers
 )

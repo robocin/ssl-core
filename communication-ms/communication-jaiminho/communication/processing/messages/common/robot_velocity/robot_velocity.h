@@ -16,7 +16,7 @@ class RobotVelocityMessage : public robocin::IProtoConvertible<protocols::common
 
   [[nodiscard]] protocols::common::RobotVelocity toProto() const override;
 
-  void fromProto(const protocols::common::RobotVelocity& robot_velocity) override;
+  void fromProto(protocols::common::RobotVelocity robot_velocity) override;
 
   std::optional<robocin::Point2D<float>> velocity;
   std::optional<float> angular_velocity;

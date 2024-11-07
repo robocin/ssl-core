@@ -2,6 +2,7 @@
 
 #include "communication/messaging/receiver/payload.h"
 
+#include <protocols/communication/robot_info.pb.h>
 #include <robocin/concurrency/concurrent_queue.h>
 #include <robocin/memory/object_ptr.h>
 #include <robocin/output/log.h>
@@ -15,7 +16,7 @@ using ::robocin::object_ptr;
 
 namespace rc {
 
-using ::protocols::communication::Communication;
+using ::protocols::communication::RobotInfo;
 
 } // namespace rc
 
@@ -46,7 +47,7 @@ void ConsumerController::exec(std::span<const Payload> payloads) {
   //   return;
   // }
 
-  if (std::optional<rc::Communication> robot_command = communication_processor_->process(payloads);
+  if (std::optional<rc::RobotInfo> robot_command = communication_processor_->process(payloads);
       robot_command != std::nullopt) {
     //   ilog("command: {} sent.", robot_command->command().DebugString());
     message_sender_->send(*robot_command);
