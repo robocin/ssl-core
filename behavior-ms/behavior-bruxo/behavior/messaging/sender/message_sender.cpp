@@ -24,7 +24,7 @@ MessageSender::MessageSender(std::unique_ptr<::robocin::IZmqPublisherSocket> beh
     behavior_socket_{std::move(behavior_socket)} {}
 
 void MessageSender::send(const rc::Behavior& behavior) {
-  // ilog("sending... {}", behavior.DebugString());
+  ilog("sending... {}", behavior.DebugString());
 
   behavior_socket_->send({
       service_discovery::kBehaviorUnificationTopic,
