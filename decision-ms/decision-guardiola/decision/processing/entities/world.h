@@ -10,7 +10,7 @@ namespace decision {
 
 class World {
  public:
-  World() = default;
+  explicit World();
 
   World(const World&) = delete;
   World& operator=(const World&) = delete;
@@ -19,17 +19,21 @@ class World {
 
   virtual ~World() = default;
 
-  std::span<RobotMessage> allies;
-  std::span<RobotMessage> enemies;
+  std::vector<RobotMessage> allies;
+  std::vector<RobotMessage> enemies;
   BallMessage ball;
   FieldMessage field;
   GameStatusMessage game_status; // referee
 
-  void update(std::optional<std::span<RobotMessage>>& allies,
-              std::optional<std::span<RobotMessage>>& enemies,
-              std::optional<BallMessage>& ball,
-              std::optional<FieldMessage>& field,
-              std::optional<GameStatusMessage>& game_status);
+  void update(std::vector<RobotMessage>& robots,
+              std::vector<BallMessage>& balls,
+              FieldMessage& field,
+              GameStatusMessage& game);
+
+ private:
+  void takeMostAccurateBall(std::vector<BallMessage>& balls);
+  void takeAlliesAndEnemies(std::vector<RobotMessage>& robots);
+  bool isAlly(const RobotMessage& robot) const;
 };
 
 } // namespace decision
