@@ -8,6 +8,7 @@
 #include "decision/processing/messages/decision/decision_message.h"
 #include "decision/processing/messages/perception/detection/detection_message.h"
 #include "perception/ball/ball_message.h"
+#include "perception/field/field_message.h"
 #include "perception/robot/robot_message.h"
 #include "referee/game_status_message.h"
 
@@ -26,12 +27,7 @@ namespace {
 
 namespace rc {
 
-using ::protocols::common::RobotId;
-using ::protocols::decision::Behavior;
 using ::protocols::decision::Decision;
-using ::protocols::decision::DefensivePlan;
-using ::protocols::decision::OffensivePlan;
-using ::protocols::decision::TacticalPlan;
 using ::protocols::perception::Detection;
 using ::protocols::referee::GameStatus;
 
@@ -51,65 +47,34 @@ std::vector<rc::GameStatus> gameStatusFromPayloads(std::span<const Payload> payl
 
 DecisionProcessor::DecisionProcessor(
     std::unique_ptr<parameters::IHandlerEngine> parameters_handler_engine,
-    std::unique_ptr<Coach> coach) :
+    std::unique_ptr<Coach> coach,
+    std::unique_ptr<World> world,
+    std::unique_ptr<RoleManager> role_manager) :
     parameters_handler_engine_{std::move(parameters_handler_engine)},
-    coach_{std::move(coach)} {}
+    coach_{std::move(coach)},
+    world_{std::move(world)},
+    role_manager_{std::move(role_manager)} {}
 
 std::optional<rc::Decision> DecisionProcessor::process(std::span<const Payload> payloads) {
   rc::Decision decision_output;
 
   DecisionProcessor::update(payloads);
+  // robocin::ilog("{}", *(world_.field.width));
 
-  coach_->process(world_);
-  TacticalPlan tactical_plan = coach_->tactical_plan;
+  // Evaluator processing is done synchronously here
+  coach_->process(*world_);
+
+  // Update and execute roles
+  role_manager_->process();
+
+  // Get behaviors decided by roles
+  auto behavior_candidates = role_manager_->behavior_candidates;
+  robocin::ilog("Currently we have {} behavior candidates", behavior_candidates.size());
 
   return rc::Decision{};
 }
 
 // Private methods
-void DecisionProcessor::takeMostAccurateBall(std::vector<BallMessage>& balls, World& world) {
-  BallMessage* most_accurate_ball = nullptr;
-  float most_accurate_confidence = 0.0;
-
-  for (auto& ball : balls) {
-    if (ball.confidence.value() >= most_accurate_confidence) {
-      most_accurate_confidence = ball.confidence.value();
-      most_accurate_ball = &ball;
-    }
-  }
-
-  world.ball = std::move(*most_accurate_ball);
-}
-
-void DecisionProcessor::takeAlliesAndEnemies(std::vector<RobotMessage>& robots, World& world) {
-  std::vector<RobotMessage> yellow;
-  std::vector<RobotMessage> blue;
-
-  for (auto& robot : robots) {
-    if (!robot.robot_id.has_value()) {
-      continue;
-    }
-
-    if (robot.robot_id->color == RobotIdMessage::Color::COLOR_YELLOW) {
-      yellow.emplace_back(std::move(robot));
-    }
-
-    if (robot.robot_id->color == RobotIdMessage::Color::COLOR_BLUE) {
-      blue.emplace_back(std::move(robot));
-    }
-
-    // todo: handle unspecified color
-  }
-
-  if (pAllyColor == RobotIdMessage::Color::COLOR_YELLOW) {
-    world.allies = yellow;
-    world.enemies = blue;
-  } else {
-    world.allies = blue;
-    world.enemies = yellow;
-  }
-}
-
 bool DecisionProcessor::update(std::span<const Payload>& payloads) {
 
   if (std::vector<rc::GameStatus> game_status = gameStatusFromPayloads(payloads);
@@ -128,9 +93,12 @@ bool DecisionProcessor::update(std::span<const Payload>& payloads) {
   }
 
   last_detection_ = DetectionMessage(detections.back());
+  world_.field = std::move(last_detection_->field.value());
 
-  DecisionProcessor::takeMostAccurateBall(last_detection_->balls, world_);
-  DecisionProcessor::takeAlliesAndEnemies(last_detection_->robots, world_);
+  world_->update(last_detection_->robots,
+                 last_detection_->balls,
+                 last_detection_->field.value(),
+                 last_game_status_.value());
 
   return true;
 }

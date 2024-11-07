@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package protocols.communication;
+
+message Communication {
+  repeated OutputRobot output = 1;
+}
+
+message OutputRobot {
+  uint32 id = 1;
+  double vx = 2;
+  double vy = 3;
+  double vw = 4;
+  bool front = 5;
+  bool chip = 6;
+  bool charge = 7;
+  double kick_strength = 8;
+  bool dribbler = 9;
+  double dribbler_speed = 10;
+}
+
+message Flags {
+  bool robot_locked = 1;
+  bool critical_move = 2;
+  bool global_speed = 3;
+}

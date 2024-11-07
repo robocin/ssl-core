@@ -15,7 +15,7 @@ class DribblerCommandMessage
 
   [[nodiscard]] protocols::common::RobotDribbler_DribblerCommand toProto() const override;
 
-  void fromProto(protocols::common::RobotDribbler_DribblerCommand dribbler_command) override;
+  void fromProto(const protocols::common::RobotDribbler_DribblerCommand& dribbler_command) override;
 
   std::optional<double> dribbler_speed;
   std::optional<bool> is_active;
@@ -27,7 +27,7 @@ class RobotDribblerMessage : public robocin::IProtoConvertible<protocols::common
 
   [[nodiscard]] protocols::common::RobotDribbler toProto() const override;
 
-  void fromProto(protocols::common::RobotDribbler robot_dribbler) override;
+  void fromProto(const protocols::common::RobotDribbler& robot_dribbler) override;
 
   DribblerCommandMessage dribbler_command;
 };

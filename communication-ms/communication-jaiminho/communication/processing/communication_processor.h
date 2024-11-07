@@ -10,7 +10,7 @@
 #include "communication/processing/messages/communication/communication_message.h"
 #include "communication/processing/messages/flags/flags.h"
 
-#include <protocols/communication/robot_info.pb.h>
+#include <protocols/communication/communication.pb.h>
 #include <robocin/parameters/parameters.h>
 
 namespace communication {
@@ -26,7 +26,7 @@ class ICommunicationProcessor {
 
   virtual ~ICommunicationProcessor() = default;
 
-  virtual std::optional<::protocols::communication::RobotInfo>
+  virtual std::optional<::protocols::communication::Communication>
   process(std::span<const Payload> payloads) = 0;
 };
 
@@ -35,7 +35,7 @@ class CommunicationProcessor : public ICommunicationProcessor {
   explicit CommunicationProcessor(
       std::unique_ptr<::robocin::parameters::IHandlerEngine> parameters_handler_engine);
 
-  std::optional<::protocols::communication::RobotInfo>
+  std::optional<::protocols::communication::Communication>
   process(std::span<const Payload> payloads) override;
 
  private:

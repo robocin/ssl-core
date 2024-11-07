@@ -1,6 +1,8 @@
 #include "decision/controller/consumer_controller.h"
 #include "decision/controller/producer_controller.h"
 #include "decision/processing/coach/coach.h"
+#include "role_manager/role_manager.h"
+#include "world.h"
 
 #include <memory>
 #include <print>
@@ -29,6 +31,8 @@ using decision::MessageSender;
 using decision::Payload;
 using decision::PayloadMapper;
 using decision::ProducerController;
+using decision::RoleManager;
+using decision::World;
 using ::robocin::ConditionVariableConcurrentQueue;
 using ::robocin::IConcurrentQueue;
 using ::robocin::ilog;
@@ -74,7 +78,9 @@ std::unique_ptr<IController> makeProducer(object_ptr<IConcurrentQueue<Payload>> 
 
 std::unique_ptr<IDecisionProcessor> makeDecisionProcessor() {
   return std::make_unique<DecisionProcessor>(std::make_unique<parameters::HandlerEngine>(),
-                                             std::make_unique<Coach>());
+                                             std::make_unique<Coach>(),
+                                             std::make_unique<World>(),
+                                             std::make_unique<RoleManager>());
 }
 
 std::unique_ptr<IMessageSender> makeMessageSender() {
