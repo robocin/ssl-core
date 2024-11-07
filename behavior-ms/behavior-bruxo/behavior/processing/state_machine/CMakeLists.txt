@@ -4,9 +4,17 @@ robocin_cpp_library(
          goalkeeper/goalkeeper_state_machine.h
          goalkeeper/states/guard.h
          goalkeeper/states/other.h
+         goalkeeper_take_ball_away/goalkeeper_take_ball_away_state_machine.h
+         goalkeeper_take_ball_away/states/go_to_ball.h
+         goalkeeper_take_ball_away/states/go_to_safe_position.h
+         goalkeeper_take_ball_away/states/kick_ball.h
     SRCS istate_machine.cpp
          goalkeeper/goalkeeper_state_machine.cpp
          goalkeeper/states/guard.cpp
          goalkeeper/states/other.cpp
+         goalkeeper_take_ball_away/goalkeeper_take_ball_away_state_machine.cpp
+         goalkeeper_take_ball_away/states/go_to_ball.cpp
+         goalkeeper_take_ball_away/states/go_to_safe_position.cpp
+         goalkeeper_take_ball_away/states/kick_ball.cpp
     DEPS common::output
 )
