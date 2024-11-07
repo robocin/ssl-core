@@ -3,7 +3,9 @@ robocin_cpp_library(
      HDRS behavior/behavior_message.h
           common/peripheral_actuation/peripheral_actuation.h
           common/robot_id/robot_id_message.h
+          common/robot_dribbler/robot_dribbler_message.h
           common/robot_kick/kick_command.h
+          common/robot_pose/robot_pose_message.h
           common/game_command/game_command_message.h
           common/game_event/game_event_message.h
           decision/decision_message.h
@@ -14,10 +16,13 @@ robocin_cpp_library(
           perception/field/field_message.h
           perception/detection/detection_message.h
           referee/game_status_message.h
+          navigation/navigation_message.h
      SRCS behavior/behavior_message.cpp
           common/peripheral_actuation/peripheral_actuation.cpp
           common/robot_id/robot_id_message.cpp
+          common/robot_dribbler/robot_dribbler_message.cpp
           common/robot_kick/kick_command.cpp
+          common/robot_pose/robot_pose_message.cpp
           common/game_command/game_command_message.cpp
           common/game_event/game_event_message.cpp
           decision/decision_message.cpp
@@ -28,6 +33,7 @@ robocin_cpp_library(
           perception/field/field_message.cpp
           perception/detection/detection_message.cpp
           referee/game_status_message.cpp
+          navigation/navigation_message.cpp
      DEPS common::utility
           common::output
           protocols::protobufs

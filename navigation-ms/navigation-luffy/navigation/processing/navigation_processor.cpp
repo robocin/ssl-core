@@ -11,6 +11,7 @@
 
 #include <optional>
 #include <protocols/behavior/behavior_unification.pb.h>
+#include <protocols/navigation/navigation.pb.h>
 #include <protocols/perception/detection.pb.h>
 #include <protocols/referee/game_status.pb.h>
 #include <ranges>
@@ -48,16 +49,15 @@ std::vector<rc::GameStatus> gameStatusFromPayloads(std::span<const Payload> payl
 NavigationProcessor::NavigationProcessor(std::unique_ptr<IMotionParser> motion_parser) :
     motion_parser_(std::move(motion_parser)) {}
 
-std::optional<NavigationMessage> NavigationProcessor::process(std::span<const Payload> payloads) {
-  NavigationMessage navigation_output;
-
+std::optional<::protocols::navigation::Navigation>
+NavigationProcessor::process(std::span<const Payload> payloads) {
   if (std::vector<rc::Behavior> behaviors = behaviorFromPayloads(payloads); !behaviors.empty()) {
-    last_behavior_ = BehaviorUnificationMessage(behaviors.back());
+    last_behavior_ = behaviors.back();
   }
 
   if (std::vector<rc::GameStatus> game_statuses = gameStatusFromPayloads(payloads);
       !game_statuses.empty()) {
-    last_game_status_ = GameStatusMessage(game_statuses.back());
+    last_game_status_ = game_statuses.back();
   }
 
   if (!last_behavior_ or !last_game_status_) {
@@ -69,55 +69,13 @@ std::optional<NavigationMessage> NavigationProcessor::process(std::span<const Pa
     // a new package must be generated only when a new detection is received.
     return std::nullopt;
   }
-  DetectionMessage last_detection = DetectionMessage(detections.back());
+  ::protocols::perception::Detection last_detection = detections.back();
 
   ///////////////////////////////////////////////////////////////////////////
-  for (const auto& behavior : last_behavior_->behavior_outputs) {
-    NavigationOutputMessage output;
-    RobotMessage ally;
+  ::protocols::navigation::Navigation navigation_proto;
 
-    for (auto& robot : last_detection.robots) {
-      if (robot.robot_id->number == behavior.robot_id->number) {
-        ally = RobotMessage(robot);
-        break;
-      }
-    }
-    if (ally.robot_id) {
-      output.robot_id = ally.robot_id;
-
-      if (behavior.motion) {
-        RobotMove move;
-        if (behavior.motion->go_to_point) {
-          move = motion_parser_->fromGoToPoint(behavior.motion->go_to_point.value(), ally);
-        } else if (behavior.motion->rotate_in_point) {
-          move = motion_parser_->fromRotateInPoint(behavior.motion->rotate_in_point.value(), ally);
-        } else if (behavior.motion->rotate_on_self) {
-          move = motion_parser_->fromRotateOnSelf(behavior.motion->rotate_on_self.value(), ally);
-        } else {
-          // PROCESSAMENTO DO GO_TO_POINT_WITH_TRAJECTORY
-        }
-
-        output.left_velocity = move.velocity().y;
-        output.forward_velocity = move.velocity().x;
-        output.angular_velocity = move.angularVelocity();
-
-        if (behavior.motion->peripheral_actuation) {
-          output.peripheral_actuation = behavior.motion->peripheral_actuation;
-        }
-
-        // TODO: Add other fields to output
-
-      } else if (behavior.planning) {
-        // PROCESSAMENTO DO PLANNING
-      } else {
-        // PROCESSAMENTO DO NAVIGATION
-      }
-    }
-
-    navigation_output.output.emplace_back(output);
-  }
   ////////////////////////////////////////////////////////////////////////////
-  return navigation_output;
+  return navigation_proto;
 }
 
 } // namespace navigation

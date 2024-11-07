@@ -11,7 +11,9 @@
 
 #include <memory>
 #include <optional>
+#include <protocols/behavior/behavior_unification.pb.h>
 #include <protocols/navigation/navigation.pb.h>
+#include <protocols/referee/game_status.pb.h>
 #include <robocin/parameters/parameters.h>
 
 namespace navigation {
@@ -27,19 +29,21 @@ class INavigationProcessor {
 
   virtual ~INavigationProcessor() = default;
 
-  virtual std::optional<NavigationMessage> process(std::span<const Payload> payloads) = 0;
+  virtual std::optional<::protocols::navigation::Navigation>
+  process(std::span<const Payload> payloads) = 0;
 };
 
 class NavigationProcessor : public INavigationProcessor {
  public:
   explicit NavigationProcessor(std::unique_ptr<IMotionParser> motion_parser);
 
-  std::optional<NavigationMessage> process(std::span<const Payload> payloads) override;
+  std::optional<::protocols::navigation::Navigation>
+  process(std::span<const Payload> payloads) override;
 
  private:
   std::unique_ptr<IMotionParser> motion_parser_;
-  std::optional<BehaviorUnificationMessage> last_behavior_;
-  std::optional<GameStatusMessage> last_game_status_;
+  std::optional<::protocols::behavior::unification::Behavior> last_behavior_;
+  std::optional<::protocols::referee::GameStatus> last_game_status_;
 };
 
 } // namespace navigation

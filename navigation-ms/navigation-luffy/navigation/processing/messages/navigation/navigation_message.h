@@ -7,8 +7,6 @@
 
 #include <cstdint>
 #include <optional>
-#include <protocols/common/robot_id.pb.h>
-#include <protocols/common/robot_pose.pb.h>
 #include <protocols/navigation/navigation.pb.h>
 #include <robocin/geometry/point2d.h>
 #include <robocin/utility/iproto_convertible.h>
@@ -51,15 +49,16 @@ class NavigationOutputMessage : public robocin::IProtoConvertible<protocols::nav
 
 class NavigationMessage : public robocin::IProtoConvertible<protocols::navigation::Navigation> {
  public:
-  explicit NavigationMessage(std::vector<NavigationOutputMessage> output = {});
+  explicit NavigationMessage(std::optional<std::vector<NavigationOutputMessage>> output
+                             = std::nullopt);
 
-  explicit NavigationMessage(const protocols::navigation::Navigation& unification_behavior_proto);
+  explicit NavigationMessage(const protocols::navigation::Navigation& navigation_proto);
 
-  std::vector<NavigationOutputMessage> output;
+  std::optional<std::vector<NavigationOutputMessage>> output;
 
   [[nodiscard]] protocols::navigation::Navigation toProto() const override;
 
-  void fromProto(const protocols::navigation::Navigation& unification_behavior_proto) override;
+  void fromProto(const protocols::navigation::Navigation& navigation_proto) override;
 };
 
 } // namespace navigation

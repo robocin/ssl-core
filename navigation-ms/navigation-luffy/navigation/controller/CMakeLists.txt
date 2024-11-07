@@ -13,4 +13,5 @@ robocin_cpp_library(
        messaging_receiver
        messaging_sender
        processing
+       messages
 )

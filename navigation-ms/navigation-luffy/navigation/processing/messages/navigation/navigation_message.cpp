@@ -1,21 +1,14 @@
 #include "navigation/processing/messages/navigation/navigation_message.h"
 
-#include "navigation_message.h"
-
-#include <algorithm>
-#include <utility>
-
 namespace navigation {
 
-void NavigationMessage::fromProto(
-    const protocols::navigation::Navigation& unification_behavior_proto) {
-  for (const auto& output_proto : unification_behavior_proto.output()) {
-    output.emplace_back(output_proto);
+void NavigationMessage::fromProto(const protocols::navigation::Navigation& navigation_proto) {
+  for (const auto& output_proto : navigation_proto.output()) {
+    output->emplace_back(output_proto);
   }
 }
-NavigationMessage::NavigationMessage(
-    const protocols::navigation::Navigation& unification_behavior_proto) {
-  NavigationMessage::fromProto(unification_behavior_proto);
+NavigationMessage::NavigationMessage(const protocols::navigation::Navigation& navigation_proto) {
+  NavigationMessage::fromProto(navigation_proto);
 }
 
 void NavigationOutputMessage::fromProto(const protocols::navigation::Output& output_proto) {
@@ -64,7 +57,7 @@ protocols::navigation::Output NavigationOutputMessage::toProto() const {
   return protocols::navigation::Output{};
 };
 
-NavigationMessage::NavigationMessage(std::vector<NavigationOutputMessage> output) :
+NavigationMessage::NavigationMessage(std::optional<std::vector<NavigationOutputMessage>> output) :
     output(std::move(output)) {}
 
 protocols::navigation::Navigation NavigationMessage::toProto() const {

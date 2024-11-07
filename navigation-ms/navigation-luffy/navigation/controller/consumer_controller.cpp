@@ -49,9 +49,10 @@ void ConsumerController::exec(std::span<const Payload> payloads) {
     return;
   }
 
-  if (std::optional<NavigationMessage> navigation_msg = navigation_processor_->process(payloads);
+  if (std::optional<::protocols::navigation::Navigation> navigation_msg
+      = navigation_processor_->process(payloads);
       navigation_msg != std::nullopt) {
-    message_sender_->send(navigation_msg->toProto());
+    message_sender_->send(*navigation_msg);
   }
 }
 
