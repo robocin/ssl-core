@@ -18,7 +18,7 @@ protocols::communication::Flags FlagsMessage::toProto() const {
   return flags;
 }
 
-void FlagsMessage::fromProto(protocols::communication::Flags flags) {
+void FlagsMessage::fromProto(const protocols::communication::Flags& flags) {
   robot_locked = flags.robot_locked();
   critical_move = flags.critical_move();
   global_speed = flags.global_speed();
