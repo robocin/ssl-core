@@ -15,12 +15,17 @@ BehaviorUnificationMessage::BehaviorUnificationMessage(
 }
 void BehaviorUnificationMessage::fromProto(
     const protocols::behavior::unification::Behavior& unification_behavior_proto) {
-  for (protocols::behavior::unification::Output output : unification_behavior_proto.output()) {
+  for (const protocols::behavior::unification::Output& output :
+       unification_behavior_proto.output()) {
     behavior_outputs.emplace_back(RobotIdMessage(output.robot_id()),
                                   MotionMessage(output.motion()),
                                   PlanningMessage(output.planning()));
   }
 }
+OutputMessage::OutputMessage(const protocols::behavior::unification::Output& output_proto) {
+  OutputMessage::fromProto(output_proto);
+}
+
 OutputMessage::OutputMessage(RobotIdMessage robot_id,
                              MotionMessage motion,
                              PlanningMessage planning) :
@@ -28,6 +33,11 @@ OutputMessage::OutputMessage(RobotIdMessage robot_id,
     motion(std::move(motion)),
     planning(std::move(planning)) {}
 
+void OutputMessage::fromProto(const protocols::behavior::unification::Output& output_proto) {
+  robot_id = RobotIdMessage(output_proto.robot_id());
+  motion = MotionMessage(output_proto.motion());
+  planning = PlanningMessage(output_proto.planning());
+}
 BehaviorMessage::BehaviorMessage(std::optional<uint32_t> id,
                                  std::optional<RobotIdMessage> robot_id,
                                  std::optional<robocin::Point2D<float>> target) :

@@ -2,7 +2,6 @@
 #define NAVIGATION_PROCESSING_MESSAGES_NAVIGATION_NAVIGATION_MESSAGE_H
 
 #include "navigation/processing/messages/common/peripheral_actuation/peripheral_actuation.h"
-#include "navigation/processing/messages/common/point2d_f/point2d_f.h"
 #include "navigation/processing/messages/common/robot_id/robot_id_message.h"
 #include "navigation/processing/messages/common/robot_pose/robot_pose_message.h"
 
@@ -17,18 +16,21 @@
 
 namespace navigation {
 
-class OutputMessage : public robocin::IProtoConvertible<protocols::navigation::Output> {
+class NavigationOutputMessage : public robocin::IProtoConvertible<protocols::navigation::Output> {
  public:
-  OutputMessage(std::optional<RobotIdMessage> robot_id,
-                std::optional<PeripheralActuationMessage> peripheral_actuation,
-                std::optional<uint32_t> timestamp,
-                std::optional<double> forward_velocity,
-                std::optional<double> left_velocity,
-                std::optional<double> angular_velocity,
-                std::optional<uint32_t> custom_command,
-                std::optional<uint32_t> sequence_number,
-                std::optional<robocin::Point2Df> output_global_linear_velocity,
-                std::optional<RobotPoseMessage> robot_pose);
+  NavigationOutputMessage();
+  NavigationOutputMessage(std::optional<RobotIdMessage> robot_id,
+                          std::optional<PeripheralActuationMessage> peripheral_actuation,
+                          std::optional<uint32_t> timestamp,
+                          std::optional<double> forward_velocity,
+                          std::optional<double> left_velocity,
+                          std::optional<double> angular_velocity,
+                          std::optional<uint32_t> custom_command,
+                          std::optional<uint32_t> sequence_number,
+                          std::optional<robocin::Point2Df> output_global_linear_velocity,
+                          std::optional<RobotPoseMessage> robot_pose);
+
+  explicit NavigationOutputMessage(const protocols::navigation::Output& output_proto);
 
   std::optional<RobotIdMessage> robot_id;
   std::optional<PeripheralActuationMessage> peripheral_actuation;
@@ -48,8 +50,9 @@ class OutputMessage : public robocin::IProtoConvertible<protocols::navigation::O
 
 class NavigationMessage : public robocin::IProtoConvertible<protocols::navigation::Navigation> {
  public:
-  explicit NavigationMessage(OutputMessage output);
-  OutputMessage output;
+  explicit NavigationMessage(std::vector<NavigationOutputMessage> output);
+  explicit NavigationMessage(const protocols::navigation::Navigation& unification_behavior_proto);
+  std::vector<NavigationOutputMessage> output;
 
   [[nodiscard]] protocols::navigation::Navigation toProto() const override;
 

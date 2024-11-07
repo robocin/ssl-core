@@ -18,7 +18,6 @@ RobotIdMessage::Color getColor(rc::RobotId_Color color_proto) {
     default: return RobotIdMessage::Color::COLOR_UNSPECIFIED;
   }
 }
-
 RobotIdMessage::RobotIdMessage(const rc::RobotId& robot_id_proto) { fromProto(robot_id_proto); };
 
 protocols::common::RobotId RobotIdMessage::toProto() const { return protocols::common::RobotId{}; };

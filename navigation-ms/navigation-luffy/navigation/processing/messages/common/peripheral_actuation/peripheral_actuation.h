@@ -12,8 +12,11 @@ namespace navigation {
 class PeripheralActuationMessage
     : public robocin::IProtoConvertible<protocols::common::PeripheralActuation> {
  public:
+  PeripheralActuationMessage();
   explicit PeripheralActuationMessage(KickCommandMessage kick_command,
                                       RobotDribblerMessage robot_dribbler);
+  explicit PeripheralActuationMessage(
+      const protocols::common::PeripheralActuation& peripheral_actuation_proto);
   KickCommandMessage kick_command;
   RobotDribblerMessage robot_dribbler;
 

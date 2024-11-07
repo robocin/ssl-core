@@ -10,4 +10,12 @@ protocols::common::RobotPose RobotPoseMessage::toProto() const {
   return protocols::common::RobotPose{};
 };
 
+void RobotPoseMessage::fromProto(const protocols::common::RobotPose& robot_pose_proto){
+  position = robocin::Point2Df{robot_pose_proto.position().x(), robot_pose_proto.position().y()};
+  orientation = robot_pose_proto.orientation();
+}
+
+RobotPoseMessage::RobotPoseMessage(const protocols::common::RobotPose& robot_pose_proto){
+  RobotPoseMessage::fromProto(robot_pose_proto);
+}
 } // namespace navigation

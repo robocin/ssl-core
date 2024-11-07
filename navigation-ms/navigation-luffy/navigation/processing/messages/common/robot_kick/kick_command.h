@@ -9,20 +9,20 @@ namespace navigation {
 class KickCommandMessage
     : public robocin::IProtoConvertible<protocols::common::RobotKick::KickCommand> {
  public:
-  explicit KickCommandMessage(double strength,
-                              bool is_front,
-                              bool is_chip,
-                              bool charge_capacitor,
-                              bool is_bypass_ir);
+  KickCommandMessage();
+  KickCommandMessage(double strength,
+                     bool is_front,
+                     bool is_chip,
+                     bool charge_capacitor,
+                     bool is_bypass_ir);
+  explicit KickCommandMessage(const protocols::common::RobotKick::KickCommand& kick_command_proto);
   double strength;
   bool is_front;
   bool is_chip;
   bool charge_capacitor;
   bool is_bypass_ir;
 
-  [[nodiscard]] protocols::common::RobotKick::KickCommand toProto() const override {
-    return protocols::common::RobotKick::KickCommand{};
-  };
+  [[nodiscard]] protocols::common::RobotKick::KickCommand toProto() const override;
 
   void fromProto(const protocols::common::RobotKick::KickCommand& kick_command_proto) override;
 };

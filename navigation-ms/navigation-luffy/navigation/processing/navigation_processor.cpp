@@ -1,9 +1,13 @@
 #include "navigation/processing/navigation_processor.h"
 
-#include "messages/behavior/behavior_message.h"
-#include "messages/perception/detection/detection_message.h"
-#include "messages/referee/game_status_message.h"
 #include "navigation/messaging/receiver/payload.h"
+#include "navigation/processing/messages/behavior/behavior_message.h"
+#include "navigation/processing/messages/common/robot_id/robot_id_message.h"
+#include "navigation/processing/messages/navigation/navigation_message.h"
+#include "navigation/processing/messages/perception/detection/detection_message.h"
+#include "navigation/processing/messages/perception/robot/robot_message.h"
+#include "navigation/processing/messages/planning/planning_message.h"
+#include "navigation/processing/messages/referee/game_status_message.h"
 
 #include <protocols/behavior/behavior_unification.pb.h>
 #include <protocols/behavior/motion.pb.h>
@@ -59,7 +63,7 @@ NavigationProcessor::NavigationProcessor(std::unique_ptr<IMotionParser> motion_p
     motion_parser_(std::move(motion_parser)) {}
 
 std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Payload> payloads) {
-  rc::Navigation navigation_output;
+  NavigationOutputMessage navigation_output;
 
   if (std::vector<rc::Behavior> behaviors = behaviorFromPayloads(payloads); !behaviors.empty()) {
     last_behavior_ = BehaviorUnificationMessage(behaviors.back());
@@ -82,26 +86,26 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
   DetectionMessage last_detection = DetectionMessage(detections.back());
 
   ///////////////////////////////////////////////////////////////////////////
-  for (const auto& behavior : last_behavior_->output()) {
-    rc::Output output;
-    rc::Robot ally;
+  for (const auto& behavior : last_behavior_->behavior_outputs) {
+    NavigationOutputMessage output;
+    RobotMessage ally;
 
-    for (const auto& robot : last_detection.robots()) {
-      if (robot.robot_id().number() == behavior.robot_id().number()) {
-        ally = robot;
+    for (auto& robot : last_detection.robots) {
+      if (robot.robot_id->number == behavior.robot_id.number) {
+        ally = RobotMessage(robot);
         break;
       }
     }
-    if (ally.has_robot_id()) {
-      output.mutable_robot_id()->CopyFrom(ally.robot_id());
+    if (ally.robot_id()) {
+      output.robot_id = ally.robot_id();
 
-      if (behavior.has_motion()) {
+      if (behavior.motion()) {
         RobotMove move;
-        if (behavior.motion().has_go_to_point()) {
+        if (behavior.motion().go_to_point()) {
           move = motion_parser_->fromGoToPoint(behavior.motion().go_to_point(), ally);
-        } else if (behavior.motion().has_rotate_in_point()) {
+        } else if (behavior.motion().rotate_in_point()) {
           move = motion_parser_->fromRotateInPoint(behavior.motion().rotate_in_point(), ally);
-        } else if (behavior.motion().has_rotate_on_self()) {
+        } else if (behavior.motion().rotate_on_self()) {
           move = motion_parser_->fromRotateOnSelf(behavior.motion().rotate_on_self(), ally);
         } else {
           // PROCESSAMENTO DO GO_TO_POINT_WITH_TRAJECTORY

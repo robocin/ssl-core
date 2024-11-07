@@ -10,7 +10,10 @@ namespace navigation {
 class DribblerCommandMessage
     : public robocin::IProtoConvertible<protocols::common::RobotDribbler::DribblerCommand> {
  public:
-  explicit DribblerCommandMessage(double dribbler_speed, bool is_active);
+  DribblerCommandMessage();
+  DribblerCommandMessage(double dribbler_speed, bool is_active);
+  explicit DribblerCommandMessage(
+      const protocols::common::RobotDribbler::DribblerCommand& dribbler_command_proto);
   double dribbler_speed;
   bool is_active;
 
@@ -23,12 +26,13 @@ class DribblerCommandMessage
 class DribblerInfoMessage
     : public robocin::IProtoConvertible<protocols::common::RobotDribbler::DribblerInfo> {
  public:
-  explicit DribblerInfoMessage(double dribbler_speed,
-                               double dribbler_current,
-                               bool is_ball_detected);
-  double dribbler_speed;
-  double dribbler_current;
-  bool is_ball_detected;
+  DribblerInfoMessage();
+  DribblerInfoMessage(double dribbler_speed, double dribbler_current, bool is_ball_detected);
+  explicit DribblerInfoMessage(
+      const protocols::common::RobotDribbler::DribblerInfo& dribbler_info_proto);
+  double dribbler_speed = 0;
+  double dribbler_current = 0;
+  bool is_ball_detected = false;
 
   [[nodiscard]] protocols::common::RobotDribbler::DribblerInfo toProto() const override;
 
@@ -38,8 +42,11 @@ class DribblerInfoMessage
 
 class RobotDribblerMessage : public robocin::IProtoConvertible<protocols::common::RobotDribbler> {
  public:
-  explicit RobotDribblerMessage(std::optional<DribblerCommandMessage> dribbler_command,
-                                std::optional<DribblerInfoMessage> dribbler_info);
+  RobotDribblerMessage();
+  RobotDribblerMessage(std::optional<DribblerCommandMessage> dribbler_command,
+                       std::optional<DribblerInfoMessage> dribbler_info);
+
+  explicit RobotDribblerMessage(const protocols::common::RobotDribbler& robot_dribbler_proto);
 
   std::optional<DribblerCommandMessage> dribbler_command;
   std::optional<DribblerInfoMessage> dribbler_info;
