@@ -9,10 +9,8 @@
 #include "navigation/processing/messages/planning/planning_message.h"
 #include "navigation/processing/messages/referee/game_status_message.h"
 
+#include <optional>
 #include <protocols/behavior/behavior_unification.pb.h>
-#include <protocols/behavior/motion.pb.h>
-#include <protocols/behavior/planning.pb.h>
-#include <protocols/navigation/navigation.pb.h>
 #include <protocols/perception/detection.pb.h>
 #include <protocols/referee/game_status.pb.h>
 #include <ranges>
@@ -22,21 +20,9 @@ namespace navigation {
 namespace parameters = ::robocin::parameters;
 
 namespace rc {
-
-using ::protocols::behavior::Planning;
 using ::protocols::behavior::unification::Behavior;
-using ::protocols::behavior::unification::Motion;
-
-using ::protocols::referee::GameStatus;
-
-using ::protocols::navigation::Navigation;
-using ::protocols::navigation::Output;
-
 using ::protocols::perception::Detection;
-using ::protocols::perception::Robot;
-
-using ::protocols::common::PeripheralActuation;
-using ::protocols::common::RobotId;
+using ::protocols::referee::GameStatus;
 
 } // namespace rc
 
@@ -62,8 +48,8 @@ std::vector<rc::GameStatus> gameStatusFromPayloads(std::span<const Payload> payl
 NavigationProcessor::NavigationProcessor(std::unique_ptr<IMotionParser> motion_parser) :
     motion_parser_(std::move(motion_parser)) {}
 
-std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Payload> payloads) {
-  NavigationOutputMessage navigation_output;
+std::optional<NavigationMessage> NavigationProcessor::process(std::span<const Payload> payloads) {
+  NavigationMessage navigation_output;
 
   if (std::vector<rc::Behavior> behaviors = behaviorFromPayloads(payloads); !behaviors.empty()) {
     last_behavior_ = BehaviorUnificationMessage(behaviors.back());
@@ -91,44 +77,44 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
     RobotMessage ally;
 
     for (auto& robot : last_detection.robots) {
-      if (robot.robot_id->number == behavior.robot_id.number) {
+      if (robot.robot_id->number == behavior.robot_id->number) {
         ally = RobotMessage(robot);
         break;
       }
     }
-    if (ally.robot_id()) {
-      output.robot_id = ally.robot_id();
+    if (ally.robot_id) {
+      output.robot_id = ally.robot_id;
 
-      if (behavior.motion()) {
+      if (behavior.motion) {
         RobotMove move;
-        if (behavior.motion().go_to_point()) {
-          move = motion_parser_->fromGoToPoint(behavior.motion().go_to_point(), ally);
-        } else if (behavior.motion().rotate_in_point()) {
-          move = motion_parser_->fromRotateInPoint(behavior.motion().rotate_in_point(), ally);
-        } else if (behavior.motion().rotate_on_self()) {
-          move = motion_parser_->fromRotateOnSelf(behavior.motion().rotate_on_self(), ally);
+        if (behavior.motion->go_to_point) {
+          move = motion_parser_->fromGoToPoint(behavior.motion->go_to_point.value(), ally);
+        } else if (behavior.motion->rotate_in_point) {
+          move = motion_parser_->fromRotateInPoint(behavior.motion->rotate_in_point.value(), ally);
+        } else if (behavior.motion->rotate_on_self) {
+          move = motion_parser_->fromRotateOnSelf(behavior.motion->rotate_on_self.value(), ally);
         } else {
           // PROCESSAMENTO DO GO_TO_POINT_WITH_TRAJECTORY
         }
 
-        output.set_left_velocity(move.velocity().y);
-        output.set_forward_velocity(move.velocity().x);
-        output.set_angular_velocity(move.angularVelocity());
+        output.left_velocity = move.velocity().y;
+        output.forward_velocity = move.velocity().x;
+        output.angular_velocity = move.angularVelocity();
 
-        if (behavior.motion().has_peripheral_actuation()) {
-          output.mutable_peripheral_actuation()->CopyFrom(behavior.motion().peripheral_actuation());
+        if (behavior.motion->peripheral_actuation) {
+          output.peripheral_actuation = behavior.motion->peripheral_actuation;
         }
 
         // TODO: Add other fields to output
 
-      } else if (behavior.has_planning()) {
+      } else if (behavior.planning) {
         // PROCESSAMENTO DO PLANNING
       } else {
         // PROCESSAMENTO DO NAVIGATION
       }
     }
 
-    navigation_output.add_output()->CopyFrom(output);
+    navigation_output.output.emplace_back(output);
   }
   ////////////////////////////////////////////////////////////////////////////
   return navigation_output;

@@ -4,6 +4,7 @@
 #include "messages/behavior/behavior_message.h"
 #include "navigation/messaging/receiver/payload.h"
 #include "navigation/processing/messages/behavior/behavior_message.h"
+#include "navigation/processing/messages/navigation/navigation_message.h"
 #include "navigation/processing/messages/perception/detection/detection_message.h"
 #include "navigation/processing/messages/referee/game_status_message.h"
 #include "navigation/processing/motion_parser/motion_parser.h"
@@ -26,16 +27,14 @@ class INavigationProcessor {
 
   virtual ~INavigationProcessor() = default;
 
-  virtual std::optional<::protocols::navigation::Navigation>
-  process(std::span<const Payload> payloads) = 0;
+  virtual std::optional<NavigationMessage> process(std::span<const Payload> payloads) = 0;
 };
 
 class NavigationProcessor : public INavigationProcessor {
  public:
   explicit NavigationProcessor(std::unique_ptr<IMotionParser> motion_parser);
 
-  std::optional<::protocols::navigation::Navigation>
-  process(std::span<const Payload> payloads) override;
+  std::optional<NavigationMessage> process(std::span<const Payload> payloads) override;
 
  private:
   std::unique_ptr<IMotionParser> motion_parser_;

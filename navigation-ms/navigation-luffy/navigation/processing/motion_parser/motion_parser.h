@@ -1,6 +1,9 @@
 #ifndef NAVIGATION_PROCESSING_MOTION_PARSER_H
 #define NAVIGATION_PROCESSING_MOTION_PARSER_H
 
+#include "navigation/processing/messages/motion/motion_message.h"
+#include "navigation/processing/messages/perception/robot/robot_message.h"
+
 #include <navigation/processing/entities/robot_move.h>
 #include <protocols/behavior/behavior_unification.pb.h>
 #include <protocols/behavior/motion.pb.h>
@@ -21,16 +24,15 @@ class IMotionParser {
 
   virtual ~IMotionParser() = default;
 
-  virtual RobotMove fromGoToPoint(const ::protocols::behavior::GoToPoint& go_to_point,
-                                  const ::protocols::perception::Robot& robot)
+  virtual RobotMove fromGoToPoint(const GoToPointMessage& go_to_point, const RobotMessage& robot)
       = 0;
 
-  virtual RobotMove fromRotateInPoint(const ::protocols::behavior::RotateInPoint& rotate_in_point,
-                                      const ::protocols::perception::Robot& robot)
+  virtual RobotMove fromRotateInPoint(const RotateInPointMessage& rotate_in_point,
+                                      const RobotMessage& robot)
       = 0;
 
-  virtual RobotMove fromRotateOnSelf(const ::protocols::behavior::RotateOnSelf& rotate_on_self,
-                                     const ::protocols::perception::Robot& robot)
+  virtual RobotMove fromRotateOnSelf(const RotateOnSelfMessage& rotate_on_self,
+                                     const RobotMessage& robot)
       = 0;
 };
 
@@ -38,14 +40,13 @@ class MotionParser : public IMotionParser {
  public:
   MotionParser();
 
-  RobotMove fromGoToPoint(const ::protocols::behavior::GoToPoint& go_to_point,
-                          const ::protocols::perception::Robot& robot) override;
+  RobotMove fromGoToPoint(const GoToPointMessage& go_to_point, const RobotMessage& robot) override;
 
-  RobotMove fromRotateInPoint(const ::protocols::behavior::RotateInPoint& rotate_in_point,
-                              const ::protocols::perception::Robot& robot) override;
+  RobotMove fromRotateInPoint(const RotateInPointMessage& rotate_in_point,
+                              const RobotMessage& robot) override;
 
-  RobotMove fromRotateOnSelf(const ::protocols::behavior::RotateOnSelf& rotate_on_self,
-                             const ::protocols::perception::Robot& robot) override;
+  RobotMove fromRotateOnSelf(const RotateOnSelfMessage& rotate_on_self,
+                             const RobotMessage& robot) override;
 };
 
 } // namespace navigation

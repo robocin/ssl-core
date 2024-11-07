@@ -1,6 +1,7 @@
 #ifndef NAVIGATION_PROCESSING_MESSAGES_MOTION_MOTION_MESSAGE_H
 #define NAVIGATION_PROCESSING_MESSAGES_MOTION_MOTION_MESSAGE_H
 
+#include "navigation/processing/messages/common/peripheral_actuation/peripheral_actuation.h"
 #include "navigation/processing/messages/common/robot_id/robot_id_message.h"
 #include "protocols/behavior/behavior_unification.pb.h"
 #include "robocin/geometry/point2d.h"
@@ -196,7 +197,9 @@ class MotionMessage : public robocin::IProtoConvertible<protocols::behavior::uni
                          std::optional<GoToPointWithTrajectoryMessage> go_to_point_with_trajectory
                          = std::nullopt,
                          std::optional<RotateInPointMessage> rotate_in_point = std::nullopt,
-                         std::optional<RotateOnSelfMessage> rotate_on_self = std::nullopt);
+                         std::optional<RotateOnSelfMessage> rotate_on_self = std::nullopt,
+                         std::optional<PeripheralActuationMessage> peripheral_actuation
+                         = std::nullopt);
 
   explicit MotionMessage(const protocols::behavior::unification::Motion& motion_proto);
 
@@ -204,6 +207,7 @@ class MotionMessage : public robocin::IProtoConvertible<protocols::behavior::uni
   std::optional<GoToPointWithTrajectoryMessage> go_to_point_with_trajectory;
   std::optional<RotateInPointMessage> rotate_in_point;
   std::optional<RotateOnSelfMessage> rotate_on_self;
+  std::optional<PeripheralActuationMessage> peripheral_actuation;
 
   [[nodiscard]] protocols::behavior::unification::Motion toProto() const override;
 

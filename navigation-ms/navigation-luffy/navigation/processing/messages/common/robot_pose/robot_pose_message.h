@@ -16,7 +16,7 @@ class RobotPoseMessage : public robocin::IProtoConvertible<protocols::common::Ro
   float orientation;
 
   [[nodiscard]] protocols::common::RobotPose toProto() const override;
-  
+
   void fromProto(const protocols::common::RobotPose& robot_pose_proto) override;
 };
 } // namespace navigation

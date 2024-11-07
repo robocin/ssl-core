@@ -26,9 +26,9 @@ OutputMessage::OutputMessage(const protocols::behavior::unification::Output& out
   OutputMessage::fromProto(output_proto);
 }
 
-OutputMessage::OutputMessage(RobotIdMessage robot_id,
-                             MotionMessage motion,
-                             PlanningMessage planning) :
+OutputMessage::OutputMessage(std::optional<RobotIdMessage> robot_id,
+                             std::optional<MotionMessage> motion,
+                             std::optional<PlanningMessage> planning) :
     robot_id(std::move(robot_id)),
     motion(std::move(motion)),
     planning(std::move(planning)) {}

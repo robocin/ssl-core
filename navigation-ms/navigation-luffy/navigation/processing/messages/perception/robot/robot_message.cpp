@@ -87,5 +87,4 @@ void RobotMessage::fromProto(const rc::Robot& robot_proto) {
 };
 
 RobotMessage::RobotMessage(const rc::Robot& robot_proto) { RobotMessage::fromProto(robot_proto); }
-
 } // namespace navigation

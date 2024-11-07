@@ -6,6 +6,7 @@
 #include "navigation/processing/messages/planning/planning_message.h"
 
 #include <cstdint>
+#include <optional>
 #include <protocols/behavior/behavior_unification.pb.h>
 #include <protocols/behavior/planning.pb.h>
 #include <protocols/common/robot_id.pb.h>
@@ -19,12 +20,15 @@ namespace navigation {
 
 class OutputMessage : public robocin::IProtoConvertible<protocols::behavior::unification::Output> {
  public:
-  OutputMessage(RobotIdMessage robot_id, MotionMessage motion, PlanningMessage planning);
+  ~OutputMessage() override;
+  OutputMessage(std::optional<RobotIdMessage> robot_id = std::nullopt,
+                std::optional<MotionMessage> motion = std::nullopt,
+                std::optional<PlanningMessage> planning = std::nullopt);
   explicit OutputMessage(const protocols::behavior::unification::Output& output_proto);
 
-  RobotIdMessage robot_id;
-  MotionMessage motion;
-  PlanningMessage planning;
+  std::optional<RobotIdMessage> robot_id;
+  std::optional<MotionMessage> motion;
+  std::optional<PlanningMessage> planning;
 
   [[nodiscard]] protocols::behavior::unification::Output toProto() const override {
     return protocols::behavior::unification::Output{};

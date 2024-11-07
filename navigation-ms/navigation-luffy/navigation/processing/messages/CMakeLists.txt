@@ -31,4 +31,5 @@ robocin_cpp_library(
      DEPS common::utility
           common::output
           protocols::protobufs
+          common::geometry
 )

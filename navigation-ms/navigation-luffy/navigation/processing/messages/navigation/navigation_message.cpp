@@ -13,8 +13,6 @@ void NavigationMessage::fromProto(
     output.emplace_back(output_proto);
   }
 }
-NavigationOutputMessage::NavigationOutputMessage() = default;
-
 NavigationMessage::NavigationMessage(
     const protocols::navigation::Navigation& unification_behavior_proto) {
   NavigationMessage::fromProto(unification_behavior_proto);
@@ -50,6 +48,7 @@ NavigationOutputMessage::NavigationOutputMessage(
     std::optional<uint32_t> sequence_number,
     std::optional<robocin::Point2Df> output_global_linear_velocity,
     std::optional<RobotPoseMessage> robot_pose) :
+
     robot_id(std::move(robot_id)),
     peripheral_actuation(std::move(peripheral_actuation)),
     timestamp(timestamp),
