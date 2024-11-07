@@ -69,7 +69,7 @@ BehaviorProcessor::BehaviorProcessor(
     goalkeeper_state_machine_{std::move(goalkeeper_state_machine)} {}
 
 std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> payloads) {
-
+  robocin::ilog("BEHAVIOR");
   if (std::vector<rc::GameStatus> game_status_messages = gameStatusFromPayloads(payloads);
       !game_status_messages.empty()) {
     last_game_status_ = game_status_messages.back();
@@ -94,16 +94,15 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
                 last_game_status_.value());
 
   robocin::ilog("{}", world_.game_status.command->stop.has_value());
-  // if (!world_.game_status.command->stop.has_value()) {
-  //   // Sempre azul
-  //   behavior_message.output.emplace_back(
-  //       RobotIdMessage{pAllyColor, 0},
-  //       MotionMessage{
-  //           GoToPointMessage{robocin::Point2Df{world_.ball.position->x,
-  //           world_.ball.position->y}}});
-  // }
+  if (!world_.game_status.command->stop.has_value()) {
+    // Sempre azul
+    behavior_message.output.emplace_back(
+        RobotIdMessage{pAllyColor, 0},
+        MotionMessage{
+            GoToPointMessage{robocin::Point2Df{world_.ball.position->x, world_.ball.position->y}}});
+  }
 
-  // return behavior_message.toProto();
+  return behavior_message.toProto();
 }
 
 } // namespace behavior
