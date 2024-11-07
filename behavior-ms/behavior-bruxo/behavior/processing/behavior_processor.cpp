@@ -95,6 +95,7 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
   world_.update(last_decision_.value(),
                 {last_detection.robots().begin(), last_detection.robots().end()},
                 {last_detection.balls().begin(), last_detection.balls().end()},
+                last_detection.field(),
                 last_game_status_.value());
   
   for (const auto& robot : world_.allies) {
