@@ -16,6 +16,7 @@ class GoalkeeperStateMachine : IStateMachine {
  private:
   IState* current_state_;
   OutputMessage output;
+  World world_;
 
  public:
   explicit GoalkeeperStateMachine();

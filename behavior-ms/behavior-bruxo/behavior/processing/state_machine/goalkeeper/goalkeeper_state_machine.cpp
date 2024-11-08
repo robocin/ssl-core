@@ -21,6 +21,6 @@ void GoalkeeperStateMachine::transitionTo(IState* state) {
 
 void GoalkeeperStateMachine::run() {
   robocin::ilog("GoalkeeperStateMachine running!");
-  output = current_state_->exec();
+  output = current_state_->exec(world_);
 }
 } // namespace behavior

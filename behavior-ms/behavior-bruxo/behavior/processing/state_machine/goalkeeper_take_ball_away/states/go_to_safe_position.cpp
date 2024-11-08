@@ -7,7 +7,7 @@ namespace behavior {
 
 GoToSafePosition::GoToSafePosition() = default;
 
-OutputMessage GoToSafePosition::exec() {
+OutputMessage GoToSafePosition::exec(const World& world) {
   robocin::ilog("Exec GoToSafePosition state");
   state_machine_->transitionTo(new GoToBall);
 

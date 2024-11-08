@@ -8,14 +8,13 @@ class IProtoConvertible {
  public:
   IProtoConvertible() = default;
 
-  IProtoConvertible(const IProtoConvertible&) = delete;
-  IProtoConvertible& operator=(const IProtoConvertible&) = delete;
+  IProtoConvertible(const IProtoConvertible&) = default;
+  IProtoConvertible& operator=(const IProtoConvertible&) = default;
   IProtoConvertible(IProtoConvertible&&) noexcept = default;
   IProtoConvertible& operator=(IProtoConvertible&&) noexcept = default;
 
   virtual ~IProtoConvertible() = default;
 
-  
   virtual T toProto() const = 0;
   virtual void fromProto(const T& proto) = 0;
 };

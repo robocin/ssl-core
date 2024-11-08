@@ -6,7 +6,7 @@ namespace behavior {
 
 Other::Other() = default;
 
-OutputMessage Other::exec() {
+OutputMessage Other::exec(const World& world) {
   robocin::ilog("Exec other state and go back");
   state_machine_->transitionTo(new Guard);
 
