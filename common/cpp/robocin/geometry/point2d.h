@@ -255,13 +255,6 @@ struct Point2D {
     return result;
   }
 
-  /*
-  Geometry2D::distancePointSegment
-  Geometry2D::distancePointLine
-  Geometry2D::pointInPolygon
-  Geometry2D::pointOnPolygon
-  */
-
   /*!
    * @param a, b form the line (a, b)
    * @return Returns the distance between the point and its projection onto line defined by a and
