@@ -230,7 +230,7 @@ services:
       dockerfile: behavior-ms/behavior-bruxo/behavior-bruxo.Dockerfile
     volumes:
       - .ssl-core:/tmp/.ssl-core
-    attach: true
+    attach: false
   
   communication-ms:
     container_name: communication-ms

@@ -1,13 +1,16 @@
 #include "navigation/processing/navigation_processor.h"
 
 #include "navigation/messaging/receiver/payload.h"
+#include "parameters.h"
 
 #include <protocols/behavior/behavior_unification.pb.h>
 #include <protocols/behavior/motion.pb.h>
 #include <protocols/behavior/planning.pb.h>
+#include <protocols/common/robot_id.pb.h>
 #include <protocols/navigation/navigation.pb.h>
 #include <protocols/perception/detection.pb.h>
 #include <ranges>
+#include <robocin/output/log.h>
 
 namespace navigation {
 
@@ -34,9 +37,31 @@ using ::protocols::common::RobotId;
 namespace {
 
 protocols::perception::Robot
-findMyRobot(int id, const google::protobuf::RepeatedPtrField<rc::Robot>& allies) { // implement
+findMyRobot(int number, const google::protobuf::RepeatedPtrField<rc::Robot>& robots) {
+  // This function does not handle a case where it does not find a robot
+  for (auto& robot : robots) {
+    auto number_match = robot.robot_id().number() == number;
+    if (number_match) {
+      return robot;
+    }
+  }
+
   return protocols::perception::Robot{};
 }
+
+rc::Output makeOutput(RobotMove move, const protocols::behavior::unification::Output& behavior) {
+  rc::Output output;
+
+  output.set_left_velocity(move.velocity().y);
+  output.set_forward_velocity(move.velocity().x);
+  output.set_angular_velocity(move.angularVelocity());
+
+  if (behavior.motion().has_peripheral_actuation()) {
+    output.mutable_peripheral_actuation()->CopyFrom(behavior.motion().peripheral_actuation());
+  }
+
+  return output;
+};
 
 std::vector<rc::Behavior> behaviorFromPayloads(std::span<const Payload> payloads) {
   return payloads | std::views::transform(&Payload::getBehaviors) | std::views::join
@@ -71,14 +96,18 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
   }
   rc::Detection last_detection = detections.back();
 
+  // For now, doing only for one robot
   RobotMove move;
   for (const auto& behavior : last_behavior_->output()) {
+    rc::Robot robot;
     if (behavior.has_motion()) {
-      // Mock only robot with I: 0
-      rc::Robot robot_mock{};
-      move = motion_parser_->fromGoToPoint(behavior.motion().go_to_point(),
-                                           findMyRobot(0, last_detection.robots()));
+      robot = findMyRobot(behavior.robot_id().number(), last_detection.robots());
+
+      // todo: parser is crashing
+      // move = motion_parser_->fromGoToPoint(behavior.motion().go_to_point(), robot);
     }
+
+    navigation_output.add_output()->CopyFrom(makeOutput(move, behavior));
   }
 
   return navigation_output;
