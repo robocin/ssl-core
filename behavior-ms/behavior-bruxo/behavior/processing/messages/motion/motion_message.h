@@ -14,7 +14,7 @@ namespace behavior {
 ()
 */
 class GoToPointMessage : public robocin::IProtoConvertible<protocols::behavior::GoToPoint> {
-
+ public:
   enum MovingProfile {
     // Move safely profile
     SafeInStopSpeed = 0,
@@ -51,7 +51,6 @@ class GoToPointMessage : public robocin::IProtoConvertible<protocols::behavior::
     NORMAL = 1,
   };
 
- public:
   explicit GoToPointMessage(std::optional<robocin::Point2D<float>> target = std::nullopt,
                             std::optional<double> target_angle = std::nullopt,
                             std::optional<MovingProfile> moving_profile = std::nullopt,

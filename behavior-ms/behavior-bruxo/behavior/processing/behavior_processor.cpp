@@ -6,6 +6,7 @@
 #include "common/game_command/game_command_message.h"
 #include "common/robot_id/robot_id.h"
 #include "motion/motion_message.h"
+#include "perception/robot/robot_message.h"
 #include "state_machine/goalkeeper/goalkeeper_state_machine.h"
 
 #include <optional>
@@ -41,9 +42,35 @@ using ::protocols::behavior::unification::Behavior;
 using ::protocols::behavior::unification::Motion;
 using ::protocols::behavior::unification::Output;
 
+using ::protocols::perception::Robot;
+
 using ::protocols::referee::GameStatus;
 
 } // namespace rc
+
+RobotMessage findMyRobot(int number, std::vector<RobotMessage>& robots) {
+  // This function does not handle a case where it does not find a robot
+  for (auto& robot : robots) {
+    auto number_match = robot.robot_id->number.value() == number;
+    if (number_match) {
+
+      return RobotMessage{
+          robot.confidence.value(),
+          RobotIdMessage{robot.robot_id->color.value(), robot.robot_id->number.value()},
+          robot.position.value(),
+          robot.angle.value(),
+          robot.velocity.value(),
+          robot.angular_velocity.value(),
+          robot.radius.value(),
+          robot.height.value(),
+          robot.dribbler_width.value(),
+          std::nullopt /* Feedback */};
+    }
+  }
+
+  // Unreachble hopefully
+  return RobotMessage{};
+}
 
 std::vector<rc::Detection> detectionFromPayloads(std::span<const Payload> payloads) {
   return payloads | std::views::transform(&Payload::getDetectionMessages) | std::views::join
@@ -93,13 +120,19 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
                 last_detection.field(),
                 last_game_status_.value());
 
-  robocin::ilog("{}", world_.game_status.command->stop.has_value());
   if (!world_.game_status.command->stop.has_value()) {
-    // Sempre azul
+    auto robot = findMyRobot(2, world_.allies);
+    auto ball_2_d = robocin::Point2Df(world_.ball.position->x, world_.ball.position->y);
+    auto target_angle = (ball_2_d - robot.position.value()).angle();
+
     behavior_message.output.emplace_back(
         RobotIdMessage{pAllyColor, 0},
         MotionMessage{
-            GoToPointMessage{robocin::Point2Df{world_.ball.position->x, world_.ball.position->y}}});
+            GoToPointMessage{robocin::Point2Df{world_.ball.position->x, world_.ball.position->y},
+                             target_angle,
+                             GoToPointMessage::MovingProfile::DirectApproachBallSpeed,
+                             GoToPointMessage::PrecisionToTarget::HIGH,
+                             true /* sync_rotate_with_linear_movement */}});
   }
 
   return behavior_message.toProto();

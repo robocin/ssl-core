@@ -95,6 +95,7 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
     return std::nullopt;
   }
   rc::Detection last_detection = detections.back();
+  robocin::ilog("LAFAAAAAAAA!");
 
   // For now, doing only for one robot
   RobotMove move;
@@ -104,7 +105,8 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
       robot = findMyRobot(behavior.robot_id().number(), last_detection.robots());
 
       // todo: parser is crashing
-      // move = motion_parser_->fromGoToPoint(behavior.motion().go_to_point(), robot);
+      move = motion_parser_->fromGoToPoint(behavior.motion().go_to_point(), robot);
+      robocin::ilog("Parsed!");
     }
 
     navigation_output.add_output()->CopyFrom(makeOutput(move, behavior));
