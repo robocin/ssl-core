@@ -6,6 +6,7 @@
 namespace navigation {
 
 class MoveState {
+ protected:
   ::robocin::Point2Dd velocity_;
   ::robocin::Point2Dd position_;
   double angular_velocity_;
