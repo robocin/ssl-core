@@ -5,4 +5,5 @@ robocin_cpp_library(
   DEPS navigation_entities
        navigation_utils
        motion_parser
+       messages
 )

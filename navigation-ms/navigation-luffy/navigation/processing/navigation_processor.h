@@ -1,7 +1,12 @@
 #ifndef NAVIGATION_PROCESSING_NAVIGATION_PROCESSOR_H
 #define NAVIGATION_PROCESSING_NAVIGATION_PROCESSOR_H
 
+#include "messages/behavior/behavior_message.h"
 #include "navigation/messaging/receiver/payload.h"
+#include "navigation/processing/messages/behavior/behavior_message.h"
+#include "navigation/processing/messages/navigation/navigation_message.h"
+#include "navigation/processing/messages/perception/detection/detection_message.h"
+#include "navigation/processing/messages/referee/game_status_message.h"
 #include "navigation/processing/motion_parser/motion_parser.h"
 
 #include <memory>

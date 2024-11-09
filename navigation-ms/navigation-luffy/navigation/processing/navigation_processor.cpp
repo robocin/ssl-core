@@ -1,10 +1,16 @@
 #include "navigation/processing/navigation_processor.h"
 
 #include "navigation/messaging/receiver/payload.h"
+#include "navigation/processing/messages/behavior/behavior_message.h"
+#include "navigation/processing/messages/common/robot_id/robot_id_message.h"
+#include "navigation/processing/messages/navigation/navigation_message.h"
+#include "navigation/processing/messages/perception/detection/detection_message.h"
+#include "navigation/processing/messages/perception/robot/robot_message.h"
+#include "navigation/processing/messages/planning/planning_message.h"
+#include "navigation/processing/messages/referee/game_status_message.h"
 
+#include <optional>
 #include <protocols/behavior/behavior_unification.pb.h>
-#include <protocols/behavior/motion.pb.h>
-#include <protocols/behavior/planning.pb.h>
 #include <protocols/navigation/navigation.pb.h>
 #include <protocols/perception/detection.pb.h>
 #include <protocols/referee/game_status.pb.h>
@@ -15,21 +21,9 @@ namespace navigation {
 namespace parameters = ::robocin::parameters;
 
 namespace rc {
-
-using ::protocols::behavior::Planning;
 using ::protocols::behavior::unification::Behavior;
-using ::protocols::behavior::unification::Motion;
-
-using ::protocols::referee::GameStatus;
-
-using ::protocols::navigation::Navigation;
-using ::protocols::navigation::Output;
-
 using ::protocols::perception::Detection;
-using ::protocols::perception::Robot;
-
-using ::protocols::common::PeripheralActuation;
-using ::protocols::common::RobotId;
+using ::protocols::referee::GameStatus;
 
 } // namespace rc
 
@@ -55,9 +49,8 @@ std::vector<rc::GameStatus> gameStatusFromPayloads(std::span<const Payload> payl
 NavigationProcessor::NavigationProcessor(std::unique_ptr<IMotionParser> motion_parser) :
     motion_parser_(std::move(motion_parser)) {}
 
-std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Payload> payloads) {
-  rc::Navigation navigation_output;
-
+std::optional<::protocols::navigation::Navigation>
+NavigationProcessor::process(std::span<const Payload> payloads) {
   if (std::vector<rc::Behavior> behaviors = behaviorFromPayloads(payloads); !behaviors.empty()) {
     last_behavior_ = behaviors.back();
   }
@@ -76,55 +69,12 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
     // a new package must be generated only when a new detection is received.
     return std::nullopt;
   }
-  rc::Detection last_detection = detections.back();
+  
+  ::protocols::perception::Detection last_detection = detections.back();
 
-  ///////////////////////////////////////////////////////////////////////////
-  for (const auto& behavior : last_behavior_->output()) {
-    rc::Output output;
-    rc::Robot ally;
+  ::protocols::navigation::Navigation navigation_proto;
 
-    for (const auto& robot : last_detection.robots()) {
-      if (robot.robot_id().number() == behavior.robot_id().number()) {
-        ally = robot;
-        break;
-      }
-    }
-    if (ally.has_robot_id()) {
-      output.mutable_robot_id()->CopyFrom(ally.robot_id());
-
-      if (behavior.has_motion()) {
-        RobotMove move;
-        if (behavior.motion().has_go_to_point()) {
-          move = motion_parser_->fromGoToPoint(behavior.motion().go_to_point(), ally);
-        } else if (behavior.motion().has_rotate_in_point()) {
-          move = motion_parser_->fromRotateInPoint(behavior.motion().rotate_in_point(), ally);
-        } else if (behavior.motion().has_rotate_on_self()) {
-          move = motion_parser_->fromRotateOnSelf(behavior.motion().rotate_on_self(), ally);
-        } else {
-          // PROCESSAMENTO DO GO_TO_POINT_WITH_TRAJECTORY
-        }
-
-        output.set_left_velocity(move.velocity().y);
-        output.set_forward_velocity(move.velocity().x);
-        output.set_angular_velocity(move.angularVelocity());
-
-        if (behavior.motion().has_peripheral_actuation()) {
-          output.mutable_peripheral_actuation()->CopyFrom(behavior.motion().peripheral_actuation());
-        }
-
-        // TODO: Add other fields to output
-
-      } else if (behavior.has_planning()) {
-        // PROCESSAMENTO DO PLANNING
-      } else {
-        // PROCESSAMENTO DO NAVIGATION
-      }
-    }
-
-    navigation_output.add_output()->CopyFrom(output);
-  }
-  ////////////////////////////////////////////////////////////////////////////
-  return navigation_output;
+  return navigation_proto;
 }
 
 } // namespace navigation
