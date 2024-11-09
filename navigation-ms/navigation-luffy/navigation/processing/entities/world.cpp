@@ -2,9 +2,11 @@
 
 #include "navigation/processing/messages/behavior/behavior_message.h"
 #include "navigation/processing/messages/common/robot_id/robot_id_message.h"
+#include "navigation/processing/messages/motion/motion_message.h"
 #include "navigation/processing/messages/perception/ball/ball_message.h"
 #include "navigation/processing/messages/perception/field/field_message.h"
 #include "navigation/processing/messages/perception/robot/robot_message.h"
+#include "navigation/processing/messages/planning/planning_message.h"
 #include "navigation/processing/messages/referee/game_status_message.h"
 #include "world.h"
 
@@ -25,7 +27,7 @@ void World::takeBallHighConfidence(const std::vector<BallMessage>& balls) {
           return ball.confidence < candidate.confidence;
         });
 
-  this->ball = *max_ball;
+  this->ball = std::move(BallMessage{*max_ball});
 }
 
 void World::takeRobotsData(const OutputMessage& behavior, const std::vector<RobotMessage>& robots) {
@@ -33,16 +35,14 @@ void World::takeRobotsData(const OutputMessage& behavior, const std::vector<Robo
     return;
   }
 
+  this->robot_motion = std::nullopt;
   if (behavior.motion) {
-    this->robot_motion = behavior.motion;
-  } else {
-    this->robot_motion = std::nullopt;
+    this->robot_motion = MotionMessage(behavior.motion.value());
   }
 
+  this->robot_planning = std::nullopt;
   if (behavior.planning) {
-    this->robot_planning = behavior.planning;
-  } else {
-    this->robot_planning = std::nullopt;
+    this->robot_planning = PlanningMessage(behavior.planning.value());
   }
 
   this->ally_color = behavior.robot_id.value().color.value();
@@ -54,7 +54,7 @@ void World::takeRobotsData(const OutputMessage& behavior, const std::vector<Robo
     RobotMessage robot_message(robot);
 
     if (robot.robot_id->number == behavior.robot_id->number && isAlly(robot_message)) {
-      this->robot = robot_message; // TODO: Check if allies should include our ally robot
+      this->robot = RobotMessage(robot_message);
     }
 
     if (isAlly(robot_message)) {
@@ -66,12 +66,12 @@ void World::takeRobotsData(const OutputMessage& behavior, const std::vector<Robo
 }
 
 void World::takeGameStatus(const GameStatusMessage& game_status) {
-  this->game_status = game_status;
+  this->game_status = GameStatusMessage(game_status);
 }
 
 bool World::isAlly(const RobotMessage& robot) const { return robot.robot_id->color == ally_color; }
 
-void World::takeField(const FieldMessage& field) { this->field = field; }
+void World::takeField(const FieldMessage& field) { this->field = FieldMessage(field); }
 
 void World::update(const OutputMessage& behavior,
                    const std::vector<RobotMessage>& robots,
