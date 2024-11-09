@@ -1,13 +1,19 @@
 #ifndef NAVIGATION_PROCESSING_NAVIGATION_PROCESSOR_H
 #define NAVIGATION_PROCESSING_NAVIGATION_PROCESSOR_H
 
+#include "messages/behavior/behavior_message.h"
 #include "navigation/messaging/receiver/payload.h"
+#include "navigation/processing/messages/behavior/behavior_message.h"
+#include "navigation/processing/messages/navigation/navigation_message.h"
+#include "navigation/processing/messages/perception/detection/detection_message.h"
+#include "navigation/processing/messages/referee/game_status_message.h"
 #include "navigation/processing/motion_parser/motion_parser.h"
 
 #include <memory>
 #include <optional>
 #include <protocols/behavior/behavior_unification.pb.h>
 #include <protocols/navigation/navigation.pb.h>
+#include <protocols/referee/game_status.pb.h>
 #include <robocin/parameters/parameters.h>
 
 namespace navigation {
@@ -36,8 +42,8 @@ class NavigationProcessor : public INavigationProcessor {
 
  private:
   std::unique_ptr<IMotionParser> motion_parser_;
-
   std::optional<::protocols::behavior::unification::Behavior> last_behavior_;
+  std::optional<::protocols::referee::GameStatus> last_game_status_;
 };
 
 } // namespace navigation

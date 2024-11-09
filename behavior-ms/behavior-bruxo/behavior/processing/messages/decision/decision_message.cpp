@@ -1,6 +1,33 @@
 #include "behavior/processing/messages/decision/decision_message.h"
 
+#include <protocols/decision/decision.pb.h>
+
 namespace behavior {
+
+protocols::decision::Behavior::BehaviorId
+getProtoBehaviorId(BehaviorDecisionMessage::BehaviorId id) {
+  switch (id) {
+    case BehaviorDecisionMessage::BehaviorId::UNSPECIFIED:
+      return protocols::decision::Behavior::BehaviorId::Behavior_BehaviorId_UNSPECIFIED;
+    case BehaviorDecisionMessage::BehaviorId::GOALKEEPER:
+      return protocols::decision::Behavior::BehaviorId::Behavior_BehaviorId_GOALKEEPER;
+    case BehaviorDecisionMessage::BehaviorId::FORWARD:
+      return protocols::decision::Behavior::BehaviorId::Behavior_BehaviorId_FORWARD;
+  }
+  return protocols::decision::Behavior::BehaviorId::Behavior_BehaviorId_UNSPECIFIED;
+}
+
+BehaviorDecisionMessage::BehaviorId getBehaviorId(protocols::decision::Behavior::BehaviorId id) {
+  switch (id) {
+    case protocols::decision::Behavior::BehaviorId::Behavior_BehaviorId_UNSPECIFIED:
+      return BehaviorDecisionMessage::BehaviorId::UNSPECIFIED;
+    case protocols::decision::Behavior::BehaviorId::Behavior_BehaviorId_GOALKEEPER:
+      return BehaviorDecisionMessage::BehaviorId::GOALKEEPER;
+    case protocols::decision::Behavior::BehaviorId::Behavior_BehaviorId_FORWARD:
+      return BehaviorDecisionMessage::BehaviorId::FORWARD;
+  }
+  return BehaviorDecisionMessage::BehaviorId::UNSPECIFIED;
+}
 
 BehaviorDecisionMessage::BehaviorDecisionMessage() :
     id(std::nullopt),
@@ -10,11 +37,16 @@ BehaviorDecisionMessage::BehaviorDecisionMessage() :
 protocols::decision::Behavior BehaviorDecisionMessage::toProto() const {
   protocols::decision::Behavior behavior_proto;
 
-  return protocols::decision::Behavior{};
+  behavior_proto.set_id(getProtoBehaviorId(id.value()));
+  *behavior_proto.mutable_robot_id() = robot_id.value().toProto();
+  behavior_proto.mutable_target()->set_x(target->x);
+  behavior_proto.mutable_target()->set_y(target->y);
+
+  return behavior_proto;
 }
 
 void BehaviorDecisionMessage::fromProto(const protocols::decision::Behavior& behavior_proto) {
-  id = behavior_proto.id();
+  id = getBehaviorId(behavior_proto.id());
   if (behavior_proto.has_robot_id()) {
     robot_id = RobotIdMessage{};
     robot_id->fromProto(behavior_proto.robot_id());

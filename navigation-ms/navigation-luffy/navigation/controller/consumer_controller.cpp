@@ -1,5 +1,6 @@
 #include "navigation/controller/consumer_controller.h"
 
+#include "messages/navigation/navigation_message.h"
 #include "navigation/messaging/receiver/payload.h"
 
 #include <protocols/navigation/navigation.pb.h>
@@ -48,7 +49,8 @@ void ConsumerController::exec(std::span<const Payload> payloads) {
     return;
   }
 
-  if (std::optional<rc::Navigation> navigation_msg = navigation_processor_->process(payloads);
+  if (std::optional<::protocols::navigation::Navigation> navigation_msg
+      = navigation_processor_->process(payloads);
       navigation_msg != std::nullopt) {
     message_sender_->send(*navigation_msg);
   }

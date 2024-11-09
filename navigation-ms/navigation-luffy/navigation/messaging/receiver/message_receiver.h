@@ -28,6 +28,7 @@ class MessageReceiver : public IMessageReceiver {
  public:
   MessageReceiver(std::unique_ptr<::robocin::IZmqSubscriberSocket> behavior_socket,
                   std::unique_ptr<::robocin::IZmqSubscriberSocket> perception_socket,
+                  std::unique_ptr<::robocin::IZmqSubscriberSocket> game_status_socket,
                   std::unique_ptr<::robocin::IZmqPoller> zmq_poller,
                   std::unique_ptr<IPayloadMapper> payload_mapper);
 
@@ -36,6 +37,7 @@ class MessageReceiver : public IMessageReceiver {
  private:
   std::unique_ptr<::robocin::IZmqSubscriberSocket> behavior_socket_;
   std::unique_ptr<::robocin::IZmqSubscriberSocket> perception_socket_;
+  std::unique_ptr<::robocin::IZmqSubscriberSocket> game_status_socket_;
   std::unique_ptr<::robocin::IZmqPoller> zmq_poller_;
   std::unique_ptr<IPayloadMapper> payload_mapper_;
 };
