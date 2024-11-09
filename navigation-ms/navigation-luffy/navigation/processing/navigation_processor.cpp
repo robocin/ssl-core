@@ -69,12 +69,11 @@ NavigationProcessor::process(std::span<const Payload> payloads) {
     // a new package must be generated only when a new detection is received.
     return std::nullopt;
   }
+  
   ::protocols::perception::Detection last_detection = detections.back();
 
-  ///////////////////////////////////////////////////////////////////////////
   ::protocols::navigation::Navigation navigation_proto;
 
-  ////////////////////////////////////////////////////////////////////////////
   return navigation_proto;
 }
 

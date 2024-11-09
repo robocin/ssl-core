@@ -9,13 +9,19 @@ namespace behavior {
 
 class BehaviorDecisionMessage : public robocin::IProtoConvertible<protocols::decision::Behavior> {
  public:
+  enum BehaviorId {
+    UNSPECIFIED = 0,
+    GOALKEEPER = 1,
+    FORWARD = 2
+  };
+
   BehaviorDecisionMessage();
 
   [[nodiscard]] protocols::decision::Behavior toProto() const override;
 
   void fromProto(const protocols::decision::Behavior& behavior) override;
 
-  std::optional<uint32_t> id;
+  std::optional<BehaviorId> id;
   std::optional<RobotIdMessage> robot_id;
   std::optional<robocin::Point2Df> target;
 };
