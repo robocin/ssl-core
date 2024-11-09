@@ -8,7 +8,6 @@ robocin_cpp_library(
           common/robot_pose/robot_pose_message.h
           common/game_command/game_command_message.h
           common/game_event/game_event_message.h
-          decision/decision_message.h
           motion/motion_message.h
           planning/planning_message.h
           perception/robot/robot_message.h
@@ -25,7 +24,6 @@ robocin_cpp_library(
           common/robot_pose/robot_pose_message.cpp
           common/game_command/game_command_message.cpp
           common/game_event/game_event_message.cpp
-          decision/decision_message.cpp
           motion/motion_message.cpp
           planning/planning_message.cpp
           perception/robot/robot_message.cpp

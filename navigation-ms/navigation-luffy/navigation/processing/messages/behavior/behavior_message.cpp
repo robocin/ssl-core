@@ -38,11 +38,5 @@ void OutputMessage::fromProto(const protocols::behavior::unification::Output& ou
   motion = MotionMessage(output_proto.motion());
   planning = PlanningMessage(output_proto.planning());
 }
-BehaviorMessage::BehaviorMessage(std::optional<uint32_t> id,
-                                 std::optional<RobotIdMessage> robot_id,
-                                 std::optional<robocin::Point2D<float>> target) :
-    id(id),
-    robot_id(std::move(robot_id)),
-    target(target) {}
 
 } // namespace navigation

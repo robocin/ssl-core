@@ -10,7 +10,6 @@
 #include <protocols/behavior/behavior_unification.pb.h>
 #include <protocols/behavior/planning.pb.h>
 #include <protocols/common/robot_id.pb.h>
-#include <protocols/decision/decision.pb.h>
 #include <robocin/geometry/point2d.h>
 #include <robocin/utility/iproto_convertible.h>
 #include <sys/types.h>
@@ -51,23 +50,6 @@ class BehaviorUnificationMessage
 
   void
   fromProto(const protocols::behavior::unification::Behavior& unification_behavior_proto) override;
-};
-
-class BehaviorMessage : public robocin::IProtoConvertible<protocols::decision::Behavior> {
- public:
-  BehaviorMessage(std::optional<uint32_t> id,
-                  std::optional<RobotIdMessage> robot_id,
-                  std::optional<robocin::Point2D<float>> target);
-
-  std::optional<uint32_t> id = std::nullopt;
-  std::optional<RobotIdMessage> robot_id = std::nullopt;
-  std::optional<robocin::Point2D<float>> target = std::nullopt;
-
-  [[nodiscard]] protocols::decision::Behavior toProto() const override {
-    return protocols::decision::Behavior{};
-  }
-
-  void fromProto(const protocols::decision::Behavior& behavior_proto) override;
 };
 
 } // namespace navigation
