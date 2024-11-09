@@ -10,12 +10,11 @@ namespace navigation {
 class DribblerCommandMessage
     : public robocin::IProtoConvertible<protocols::common::RobotDribbler::DribblerCommand> {
  public:
-  DribblerCommandMessage();
-  DribblerCommandMessage(double dribbler_speed, bool is_active);
+  explicit DribblerCommandMessage(double dribbler_speed, bool is_active);
   explicit DribblerCommandMessage(
       const protocols::common::RobotDribbler::DribblerCommand& dribbler_command_proto);
-  double dribbler_speed;
-  bool is_active;
+  std::optional<double> dribbler_speed;
+  std::optional<bool> is_active;
 
   [[nodiscard]] protocols::common::RobotDribbler::DribblerCommand toProto() const override;
 
@@ -26,13 +25,17 @@ class DribblerCommandMessage
 class DribblerInfoMessage
     : public robocin::IProtoConvertible<protocols::common::RobotDribbler::DribblerInfo> {
  public:
-  DribblerInfoMessage();
-  DribblerInfoMessage(double dribbler_speed, double dribbler_current, bool is_ball_detected);
+  std::optional<double> dribbler_speed = 0;
+  std::optional<double> dribbler_current = 0;
+  std::optional<bool> is_ball_detected = false;
+
+  explicit DribblerInfoMessage(
+    std::optional<double> dribbler_speed = std::nullopt, 
+    std::optional<double> dribbler_current = std::nullopt, 
+    std::optional<bool> is_ball_detected = std::nullopt);
+
   explicit DribblerInfoMessage(
       const protocols::common::RobotDribbler::DribblerInfo& dribbler_info_proto);
-  double dribbler_speed = 0;
-  double dribbler_current = 0;
-  bool is_ball_detected = false;
 
   [[nodiscard]] protocols::common::RobotDribbler::DribblerInfo toProto() const override;
 
