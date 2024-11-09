@@ -2,6 +2,7 @@
 #define ROBOCIN_MATHEMATICS_H
 
 #include "robocin/geometry/point2d.h"
+#include "robocin/geometry/line.h"
 
 #include <algorithm>
 #include <cmath>
@@ -9,21 +10,6 @@
 #include <type_traits>
 
 namespace mathematics {
-/*!
- * @tparam T arithmetic type.
- * @return Returns true if T is float and the absolute value of f is within 0.00001f of 0.0.
- * @return Returns true if T is double and the absolute value of d is within 0.000000000001 of
- * 0.0.
- * @return Returns true if T is an integer type and equals to 0.
- */
-template <class T>
-[[maybe_unused]] constexpr bool isNull(const T& value) noexcept {
-  if constexpr (std::is_floating_point_v<T>) {
-    return (fabsf(value - 1.0F) < 1e-9);
-  } else {
-    return value == 0;
-  }
-}
 
 /*!
  * @tparam T arithmetic type.
@@ -37,7 +23,7 @@ template <class T>
 template <class T>
 [[maybe_unused]] constexpr T
 map(const T& value, const T& l_lower, const T& l_higher, const T& r_lower, const T& r_higher) {
-  if (isNull(l_higher - l_lower)) {
+  if (robocin::Point2D<T>::fuzzyIsNull(l_higher - l_lower)) {
     throw std::runtime_error("'l_lower' equals to 'l_higher'.");
   }
   return (value - l_lower) * (r_higher - r_lower) / (l_higher - l_lower) + r_lower;
@@ -60,14 +46,25 @@ constexpr bool linesParallel(const robocin::Point2D<T>& a,
 
 /*!
  * @tparam T arithmetic type.
+ * @param a, b lines a and b.
+ * @return Determines if lines through (a, b) and (c, d) are parallel.
+ */
+template <class T>
+constexpr bool linesParallel(const robocin::Line<T>& a,
+                             const robocin::Line<T>& b) {
+  return linesParallel(a.p1(),a.p2(),b.p1(),b.p2());
+}
+
+/*!
+ * @tparam T arithmetic type.
  * @param a, b, c, d lines (a, b) and (c, d).
  * @return Determines if lines through (a, b) and (c, d) are collinear.
  */
 template <class T>
 constexpr bool linesCollinear(const robocin::Point2D<T>& a,
-                              const robocin::Point2D<T>& b,
-                              const robocin::Point2D<T>& c,
-                              const robocin::Point2D<T>& d) {
+                             const robocin::Point2D<T>& b,
+                             const robocin::Point2D<T>& c,
+                             const robocin::Point2D<T>& d) {
   if (!linesParallel<T>(a, b, c, d)) {
     return false;
   }
@@ -82,14 +79,24 @@ constexpr bool linesCollinear(const robocin::Point2D<T>& a,
 
 /*!
  * @tparam T arithmetic type.
+ * @param a and b are lines.
+ * @return Determines if lines through (a, b) and (c, d) are collinear.
+ */
+template <class T>
+constexpr bool linesCollinear(const robocin::Line<T>& a,
+                              const robocin::Line<T>& b) {
+  return linesCollinear(a.p1(),a.p2(),b.p1(),b.p2());
+}
+/*!
+ * @tparam T arithmetic type.
  * @param a, b, c, d lines (a, b) and (c, d).
  * @return Determines if line segment from a to b intersects with line segment from c to d.
  */
 template <class T>
 constexpr bool segmentsIntersect(const robocin::Point2D<T>& a,
-                                 const robocin::Point2D<T>& b,
-                                 const robocin::Point2D<T>& c,
-                                 const robocin::Point2D<T>& d) {
+                             const robocin::Point2D<T>& b,
+                             const robocin::Point2D<T>& c,
+                             const robocin::Point2D<T>& d) {
   if (linesCollinear<T>(a, b, c, d)) {
     if (robocin::Point2D<T>::fuzzyIsNull(a.distanceSquaredTo(c))
         || robocin::Point2D<T>::fuzzyIsNull(a.distanceSquaredTo(d))
@@ -110,6 +117,17 @@ constexpr bool segmentsIntersect(const robocin::Point2D<T>& a,
     return false;
   }
   return true;
+}
+
+/*!
+ * @tparam T arithmetic type.
+ * @param a, b, c, d lines (a, b) and (c, d).
+ * @return Determines if line segment from a to b intersects with line segment from c to d.
+ */
+template <class T>
+constexpr bool segmentsIntersect(const robocin::Line<T>& a,
+                                 const robocin::Line<T>& b) {
+  return segmentsIntersect(a.p1(),a.p2(),b.p1(),b.p2());
 }
 
 } // namespace mathematics
