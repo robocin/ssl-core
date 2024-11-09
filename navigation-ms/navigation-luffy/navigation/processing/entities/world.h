@@ -38,17 +38,17 @@ class World {
   std::vector<RobotMessage> enemies;
   RobotIdMessage::Color ally_color;
 
-  void update(const OutputMessage& behavior,
-              const std::vector<RobotMessage>& robots,
-              const std::vector<BallMessage>& balls,
-              const FieldMessage& field,
-              const GameStatusMessage& game_status);
+  void update(OutputMessage& behavior,
+              std::vector<RobotMessage>& robots,
+              std::vector<BallMessage>& balls,
+              FieldMessage& field,
+              GameStatusMessage& game_status);
 
  private:
-  void takeBallHighConfidence(const std::vector<BallMessage>& balls);
-  void takeRobotsData(const OutputMessage& behavior, const std::vector<RobotMessage>& robots);
-  void takeGameStatus(const GameStatusMessage& game_status);
-  void takeField(const FieldMessage& field);
+  void takeBallHighConfidence(std::vector<BallMessage>& balls);
+  void takeRobotsData(OutputMessage& behavior, std::vector<RobotMessage>& robots);
+  void takeGameStatus(GameStatusMessage& game_status);
+  void takeField(FieldMessage& field);
 
   [[nodiscard]] bool isAlly(const RobotMessage& robot) const;
 };

@@ -74,10 +74,10 @@ NavigationProcessor::process(std::span<const Payload> payloads) {
   ///////////////////////////////////////////////////////////////////////////
   NavigationMessage navigation_msg;
 
-  for (const auto& behavior : last_behavior_->behavior_outputs) {
+  for (auto& behavior : last_behavior_->behavior_outputs) {
     motion_parser_->setWorld(behavior, last_detection, last_game_status_.value());
     NavigationOutputMessage output_msg = motion_parser_->parseMotion();
-    navigation_msg.output->emplace_back(output_msg);
+    navigation_msg.output->emplace_back(std::move(output_msg));
   }
 
   return navigation_msg.toProto();

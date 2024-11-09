@@ -27,9 +27,8 @@ class IMotionParser {
 
   virtual NavigationOutputMessage parseMotion() = 0;
 
-  virtual void setWorld(const OutputMessage& behavior,
-                        const DetectionMessage& detection,
-                        const GameStatusMessage& game_status)
+  virtual void
+  setWorld(OutputMessage& behavior, DetectionMessage& detection, GameStatusMessage& game_status)
       = 0;
 
  private:
@@ -46,9 +45,9 @@ class MotionParser : public IMotionParser {
 
   NavigationOutputMessage parseMotion() override;
 
-  void setWorld(const OutputMessage& behavior,
-                const DetectionMessage& detection,
-                const GameStatusMessage& game_status) override;
+  void setWorld(OutputMessage& behavior,
+                DetectionMessage& detection,
+                GameStatusMessage& game_status) override;
 
  private:
   RobotMove fromGoToPoint(const GoToPointMessage& go_to_point) override;

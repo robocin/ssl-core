@@ -27,9 +27,9 @@ using ::protocols::perception::Robot;
 
 MotionParser::MotionParser() = default;
 
-void MotionParser::setWorld(const OutputMessage& behavior,
-                            const DetectionMessage& detection,
-                            const GameStatusMessage& game_status) {
+void MotionParser::setWorld(OutputMessage& behavior,
+                            DetectionMessage& detection,
+                            GameStatusMessage& game_status) {
   world_.update(behavior, detection.robots, detection.balls, detection.field.value(), game_status);
 }
 
@@ -54,7 +54,7 @@ NavigationOutputMessage MotionParser::parseMotion() {
     output_msg.angular_velocity = move.angularVelocity();
 
     if (world_.robot_motion->peripheral_actuation) {
-      output_msg.peripheral_actuation = world_.robot_motion->peripheral_actuation;
+      output_msg.peripheral_actuation = std::move(world_.robot_motion->peripheral_actuation);
     }
 
     // TODO: Add other fields to output

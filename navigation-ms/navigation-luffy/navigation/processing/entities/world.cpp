@@ -17,32 +17,31 @@
 
 namespace navigation {
 
-void World::takeBallHighConfidence(const std::vector<BallMessage>& balls) {
+void World::takeBallHighConfidence(std::vector<BallMessage>& balls) {
   if (balls.empty()) {
     return;
   }
 
-  auto max_ball
-      = std::max_element(balls.begin(), balls.end(), [](const auto& ball, const auto& candidate) {
-          return ball.confidence < candidate.confidence;
-        });
+  auto max_ball = std::max_element(balls.begin(), balls.end(), [](auto& ball, auto& candidate) {
+    return ball.confidence < candidate.confidence;
+  });
 
-  this->ball = std::move(BallMessage{*max_ball});
+  this->ball = std::move(*max_ball);
 }
 
-void World::takeRobotsData(const OutputMessage& behavior, const std::vector<RobotMessage>& robots) {
+void World::takeRobotsData(OutputMessage& behavior, std::vector<RobotMessage>& robots) {
   if (robots.empty()) {
     return;
   }
 
   this->robot_motion = std::nullopt;
   if (behavior.motion) {
-    this->robot_motion = MotionMessage(behavior.motion.value());
+    this->robot_motion = std::move(behavior.motion.value());
   }
 
   this->robot_planning = std::nullopt;
   if (behavior.planning) {
-    this->robot_planning = PlanningMessage(behavior.planning.value());
+    this->robot_planning = std::move(behavior.planning.value());
   }
 
   this->ally_color = behavior.robot_id.value().color.value();
@@ -50,34 +49,33 @@ void World::takeRobotsData(const OutputMessage& behavior, const std::vector<Robo
   allies.clear();
   enemies.clear();
 
-  for (const auto& robot : robots) {
-    RobotMessage robot_message(robot);
+  for (auto& robot : robots) {
 
-    if (robot.robot_id->number == behavior.robot_id->number && isAlly(robot_message)) {
-      this->robot = RobotMessage(robot_message);
+    if (robot.robot_id->number == behavior.robot_id->number && isAlly(robot)) {
+      this->robot = std::move(robot);
     }
 
-    if (isAlly(robot_message)) {
-      this->allies.emplace_back(std::move(robot_message));
+    if (isAlly(robot)) {
+      this->allies.emplace_back(std::move(robot));
     } else {
-      this->enemies.emplace_back(std::move(robot_message));
+      this->enemies.emplace_back(std::move(robot));
     }
   }
 }
 
-void World::takeGameStatus(const GameStatusMessage& game_status) {
-  this->game_status = GameStatusMessage(game_status);
+void World::takeGameStatus(GameStatusMessage& game_status) {
+  this->game_status = std::move(game_status);
 }
 
 bool World::isAlly(const RobotMessage& robot) const { return robot.robot_id->color == ally_color; }
 
-void World::takeField(const FieldMessage& field) { this->field = FieldMessage(field); }
+void World::takeField(FieldMessage& field) { this->field = std::move(field); }
 
-void World::update(const OutputMessage& behavior,
-                   const std::vector<RobotMessage>& robots,
-                   const std::vector<BallMessage>& balls,
-                   const FieldMessage& field,
-                   const GameStatusMessage& game_status) {
+void World::update(OutputMessage& behavior,
+                   std::vector<RobotMessage>& robots,
+                   std::vector<BallMessage>& balls,
+                   FieldMessage& field,
+                   GameStatusMessage& game_status) {
 
   World::takeRobotsData(behavior, robots);
   World::takeBallHighConfidence(balls);

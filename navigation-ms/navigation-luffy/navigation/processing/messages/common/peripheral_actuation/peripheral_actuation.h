@@ -4,6 +4,7 @@
 #include "navigation/processing/messages/common/robot_dribbler/robot_dribbler_message.h"
 #include "navigation/processing/messages/common/robot_kick/kick_command.h"
 
+#include <optional>
 #include <protocols/common/peripheral_actuation.pb.h>
 #include <robocin/utility/iproto_convertible.h>
 
@@ -12,13 +13,14 @@ namespace navigation {
 class PeripheralActuationMessage
     : public robocin::IProtoConvertible<protocols::common::PeripheralActuation> {
  public:
-  PeripheralActuationMessage();
-  explicit PeripheralActuationMessage(KickCommandMessage kick_command,
-                                      RobotDribblerMessage robot_dribbler);
+  std::optional<KickCommandMessage> kick_command;
+  std::optional<RobotDribblerMessage> robot_dribbler;
+
+  explicit PeripheralActuationMessage(std::optional<KickCommandMessage> kick_command = std::nullopt,
+                                      std::optional<RobotDribblerMessage> robot_dribbler
+                                      = std::nullopt);
   explicit PeripheralActuationMessage(
       const protocols::common::PeripheralActuation& peripheral_actuation_proto);
-  KickCommandMessage kick_command;
-  RobotDribblerMessage robot_dribbler;
 
   [[nodiscard]] protocols::common::PeripheralActuation toProto() const override;
 
