@@ -13,6 +13,12 @@
 namespace behavior {
 
 class KickBall : public IState {
+ private:
+  OutputMessage makeKickBallOutput(const World& world);
+  RobotIdMessage makeKickBallRobotId(const World& world);
+  MotionMessage makeKickBallMotion(const World& world);
+  PlanningMessage makeKickBallPlanning(const World& world);
+
  protected:
   IStateMachine* state_machine_{}; // back reference
 

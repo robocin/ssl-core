@@ -13,6 +13,12 @@
 namespace behavior {
 
 class GoToBall : public IState {
+ private:
+  OutputMessage makeGoToBallOutput(const World& world);
+  RobotIdMessage makeGoToBallRobotId(const World& world);
+  MotionMessage makeGoToBallMotion(const World& world);
+  PlanningMessage makeGoToBallPlanning(const World& world);
+
  protected:
   IStateMachine* state_machine_{}; // back reference
 

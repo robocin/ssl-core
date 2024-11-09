@@ -24,6 +24,27 @@ OutputMessage KickBall::exec(const World& world) {
     state_machine_->transitionTo(new GoToSafePosition);
   }
 
-  return OutputMessage{};
+  return makeKickBallOutput(world);
+}
+
+OutputMessage KickBall::makeKickBallOutput(const World& world) {
+  return OutputMessage{RobotIdMessage{KickBall::makeKickBallRobotId(world)},
+                       MotionMessage{KickBall::makeKickBallMotion(world)},
+                       PlanningMessage{KickBall::makeKickBallPlanning(world)}};
+}
+
+RobotIdMessage KickBall::makeKickBallRobotId(const World& world) {
+  // TODO(ersaraujo): Create the robot id message
+  return RobotIdMessage{};
+}
+
+MotionMessage KickBall::makeKickBallMotion(const World& world) {
+  // TODO(ersaraujo): Create the motion message
+  return MotionMessage{};
+}
+
+PlanningMessage KickBall::makeKickBallPlanning(const World& world) {
+  // TODO(ersaraujo): Create the planning message
+  return PlanningMessage{};
 }
 } // namespace behavior

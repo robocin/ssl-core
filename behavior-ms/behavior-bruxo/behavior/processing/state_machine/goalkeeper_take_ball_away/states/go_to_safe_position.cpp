@@ -11,6 +11,27 @@ OutputMessage GoToSafePosition::exec(const World& world) {
   robocin::ilog("Exec GoToSafePosition state");
   state_machine_->transitionTo(new GoToBall);
 
-  return OutputMessage{};
+  return makeGoToSafePositionOutput(world);
+}
+
+OutputMessage GoToSafePosition::makeGoToSafePositionOutput(const World& world) {
+  return OutputMessage{RobotIdMessage{GoToSafePosition::makeGoToSafePositionRobotId(world)},
+                       MotionMessage{GoToSafePosition::makeGoToSafePositionMotion(world)},
+                       PlanningMessage{GoToSafePosition::makeGoToSafePositionPlanning(world)}};
+}
+
+RobotIdMessage GoToSafePosition::makeGoToSafePositionRobotId(const World& world) {
+  // TODO(mlv): Create the robot id message
+  return RobotIdMessage{};
+}
+
+MotionMessage GoToSafePosition::makeGoToSafePositionMotion(const World& world) {
+  // TODO(mlv): Create the motion message
+  return MotionMessage{};
+}
+
+PlanningMessage GoToSafePosition::makeGoToSafePositionPlanning(const World& world) {
+  // TODO(mlv): Create the planning message
+  return PlanningMessage{};
 }
 } // namespace behavior

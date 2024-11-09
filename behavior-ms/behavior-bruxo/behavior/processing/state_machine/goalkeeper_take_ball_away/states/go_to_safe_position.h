@@ -11,6 +11,12 @@
 namespace behavior {
 
 class GoToSafePosition : public IState {
+ private:
+  OutputMessage makeGoToSafePositionOutput(const World& world);
+  RobotIdMessage makeGoToSafePositionRobotId(const World& world);
+  MotionMessage makeGoToSafePositionMotion(const World& world);
+  PlanningMessage makeGoToSafePositionPlanning(const World& world);
+
  protected:
   IStateMachine* state_machine_{}; // back reference
 

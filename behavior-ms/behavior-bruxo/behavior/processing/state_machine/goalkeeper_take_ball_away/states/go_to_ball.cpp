@@ -23,6 +23,27 @@ OutputMessage GoToBall::exec(const World& world) {
     state_machine_->transitionTo(new KickBall);
   }
 
-  return OutputMessage{};
+  return makeGoToBallOutput(world);
+}
+
+OutputMessage GoToBall::makeGoToBallOutput(const World& world) {
+  return OutputMessage{RobotIdMessage{GoToBall::makeGoToBallRobotId(world)},
+                       MotionMessage{GoToBall::makeGoToBallMotion(world)},
+                       PlanningMessage{GoToBall::makeGoToBallPlanning(world)}};
+}
+
+RobotIdMessage GoToBall::makeGoToBallRobotId(const World& world) {
+  // TODO(mlv): Create the robot id message
+  return RobotIdMessage{};
+}
+
+MotionMessage GoToBall::makeGoToBallMotion(const World& world) {
+  // TODO(mlv): Create the motion message
+  return MotionMessage{};
+}
+
+PlanningMessage GoToBall::makeGoToBallPlanning(const World& world) {
+  // TODO(mlv): Create the planning message
+  return PlanningMessage{};
 }
 } // namespace behavior
