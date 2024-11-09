@@ -30,33 +30,6 @@ using ::protocols::referee::GameStatus;
 
 namespace {
 
-protocols::perception::Robot
-findMyRobot(int number, const google::protobuf::RepeatedPtrField<rc::Robot>& robots) {
-  // This function does not handle a case where it does not find a robot
-  for (auto& robot : robots) {
-    auto number_match = robot.robot_id().number() == number;
-    if (number_match) {
-      return robot;
-    }
-  }
-
-  return protocols::perception::Robot{};
-}
-
-rc::Output makeOutput(RobotMove move, const protocols::behavior::unification::Output& behavior) {
-  rc::Output output;
-
-  output.set_left_velocity(move.velocity().y);
-  output.set_forward_velocity(move.velocity().x);
-  output.set_angular_velocity(move.angularVelocity());
-
-  if (behavior.motion().has_peripheral_actuation()) {
-    output.mutable_peripheral_actuation()->CopyFrom(behavior.motion().peripheral_actuation());
-  }
-
-  return output;
-};
-
 std::vector<rc::Behavior> behaviorFromPayloads(std::span<const Payload> payloads) {
   return payloads | std::views::transform(&Payload::getBehaviors) | std::views::join
          | std::ranges::to<std::vector>();
