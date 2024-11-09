@@ -4,7 +4,6 @@
 #include "navigation/processing/messages/motion/motion_message.h"
 
 namespace navigation {
-PlanningMessage::PlanningMessage() = default;
 PlanningMessage::PlanningMessage(DiscretizedPathMessage discretized_path,
                                  GoToPointMessage go_to_point,
                                  RotateInPointMessage rotate_in_point,

@@ -29,10 +29,9 @@ class DribblerInfoMessage
   std::optional<double> dribbler_current = 0;
   std::optional<bool> is_ball_detected = false;
 
-  explicit DribblerInfoMessage(
-    std::optional<double> dribbler_speed = std::nullopt, 
-    std::optional<double> dribbler_current = std::nullopt, 
-    std::optional<bool> is_ball_detected = std::nullopt);
+  explicit DribblerInfoMessage(std::optional<double> dribbler_speed = std::nullopt,
+                               std::optional<double> dribbler_current = std::nullopt,
+                               std::optional<bool> is_ball_detected = std::nullopt);
 
   explicit DribblerInfoMessage(
       const protocols::common::RobotDribbler::DribblerInfo& dribbler_info_proto);
@@ -45,9 +44,10 @@ class DribblerInfoMessage
 
 class RobotDribblerMessage : public robocin::IProtoConvertible<protocols::common::RobotDribbler> {
  public:
-  RobotDribblerMessage();
-  RobotDribblerMessage(std::optional<DribblerCommandMessage> dribbler_command,
-                       std::optional<DribblerInfoMessage> dribbler_info);
+  explicit RobotDribblerMessage();
+  explicit RobotDribblerMessage(std::optional<DribblerCommandMessage> dribbler_command
+                                = std::nullopt,
+                                std::optional<DribblerInfoMessage> dribbler_info = std::nullopt);
 
   explicit RobotDribblerMessage(const protocols::common::RobotDribbler& robot_dribbler_proto);
 
