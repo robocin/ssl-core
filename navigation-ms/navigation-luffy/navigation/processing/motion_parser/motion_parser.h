@@ -1,10 +1,14 @@
 #ifndef NAVIGATION_PROCESSING_MOTION_PARSER_H
 #define NAVIGATION_PROCESSING_MOTION_PARSER_H
 
+#include "navigation/processing/entities/world.h"
+#include "navigation/processing/messages/behavior/behavior_message.h"
+#include "navigation/processing/messages/motion/motion_message.h"
+#include "navigation/processing/messages/navigation/navigation_message.h"
+#include "navigation/processing/messages/perception/detection/detection_message.h"
+#include "navigation/processing/messages/referee/game_status_message.h"
+
 #include <navigation/processing/entities/robot_move.h>
-#include <protocols/behavior/behavior_unification.pb.h>
-#include <protocols/behavior/motion.pb.h>
-#include <protocols/perception/detection.pb.h>
 
 #define PI 3.14159265358979323846
 
@@ -21,31 +25,38 @@ class IMotionParser {
 
   virtual ~IMotionParser() = default;
 
-  virtual RobotMove fromGoToPoint(const ::protocols::behavior::GoToPoint& go_to_point,
-                                  const ::protocols::perception::Robot& robot)
+  virtual NavigationOutputMessage parseMotion() = 0;
+
+  virtual void
+  setWorld(OutputMessage& behavior, DetectionMessage& detection, GameStatusMessage& game_status)
       = 0;
 
-  virtual RobotMove fromRotateInPoint(const ::protocols::behavior::RotateInPoint& rotate_in_point,
-                                      const ::protocols::perception::Robot& robot)
-      = 0;
+ private:
+  virtual RobotMove fromGoToPoint(const GoToPointMessage& go_to_point) = 0;
 
-  virtual RobotMove fromRotateOnSelf(const ::protocols::behavior::RotateOnSelf& rotate_on_self,
-                                     const ::protocols::perception::Robot& robot)
-      = 0;
+  virtual RobotMove fromRotateInPoint(const RotateInPointMessage& rotate_in_point) = 0;
+
+  virtual RobotMove fromRotateOnSelf(const RotateOnSelfMessage& rotate_on_self) = 0;
 };
 
 class MotionParser : public IMotionParser {
  public:
   MotionParser();
 
-  RobotMove fromGoToPoint(const ::protocols::behavior::GoToPoint& go_to_point,
-                          const ::protocols::perception::Robot& robot) override;
+  NavigationOutputMessage parseMotion() override;
 
-  RobotMove fromRotateInPoint(const ::protocols::behavior::RotateInPoint& rotate_in_point,
-                              const ::protocols::perception::Robot& robot) override;
+  void setWorld(OutputMessage& behavior,
+                DetectionMessage& detection,
+                GameStatusMessage& game_status) override;
 
-  RobotMove fromRotateOnSelf(const ::protocols::behavior::RotateOnSelf& rotate_on_self,
-                             const ::protocols::perception::Robot& robot) override;
+ private:
+  RobotMove fromGoToPoint(const GoToPointMessage& go_to_point) override;
+
+  RobotMove fromRotateInPoint(const RotateInPointMessage& rotate_in_point) override;
+
+  RobotMove fromRotateOnSelf(const RotateOnSelfMessage& rotate_on_self) override;
+
+  World world_;
 };
 
 } // namespace navigation

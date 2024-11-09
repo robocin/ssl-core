@@ -6,18 +6,18 @@
 namespace navigation {
 
 class RobotMove {
-  ::robocin::Point2Dd velocity_;
-  double angularVelocity_;
+  ::robocin::Point2Df velocity_;
+  float angularVelocity_;
 
  public:
-  RobotMove(::robocin::Point2Dd velocity, double angularVelocity);
+  RobotMove(::robocin::Point2Df velocity, float angularVelocity);
 
-  explicit RobotMove(double angularVelocity);
+  explicit RobotMove(float angularVelocity);
 
   RobotMove();
 
-  [[nodiscard]] ::robocin::Point2Dd velocity() const;
-  [[nodiscard]] double angularVelocity() const;
+  [[nodiscard]] ::robocin::Point2Df velocity() const;
+  [[nodiscard]] float angularVelocity() const;
 };
 
 } // namespace navigation

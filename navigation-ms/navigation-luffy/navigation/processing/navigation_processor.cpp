@@ -1,14 +1,19 @@
 #include "navigation/processing/navigation_processor.h"
 
 #include "navigation/messaging/receiver/payload.h"
-#include "parameters.h"
+#include "navigation/processing/messages/behavior/behavior_message.h"
+#include "navigation/processing/messages/common/robot_id/robot_id_message.h"
+#include "navigation/processing/messages/navigation/navigation_message.h"
+#include "navigation/processing/messages/perception/detection/detection_message.h"
+#include "navigation/processing/messages/perception/robot/robot_message.h"
+#include "navigation/processing/messages/planning/planning_message.h"
+#include "navigation/processing/messages/referee/game_status_message.h"
 
+#include <optional>
 #include <protocols/behavior/behavior_unification.pb.h>
-#include <protocols/behavior/motion.pb.h>
-#include <protocols/behavior/planning.pb.h>
-#include <protocols/common/robot_id.pb.h>
 #include <protocols/navigation/navigation.pb.h>
 #include <protocols/perception/detection.pb.h>
+#include <protocols/referee/game_status.pb.h>
 #include <ranges>
 #include <robocin/output/log.h>
 
@@ -17,20 +22,9 @@ namespace navigation {
 namespace parameters = ::robocin::parameters;
 
 namespace rc {
-
-using ::protocols::behavior::GoToPoint;
-using ::protocols::behavior::Planning;
 using ::protocols::behavior::unification::Behavior;
-using ::protocols::behavior::unification::Motion;
-
-using ::protocols::navigation::Navigation;
-using ::protocols::navigation::Output;
-
 using ::protocols::perception::Detection;
-using ::protocols::perception::Robot;
-
-using ::protocols::common::PeripheralActuation;
-using ::protocols::common::RobotId;
+using ::protocols::referee::GameStatus;
 
 } // namespace rc
 
@@ -73,19 +67,28 @@ std::vector<rc::Detection> detectionFromPayloads(std::span<const Payload> payloa
          | std::ranges::to<std::vector>();
 }
 
+std::vector<rc::GameStatus> gameStatusFromPayloads(std::span<const Payload> payloads) {
+  return payloads | std::views::transform(&Payload::getGameStatuses) | std::views::join
+         | std::ranges::to<std::vector>();
+}
+
 } // namespace
 
 NavigationProcessor::NavigationProcessor(std::unique_ptr<IMotionParser> motion_parser) :
     motion_parser_(std::move(motion_parser)) {}
 
-std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Payload> payloads) {
-  rc::Navigation navigation_output;
-
+std::optional<::protocols::navigation::Navigation>
+NavigationProcessor::process(std::span<const Payload> payloads) {
   if (std::vector<rc::Behavior> behaviors = behaviorFromPayloads(payloads); !behaviors.empty()) {
-    last_behavior_ = behaviors.back();
+    last_behavior_ = BehaviorUnificationMessage(behaviors.back());
   }
 
-  if (!last_behavior_) {
+  if (std::vector<rc::GameStatus> game_statuses = gameStatusFromPayloads(payloads);
+      !game_statuses.empty()) {
+    last_game_status_ = GameStatusMessage(game_statuses.back());
+  }
+
+  if (!last_behavior_ or !last_game_status_) {
     return std::nullopt;
   }
 
@@ -94,25 +97,18 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
     // a new package must be generated only when a new detection is received.
     return std::nullopt;
   }
-  rc::Detection last_detection = detections.back();
-  robocin::ilog("LAFAAAAAAAA!");
+  DetectionMessage last_detection = DetectionMessage(detections.back());
 
-  // For now, doing only for one robot
-  RobotMove move;
-  for (const auto& behavior : last_behavior_->output()) {
-    rc::Robot robot;
-    if (behavior.has_motion()) {
-      robot = findMyRobot(behavior.robot_id().number(), last_detection.robots());
+  ///////////////////////////////////////////////////////////////////////////
+  NavigationMessage navigation_msg;
 
-      // todo: parser is crashing
-      move = motion_parser_->fromGoToPoint(behavior.motion().go_to_point(), robot);
-      robocin::ilog("Parsed!");
-    }
-
-    navigation_output.add_output()->CopyFrom(makeOutput(move, behavior));
+  for (auto& behavior : last_behavior_->behavior_outputs) {
+    motion_parser_->setWorld(behavior, last_detection, last_game_status_.value());
+    NavigationOutputMessage output_msg = motion_parser_->parseMotion();
+    navigation_msg.output->emplace_back(std::move(output_msg));
   }
 
-  return navigation_output;
+  return navigation_msg.toProto();
 }
 
 } // namespace navigation
