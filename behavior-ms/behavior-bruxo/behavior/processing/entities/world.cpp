@@ -51,9 +51,12 @@ void World::takeGameStatus(const protocols::referee::GameStatus& game_status) {
 
 bool World::isAlly(const RobotMessage& robot) const { return robot.robot_id->color == pAllyColor; }
 
+void World::takeField(const protocols::perception::Field& field) { this->field.fromProto(field); }
+
 void World::update(const protocols::decision::Decision& decision,
                    const std::vector<protocols::perception::Robot>& robots,
                    const std::vector<protocols::perception::Ball>& balls,
+                   const protocols::perception::Field& field,
                    const protocols::referee::GameStatus& game_status) {
 
   World::takeDecision(decision);

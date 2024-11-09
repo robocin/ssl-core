@@ -19,10 +19,12 @@ using ::robocin::ZmqDatagram;
 
 MessageReceiver::MessageReceiver(std::unique_ptr<IZmqSubscriberSocket> behavior_socket,
                                  std::unique_ptr<IZmqSubscriberSocket> perception_socket,
+                                 std::unique_ptr<IZmqSubscriberSocket> game_status_socket,
                                  std::unique_ptr<IZmqPoller> zmq_poller,
                                  std::unique_ptr<IPayloadMapper> payload_mapper) :
     behavior_socket_{std::move(behavior_socket)},
     perception_socket_{std::move(perception_socket)},
+    game_status_socket_{std::move(game_status_socket)},
     zmq_poller_{std::move(zmq_poller)},
     payload_mapper_{std::move(payload_mapper)} {}
 
@@ -50,6 +52,15 @@ Payload MessageReceiver::receive() {
       }
 
       datagrams.emplace_back(std::move(perception_zmq_datagram));
+    }
+
+    while (true) {
+      ZmqDatagram game_status_zmq_datagram = zmq_poller_->receive(*game_status_socket_);
+      if (game_status_zmq_datagram.empty()) {
+        break;
+      }
+
+      datagrams.emplace_back(std::move(game_status_zmq_datagram));
     }
 
     if (datagrams.empty()) {
