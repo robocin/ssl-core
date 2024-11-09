@@ -6,6 +6,7 @@
 
 #include "behavior/processing/messages/decision/decision_message.h"
 #include "behavior/processing/messages/perception/ball/ball_message.h"
+#include "behavior/processing/messages/perception/field/field_message.h"
 #include "behavior/processing/messages/perception/robot/robot_message.h"
 #include "behavior/processing/messages/referee/game_status_message.h"
 
@@ -31,6 +32,7 @@ class World {
   BallMessage ball;
   DecisionMessage decision;
   GameStatusMessage game_status;
+  FieldMessage field;
 
   std::vector<RobotMessage> allies;
   std::vector<RobotMessage> enemies;
@@ -38,6 +40,7 @@ class World {
   void update(const protocols::decision::Decision& decision,
               const std::vector<protocols::perception::Robot>& robots,
               const std::vector<protocols::perception::Ball>& balls,
+              const protocols::perception::Field& field,
               const protocols::referee::GameStatus& game_status);
 
  private:
@@ -45,6 +48,7 @@ class World {
   void takeAlliesAndEnemies(const std::vector<protocols::perception::Robot>& robots);
   void takeDecision(const protocols::decision::Decision& decision);
   void takeGameStatus(const protocols::referee::GameStatus& game_status);
+  void takeField(const protocols::perception::Field& field);
 
   [[nodiscard]] bool isAlly(const RobotMessage& robot) const;
 

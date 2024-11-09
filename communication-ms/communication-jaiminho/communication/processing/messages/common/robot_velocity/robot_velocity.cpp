@@ -20,7 +20,7 @@ protocols::common::RobotVelocity RobotVelocityMessage::toProto() const {
   return robot_velocity;
 }
 
-void RobotVelocityMessage::fromProto(protocols::common::RobotVelocity robot_velocity) {
+void RobotVelocityMessage::fromProto(const protocols::common::RobotVelocity& robot_velocity) {
   if (robot_velocity.has_velocity()) {
     robocin::Point2D<float> point2Df;
     point2Df.x = robot_velocity.velocity().x();

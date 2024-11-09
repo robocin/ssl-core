@@ -7,7 +7,7 @@
 #include "communication/processing/communication_processor.h"
 
 #include <memory>
-#include <protocols/communication/robot_info.pb.h>
+#include <protocols/communication/communication.pb.h>
 #include <robocin/concurrency/concurrent_queue.h>
 #include <robocin/memory/object_ptr.h>
 
