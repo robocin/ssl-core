@@ -4,14 +4,13 @@
 
 namespace navigation {
 
+// DribblerCommandMessage
 void DribblerCommandMessage::fromProto(
     const protocols::common::RobotDribbler::DribblerCommand& dribbler_command_proto) {
 
   dribbler_speed = dribbler_command_proto.dribbler_speed();
   is_active = dribbler_command_proto.is_active();
 }
-
-DribblerCommandMessage::DribblerCommandMessage() = default;
 
 DribblerCommandMessage::DribblerCommandMessage(
     const protocols::common::RobotDribbler::DribblerCommand& dribbler_command_proto) {
@@ -25,7 +24,6 @@ DribblerCommandMessage::DribblerCommandMessage(double dribbler_speed, bool is_ac
 protocols::common::RobotDribbler::DribblerCommand DribblerCommandMessage::toProto() const {
   return protocols::common::RobotDribbler::DribblerCommand{};
 };
-DribblerInfoMessage::DribblerInfoMessage() = default;
 void DribblerInfoMessage::fromProto(
     const protocols::common::RobotDribbler::DribblerInfo& dribbler_info_proto) {
   dribbler_speed = dribbler_info_proto.dribbler_speed();
@@ -33,14 +31,15 @@ void DribblerInfoMessage::fromProto(
   is_ball_detected = dribbler_info_proto.is_ball_detected();
 }
 
+// DribblerInfoMessage
 DribblerInfoMessage::DribblerInfoMessage(
     const protocols::common::RobotDribbler::DribblerInfo& dribbler_info_proto) {
   DribblerInfoMessage::fromProto(dribbler_info_proto);
 }
 
-DribblerInfoMessage::DribblerInfoMessage(double dribbler_speed,
-                                         double dribbler_current,
-                                         bool is_ball_detected) :
+DribblerInfoMessage::DribblerInfoMessage(std::optional<double> dribbler_speed,
+                                         std::optional<double> dribbler_current,
+                                         std::optional<bool> is_ball_detected) :
     dribbler_speed(dribbler_speed),
     dribbler_current(dribbler_current),
     is_ball_detected(is_ball_detected) {}
@@ -48,22 +47,25 @@ DribblerInfoMessage::DribblerInfoMessage(double dribbler_speed,
 protocols::common::RobotDribbler::DribblerInfo DribblerInfoMessage::toProto() const {
   return protocols::common::RobotDribbler::DribblerInfo{};
 };
-RobotDribblerMessage::RobotDribblerMessage() = default;
+
+// RobotDribblerMessage
 void RobotDribblerMessage::fromProto(const protocols::common::RobotDribbler& robot_dribbler_proto) {
   if (robot_dribbler_proto.has_dribbler_command()) {
     dribbler_command = DribblerCommandMessage(robot_dribbler_proto.dribbler_command());
-  } else if (robot_dribbler_proto.has_dribbler_info()) {
+  }
+  
+  if (robot_dribbler_proto.has_dribbler_info()) {
     dribbler_info = DribblerInfoMessage(robot_dribbler_proto.dribbler_info());
   }
 }
+
 RobotDribblerMessage::RobotDribblerMessage(
     const protocols::common::RobotDribbler& robot_dribbler_proto) {
   RobotDribblerMessage::fromProto(robot_dribbler_proto);
 }
-RobotDribblerMessage::RobotDribblerMessage(std::optional<DribblerCommandMessage> dribbler_command
-                                           = std::nullopt,
-                                           std::optional<DribblerInfoMessage> dribbler_info
-                                           = std::nullopt) :
+
+RobotDribblerMessage::RobotDribblerMessage(std::optional<DribblerCommandMessage> dribbler_command,
+                                           std::optional<DribblerInfoMessage> dribbler_info) :
 
     dribbler_command(std::move(dribbler_command)),
     dribbler_info(std::move(dribbler_info)) {}
@@ -71,4 +73,5 @@ RobotDribblerMessage::RobotDribblerMessage(std::optional<DribblerCommandMessage>
 protocols::common::RobotDribbler RobotDribblerMessage::toProto() const {
   return protocols::common::RobotDribbler{};
 };
+
 } // namespace navigation
