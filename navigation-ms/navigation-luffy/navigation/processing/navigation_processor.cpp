@@ -7,6 +7,7 @@
 #include <protocols/behavior/planning.pb.h>
 #include <protocols/navigation/navigation.pb.h>
 #include <protocols/perception/detection.pb.h>
+#include <protocols/referee/game_status.pb.h>
 #include <ranges>
 
 namespace navigation {
@@ -15,10 +16,11 @@ namespace parameters = ::robocin::parameters;
 
 namespace rc {
 
-using ::protocols::behavior::GoToPoint;
 using ::protocols::behavior::Planning;
 using ::protocols::behavior::unification::Behavior;
 using ::protocols::behavior::unification::Motion;
+
+using ::protocols::referee::GameStatus;
 
 using ::protocols::navigation::Navigation;
 using ::protocols::navigation::Output;
@@ -43,6 +45,11 @@ std::vector<rc::Detection> detectionFromPayloads(std::span<const Payload> payloa
          | std::ranges::to<std::vector>();
 }
 
+std::vector<rc::GameStatus> gameStatusFromPayloads(std::span<const Payload> payloads) {
+  return payloads | std::views::transform(&Payload::getGameStatuses) | std::views::join
+         | std::ranges::to<std::vector>();
+}
+
 } // namespace
 
 NavigationProcessor::NavigationProcessor(std::unique_ptr<IMotionParser> motion_parser) :
@@ -55,7 +62,12 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
     last_behavior_ = behaviors.back();
   }
 
-  if (!last_behavior_) {
+  if (std::vector<rc::GameStatus> game_statuses = gameStatusFromPayloads(payloads);
+      !game_statuses.empty()) {
+    last_game_status_ = game_statuses.back();
+  }
+
+  if (!last_behavior_ or !last_game_status_) {
     return std::nullopt;
   }
 
@@ -67,12 +79,12 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
   rc::Detection last_detection = detections.back();
 
   ///////////////////////////////////////////////////////////////////////////
-  for (const auto& behavior_ : last_behavior_->output()) {
+  for (const auto& behavior : last_behavior_->output()) {
     rc::Output output;
     rc::Robot ally;
 
     for (const auto& robot : last_detection.robots()) {
-      if (robot.robot_id().number() == behavior_.robot_id().number()) {
+      if (robot.robot_id().number() == behavior.robot_id().number()) {
         ally = robot;
         break;
       }
@@ -80,15 +92,14 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
     if (ally.has_robot_id()) {
       output.mutable_robot_id()->CopyFrom(ally.robot_id());
 
-      if (behavior_.has_motion()) {
+      if (behavior.has_motion()) {
         RobotMove move;
-        if (behavior_.motion().has_go_to_point()) {
-          move = motion_parser_->fromGoToPoint(behavior_.motion().go_to_point(),
-                                               ally);
-        } else if (behavior_.motion().has_rotate_in_point()) {
-          move = motion_parser_->fromRotateInPoint(behavior_.motion().rotate_in_point(), ally);
-        } else if (behavior_.motion().has_rotate_on_self()) {
-          move = motion_parser_->fromRotateOnSelf(behavior_.motion().rotate_on_self(), ally);
+        if (behavior.motion().has_go_to_point()) {
+          move = motion_parser_->fromGoToPoint(behavior.motion().go_to_point(), ally);
+        } else if (behavior.motion().has_rotate_in_point()) {
+          move = motion_parser_->fromRotateInPoint(behavior.motion().rotate_in_point(), ally);
+        } else if (behavior.motion().has_rotate_on_self()) {
+          move = motion_parser_->fromRotateOnSelf(behavior.motion().rotate_on_self(), ally);
         } else {
           // PROCESSAMENTO DO GO_TO_POINT_WITH_TRAJECTORY
         }
@@ -97,14 +108,13 @@ std::optional<rc::Navigation> NavigationProcessor::process(std::span<const Paylo
         output.set_forward_velocity(move.velocity().x);
         output.set_angular_velocity(move.angularVelocity());
 
-        if (behavior_.motion().has_peripheral_actuation()) {
-          output.mutable_peripheral_actuation()->CopyFrom(
-              behavior_.motion().peripheral_actuation());
+        if (behavior.motion().has_peripheral_actuation()) {
+          output.mutable_peripheral_actuation()->CopyFrom(behavior.motion().peripheral_actuation());
         }
 
         // TODO: Add other fields to output
 
-      } else if (behavior_.has_planning()) {
+      } else if (behavior.has_planning()) {
         // PROCESSAMENTO DO PLANNING
       } else {
         // PROCESSAMENTO DO NAVIGATION
