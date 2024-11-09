@@ -20,7 +20,7 @@ namespace navigation {
 
 class OutputMessage : public robocin::IProtoConvertible<protocols::behavior::unification::Output> {
  public:
-  ~OutputMessage() override;
+ 
   OutputMessage(std::optional<RobotIdMessage> robot_id = std::nullopt,
                 std::optional<MotionMessage> motion = std::nullopt,
                 std::optional<PlanningMessage> planning = std::nullopt);

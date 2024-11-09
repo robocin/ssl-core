@@ -8,8 +8,8 @@ class IProtoConvertible {
  public:
   IProtoConvertible() = default;
 
-  IProtoConvertible(const IProtoConvertible&) = default;
-  IProtoConvertible& operator=(const IProtoConvertible&) = default;
+  IProtoConvertible(const IProtoConvertible&) = delete;
+  IProtoConvertible& operator=(const IProtoConvertible&) = delete;
   IProtoConvertible(IProtoConvertible&&) noexcept = default;
   IProtoConvertible& operator=(IProtoConvertible&&) noexcept = default;
 
