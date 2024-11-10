@@ -1,5 +1,7 @@
 #include "behavior/processing/messages/motion/motion_message.h"
 
+#include "behavior/processing/messages/common/peripheral_actuation/peripheral_actuation.h"
+
 namespace behavior {
 
 GoToPointMessage::GoToPointMessage(std::optional<robocin::Point2D<float>> target,
@@ -56,11 +58,13 @@ MotionMessage::MotionMessage(
     std::optional<GoToPointMessage> go_to_point,
     std::optional<GoToPointWithTrajectoryMessage> go_to_point_with_trajectory,
     std::optional<RotateInPointMessage> rotate_in_point,
-    std::optional<RotateOnSelfMessage> rotate_on_self) :
+    std::optional<RotateOnSelfMessage> rotate_on_self,
+    std::optional<PeripheralActuationMessage> peripheral_actuation) :
     go_to_point{std::move(go_to_point)},
     go_to_point_with_trajectory{std::move(go_to_point_with_trajectory)},
     rotate_in_point{std::move(rotate_in_point)},
-    rotate_on_self{std::move(rotate_on_self)} {}
+    rotate_on_self{std::move(rotate_on_self)},
+    peripheral_actuation(std::move(peripheral_actuation)) {}
 
 protocols::behavior::unification::Motion MotionMessage::toProto() const {
   protocols::behavior::unification::Motion motion;
