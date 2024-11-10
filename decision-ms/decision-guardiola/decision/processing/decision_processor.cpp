@@ -59,7 +59,6 @@ std::optional<rc::Decision> DecisionProcessor::process(std::span<const Payload> 
   rc::Decision decision_output;
 
   DecisionProcessor::update(payloads);
-  // robocin::ilog("{}", *(world_.field.width));
 
   // Evaluator processing is done synchronously here
   coach_->process(*world_);
@@ -93,7 +92,7 @@ bool DecisionProcessor::update(std::span<const Payload>& payloads) {
   }
 
   last_detection_ = DetectionMessage(detections.back());
-  world_.field = std::move(last_detection_->field.value());
+  world_->field = std::move(last_detection_->field.value());
 
   world_->update(last_detection_->robots,
                  last_detection_->balls,
