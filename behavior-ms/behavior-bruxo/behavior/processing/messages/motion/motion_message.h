@@ -88,16 +88,29 @@ class GoToPointWithTrajectoryMessage
 
 class RotateInPointMessage : public robocin::IProtoConvertible<protocols::behavior::RotateInPoint> {
  public:
-  RotateInPointMessage();
+  explicit RotateInPointMessage(protocols::behavior::RotateInPoint rotate_in_point_proto);
 
-  [[nodiscard]] protocols::behavior::RotateInPoint toProto() const override {
-    protocols::behavior::RotateInPoint rotate_in_point;
-    return rotate_in_point;
-  };
+  explicit RotateInPointMessage(std::optional<robocin::Point2Df> target,
+                                std::optional<double> target_angle,
+                                std::optional<bool> clockwise,
+                                std::optional<double> orbit_radius,
+                                std::optional<double> rotate_velocity,
+                                std::optional<double> min_velocity,
+                                std::optional<double> approach_kp,
+                                std::optional<double> angle_kp);
 
-  void fromProto(const protocols::behavior::RotateInPoint& rotate_in_point) override {
-    // Implementação específica para converter de proto para RotateInPointMessage
-  };
+  std::optional<robocin::Point2Df> target;
+  std::optional<double> target_angle;
+  std::optional<bool> clockwise;
+  std::optional<double> orbit_radius;
+  std::optional<double> rotate_velocity;
+  std::optional<double> min_velocity;
+  std::optional<double> approach_kp;
+  std::optional<double> angle_kp;
+
+  [[nodiscard]] protocols::behavior::RotateInPoint toProto() const override;
+
+  void fromProto(const protocols::behavior::RotateInPoint& rotate_in_point) override;
 };
 
 class RotateOnSelfMessage : public robocin::IProtoConvertible<protocols::behavior::RotateOnSelf> {

@@ -2,6 +2,8 @@
 
 #include "behavior/processing/messages/common/peripheral_actuation/peripheral_actuation.h"
 
+#include <robocin/geometry/point2d.h>
+
 namespace behavior {
 
 GoToPointMessage::GoToPointMessage(std::optional<robocin::Point2D<float>> target,
@@ -50,7 +52,62 @@ void GoToPointMessage::fromProto(const protocols::behavior::GoToPoint& go_to_poi
 
 GoToPointWithTrajectoryMessage::GoToPointWithTrajectoryMessage() {}
 
-RotateInPointMessage::RotateInPointMessage() {}
+RotateInPointMessage::RotateInPointMessage(std::optional<robocin::Point2Df> target,
+                                           std::optional<double> target_angle,
+                                           std::optional<bool> clockwise,
+                                           std::optional<double> orbit_radius,
+                                           std::optional<double> rotate_velocity,
+                                           std::optional<double> min_velocity,
+                                           std::optional<double> approach_kp,
+                                           std::optional<double> angle_kp) :
+    target(target),
+    target_angle(target_angle),
+    clockwise(clockwise),
+    orbit_radius(orbit_radius),
+    rotate_velocity(rotate_velocity),
+    min_velocity(min_velocity),
+    approach_kp(approach_kp),
+    angle_kp(angle_kp) {}
+
+RotateInPointMessage::RotateInPointMessage(
+    protocols::behavior::RotateInPoint rotate_in_point_proto) {
+  fromProto(rotate_in_point_proto);
+}
+
+protocols::behavior::RotateInPoint RotateInPointMessage::toProto() const {
+  protocols::behavior::RotateInPoint proto;
+
+  auto target_proto = proto.mutable_target();
+  target_proto->set_x(target->x);
+  target_proto->set_y(target->y);
+
+  proto.set_target_angle(target_angle.value());
+  proto.set_clockwise(clockwise.value());
+  proto.set_orbit_radius(orbit_radius.value());
+  proto.set_rotate_velocity(rotate_velocity.value());
+  proto.set_min_velocity(min_velocity.value());
+  proto.set_approach_kp(approach_kp.value());
+  proto.set_angle_kp(angle_kp.value());
+
+  return proto;
+};
+
+void RotateInPointMessage::fromProto(
+    const protocols::behavior::RotateInPoint& rotate_in_point_proto) {
+
+  if (rotate_in_point_proto.has_target()) {
+    target
+        = robocin::Point2Df(rotate_in_point_proto.target().x(), rotate_in_point_proto.target().y());
+  }
+
+  target_angle = rotate_in_point_proto.target_angle();
+  clockwise = rotate_in_point_proto.clockwise();
+  orbit_radius = rotate_in_point_proto.orbit_radius();
+  rotate_velocity = rotate_in_point_proto.rotate_velocity();
+  min_velocity = rotate_in_point_proto.min_velocity();
+  approach_kp = rotate_in_point_proto.approach_kp();
+  angle_kp = rotate_in_point_proto.angle_kp();
+};
 
 RotateOnSelfMessage::RotateOnSelfMessage() {}
 
