@@ -2,6 +2,7 @@
 #define DECISION_PROCESSING_COACH_COACH_H
 
 #include "decision/processing/coach/icoach.h"
+#include "decision/processing/evaluators/goalkeeper_state_machine_evaluator.h"
 #include "decision/processing/messages/behavior/behavior_message.h"
 
 namespace decision {
@@ -18,6 +19,7 @@ class Coach : public ICoach {
 
  private:
   ExampleEvaluator example_evaluator_;
+  GoalkeeperStateMachineEvaluator goalkeeper_state_machine_evaluator_;
 
   void processEvaluators(World& world);
 };
