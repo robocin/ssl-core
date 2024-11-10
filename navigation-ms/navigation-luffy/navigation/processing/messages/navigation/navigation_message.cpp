@@ -87,7 +87,7 @@ protocols::navigation::Output NavigationOutputMessage::toProto() const {
     output_proto.mutable_output_global_linear_velocity()->set_y(output_global_linear_velocity->y);
   };
 
-  return protocols::navigation::Output{};
+  return output_proto;
 };
 
 NavigationMessage::NavigationMessage(std::vector<NavigationOutputMessage> output) :

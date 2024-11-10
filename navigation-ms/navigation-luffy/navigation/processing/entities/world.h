@@ -32,7 +32,7 @@ class World {
   GameStatusMessage game_status;
   std::optional<MotionMessage> robot_motion;
   std::optional<PlanningMessage> robot_planning;
-  RobotMessage robot;
+  RobotMessage ally;
 
   std::vector<RobotMessage> allies;
   std::vector<RobotMessage> enemies;
