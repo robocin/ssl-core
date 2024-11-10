@@ -52,12 +52,12 @@ NavigationProcessor::NavigationProcessor(std::unique_ptr<IMotionParser> motion_p
 std::optional<::protocols::navigation::Navigation>
 NavigationProcessor::process(std::span<const Payload> payloads) {
   if (std::vector<rc::Behavior> behaviors = behaviorFromPayloads(payloads); !behaviors.empty()) {
-    last_behavior_ = behaviors.back();
+    last_behavior_ = BehaviorUnificationMessage(behaviors.back());
   }
 
   if (std::vector<rc::GameStatus> game_statuses = gameStatusFromPayloads(payloads);
       !game_statuses.empty()) {
-    last_game_status_ = game_statuses.back();
+    last_game_status_ = GameStatusMessage(game_statuses.back());
   }
 
   if (!last_behavior_ or !last_game_status_) {
@@ -69,12 +69,18 @@ NavigationProcessor::process(std::span<const Payload> payloads) {
     // a new package must be generated only when a new detection is received.
     return std::nullopt;
   }
-  
-  ::protocols::perception::Detection last_detection = detections.back();
+  DetectionMessage last_detection = DetectionMessage(detections.back());
 
-  ::protocols::navigation::Navigation navigation_proto;
+  ///////////////////////////////////////////////////////////////////////////
+  NavigationMessage navigation_msg;
 
-  return navigation_proto;
+  for (auto& behavior : last_behavior_->behavior_outputs) {
+    motion_parser_->setWorld(behavior, last_detection, last_game_status_.value());
+    NavigationOutputMessage output_msg = motion_parser_->parseMotion();
+    navigation_msg.output->emplace_back(std::move(output_msg));
+  }
+
+  return navigation_msg.toProto();
 }
 
 } // namespace navigation
