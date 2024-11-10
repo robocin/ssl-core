@@ -15,9 +15,9 @@ class PeripheralActuationMessage
                                       /*RobotDribblerMessage robot_dribbler*/);
   KickCommandMessage kick_command;
 
-  [[nodiscard]] protocols::common::PeripheralActuation toProto() const override {
-    return protocols::common::PeripheralActuation{};
-  };
+  void fromProto(const protocols::common::PeripheralActuation& peripheral_actuation_proto) override;
+
+  [[nodiscard]] protocols::common::PeripheralActuation toProto() const override;
 };
 } // namespace behavior
 
