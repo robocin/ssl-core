@@ -13,22 +13,26 @@ KickBall::KickBall() = default;
 OutputMessage KickBall::exec(const World& world) {
   robocin::ilog("Exec KickBall state");
 
-  robocin::Point2Df ball_position
-      = robocin::Point2Df{world.ball.position->x, world.ball.position->y};
-  // TODO(mlv): get ally id
+  // TODO(mlv): get ally id and kick target position
+  robocin::Point2Df target_position = world.field.enemyGoalInsideCenter();
   const int ally_id = 0;
 
-  bool is_ally_looking_to_target_and_ball
-      = behavior::AllyAnalyzer::isAllyLookingToTargetAndBall(world,
-                                                             0,
-                                                             ball_position,
-                                                             approach_angle_threshold);
+  if (GoalkeeperCommon::riskOfCollideWithPosts(world, ally_id)
+      || GoalkeeperCommon::robotBallTooClosePosts(world, ally_id)) {
+    state_machine_->transitionTo(new GoToSafePosition);
+  } else {
+    bool is_ally_looking_to_target_and_ball
+        = behavior::AllyAnalyzer::isAllyLookingToTargetAndBall(world,
+                                                               ally_id,
+                                                               target_position,
+                                                               approach_angle_threshold);
 
-  bool is_ball_in_range_to_kick
-      = behavior::AllyAnalyzer::isBallInRangeToKick(world, 0, distance_to_consider_kick);
+    bool is_ball_in_range_to_kick
+        = behavior::AllyAnalyzer::isBallInRangeToKick(world, ally_id, distance_to_consider_kick);
 
-  if (!is_ally_looking_to_target_and_ball || !is_ball_in_range_to_kick) {
-    state_machine_->transitionTo(new GoToBall);
+    if (!is_ally_looking_to_target_and_ball || !is_ball_in_range_to_kick) {
+      state_machine_->transitionTo(new GoToBall);
+    }
   }
 
   return makeKickBallOutput(world);

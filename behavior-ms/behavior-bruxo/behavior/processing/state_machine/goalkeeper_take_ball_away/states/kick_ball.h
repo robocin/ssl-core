@@ -3,6 +3,7 @@
 
 #include "behavior/processing/analyzer/ally_analyzer.h"
 #include "behavior/processing/messages/behavior/behavior_message.h"
+#include "behavior/processing/state_machine/goalkeeper_take_ball_away/common/goalkeeper_take_ball_away_common.h"
 #include "behavior/processing/state_machine/goalkeeper_take_ball_away/goalkeeper_take_ball_away_state_machine.h"
 #include "behavior/processing/state_machine/goalkeeper_take_ball_away/states/go_to_ball.h"
 #include "behavior/processing/state_machine/goalkeeper_take_ball_away/states/go_to_safe_position.h"
