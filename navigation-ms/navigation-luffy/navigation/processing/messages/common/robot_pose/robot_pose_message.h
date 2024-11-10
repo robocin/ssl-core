@@ -10,10 +10,11 @@ namespace navigation {
 
 class RobotPoseMessage : public robocin::IProtoConvertible<protocols::common::RobotPose> {
  public:
-  robocin::Point2Df position;
-  float orientation;
+  std::optional<robocin::Point2Df> position;
+  std::optional<float> orientation;
 
-  RobotPoseMessage(robocin::Point2Df position = robocin::Point2Df{0, 0}, float orientation = 0.0F);
+  explicit RobotPoseMessage(std::optional<robocin::Point2Df> position = std::nullopt,
+                            std::optional<float> orientation = std::nullopt);
 
   explicit RobotPoseMessage(const protocols::common::RobotPose& robot_pose_proto);
 

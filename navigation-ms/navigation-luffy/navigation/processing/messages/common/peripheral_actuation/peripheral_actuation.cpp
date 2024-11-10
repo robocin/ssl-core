@@ -22,7 +22,14 @@ PeripheralActuationMessage::PeripheralActuationMessage(
   PeripheralActuationMessage::fromProto(peripheral_actuation_proto);
 }
 protocols::common::PeripheralActuation PeripheralActuationMessage::toProto() const {
-  return protocols::common::PeripheralActuation{};
+  protocols::common::PeripheralActuation actuation_proto;
+  if (kick_command.has_value()) {
+    actuation_proto.mutable_kick_command()->CopyFrom(kick_command->toProto());
+  }
+  if (robot_dribbler.has_value()) {
+    actuation_proto.mutable_robot_dribbler()->CopyFrom(robot_dribbler->toProto());
+  }
+  return actuation_proto;
 };
 
 } // namespace navigation

@@ -49,12 +49,11 @@ class NavigationOutputMessage : public robocin::IProtoConvertible<protocols::nav
 
 class NavigationMessage : public robocin::IProtoConvertible<protocols::navigation::Navigation> {
  public:
-  explicit NavigationMessage(std::optional<std::vector<NavigationOutputMessage>> output
-                             = std::nullopt);
+  explicit NavigationMessage(std::vector<NavigationOutputMessage> output = {});
 
   explicit NavigationMessage(const protocols::navigation::Navigation& navigation_proto);
 
-  std::optional<std::vector<NavigationOutputMessage>> output;
+  std::vector<NavigationOutputMessage> output;
 
   [[nodiscard]] protocols::navigation::Navigation toProto() const override;
 
