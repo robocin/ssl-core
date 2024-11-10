@@ -1,7 +1,7 @@
 #ifndef DECISION_PROCESSING_EVALUATORS_GOALKEEPER_STATE_MACHINE_EVALUATOR_H
 #define DECISION_PROCESSING_EVALUATORS_GOALKEEPER_STATE_MACHINE_EVALUATOR_H
 
-#include "decision/processing/entities/machine_states.h"
+#include "decision/processing/entities/behavior_state_machine.h"
 #include "decision/processing/evaluators/evaluator_result.h"
 #include "decision/processing/evaluators/ievaluator.h"
 
@@ -9,11 +9,11 @@ namespace decision {
 
 class GoalkeeperStateMachineEvaluatorResult : public EvaluatorResult {
  public:
-  MachineStates::GoalkeeperStateMachines state_machine;
+  StateMachines::GoalkeeperStateMachines state_machine;
   double score;
 
   GoalkeeperStateMachineEvaluatorResult();
-  GoalkeeperStateMachineEvaluatorResult(MachineStates::GoalkeeperStateMachines state_machine,
+  GoalkeeperStateMachineEvaluatorResult(StateMachines::GoalkeeperStateMachines state_machine,
                                         double score);
 };
 
