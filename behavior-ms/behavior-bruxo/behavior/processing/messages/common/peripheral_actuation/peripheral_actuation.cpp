@@ -3,7 +3,6 @@
 #include "behavior/processing/messages/common/robot_kick/kick_command.h"
 
 namespace behavior {
-
 PeripheralActuationMessage::PeripheralActuationMessage(KickCommandMessage kick_command) :
     kick_command(std::move(kick_command)) {};
 

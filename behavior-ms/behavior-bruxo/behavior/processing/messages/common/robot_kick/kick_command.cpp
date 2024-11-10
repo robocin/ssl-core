@@ -2,7 +2,7 @@
 
 namespace behavior {
 
-KickCommandMessage::KickCommandMessage(double strength,
+KickCommandMessage::KickCommandMessage(float strength,
                                        bool is_front,
                                        bool is_chip,
                                        bool charge_capacitor,

@@ -9,12 +9,12 @@ namespace behavior {
 class KickCommandMessage
     : public robocin::IProtoConvertible<protocols::common::RobotKick::KickCommand> {
  public:
-  explicit KickCommandMessage(double strength,
+  explicit KickCommandMessage(float strength,
                               bool is_front,
                               bool is_chip,
                               bool charge_capacitor,
                               bool is_bypass_ir);
-  double strength;
+  float strength;
   bool is_front;
   bool is_chip;
   bool charge_capacitor;
