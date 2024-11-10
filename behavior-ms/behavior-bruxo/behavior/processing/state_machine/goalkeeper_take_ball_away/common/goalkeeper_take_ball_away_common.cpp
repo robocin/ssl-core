@@ -1,9 +1,5 @@
 #include "behavior/processing/state_machine/goalkeeper_take_ball_away/common/goalkeeper_take_ball_away_common.h"
 
-#include "behavior/parameters/parameters.h"
-
-#include <robocin/geometry/point2d.h>
-
 namespace behavior {
 
 std::optional<RobotMessage> GoalkeeperCommon::getAlly(const World& world, int id) {

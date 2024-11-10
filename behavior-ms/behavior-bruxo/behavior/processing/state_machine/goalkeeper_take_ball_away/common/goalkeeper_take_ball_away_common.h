@@ -1,6 +1,7 @@
 #ifndef BEHAVIOR_STATE_MACHINE_GOALKEEPER_COMMON_H
 #define BEHAVIOR_STATE_MACHINE_GOALKEEPER_COMMON_H
 
+#include "behavior/parameters/parameters.h"
 #include "behavior/processing/entities/world.h"
 #include "behavior/processing/messages/behavior/behavior_message.h"
 #include "behavior/processing/messages/perception/robot/robot_message.h"

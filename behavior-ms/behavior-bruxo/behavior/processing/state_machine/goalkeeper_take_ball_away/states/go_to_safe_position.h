@@ -14,22 +14,30 @@ namespace behavior {
 
 class GoToSafePosition : public IState {
  private:
+  // Output generation
   OutputMessage makeGoToSafePositionOutput(const World& world);
   RobotIdMessage makeGoToSafePositionRobotId(const World& world);
   MotionMessage makeGoToSafePositionMotion(const World& world);
   PlanningMessage makeGoToSafePositionPlanning(const World& world);
 
-  // state parameters
-  float approach_angle_threshold = 0.13 * 1.5;
-  float distance_to_consider_kick = 250 * 1;
+  // Transition logic
+  void checkAndHandleTransitions(const World& world);
+  [[nodiscard]] bool shouldStayInSafePosition(const World& world) const;
+  [[nodiscard]] bool shouldTransitionToKickBall(const World& world) const;
+
+  // Utility methods
+  [[nodiscard]] robocin::Point2Df getTargetPosition(const World& world) const;
+
+  // State parameters
+  float approach_angle_threshold = 0.13f * 1.5f;
+  float distance_to_consider_kick = 250.0f;
 
  protected:
   IStateMachine* state_machine_{}; // back reference
 
  public:
   explicit GoToSafePosition();
-
-  void setStateMachine(IStateMachine* state_machine) override { state_machine_ = state_machine; };
+  void setStateMachine(IStateMachine* state_machine) override { state_machine_ = state_machine; }
   OutputMessage exec(const World& world) override;
 };
 
