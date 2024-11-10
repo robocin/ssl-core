@@ -18,8 +18,8 @@ class GoalkeeperCommon {
   static bool robotBallTooClosePosts(const World& world, int ally_id);
 
   // Constants
-  static constexpr float DEFAULT_APPROACH_ANGLE_THRESHOLD = 0.26f;
-  static constexpr float DEFAULT_KICK_DISTANCE_THRESHOLD = 300.0f;
+  static constexpr float APPROACH_ANGLE_THRESHOLD = 0.26f;
+  static constexpr float DISTANCE_TO_CONSIDER_KICK = 300.0f;
   static constexpr float LOWER_POST_THRESHOLD_TO_CONSIDER_POST = 90.0f;
   static constexpr float UPPER_POST_THRESHOLD_TO_CONSIDER_POST = 190.0f;
 

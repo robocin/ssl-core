@@ -38,10 +38,10 @@ bool GoToSafePosition::shouldTransitionToKickBall(const World& world) const {
       = behavior::AllyAnalyzer::isAllyLookingToTargetAndBall(world,
                                                              ally_id,
                                                              target_position,
-                                                             approach_angle_threshold);
+                                                             approach_angle_threshold_);
 
   bool is_ball_in_range_to_kick
-      = behavior::AllyAnalyzer::isBallInRangeToKick(world, ally_id, distance_to_consider_kick);
+      = behavior::AllyAnalyzer::isBallInRangeToKick(world, ally_id, distance_to_consider_kick_);
 
   return is_ally_looking_to_target_and_ball && is_ball_in_range_to_kick;
 }

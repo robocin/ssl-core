@@ -29,8 +29,8 @@ class GoToSafePosition : public IState {
   [[nodiscard]] robocin::Point2Df getTargetPosition(const World& world) const;
 
   // State parameters
-  float approach_angle_threshold = 0.13f * 1.5f;
-  float distance_to_consider_kick = 250.0f;
+  float approach_angle_threshold_ = GoalkeeperCommon::APPROACH_ANGLE_THRESHOLD * 1.5f;
+  float distance_to_consider_kick_ = GoalkeeperCommon::DISTANCE_TO_CONSIDER_KICK;
 
  protected:
   IStateMachine* state_machine_{}; // back reference

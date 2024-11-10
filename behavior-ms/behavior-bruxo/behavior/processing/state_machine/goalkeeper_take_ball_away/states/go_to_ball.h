@@ -24,12 +24,12 @@ class GoToBall : public IState {
   [[nodiscard]] bool shouldTransitionToGoToSafePosition(const World& world) const;
   [[nodiscard]] bool shouldTransitionToKickBall(const World& world) const;
 
+  // state parameters
+  float approach_angle_threshold_ = GoalkeeperCommon::APPROACH_ANGLE_THRESHOLD * 1.5f;
+  float distance_to_consider_kick_ = GoalkeeperCommon::DISTANCE_TO_CONSIDER_KICK;
+
  protected:
   IStateMachine* state_machine_{}; // back reference
-
-  // state parameters
-  float approach_angle_threshold = 0.13f * 1.5f;
-  float distance_to_consider_kick = 250.0f;
 
  public:
   explicit GoToBall();
