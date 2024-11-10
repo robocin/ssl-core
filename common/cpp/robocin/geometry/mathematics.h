@@ -131,6 +131,17 @@ constexpr bool segmentsIntersect(const robocin::Line<T>& a, const robocin::Line<
   return segmentsIntersect(a.p1(), a.p2(), b.p1(), b.p2());
 }
 
+/*!
+ * @tparam PT Requires '.x()' and '.y()' members.
+ * @param lhs, rhs the vectors.
+ * @return Computes the angle between lhs and rhs (in the range [-π , +π] radians, the order
+ * matters).
+ */
+template <class PT>
+constexpr auto angleBetween(const PT& lhs, const PT& rhs) {
+  return std::atan2(lhs.cross(rhs), lhs.dot(rhs));
+}
+
 } // namespace mathematics
 
 #endif // ROBOCIN_MATHEMATICS_H

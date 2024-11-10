@@ -36,7 +36,7 @@ struct Point2D {
   }
 
   // Floatint-point comparison:
-  bool fuzzyIsNull(value_type value, value_type epsilon = static_cast<value_type>(1e-9)) {
+  bool fuzzyIsNull(value_type value, value_type epsilon = static_cast<value_type>(1e-9)) const {
     return std::abs(value) < epsilon;
   }
 
@@ -262,7 +262,7 @@ struct Point2D {
    * @note assuming a != b.
    */
   constexpr auto distanceToLine(const Point2D& a, const Point2D& b) {
-    return distanceTo(projectOntoLine(a, b));
+    return distanceTo(projectedOntoLine(a, b));
   }
 
   /*!
@@ -272,7 +272,7 @@ struct Point2D {
    * @note assuming a != b.
    */
   constexpr auto distanceToSegment(const Point2D& a, const Point2D& b) {
-    return distanceTo(projectOntoSegment(a, b));
+    return distanceTo(projectedOntoSegment(a, b));
   }
 
   /*!
