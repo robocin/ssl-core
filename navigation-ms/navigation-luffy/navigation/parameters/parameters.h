@@ -2,12 +2,15 @@
 #define NAVIGATION_PARAMETERS_PARAMETERS_H
 
 #include <numbers>
+#include <protocols/common/robot_id.pb.h>
 #include <robocin/parameters/parameters.h>
 
 namespace navigation {
 // NOLINTBEGIN(*comment*)
 constinit const auto pNavigationPollerTimeoutMs
     = ::robocin::parameters::View<1>::asInt32(10 /*ms ~= 100Hz*/);
+
+constinit const auto pAllyColor = protocols::common::RobotId::Color::RobotId_Color_COLOR_YELLOW;
 
 inline const static double M_to_MM = 1e3;
 inline const static bool USING_GLOBAL_VELOCITY = false;

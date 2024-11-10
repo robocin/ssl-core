@@ -42,6 +42,8 @@ void World::takeAlliesAndEnemies(const std::vector<protocols::perception::Robot>
 }
 
 void World::takeDecision(const protocols::decision::Decision& decision) {
+  // Reimplement when we listen to decision
+  return;
   this->decision.fromProto(decision);
 }
 
@@ -53,13 +55,11 @@ bool World::isAlly(const RobotMessage& robot) const { return robot.robot_id->col
 
 void World::takeField(const protocols::perception::Field& field) { this->field.fromProto(field); }
 
-void World::update(const protocols::decision::Decision& decision,
-                   const std::vector<protocols::perception::Robot>& robots,
+void World::update(const std::vector<protocols::perception::Robot>& robots,
                    const std::vector<protocols::perception::Ball>& balls,
                    const protocols::perception::Field& field,
                    const protocols::referee::GameStatus& game_status) {
 
-  World::takeDecision(decision);
   World::takeAlliesAndEnemies(robots);
   World::takeBallHighConfidence(balls);
   World::takeGameStatus(game_status);

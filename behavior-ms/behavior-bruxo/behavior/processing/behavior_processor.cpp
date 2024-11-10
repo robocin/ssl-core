@@ -1,7 +1,12 @@
 #include "behavior/processing/behavior_processor.h"
 
+#include "behavior/behavior_message.h"
 #include "behavior/messaging/receiver/payload.h"
 #include "behavior/parameters/parameters.h"
+#include "common/game_command/game_command_message.h"
+#include "common/robot_id/robot_id.h"
+#include "motion/motion_message.h"
+#include "perception/robot/robot_message.h"
 #include "state_machine/goalkeeper/goalkeeper_state_machine.h"
 
 #include <optional>
@@ -11,6 +16,7 @@
 #include <protocols/perception/detection.pb.h>
 #include <protocols/referee/game_status.pb.h>
 #include <ranges>
+#include <robocin/geometry/point2d.h>
 #include <robocin/memory/object_ptr.h>
 #include <robocin/output/log.h>
 #include <vector>
@@ -36,9 +42,35 @@ using ::protocols::behavior::unification::Behavior;
 using ::protocols::behavior::unification::Motion;
 using ::protocols::behavior::unification::Output;
 
+using ::protocols::perception::Robot;
+
 using ::protocols::referee::GameStatus;
 
 } // namespace rc
+
+RobotMessage findMyRobot(int number, std::vector<RobotMessage>& robots) {
+  // This function does not handle a case where it does not find a robot
+  for (auto& robot : robots) {
+    auto number_match = robot.robot_id->number.value() == number;
+    if (number_match) {
+
+      return RobotMessage{
+          robot.confidence.value(),
+          RobotIdMessage{robot.robot_id->color.value(), robot.robot_id->number.value()},
+          robot.position.value(),
+          robot.angle.value(),
+          robot.velocity.value(),
+          robot.angular_velocity.value(),
+          robot.radius.value(),
+          robot.height.value(),
+          robot.dribbler_width.value(),
+          std::nullopt /* Feedback */};
+    }
+  }
+
+  // Unreachble hopefully
+  return RobotMessage{};
+}
 
 std::vector<rc::Detection> detectionFromPayloads(std::span<const Payload> payloads) {
   return payloads | std::views::transform(&Payload::getDetectionMessages) | std::views::join
@@ -64,16 +96,7 @@ BehaviorProcessor::BehaviorProcessor(
     goalkeeper_state_machine_{std::move(goalkeeper_state_machine)} {}
 
 std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> payloads) {
-
-  if (std::vector<rc::Decision> decision_messages = decisionfromPayloads(payloads);
-      !decision_messages.empty()) {
-    last_decision_ = decision_messages.back();
-  }
-
-  if (!last_decision_) {
-    return std::nullopt;
-  }
-
+  robocin::ilog("BEHAVIOR");
   if (std::vector<rc::GameStatus> game_status_messages = gameStatusFromPayloads(payloads);
       !game_status_messages.empty()) {
     last_game_status_ = game_status_messages.back();
@@ -92,19 +115,25 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
 
   BehaviorMessage behavior_message;
 
-  world_.update(last_decision_.value(),
-                {last_detection.robots().begin(), last_detection.robots().end()},
+  world_.update({last_detection.robots().begin(), last_detection.robots().end()},
                 {last_detection.balls().begin(), last_detection.balls().end()},
                 last_detection.field(),
                 last_game_status_.value());
-  
-  for (const auto& robot : world_.allies) {
-    behavior_message.output.emplace_back(
-        OutputMessage{RobotIdMessage{}, MotionMessage{}, PlanningMessage{}});
-  }
 
-  ///////////////////////////////////////////////////////////////////////////////////
-  goalkeeper_state_machine_->run();
+  if (!world_.game_status.command->stop.has_value()) {
+    auto robot = findMyRobot(2, world_.allies);
+    auto ball_2_d = robocin::Point2Df(world_.ball.position->x, world_.ball.position->y);
+    auto target_angle = (ball_2_d - robot.position.value()).angle();
+
+    behavior_message.output.emplace_back(
+        RobotIdMessage{pAllyColor, 0},
+        MotionMessage{
+            GoToPointMessage{robocin::Point2Df{world_.ball.position->x, world_.ball.position->y},
+                             target_angle,
+                             GoToPointMessage::MovingProfile::DirectApproachBallSpeed,
+                             GoToPointMessage::PrecisionToTarget::HIGH,
+                             true /* sync_rotate_with_linear_movement */}});
+  }
 
   return behavior_message.toProto();
 }
