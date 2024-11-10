@@ -59,7 +59,6 @@ std::optional<rc::Decision> DecisionProcessor::process(std::span<const Payload> 
   rc::Decision decision_output;
 
   DecisionProcessor::update(payloads);
-  // robocin::ilog("{}", *(world_.field.width));
 
   // Evaluator processing is done synchronously here
   coach_->process(*world_);
