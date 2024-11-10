@@ -36,7 +36,7 @@ struct Point2D {
   }
 
   // Floatint-point comparison:
-  bool fuzzyIsNull(value_type value, value_type epsilon = static_cast<value_type>(1e-9)) {
+  bool fuzzyIsNull(value_type value, value_type epsilon = static_cast<value_type>(1e-9)) const {
     return std::abs(value) < epsilon;
   }
 

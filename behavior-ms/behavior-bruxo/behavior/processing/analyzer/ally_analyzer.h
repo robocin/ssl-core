@@ -24,6 +24,8 @@ class AllyAnalyzer {
 
   static bool isTooFarFromBall(const World& world, int ally_id, float distance_threshold);
 
+  static bool riskOfCollideWithPosts(const World& world, int ally_id);
+
  private:
   static std::optional<RobotMessage> getAlly(const World& world, int id);
 };

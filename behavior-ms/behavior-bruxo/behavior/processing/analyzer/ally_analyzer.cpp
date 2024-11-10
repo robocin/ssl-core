@@ -1,5 +1,6 @@
 #include "behavior/processing/analyzer/ally_analyzer.h"
 
+#include "ally_analyzer.h"
 #include "behavior/processing/analyzer/ball_analyzer.h"
 #include "behavior/processing/messages/perception/robot/robot_message.h"
 
@@ -69,4 +70,60 @@ bool AllyAnalyzer::isTooFarFromBall(const World& world,
   return ball_position.distanceTo(ally_position) > distance_threshold;
 }
 
+bool AllyAnalyzer::riskOfCollideWithPosts(const World& world, const int ally_id) {
+  std::optional<RobotMessage> ally = getAlly(world, ally_id);
+  if (!ally.has_value()) {
+    return false;
+  }
+  robocin::Point2Df ally_position = ally->position.value();
+
+  robocin::Point2Df ball_position
+      = robocin::Point2Df{world.ball.position->x, world.ball.position->y};
+
+  bool is_ally_to_ball_crossing_bottom_post
+      = mathematics::segmentsIntersect(ball_position,
+                                       ally_position,
+                                       world.field.allyGoalOutsideBottom(),
+                                       world.field.allyGoalInsideBottom());
+
+  bool is_ally_to_close_to_inside_bottom_post
+      = world.field.allyGoalInsideBottom().distanceToSegment(ally_position, ball_position)
+        < pRobotRadius() * 1.5;
+
+  bool is_ally_to_close_to_outside_bottom_post
+      = world.field.allyGoalOutsideBottom().distanceToSegment(ally_position, ball_position)
+        < pRobotRadius() * 1.5;
+
+  if (is_ally_to_ball_crossing_bottom_post || is_ally_to_close_to_inside_bottom_post
+      || is_ally_to_close_to_outside_bottom_post) {
+    return true;
+  }
+
+  bool is_ally_to_ball_crossing_upper_post
+      = mathematics::segmentsIntersect(ball_position,
+                                       ally_position,
+                                       world.field.allyGoalOutsideTop(),
+                                       world.field.allyGoalInsideTop());
+
+  bool is_ally_to_close_to_inside_upper_post
+      = world.field.allyGoalInsideTop().distanceToSegment(ally_position, ball_position)
+        < pRobotRadius() * 1.5;
+
+  bool is_ally_to_close_to_outside_upper_post
+      = world.field.allyGoalOutsideTop().distanceToSegment(ally_position, ball_position)
+        < pRobotRadius() * 1.5;
+
+  if (is_ally_to_ball_crossing_upper_post || is_ally_to_close_to_inside_upper_post
+      || is_ally_to_close_to_outside_upper_post) {
+    return true;
+  }
+
+  bool is_ally_crossing_back_post
+      = mathematics::segmentsIntersect(ball_position,
+                                       ally_position,
+                                       world.field.allyGoalInsideBottom(),
+                                       world.field.allyGoalInsideTop());
+
+  return is_ally_crossing_back_post;
+}
 } // namespace behavior

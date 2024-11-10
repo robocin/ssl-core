@@ -17,6 +17,9 @@ constinit const auto isAttackingToRight = ::robocin::parameters::View<1>::asBool
 
 constinit const auto pBallIsMovingVelocity = ::robocin::parameters::View<1>::asInt32(300);
 constinit const auto pBallIsMovingFastVelocity = ::robocin::parameters::View<1>::asInt32(850);
+
+constinit const auto pRobotRadius = ::robocin::parameters::View<1>::asInt32(90);
+constinit const auto pRobotDiameter = ::robocin::parameters::View<1>::asInt32(180);
 // NOLINTEND(*comment*)
 } // namespace behavior
 
