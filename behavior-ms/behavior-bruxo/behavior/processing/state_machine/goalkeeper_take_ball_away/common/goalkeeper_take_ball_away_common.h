@@ -4,6 +4,7 @@
 #include "behavior/parameters/parameters.h"
 #include "behavior/processing/entities/world.h"
 #include "behavior/processing/messages/behavior/behavior_message.h"
+#include "behavior/processing/messages/common/robot_id/robot_id.h"
 #include "behavior/processing/messages/perception/robot/robot_message.h"
 
 #include <robocin/geometry/mathematics.h>

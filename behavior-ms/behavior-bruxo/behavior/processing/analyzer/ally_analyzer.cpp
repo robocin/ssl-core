@@ -1,14 +1,11 @@
 #include "behavior/processing/analyzer/ally_analyzer.h"
 
-#include "ally_analyzer.h"
-#include "behavior/processing/analyzer/ball_analyzer.h"
-#include "behavior/processing/messages/perception/robot/robot_message.h"
-
 namespace behavior {
 
 std::optional<RobotMessage> AllyAnalyzer::getAlly(const World& world, int id) {
   for (const auto& ally : world.allies) {
     if (ally.robot_id.value().number == id) {
+      RobotMessage ally = std::move(ally);
       return ally;
     }
   }

@@ -5,10 +5,10 @@ namespace behavior {
 std::optional<RobotMessage> GoalkeeperCommon::getAlly(const World& world, int id) {
   for (const auto& ally : world.allies) {
     if (ally.robot_id.value().number == id) {
+      RobotMessage ally = std::move(ally);
       return ally;
     }
   }
-
   return std::nullopt;
 }
 
