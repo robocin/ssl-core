@@ -90,53 +90,83 @@ std::vector<rc::GameStatus> gameStatusFromPayloads(std::span<const Payload> payl
 
 } // namespace
 
+// CBR: function for every game command
+void onStop(BehaviorMessage& behavior_message, World& world) {
+  auto robot = findMyRobot(2, world.allies);
+  // Ball 2D is required because .angle() method is implemented from a Point2Df object.
+  auto ball_2_d = robocin::Point2Df(world.ball.position->x, world.ball.position->y);
+  auto target_angle = (ball_2_d - robot.position.value()).angle();
+  bool shouldKick = false;
+  // process should kick
+  std::optional<PeripheralActuationMessage> peripheral_actuation = std::nullopt;
+  if (shouldKick) {
+    peripheral_actuation = std::move(PeripheralActuationMessage{KickCommandMessage{
+        7.0 /* strength */,
+        true /* is_front */,
+        false /* is_chip */,
+        false /* charge_capacitor */,
+        false /* bypass_ir */
+    }});
+  }
+
+  // Always send go to point
+  behavior_message.output.emplace_back(
+      RobotIdMessage{pAllyColor, 0},
+      MotionMessage{
+          GoToPointMessage{robocin::Point2Df{world.ball.position->x, world.ball.position->y},
+                           target_angle,
+                           GoToPointMessage::MovingProfile::DirectApproachBallSpeed,
+                           GoToPointMessage::PrecisionToTarget::HIGH,
+                           true /* sync_rotate_with_linear_movement */},
+          std::nullopt /* go_to_point_with_trajectory */,
+          std::nullopt /* rotate_in_point */,
+          std::nullopt /* rotate_on_self */,
+          std::move(peripheral_actuation)});
+};
+
+void onHalt() { /* Implement */ };
+
 BehaviorProcessor::BehaviorProcessor(
     std::unique_ptr<parameters::IHandlerEngine> parameters_handler_engine,
-    std::unique_ptr<::behavior::GoalkeeperTakeBallAwayStateMachine>
-        goalkeeper_take_ball_away_state_machine) :
+    std::unique_ptr<GoalkeeperTakeBallAwayStateMachine> goalkeeper_take_ball_away_state_machine) :
     parameters_handler_engine_{std::move(parameters_handler_engine)},
     goalkeeper_take_ball_away_state_machine_{std::move(goalkeeper_take_ball_away_state_machine)} {}
 
 std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> payloads) {
+  BehaviorProcessor::update(payloads);
+  BehaviorMessage behavior_message;
+  if (world_.isStop()) {
+      (behavior_message, world_);
+  }
+  if (world_.isHalt()) {
+    onHalt();
+  }
+  return behavior_message.toProto();
+}
+
+bool BehaviorProcessor::update(std::span<const Payload>& payloads) {
   if (std::vector<rc::GameStatus> game_status_messages = gameStatusFromPayloads(payloads);
       !game_status_messages.empty()) {
     last_game_status_ = game_status_messages.back();
   }
 
   if (!last_game_status_) {
-    return std::nullopt;
+    return false;
   }
 
   std::vector<rc::Detection> detection_messages = detectionFromPayloads(payloads);
   if (detection_messages.empty()) {
     // a new package must be generated only when a new detection is received.
-    return std::nullopt;
+    return false;
   }
   const rc::Detection last_detection = detection_messages.back();
-
-  BehaviorMessage behavior_message;
 
   world_.update({last_detection.robots().begin(), last_detection.robots().end()},
                 {last_detection.balls().begin(), last_detection.balls().end()},
                 last_detection.field(),
                 last_game_status_.value());
 
-  if (!world_.game_status.command->stop.has_value()) {
-    auto robot = findMyRobot(2, world_.allies);
-    auto ball_2_d = robocin::Point2Df(world_.ball.position->x, world_.ball.position->y);
-    auto target_angle = (ball_2_d - robot.position.value()).angle();
-
-    behavior_message.output.emplace_back(
-        RobotIdMessage{pAllyColor, 0},
-        MotionMessage{
-            GoToPointMessage{robocin::Point2Df{world_.ball.position->x, world_.ball.position->y},
-                             target_angle,
-                             GoToPointMessage::MovingProfile::DirectApproachBallSpeed,
-                             GoToPointMessage::PrecisionToTarget::HIGH,
-                             true /* sync_rotate_with_linear_movement */}});
-  }
-
-  return behavior_message.toProto();
+  return true;
 }
 
 } // namespace behavior
