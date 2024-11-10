@@ -15,6 +15,7 @@
 #include <protocols/perception/detection.pb.h>
 #include <protocols/referee/game_status.pb.h>
 #include <ranges>
+#include <robocin/output/log.h>
 
 namespace navigation {
 
