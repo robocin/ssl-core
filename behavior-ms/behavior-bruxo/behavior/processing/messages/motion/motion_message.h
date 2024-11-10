@@ -1,6 +1,8 @@
 #ifndef BEHAVIOR_PROCESSING_MESSAGES_MOTION_MOTION_MESSAGE_H
 #define BEHAVIOR_PROCESSING_MESSAGES_MOTION_MOTION_MESSAGE_H
 
+#include "common/peripheral_actuation/peripheral_actuation.h"
+
 #include <protocols/behavior/behavior_unification.pb.h>
 #include <protocols/behavior/motion.pb.h>
 #include <robocin/geometry/point2d.h>
@@ -115,6 +117,7 @@ class RotateOnSelfMessage : public robocin::IProtoConvertible<protocols::behavio
 class MotionMessage : public robocin::IProtoConvertible<protocols::behavior::unification::Motion> {
  public:
   MotionMessage(std::optional<GoToPointMessage> go_to_point = std::nullopt,
+                std::optional<PeripheralActuationMessage> peripheral_actuation = std::nullopt,
                 std::optional<GoToPointWithTrajectoryMessage> go_to_point_with_trajectory
                 = std::nullopt,
                 std::optional<RotateInPointMessage> rotate_in_point = std::nullopt,
@@ -128,6 +131,7 @@ class MotionMessage : public robocin::IProtoConvertible<protocols::behavior::uni
   std::optional<GoToPointWithTrajectoryMessage> go_to_point_with_trajectory;
   std::optional<RotateInPointMessage> rotate_in_point;
   std::optional<RotateOnSelfMessage> rotate_on_self;
+  std::optional<PeripheralActuationMessage> peripheral_actuation;
 };
 
 } // namespace behavior

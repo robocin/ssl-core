@@ -20,9 +20,7 @@ class KickCommandMessage
   bool charge_capacitor;
   bool is_bypass_ir;
 
-  [[nodiscard]] protocols::common::RobotKick::KickCommand toProto() const override {
-    return protocols::common::RobotKick::KickCommand{};
-  };
+  [[nodiscard]] protocols::common::RobotKick::KickCommand toProto() const override;
 
   void fromProto(const protocols::common::RobotKick::KickCommand& kick_command_proto) override;
 };
