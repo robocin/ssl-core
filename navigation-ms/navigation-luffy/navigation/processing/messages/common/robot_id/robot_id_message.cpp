@@ -33,7 +33,7 @@ protocols::common::RobotId RobotIdMessage::toProto() const {
     robot_id_proto.set_color(getProtoColor(color.value()));
   }
   robot_id_proto.set_number(number);
-  return protocols::common::RobotId{};
+  return robot_id_proto;
 };
 
 void RobotIdMessage::fromProto(const rc::RobotId& robot_id_proto) {

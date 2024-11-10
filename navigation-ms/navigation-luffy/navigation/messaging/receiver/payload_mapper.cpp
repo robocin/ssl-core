@@ -33,7 +33,7 @@ Payload PayloadMapper::fromZmqDatagrams(std::span<const ZmqDatagram> messages) c
     if (zmq_datagram.topic() == service_discovery::kBehaviorUnificationTopic) {
       rc::Behavior behavior;
       behavior.ParseFromString(std::string{zmq_datagram.message()});
-      ilog("Received from behavior: {}", behavior.DebugString());
+      // ilog("Received from behavior: {}", behavior.DebugString());
       behaviors.emplace_back(std::move(behavior));
     }
     if (zmq_datagram.topic() == service_discovery::kPerceptionDetectionTopic) {
