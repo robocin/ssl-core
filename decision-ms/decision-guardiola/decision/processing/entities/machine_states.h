@@ -1,0 +1,12 @@
+#ifndef DECISION_PROCESSING_ENTITIES_MACHINE_STATES_H
+#define DECISION_PROCESSING_ENTITIES_MACHINE_STATES_H
+
+class MachineStates {
+ public:
+  enum class GoalkeeperStateMachines {
+    GUARD = 0,
+    TAKE_BALL_AWAY = 1,
+  };
+};
+
+#endif // DECISION_PROCESSING_ENTITIES_MACHINE_STATES_H

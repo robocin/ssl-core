@@ -92,7 +92,7 @@ bool DecisionProcessor::update(std::span<const Payload>& payloads) {
   }
 
   last_detection_ = DetectionMessage(detections.back());
-  world_.field = std::move(last_detection_->field.value());
+  world_->field = std::move(last_detection_->field.value());
 
   world_->update(last_detection_->robots,
                  last_detection_->balls,

@@ -1,6 +1,7 @@
 #include "decision/processing/evaluators/goalkeeper_state_machine_evaluator.h"
 
 #include "decision/processing/analyzer/field_analyzer.h"
+#include "decision/processing/entities/machine_states.h"
 
 #include <robocin/geometry/point2d.h>
 #include <robocin/output/log.h>
@@ -10,7 +11,7 @@ namespace decision {
 GoalkeeperStateMachineEvaluatorResult::GoalkeeperStateMachineEvaluatorResult() = default;
 
 GoalkeeperStateMachineEvaluatorResult::GoalkeeperStateMachineEvaluatorResult(
-    GoalkeeperStateMachines state_machine,
+    MachineStates::GoalkeeperStateMachines state_machine,
     double score) :
     state_machine(state_machine),
     score(score) {}
@@ -36,9 +37,9 @@ void GoalkeeperStateMachineEvaluator::process(World& world) {
       = is_ball_inside_area && (is_ball_stopped || is_ball_slow_and_moving_away_from_our_goal);
 
   if (should_take_ball_away) {
-    result = {GoalkeeperStateMachines::TAKE_BALL_AWAY, 1.0};
+    result = {MachineStates::GoalkeeperStateMachines::TAKE_BALL_AWAY, 1.0};
   } else {
-    result = {GoalkeeperStateMachines::GUARD, 1.0};
+    result = {MachineStates::GoalkeeperStateMachines::GUARD, 1.0};
   }
 }
 
