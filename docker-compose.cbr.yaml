@@ -13,6 +13,19 @@ services:
       driver: none
     network_mode: host
 
+  # autoref-tigers:
+  #   container_name: autoref-tigers
+  #   image: tigersmannheim/auto-referee:1.2.0
+  #   restart: unless-stopped
+  #   command:
+  #     - "-a"
+  #     - "-visionAddress"
+  #     - "224.5.23.2:10006"
+  #     - "-refereeAddress"
+  #     - "224.5.23.1:11003"
+  #   logging:
+  #     driver: none
+
   gateway:
     container_name: gateway
     build:
@@ -35,6 +48,7 @@ services:
     depends_on:
       - gateway
     network_mode: host
+    attach: false
 
   referee-ms:
     container_name: referee-ms
@@ -44,6 +58,7 @@ services:
     depends_on:
       - perception-ms
     network_mode: host
+    attach: false
 
   playback-db:
     container_name: playback-db
@@ -113,7 +128,7 @@ services:
     volumes:
       - .ssl-core:/tmp/.ssl-core
     network_mode: "host"
-    attach: true
+    attach: false
 
   # Not using decision currently
   # decision-ms:
@@ -149,7 +164,7 @@ services:
     depends_on:
       - gateway
     network_mode: "host"
-    attach: true
+    attach: false
     
 volumes:
   .ssl-core:
