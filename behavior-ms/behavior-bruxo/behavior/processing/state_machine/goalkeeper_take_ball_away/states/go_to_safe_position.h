@@ -31,8 +31,8 @@ class GoToSafePosition : public IState {
   [[nodiscard]] float getMotionAngle(const World& world) const;
 
   // State parameters
-  float approach_angle_threshold_ = GoalkeeperCommon::APPROACH_ANGLE_THRESHOLD * 1.5f;
-  float distance_to_consider_kick_ = GoalkeeperCommon::DISTANCE_TO_CONSIDER_KICK;
+  float approach_angle_threshold_ = GoalkeeperTakeBallAwayCommon::APPROACH_ANGLE_THRESHOLD * 1.5f;
+  float distance_to_consider_kick_ = GoalkeeperTakeBallAwayCommon::DISTANCE_TO_CONSIDER_KICK;
 
  protected:
   IStateMachine* state_machine_{}; // back reference

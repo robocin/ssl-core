@@ -2,7 +2,7 @@
 
 namespace behavior {
 
-std::optional<RobotMessage> GoalkeeperCommon::getAlly(const World& world, int id) {
+std::optional<RobotMessage> GoalkeeperGuardCommon::getAlly(const World& world, int id) {
   for (const auto& ally : world.allies) {
     if (ally.robot_id.value().number == id) {
       return RobotMessage{
@@ -21,7 +21,7 @@ std::optional<RobotMessage> GoalkeeperCommon::getAlly(const World& world, int id
   return std::nullopt;
 }
 
-bool GoalkeeperCommon::isBallInsideGoalkeeperArea(const World& world) {
+bool GoalkeeperGuardCommon::isBallInsideGoalkeeperArea(const World& world) {
   auto&& field = world.field;
   robocin::Point2Df ball_position
       = robocin::Point2Df{world.ball.position->x, world.ball.position->y};
@@ -29,7 +29,7 @@ bool GoalkeeperCommon::isBallInsideGoalkeeperArea(const World& world) {
   return FieldAnalyzer::allyPenaltyAreaContains(ball_position, field);
 }
 
-bool GoalkeeperCommon::isBallGoingToPassAreaLine(const World& world) {
+bool GoalkeeperGuardCommon::isBallGoingToPassAreaLine(const World& world) {
   auto&& field = world.field;
   auto&& ball = world.ball;
   robocin::Point2Df ball_position

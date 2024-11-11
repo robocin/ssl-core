@@ -1,5 +1,7 @@
 #include "behavior/processing/state_machine/goalkeeper_guard/states/defend_kick.h"
 
+#include "behavior/processing/state_machine/goalkeeper_guard/states/follow_ball_line.h"
+
 namespace behavior {
 
 DefendKick::DefendKick() = default;
@@ -12,24 +14,30 @@ OutputMessage DefendKick::exec(const World& world) {
 }
 
 void DefendKick::checkAndHandleTransitions(const World& world) {
-  if (shouldTransitionToFollowBallLine(world)) {
-    state_machine_->transitionTo(new FollowBallLine);
+  if (shouldStayInDefendKick(world)) {
     return;
   }
-
   if (shouldTransitionToFollowEnemyLine(world)) {
     state_machine_->transitionTo(new FollowEnemyLine);
+    return;
   }
+  state_machine_->transitionTo(new FollowBallLine);
 }
 
-bool DefendKick::shouldTransitionToFollowBallLine(const World& world) const {
-  const int ally_id = 0;
-  return true;
+bool DefendKick::shouldStayInDefendKick(const World& world) const {
+  bool is_ball_moving_to_our_goal = GoalkeeperGuardCommon::isBallMovingToOurGoal(world);
+  bool is_ball_inside_goalkeeper_area = GoalkeeperGuardCommon::isBallInsideGoalkeeperArea(world);
+  bool is_ball_going_to_pass_area_line = GoalkeeperGuardCommon::isBallGoingToPassAreaLine(world);
+
+  return is_ball_moving_to_our_goal
+         && (is_ball_inside_goalkeeper_area || is_ball_going_to_pass_area_line);
 }
 
 bool DefendKick::shouldTransitionToFollowEnemyLine(const World& world) const {
-  const int ally_id = 0;
-  return true;
+  return EnemyAnalyzer::enemyCanKick(
+      world,
+      GoalkeeperGuardCommon::DISTANCE_TO_CONSIDER_ENEMY_AS_CLOSE_TO_BALL,
+      GoalkeeperGuardCommon::MAX_ENEMY_SPEED_ANGLE_TO_BALL_THRESHOLD);
 }
 
 robocin::Point2Df DefendKick::getMotionTarget(const World& world) const {

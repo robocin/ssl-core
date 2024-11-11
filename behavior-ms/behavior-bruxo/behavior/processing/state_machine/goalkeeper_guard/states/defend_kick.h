@@ -3,6 +3,7 @@
 #define BEHAVIOR_STATE_MACHINE_DEFEND_KICK_H
 
 #include "behavior/processing/analyzer/ally_analyzer.h"
+#include "behavior/processing/analyzer/enemy_analyzer.h"
 #include "behavior/processing/messages/behavior/behavior_message.h"
 #include "behavior/processing/messages/motion/motion_message.h"
 #include "behavior/processing/state_machine/goalkeeper_guard/common/goalkeeper_guard_common.h"
@@ -26,7 +27,7 @@ class DefendKick : public IState {
 
   // Transition logic
   void checkAndHandleTransitions(const World& world);
-  [[nodiscard]] bool shouldTransitionToFollowBallLine(const World& world) const;
+  [[nodiscard]] bool shouldStayInDefendKick(const World& world) const;
   [[nodiscard]] bool shouldTransitionToFollowEnemyLine(const World& world) const;
 
   // Utility methods
@@ -34,7 +35,6 @@ class DefendKick : public IState {
   [[nodiscard]] float getMotionAngle(const World& world) const;
 
   // State parameters
-  float approach_angle_threshold_ = GoalkeeperCommon::APPROACH_ANGLE_THRESHOLD * 2.0f;
 
  protected:
   IStateMachine* state_machine_{}; // back reference

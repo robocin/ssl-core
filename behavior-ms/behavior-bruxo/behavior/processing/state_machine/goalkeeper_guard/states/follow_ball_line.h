@@ -3,6 +3,7 @@
 
 #include "behavior/parameters/parameters.h"
 #include "behavior/processing/analyzer/ally_analyzer.h"
+#include "behavior/processing/analyzer/enemy_analyzer.h"
 #include "behavior/processing/messages/behavior/behavior_message.h"
 #include "behavior/processing/state_machine/goalkeeper_guard/common/goalkeeper_guard_common.h"
 #include "behavior/processing/state_machine/goalkeeper_guard/goalkeeper_guard_state_machine.h"

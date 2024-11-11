@@ -33,8 +33,8 @@ class GoToBall : public IState {
   [[nodiscard]] bool isBallCloseToGoalLine(const World& world) const;
 
   // state parameters
-  float approach_angle_threshold_ = GoalkeeperCommon::APPROACH_ANGLE_THRESHOLD * 1.5f;
-  float distance_to_consider_kick_ = GoalkeeperCommon::DISTANCE_TO_CONSIDER_KICK;
+  float approach_angle_threshold_ = GoalkeeperTakeBallAwayCommon::APPROACH_ANGLE_THRESHOLD * 1.5f;
+  float distance_to_consider_kick_ = GoalkeeperTakeBallAwayCommon::DISTANCE_TO_CONSIDER_KICK;
   mutable bool is_ball_close_to_goal_line_ = false;
   float rotate_in_point_dist_threshold_ = pRobotRadius() * 1.2;
 

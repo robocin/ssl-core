@@ -28,5 +28,5 @@ robocin_cpp_library(
          goalkeeper_guard/states/follow_ball_line.cpp
          goalkeeper_guard/states/follow_enemy_line.cpp
          goalkeeper_guard/common/goalkeeper_guard_common.cpp
-    DEPS common::output
+    DEPS common::output               
 )

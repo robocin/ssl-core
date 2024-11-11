@@ -119,6 +119,8 @@ robocin::Point2Df BallAnalyzer::getProjectedBallPosition(const BallMessage& ball
 
   robocin::Point2Df result
       = ball_position + ball_velocity.resized(ball_displacement_until_reach_target_speed);
+
+  return result;
 }
 
 float BallAnalyzer::torricelli(float v, float v0, float a) {

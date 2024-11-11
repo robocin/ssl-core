@@ -2,6 +2,7 @@
 #define BEHAVIOR_STATE_MACHINE_FOLLOW_ENEMY_LINE_H
 
 #include "behavior/parameters/parameters.h"
+#include "behavior/processing/analyzer/enemy_analyzer.h"
 #include "behavior/processing/messages/behavior/behavior_message.h"
 #include "behavior/processing/state_machine/goalkeeper_guard/common/goalkeeper_guard_common.h"
 #include "behavior/processing/state_machine/goalkeeper_guard/states/defend_kick.h"
@@ -23,8 +24,8 @@ class FollowEnemyLine : public IState {
 
   // Transition logic
   void checkAndHandleTransitions(const World& world);
-  [[nodiscard]] bool shouldStayInSafePosition(const World& world) const;
-  [[nodiscard]] bool shouldTransitionToKickBall(const World& world) const;
+  [[nodiscard]] bool shouldStayInFollowEnemyLine(const World& world) const;
+  [[nodiscard]] bool shouldTransitionToDefendKick(const World& world) const;
 
   // Utility methods
   [[nodiscard]] robocin::Point2Df getMotionTarget(const World& world) const;

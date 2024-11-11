@@ -19,18 +19,19 @@ void KickBall::checkAndHandleTransitions(const World& world) {
 
   if (shouldTransitionToGoToBall(world)) {
     state_machine_->transitionTo(new GoToBall);
+    return;
   }
 }
 
 bool KickBall::shouldTransitionToSafePosition(const World& world) const {
   const int ally_id = 0;
-  return GoalkeeperCommon::riskOfCollideWithPosts(world, ally_id)
-         || GoalkeeperCommon::robotBallTooClosePosts(world, ally_id);
+  return GoalkeeperTakeBallAwayCommon::riskOfCollideWithPosts(world, ally_id)
+         || GoalkeeperTakeBallAwayCommon::robotBallTooClosePosts(world, ally_id);
 }
 
 bool KickBall::shouldTransitionToGoToBall(const World& world) const {
   const int ally_id = 0;
-  robocin::Point2Df target_position = GoalkeeperCommon::getKickTargetPosition(world);
+  robocin::Point2Df target_position = GoalkeeperTakeBallAwayCommon::getKickTargetPosition(world);
 
   bool is_ally_looking_to_target_and_ball
       = AllyAnalyzer::isAllyLookingToTargetAndBall(world,
@@ -51,7 +52,8 @@ robocin::Point2Df KickBall::getMotionTarget(const World& world) const {
 }
 
 float KickBall::getMotionAngle(const World& world) const {
-  return (GoalkeeperCommon::getKickTargetPosition(world) - getMotionTarget(world)).angle();
+  return (GoalkeeperTakeBallAwayCommon::getKickTargetPosition(world) - getMotionTarget(world))
+      .angle();
 }
 
 OutputMessage KickBall::makeKickBallOutput(const World& world) {

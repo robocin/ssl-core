@@ -15,7 +15,7 @@
 
 namespace behavior {
 
-class GoalkeeperCommon {
+class GoalkeeperGuardCommon {
  public:
   // Common utility functions used across states
   static std::optional<RobotMessage> getAlly(const World& world, int id);
@@ -25,6 +25,8 @@ class GoalkeeperCommon {
 
   // Constants
   static constexpr float APPROACH_ANGLE_THRESHOLD = 0.26f;
+  static constexpr float MAX_ENEMY_SPEED_ANGLE_TO_BALL_THRESHOLD = 0.3f;
+  static constexpr float DISTANCE_TO_CONSIDER_ENEMY_AS_CLOSE_TO_BALL = 230.0f;
 
  private:
 };

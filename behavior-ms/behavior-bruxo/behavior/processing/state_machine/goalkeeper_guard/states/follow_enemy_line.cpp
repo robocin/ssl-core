@@ -1,58 +1,58 @@
-#include "behavior/processing/state_machine/goalkeeper_take_ball_away/states/go_to_safe_position.h"
+#include "behavior/processing/state_machine/goalkeeper_guard/states/follow_enemy_line.h"
+
+#include "behavior/processing/analyzer/enemy_analyzer.h"
+#include "behavior/processing/state_machine/goalkeeper_guard/common/goalkeeper_guard_common.h"
+#include "behavior/processing/state_machine/goalkeeper_guard/states/defend_kick.h"
+
+#include <robocin/geometry/point2d.h>
 
 namespace behavior {
 
-GoToSafePosition::GoToSafePosition() = default;
+FollowEnemyLine::FollowEnemyLine() = default;
 
-OutputMessage GoToSafePosition::exec(const World& world) {
-  robocin::ilog("Exec GoToSafePosition state");
+OutputMessage FollowEnemyLine::exec(const World& world) {
+  robocin::ilog("Exec FollowEnemyLine state");
 
   checkAndHandleTransitions(world);
-  return makeGoToSafePositionOutput(world);
+  return makeFollowEnemyLineOutput(world);
 }
 
-void GoToSafePosition::checkAndHandleTransitions(const World& world) {
-  if (shouldStayInSafePosition(world)) {
+void FollowEnemyLine::checkAndHandleTransitions(const World& world) {
+  if (shouldTransitionToDefendKick(world)) {
+    state_machine_->transitionTo(new DefendKick);
     return;
   }
 
-  if (shouldTransitionToKickBall(world)) {
-    state_machine_->transitionTo(new KickBall);
+  if (shouldStayInFollowEnemyLine(world)) {
     return;
   }
 
-  state_machine_->transitionTo(new GoToBall);
+  state_machine_->transitionTo(new FollowBallLine);
 }
 
-bool GoToSafePosition::shouldStayInSafePosition(const World& world) const {
+bool FollowEnemyLine::shouldStayInFollowEnemyLine(const World& world) const {
+  return EnemyAnalyzer::enemyCanKick(
+      world,
+      GoalkeeperGuardCommon::DISTANCE_TO_CONSIDER_ENEMY_AS_CLOSE_TO_BALL,
+      GoalkeeperGuardCommon::MAX_ENEMY_SPEED_ANGLE_TO_BALL_THRESHOLD);
+};
+
+bool FollowEnemyLine::shouldTransitionToDefendKick(const World& world) const {
+  bool is_ball_moving_to_our_goal = GoalkeeperGuardCommon::isBallMovingToOurGoal(world);
+  bool is_ball_inside_goalkeeper_area = GoalkeeperGuardCommon::isBallInsideGoalkeeperArea(world);
+  bool is_ball_going_to_pass_area_line = GoalkeeperGuardCommon::isBallGoingToPassAreaLine(world);
+
+  return is_ball_moving_to_our_goal
+         && (is_ball_inside_goalkeeper_area || is_ball_going_to_pass_area_line);
+}
+
+robocin::Point2Df FollowEnemyLine::getMotionTarget(const World& world) const {
+  return robocin::Point2Df{};
+}
+
+float FollowEnemyLine::getMotionAngle(const World& world) const {
   const int ally_id = 0;
-  return GoalkeeperCommon::riskOfCollideWithPosts(world, ally_id)
-         || GoalkeeperCommon::robotBallTooClosePosts(world, ally_id);
-}
-
-bool GoToSafePosition::shouldTransitionToKickBall(const World& world) const {
-  const int ally_id = 0;
-  robocin::Point2Df kick_target_position = GoalkeeperCommon::getKickTargetPosition(world);
-
-  bool is_ally_looking_to_target_and_ball
-      = AllyAnalyzer::isAllyLookingToTargetAndBall(world,
-                                                   ally_id,
-                                                   kick_target_position,
-                                                   approach_angle_threshold_);
-
-  bool is_ball_in_range_to_kick
-      = AllyAnalyzer::isBallInRangeToKick(world, ally_id, distance_to_consider_kick_);
-
-  return is_ally_looking_to_target_and_ball && is_ball_in_range_to_kick;
-}
-
-robocin::Point2Df GoToSafePosition::getMotionTarget(const World& world) const {
-  return GoalkeeperCommon::getSafePositionToAvoidPosts(world);
-}
-
-float GoToSafePosition::getMotionAngle(const World& world) const {
-  const int ally_id = 0;
-  std::optional<RobotMessage> ally = GoalkeeperCommon::getAlly(world, ally_id);
+  std::optional<RobotMessage> ally = GoalkeeperGuardCommon::getAlly(world, ally_id);
   if (!ally.has_value()) {
     return 0.0f;
   }
@@ -64,24 +64,24 @@ float GoToSafePosition::getMotionAngle(const World& world) const {
   return (ball_position - ally_position).angle();
 }
 
-OutputMessage GoToSafePosition::makeGoToSafePositionOutput(const World& world) {
-  return OutputMessage{RobotIdMessage{makeGoToSafePositionRobotId(world)},
-                       MotionMessage{makeGoToSafePositionMotion(world)},
-                       PlanningMessage{makeGoToSafePositionPlanning(world)}};
+OutputMessage FollowEnemyLine::makeFollowEnemyLineOutput(const World& world) {
+  return OutputMessage{RobotIdMessage{makeFollowEnemyLineRobotId(world)},
+                       MotionMessage{makeFollowEnemyLineMotion(world)},
+                       PlanningMessage{makeFollowEnemyLinePlanning(world)}};
 }
 
-RobotIdMessage GoToSafePosition::makeGoToSafePositionRobotId(const World& world) {
+RobotIdMessage FollowEnemyLine::makeFollowEnemyLineRobotId(const World& world) {
   // TODO(mlv): Create the robot id message
   return RobotIdMessage{};
 }
 
-MotionMessage GoToSafePosition::makeGoToSafePositionMotion(const World& world) {
+MotionMessage FollowEnemyLine::makeFollowEnemyLineMotion(const World& world) {
   // TODO(mlv): Create the motion message
   GoToPointMessage go_to_point = GoToPointMessage{getMotionTarget(world), getMotionAngle(world)};
   return MotionMessage{std::move(go_to_point)};
 }
 
-PlanningMessage GoToSafePosition::makeGoToSafePositionPlanning(const World& world) {
+PlanningMessage FollowEnemyLine::makeFollowEnemyLinePlanning(const World& world) {
   // TODO(mlv): Create the planning message
   return PlanningMessage{};
 }
