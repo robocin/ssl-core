@@ -105,34 +105,41 @@ bool BallAnalyzer::isBallMovingToEnemySide(const FieldMessage& field, BallMessag
   return is_moving_to_enemy_side;
 }
 
-Point2Df BallAnalyzer::getProjectedBallPosition(BallMessage& ball, double target_speed){
-  //TODO(mlv): turn into parameter
+robocin::Point2Df BallAnalyzer::getProjectedBallPosition(BallMessage& ball, double target_speed) {
+  // TODO(mlv): turn into parameter
   const float ball_deceleration = -328.0f;
-  float ball_velocity_norm = ball.velocity.norm();
+  robocin::Point2Df ball_position = robocin::Point2Df{ball.position->x, ball.position->y};
+  robocin::Point2Df ball_velocity = robocin::Point2Df{ball.velocity->x, ball.velocity->y};
 
-  float ball_displacement_until_reach_target_speed = torricelli(target_speed, ball_velocity_norm, ball_deceleration);
+  float ball_velocity_norm = ball_velocity.norm();
 
-  Point2Df result = ball_position + ball_velocity.resized(ball_displacement_until_reach_target_speed);
+  float ball_displacement_until_reach_target_speed
+      = torricelli(target_speed, ball_velocity_norm, ball_deceleration);
+
+  robocin::Point2Df result
+      = ball_position + ball_velocity.resized(ball_displacement_until_reach_target_speed);
 }
 
-float BallAnalyzer::torricelli(float v, float v0, float a){
+float BallAnalyzer::torricelli(float v, float v0, float a) {
   return (v * v - v0 * v0) / (2.0f * a);
 }
 
-bool BallAnalyzer::isMovingToDefensiveGoal(const FieldMessage& field, BallMessage& ball){
-  if(isBallStopped()){
+bool BallAnalyzer::isMovingToDefensiveGoal(const FieldMessage& field, BallMessage& ball) {
+  if (isBallStopped(ball)) {
     return false;
   }
   robocin::Point2Df ball_position = robocin::Point2Df{ball.position->x, ball.position->y};
+  robocin::Point2Df ball_velocity = robocin::Point2Df{ball.velocity->x, ball.velocity->y};
 
-  robocin::Point2Df offset_from_goal_center = {0, field.penalty_area_width.value() * std::sqrt(2) / 2};
-  bool is_ball_moving_to_defensive_goal = mathematics::segmentsIntersect(field.allyGoalOutsideCenter() + offset_from_goal_center,
-                                                                        field.allyGoalInsideCenter() - offset_from_goal_center,
-                                                                        ball_position,
-                                                                        ball_position + ball.velocity().resized(field.length));
+  robocin::Point2Df offset_from_goal_center
+      = {0, static_cast<float>(field.penalty_area_width.value() * std::sqrt(2) / 2)};
+  bool is_ball_moving_to_defensive_goal
+      = mathematics::segmentsIntersect(field.allyGoalOutsideCenter() + offset_from_goal_center,
+                                       field.allyGoalInsideCenter() - offset_from_goal_center,
+                                       ball_position,
+                                       ball_position + ball_velocity.resized(field.length.value()));
 
-  return is_ball_moving_to_defensive_goal;                                                                
+  return is_ball_moving_to_defensive_goal;
 }
-
 
 } // namespace behavior

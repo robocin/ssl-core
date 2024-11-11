@@ -28,8 +28,7 @@ void FollowBallLine::checkAndHandleTransitions(const World& world) {
 bool FollowBallLine::shouldTransitionToDefendKick(const World& world) const {
   // TODO(mlv): get ally id
   const int ally_id = 0;
-  return GoalkeeperCommon::riskOfCollideWithPosts(world, ally_id)
-         || GoalkeeperCommon::robotBallTooClosePosts(world, ally_id);
+  return true;
 }
 
 bool FollowBallLine::shouldTransitionToFollowEnemyLine(const World& world) const {
@@ -59,10 +58,7 @@ float FollowBallLine::getMotionAngle(const World& world) const {
     return 0.0f;
   }
 
-  robocin::Point2Df ally_position = ally->position.value();
-  robocin::Point2Df kick_target_position = GoalkeeperCommon::getKickTargetPosition(world);
-
-  return (kick_target_position - ally_position).angle();
+  return 0.0f;
 }
 
 GoToPointMessage::MovingProfile FollowBallLine::getMotionMovingProfile(const World& world) const {

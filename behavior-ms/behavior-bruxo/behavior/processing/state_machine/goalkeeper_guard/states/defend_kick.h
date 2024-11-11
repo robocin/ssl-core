@@ -35,7 +35,6 @@ class DefendKick : public IState {
 
   // State parameters
   float approach_angle_threshold_ = GoalkeeperCommon::APPROACH_ANGLE_THRESHOLD * 2.0f;
-  float distance_to_consider_kick_ = GoalkeeperCommon::DISTANCE_TO_CONSIDER_KICK * 1.2f;
 
  protected:
   IStateMachine* state_machine_{}; // back reference

@@ -2,12 +2,14 @@
 #define BEHAVIOR_STATE_MACHINE_GOALKEEPER_COMMON_H
 
 #include "behavior/parameters/parameters.h"
+#include "behavior/processing/analyzer/ball_analyzer.h"
+#include "behavior/processing/analyzer/field_analyzer.h"
 #include "behavior/processing/entities/world.h"
 #include "behavior/processing/messages/behavior/behavior_message.h"
 #include "behavior/processing/messages/common/robot_id/robot_id.h"
 #include "behavior/processing/messages/perception/robot/robot_message.h"
-#include "behavior/processing/analyzer/field_analyzer.h"
 
+#include <robocin/geometry/line.h>
 #include <robocin/geometry/mathematics.h>
 #include <robocin/geometry/point2d.h>
 
@@ -24,9 +26,7 @@ class GoalkeeperCommon {
   // Constants
   static constexpr float APPROACH_ANGLE_THRESHOLD = 0.26f;
 
-
  private:
-
 };
 
 } // namespace behavior

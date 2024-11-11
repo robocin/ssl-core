@@ -24,24 +24,12 @@ void DefendKick::checkAndHandleTransitions(const World& world) {
 
 bool DefendKick::shouldTransitionToFollowBallLine(const World& world) const {
   const int ally_id = 0;
-  return GoalkeeperCommon::riskOfCollideWithPosts(world, ally_id)
-         || GoalkeeperCommon::robotBallTooClosePosts(world, ally_id);
+  return true;
 }
 
 bool DefendKick::shouldTransitionToFollowEnemyLine(const World& world) const {
   const int ally_id = 0;
-  robocin::Point2Df target_position = GoalkeeperCommon::getKickTargetPosition(world);
-
-  bool is_ally_looking_to_target_and_ball
-      = AllyAnalyzer::isAllyLookingToTargetAndBall(world,
-                                                   ally_id,
-                                                   target_position,
-                                                   approach_angle_threshold_);
-
-  bool is_ball_in_range_to_kick
-      = AllyAnalyzer::isBallInRangeToKick(world, ally_id, distance_to_consider_kick_);
-
-  return !is_ally_looking_to_target_and_ball || !is_ball_in_range_to_kick;
+  return true;
 }
 
 robocin::Point2Df DefendKick::getMotionTarget(const World& world) const {
@@ -50,9 +38,7 @@ robocin::Point2Df DefendKick::getMotionTarget(const World& world) const {
   return ball_position;
 }
 
-float DefendKick::getMotionAngle(const World& world) const {
-  return (GoalkeeperCommon::getKickTargetPosition(world) - getMotionTarget(world)).angle();
-}
+float DefendKick::getMotionAngle(const World& world) const { return 0.0f; }
 
 OutputMessage DefendKick::makeDefendKickOutput(const World& world) {
   return OutputMessage{RobotIdMessage{makeDefendKickRobotId(world)},

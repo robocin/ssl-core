@@ -21,14 +21,14 @@ std::optional<RobotMessage> GoalkeeperCommon::getAlly(const World& world, int id
   return std::nullopt;
 }
 
-bool GoalkeeperCommon::isBallInsideGoalkeeperArea(const World& world, int id){
+bool GoalkeeperCommon::isBallInsideGoalkeeperArea(const World& world, int id) {
   robocin::Point2Df ball_position
       = robocin::Point2Df{world.ball.position->x, world.ball.position->y};
 
-  return FieldAnalyzer::allyPenaltyAreaContains(ball_position, field);  
+  return FieldAnalyzer::allyPenaltyAreaContains(ball_position, field);
 }
 
-bool GoalkeeperCommon::isBallGoingToPassAreaLine(const World& world){
+bool GoalkeeperCommon::isBallGoingToPassAreaLine(const World& world) {
   auto&& field = world.field;
   auto&& ball = world.ball;
   robocin::Point2Df ball_position
@@ -44,9 +44,9 @@ bool GoalkeeperCommon::isBallGoingToPassAreaLine(const World& world){
   robocin::Line ball_to_estimated_ball = {ball_position, stop_ball_position};
 
   bool ball_is_going_to_pass_area_line = false;
-  for(size_t i = 0; i < goalkeeper_area.size() - 1; i++){
-    robocin::Line area_line = {goalkeeperArea[i], goalkeeperArea[i+1]};
-    if(mathematics::segmentsIntersect(ball_to_estimated_ball, area_line)){
+  for (size_t i = 0; i < goalkeeper_area.size() - 1; i++) {
+    robocin::Line area_line = {goalkeeper_area[i], goalkeeper_area[i + 1]};
+    if (mathematics::segmentsIntersect(ball_to_estimated_ball, area_line)) {
       ball_is_going_to_pass_area_line = true;
       break;
     }
