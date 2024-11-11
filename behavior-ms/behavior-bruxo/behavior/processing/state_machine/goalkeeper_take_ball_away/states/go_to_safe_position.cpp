@@ -53,6 +53,9 @@ robocin::Point2Df GoToSafePosition::getMotionTarget(const World& world) const {
 float GoToSafePosition::getMotionAngle(const World& world) const {
   const int ally_id = 0;
   std::optional<RobotMessage> ally = GoalkeeperCommon::getAlly(world, ally_id);
+  if (!ally.has_value()) {
+    return 0.0f;
+  }
 
   robocin::Point2Df ally_position = ally->position.value();
   robocin::Point2Df ball_position

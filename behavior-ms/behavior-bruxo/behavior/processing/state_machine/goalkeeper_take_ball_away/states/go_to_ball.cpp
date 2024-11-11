@@ -53,6 +53,9 @@ bool GoToBall::isBallCloseToGoalLine(const World& world) const {
   auto&& field = world.field;
   const int ally_id = 0;
   std::optional<RobotMessage> ally = GoalkeeperCommon::getAlly(world, ally_id);
+  if (!ally.has_value()) {
+    return false;
+  }
 
   robocin::Point2Df ally_position = ally->position.value();
   robocin::Point2Df ball_position
@@ -73,6 +76,9 @@ bool GoToBall::isBallCloseToGoalLine(const World& world) const {
 robocin::Point2Df GoToBall::getMotionTarget(const World& world) const {
   const int ally_id = 0;
   std::optional<RobotMessage> ally = GoalkeeperCommon::getAlly(world, ally_id);
+  if (!ally.has_value()) {
+    return robocin::Point2Df{0, 0};
+  }
 
   robocin::Point2Df ally_position = ally->position.value();
   robocin::Point2Df ball_position
@@ -91,6 +97,9 @@ robocin::Point2Df GoToBall::getMotionTarget(const World& world) const {
 float GoToBall::getMotionAngle(const World& world) const {
   const int ally_id = 0;
   std::optional<RobotMessage> ally = GoalkeeperCommon::getAlly(world, ally_id);
+  if (!ally.has_value()) {
+    return 0.0f;
+  }
 
   robocin::Point2Df ally_position = ally->position.value();
   robocin::Point2Df kick_target_position = GoalkeeperCommon::getKickTargetPosition(world);
@@ -101,6 +110,9 @@ float GoToBall::getMotionAngle(const World& world) const {
 GoToPointMessage::MovingProfile GoToBall::getMotionMovingProfile(const World& world) const {
   const int ally_id = 0;
   std::optional<RobotMessage> ally = GoalkeeperCommon::getAlly(world, ally_id);
+  if (!ally.has_value()) {
+    return GoToPointMessage::MovingProfile::BalancedInDefaultSpeed;
+  }
 
   robocin::Point2Df ally_position = ally->position.value();
   robocin::Point2Df ball_position
