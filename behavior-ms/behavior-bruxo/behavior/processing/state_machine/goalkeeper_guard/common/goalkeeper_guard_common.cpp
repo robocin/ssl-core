@@ -1,4 +1,4 @@
-#include "behavior/processing/state_machine/goalkeeper_take_ball_away/common/goalkeeper_take_ball_away_common.h"
+#include "behavior/processing/state_machine/goalkeeper_guard/common/goalkeeper_guard_common.h"
 
 namespace behavior {
 
@@ -21,7 +21,8 @@ std::optional<RobotMessage> GoalkeeperCommon::getAlly(const World& world, int id
   return std::nullopt;
 }
 
-bool GoalkeeperCommon::isBallInsideGoalkeeperArea(const World& world, int id) {
+bool GoalkeeperCommon::isBallInsideGoalkeeperArea(const World& world) {
+  auto&& field = world.field;
   robocin::Point2Df ball_position
       = robocin::Point2Df{world.ball.position->x, world.ball.position->y};
 

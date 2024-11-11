@@ -105,7 +105,8 @@ bool BallAnalyzer::isBallMovingToEnemySide(const FieldMessage& field, BallMessag
   return is_moving_to_enemy_side;
 }
 
-robocin::Point2Df BallAnalyzer::getProjectedBallPosition(BallMessage& ball, double target_speed) {
+robocin::Point2Df BallAnalyzer::getProjectedBallPosition(const BallMessage& ball,
+                                                         double target_speed) {
   // TODO(mlv): turn into parameter
   const float ball_deceleration = -328.0f;
   robocin::Point2Df ball_position = robocin::Point2Df{ball.position->x, ball.position->y};

@@ -26,11 +26,11 @@ class BallAnalyzer {
   static bool isBallMovingToOffensiveGoal(const FieldMessage& field, BallMessage& ball);
   static bool isBallMovingToDefensiveGoal(const FieldMessage& field, BallMessage& ball);
   static bool isBallMovingToEnemySide(const FieldMessage& field, BallMessage& ball);
-  robocin::Point2Df getProjectedBallPosition(BallMessage& ball, double target_speed);
+  static robocin::Point2Df getProjectedBallPosition(const BallMessage& ball, double target_speed);
   static bool isMovingToDefensiveGoal(const FieldMessage& field, BallMessage& ball);
 
  private:
-  float torricelli(float v, float v0, float a);
+  static float torricelli(float v, float v0, float a);
 };
 
 } // namespace behavior
