@@ -1,5 +1,8 @@
 #include "behavior/processing/state_machine/goalkeeper_guard/common/goalkeeper_guard_common.h"
 
+#include "behavior/processing/analyzer/enemy_analyzer.h"
+#include "behavior/processing/messages/perception/robot/robot_message.h"
+
 #include <robocin/geometry/point2d.h>
 
 namespace behavior {
@@ -126,6 +129,199 @@ float GoalkeeperGuardCommon::distanceFromBallToClosestAreaSegment(const World& w
   }
 
   return min_distance;
+}
+
+bool GoalkeeperGuardCommon::isLateralMove(const World& world,
+                                          int ally_id,
+                                          robocin::Point2Df target_position) {
+  std::optional<RobotMessage> ally = getAlly(world, ally_id);
+  if (!ally.has_value()) {
+    return false;
+  }
+  auto&& field = world.field;
+  robocin::Point2Df ally_position = ally->position.value();
+
+  float ally_to_target_point_dist_x = std::abs(ally_position.x - target_position.x);
+  bool is_lateral_move = ally_to_target_point_dist_x < field.penalty_area_depth.value() * 0.25f;
+
+  return is_lateral_move;
+}
+
+robocin::Point2Df GoalkeeperGuardCommon::getGoalkeeperTargetOnGoalLine(const World& world) {
+  auto&& field = world.field;
+  robocin::Point2Df ball_position
+      = robocin::Point2Df{world.ball.position->x, world.ball.position->y};
+  robocin::Point2Df ball_velocity
+      = robocin::Point2Df{world.ball.velocity->x, world.ball.velocity->y};
+
+  float attack_direction = field.attackDirection().x;
+  float defensive_goal_point_x = field.allyGoalOutsideCenter().x;
+  float angular_coefficient = std::tan(ball_velocity.angle());
+
+  float goalkeeper_target_x
+      = defensive_goal_point_x + GoalkeeperGuardCommon::IN_LINE_OFFSET_X * attack_direction;
+  float goalkeeper_target_y
+      = getGoalkeeperTargetY(world, ball_position, angular_coefficient, goalkeeper_target_x);
+
+  robocin::Point2Df goalkeeper_target_position = {goalkeeper_target_x, goalkeeper_target_y};
+
+  return goalkeeper_target_position;
+}
+
+robocin::Point2Df GoalkeeperGuardCommon::projectGoalkeeperTargetOnArc(
+    robocin::Point2Df ball_position,
+    robocin::Point2Df goalkeeper_target_position_on_line,
+    robocin::Point2Df goal_center,
+    float radius) {
+  std::vector<robocin::Point2Df> intersections
+      = getCircleLineIntersections(ball_position,
+                                   goalkeeper_target_position_on_line,
+                                   goal_center,
+                                   radius);
+  if (intersections.empty()) {
+    return goalkeeper_target_position_on_line;
+  }
+  if (intersections.size() == 1) {
+    return intersections[0];
+  }
+  if (intersections.size() == 2) {
+    if (intersections[0].y * ball_position.y < 0) {
+      return intersections[1];
+    }
+    if (intersections[1].y * ball_position.y < 0) {
+      return intersections[0];
+    }
+    if (std::abs(intersections[0].x) > std::abs(intersections[1].x)) {
+      return intersections[1];
+    }
+  }
+  return intersections[0];
+}
+
+robocin::Point2Df GoalkeeperGuardCommon::getAndProcessGoalkeeperTargetOnArc(
+    const World& world,
+    robocin::Point2Df goalkeeper_target_position_on_line,
+    robocin::Point2Df goal_center,
+    robocin::Point2Df aux_point) {
+  auto&& field = world.field;
+  robocin::Point2Df ball_position
+      = robocin::Point2Df{world.ball.position->x, world.ball.position->y};
+
+  robocin::Point2Df defensive_goal_point = field.allyGoalOutsideCenter();
+
+  float upper_post_point_y = field.allyGoalOutsideTop().y + GoalkeeperGuardCommon::IN_LINE_OFFSET_Y;
+  float bottom_post_point_y
+      = field.allyGoalOutsideBottom().y - GoalkeeperGuardCommon::IN_LINE_OFFSET_Y;
+
+  bool is_ball_close_to_goal_line
+      = (std::abs(ball_position.x) + GoalkeeperGuardCommon::IN_LINE_OFFSET_X - 10)
+        > std::abs(defensive_goal_point.x);
+
+  robocin::Point2Df goalkeeper_target_on_arc = [&]() {
+    if (!is_ball_close_to_goal_line) {
+      return projectGoalkeeperTargetOnArc(ball_position,
+                                          goalkeeper_target_position_on_line,
+                                          goal_center,
+                                          goal_center.distanceTo(aux_point));
+    }
+    if (ball_position.y > 0) {
+      return robocin::Point2Df{aux_point.x, upper_post_point_y};
+    }
+    return robocin::Point2Df{aux_point.x, bottom_post_point_y};
+  }();
+
+  return goalkeeper_target_on_arc;
+}
+
+robocin::Point2Df
+GoalkeeperGuardCommon::getKickTargetOfEnemyRobot(const World& world,
+                                                 const RobotMessage& closestEnemy) {
+  auto&& field = world.field;
+  robocin::Point2Df ball_position
+      = robocin::Point2Df{world.ball.position->x, world.ball.position->y};
+  robocin::Point2Df enemy_position = closestEnemy.position.value();
+
+  float defensive_goal_point_x = field.allyGoalOutsideCenter().x;
+  float upper_post_point
+      = field.allyGoalOutsideTop().y - 2 * GoalkeeperGuardCommon::IN_LINE_OFFSET_Y;
+  float bottom_post_point
+      = field.allyGoalOutsideBottom().y + 2 * GoalkeeperGuardCommon::IN_LINE_OFFSET_Y;
+
+  float attack_direction = field.attackDirection().x;
+  robocin::Point2Df goal_center
+      = {defensive_goal_point_x
+             - attack_direction * GoalkeeperGuardCommon::GOALKEEPER_ARC_CURVE_THRESHOLD,
+         0};
+  float enemy_angular_coefficient = std::tan(closestEnemy.angle.value());
+
+  float enemy_intercept_point_y = getGoalkeeperTargetY(world,
+                                                       enemy_position,
+                                                       enemy_angular_coefficient,
+                                                       defensive_goal_point_x);
+  enemy_intercept_point_y
+      = std::clamp(enemy_intercept_point_y, bottom_post_point, upper_post_point);
+
+  //          id = 0
+  //        A ------- B
+  //                  |
+  //    GOAL          |  id = 1
+  //                  |
+  //                  |
+  //        D ------- C
+  //          id = 2
+  int side_aux = attack_direction > 0 ? 1 : -1;
+  float area_factor = 0.5f;
+  float goal_width = field.goal_width.value();
+
+  robocin::Point2Df A = {defensive_goal_point_x, goal_width};
+  robocin::Point2Df B
+      = {defensive_goal_point_x + (side_aux * goal_width * area_factor), goal_width};
+  robocin::Point2Df C
+      = {defensive_goal_point_x + (side_aux * goal_width * area_factor), -goal_width};
+  robocin::Point2Df D = {defensive_goal_point_x, -goal_width};
+
+  robocin::Point2Df enemy_intercept_point = {defensive_goal_point_x, enemy_intercept_point_y};
+
+  if (mathematics::segmentsIntersect(A, B, ball_position, enemy_intercept_point)) {
+    enemy_intercept_point_y = upper_post_point;
+  } else if (mathematics::segmentsIntersect(C, D, ball_position, enemy_intercept_point)) {
+    enemy_intercept_point_y = bottom_post_point;
+  }
+
+  enemy_intercept_point
+      = {defensive_goal_point_x + (GoalkeeperGuardCommon::IN_LINE_OFFSET_X * attack_direction),
+         enemy_intercept_point_y};
+  robocin::Point2Df aux_point
+      = {defensive_goal_point_x + (GoalkeeperGuardCommon::IN_LINE_OFFSET_X * attack_direction),
+         goal_width / 2};
+
+  return getAndProcessGoalkeeperTargetOnArc(world, enemy_intercept_point, goal_center, aux_point);
+}
+
+robocin::Point2Df GoalkeeperGuardCommon::getEnemyToGoalDisplacedVector(const World& world) {
+  auto&& field = world.field;
+  robocin::Point2Df ball_position
+      = robocin::Point2Df{world.ball.position->x, world.ball.position->y};
+
+  // Check if has value has already been made in the condition to enter followEnemyLineOutput
+  RobotMessage closest_enemy = EnemyAnalyzer::getClosestEnemyToBall(world).value();
+
+  robocin::Point2Df enemy_kick_target_point = getKickTargetOfEnemyRobot(world, closest_enemy);
+  robocin::Point2Df ball_to_enemy_kick_target_vector = enemy_kick_target_point - ball_position;
+
+  float max_distance = (field.length.value() / 2) - field.penalty_area_depth.value();
+  float ball_to_area_distance = distanceFromBallToClosestAreaSegment(world);
+  ball_to_area_distance = std::clamp(ball_to_area_distance, 0.0f, max_distance);
+
+  float goalkeeper_bisector_weight
+      = mathematics::map(ball_to_area_distance, 0.0f, max_distance, 0.0f, 1.0f);
+  float ball_to_enemy_line_weight = 1 - goalkeeper_bisector_weight;
+
+  robocin::Point2Df enemy_to_goal_displaced_vector
+      = ball_to_enemy_kick_target_vector.normalized() * ball_to_enemy_line_weight
+        + getGoalkeeperBisectorVector(world).normalized() * goalkeeper_bisector_weight;
+
+  return enemy_to_goal_displaced_vector;
 }
 
 } // namespace behavior

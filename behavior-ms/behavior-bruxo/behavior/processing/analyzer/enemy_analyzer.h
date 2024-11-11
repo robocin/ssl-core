@@ -14,10 +14,10 @@ namespace behavior {
 class EnemyAnalyzer {
  public:
   EnemyAnalyzer();
+  static std::optional<RobotMessage> getClosestEnemyToBall(const World& world);
   static bool enemyCanKick(const World& world, float distance_threshold, float angle_threshold);
 
  private:
-  static std::optional<RobotMessage> getClosestEnemyToBall(const World& world);
 };
 
 } // namespace behavior

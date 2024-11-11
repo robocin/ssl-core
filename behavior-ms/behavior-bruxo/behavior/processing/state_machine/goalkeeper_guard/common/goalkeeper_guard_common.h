@@ -34,11 +34,29 @@ class GoalkeeperGuardCommon {
                              robocin::Point2Df goal_center,
                              float radius);
   static float distanceFromBallToClosestAreaSegment(const World& world);
+  static bool isLateralMove(const World& world, int ally_id, robocin::Point2Df target_position);
+  static robocin::Point2Df getGoalkeeperTargetOnGoalLine(const World& world);
+  static robocin::Point2Df
+  projectGoalkeeperTargetOnArc(robocin::Point2Df ball_position,
+                               robocin::Point2Df goalkeeper_target_position_on_line,
+                               robocin::Point2Df goal_center,
+                               float radius);
+  static robocin::Point2Df
+  getAndProcessGoalkeeperTargetOnArc(const World& world,
+                                     robocin::Point2Df goalkeeper_target_position_on_line,
+                                     robocin::Point2Df goal_center,
+                                     robocin::Point2Df aux_point);
+  static robocin::Point2Df getKickTargetOfEnemyRobot(const World& world,
+                                                     const RobotMessage& closestEnemy);
+  static robocin::Point2Df getEnemyToGoalDisplacedVector(const World& world);
 
   // Constants
   static constexpr float APPROACH_ANGLE_THRESHOLD = 0.26f;
   static constexpr float MAX_ENEMY_SPEED_ANGLE_TO_BALL_THRESHOLD = 0.3f;
   static constexpr float DISTANCE_TO_CONSIDER_ENEMY_AS_CLOSE_TO_BALL = 230.0f;
+  static constexpr float IN_LINE_OFFSET_X = 140.0f;
+  static constexpr float IN_LINE_OFFSET_Y = 10.0f;
+  static constexpr float GOALKEEPER_ARC_CURVE_THRESHOLD = 1200.0f;
 
  private:
 };
