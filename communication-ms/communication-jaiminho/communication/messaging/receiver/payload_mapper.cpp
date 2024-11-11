@@ -46,7 +46,7 @@ Payload PayloadMapper::fromZmqDatagrams(std::span<const ZmqDatagram> messages) c
       referee.emplace_back(std::move(referee_message));
 
     } else {
-      // wlog("zmq_datagram with topic '{}' not processed.", zmq_datagram.topic());
+      wlog("zmq_datagram with topic '{}' not processed.", zmq_datagram.topic());
     }
   }
 

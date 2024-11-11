@@ -1,17 +1,17 @@
 services:
-  ssl-vision-client:
-    container_name: ssl-vision-client
-    image: robocupssl/ssl-vision-client:1.7.3
-    command:
-      - "-visionAddress"
-      - "224.5.23.2:10006"
-    restart: unless-stopped
-    ports:
-      - 8082/tcp
-      - 8082:8082
-    logging:
-      driver: none
-    network_mode: host
+  # ssl-vision-client:
+  #   container_name: ssl-vision-client
+  #   image: robocupssl/ssl-vision-client:1.7.3
+  #   command:
+  #     - "-visionAddress"
+  #     - "224.5.23.2:10006"
+  #   restart: unless-stopped
+  #   ports:
+  #     - 8082/tcp
+  #     - 8082:8082
+  #   logging:
+  #     driver: none
+  #   network_mode: host
 
   # autoref-tigers:
   #   container_name: autoref-tigers
@@ -165,7 +165,7 @@ services:
     depends_on:
       - gateway
     network_mode: "host"
-    attach: true
+    attach: false
     
 volumes:
   .ssl-core:

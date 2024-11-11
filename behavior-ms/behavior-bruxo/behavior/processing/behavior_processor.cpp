@@ -93,10 +93,14 @@ void onRun(BehaviorMessage& behavior_message, World& world) {
   // Take forward
   int forward_number = 7;
 
+  ilog("Allies detected: {}", world.allies.size());
+
   auto robot = findMyRobot(forward_number, world.allies);
   if (!robot.has_value()) {
     ilog("Robot with id {} not found from detection packets.", forward_number);
     return;
+  } else {
+    ilog("Robot with id {} found.", forward_number);
   }
 
   // Ball 2D is required because .angle() method is implemented from a Point2Df object.
