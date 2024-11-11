@@ -3,6 +3,7 @@
 #include "message_sender.h"
 
 #include <protocols/perception/detection.pb.h>
+#include <protocols/third_party/simulation/robot_control.pb.h>
 #include <robocin/output/log.h>
 #include <robocin/wip/service_discovery/addresses.h>
 
@@ -23,7 +24,7 @@ namespace tp {
 
 using ::protocols::third_party::simulation::RobotControl;
 
-}
+} // namespace tp
 
 } // namespace
 
@@ -47,7 +48,7 @@ void MessageSender::send(const rc::Communication& robot_command) {
 }
 
 void MessageSender::send(const tp::RobotControl& robot_control) {
-  ilog("sending... {}", robot_control.DebugString());
+  // ilog("sending... {}", robot_control.DebugString());
 
   communication_socket_->send({
       service_discovery::kPerceptionDetectionTopic,
