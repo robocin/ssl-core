@@ -6,6 +6,7 @@
 
 #include <protocols/navigation/navigation.pb.h>
 #include <ranges>
+#include <robocin/output/log.h>
 
 namespace communication {
 
@@ -14,10 +15,10 @@ namespace parameters = ::robocin::parameters;
 namespace {
 
 namespace rc {
-
 using ::protocols::communication::Communication;
 using ::protocols::communication::OutputRobot;
 using ::protocols::navigation::Navigation;
+using ::robocin::ilog;
 
 } // namespace rc
 
@@ -45,7 +46,6 @@ CommunicationProcessor::CommunicationProcessor(
 
 std::optional<rc::Communication>
 CommunicationProcessor::process(std::span<const Payload> payloads) {
-
   if (std::vector<tp::Referee> referees = refereeFromPayloads(payloads); !referees.empty()) {
     last_game_controller_referee_ = std::move(referees.back());
   }
@@ -64,7 +64,18 @@ CommunicationProcessor::process(std::span<const Payload> payloads) {
   CommunicationMessage communication_message;
 
   for (const auto& navigation : last_navigation.output()) {
-    communication_message.commands.emplace_back(OutputRobotMessage{});
+    communication_message.commands.emplace_back(OutputRobotMessage{
+        navigation.robot_id().number(),
+        navigation.forward_velocity(),
+        navigation.left_velocity(),
+        navigation.angular_velocity(),
+        navigation.peripheral_actuation().kick_command().is_front(),
+        navigation.peripheral_actuation().kick_command().is_chip(),
+        true /* always charge */,
+        navigation.peripheral_actuation().kick_command().kick_strength(),
+        false /* dribbler always off */,
+        0.0 /* dribbler speed unused */
+    });
   }
   ///////////////////////////////////////////////////////////////////////////
   return communication_message.toProto();
