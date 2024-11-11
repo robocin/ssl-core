@@ -46,17 +46,15 @@ void World::takeRobotsData(OutputMessage& behavior, std::vector<RobotMessage>& r
 
   this->ally_color = behavior.robot_id->color.value();
 
-  allies.clear();
-  enemies.clear();
+  this->allies.clear();
+  this->enemies.clear();
 
   for (auto& robot_perception : robots) {
 
     if (robot_perception.robot_id->number == behavior.robot_id->number
         && isAlly(robot_perception)) {
       this->ally = std::move(robot_perception);
-    }
-
-    if (isAlly(robot_perception)) {
+    } else if (isAlly(robot_perception)) {
       this->allies.emplace_back(std::move(robot_perception));
     } else {
       this->enemies.emplace_back(std::move(robot_perception));
