@@ -2,6 +2,7 @@
 
 #include "communication/messaging/receiver/payload.h"
 #include "communication/parameters/parameters.h"
+#include <cstddef>
 #include <robocin/concurrency/concurrent_queue.h>
 #include <robocin/memory/object_ptr.h>
 #include <robocin/output/log.h>
@@ -56,15 +57,16 @@ void ConsumerController::exec(std::span<const Payload> payloads) {
     if (std::optional<tp::RobotControl> robot_control
         = communication_processor_->processSimulator(payloads);
         robot_control != std::nullopt) {
-      //   ilog("command: {} sent.", robot_command->command().DebugString());
+        ilog("control: {} sent.", robot_control->DebugString());
       message_sender_->send(*robot_control);
     }
-  } else if (std::optional<rc::Communication> robot_command
+  } else {
+    if (std::optional<rc::Communication> robot_command
              = communication_processor_->processReal(payloads);
              robot_command != std::nullopt) {
-    //   ilog("command: {} sent.", robot_command->command().DebugString());
-    message_sender_->send(*robot_command);
-  }
+      ilog("command: {} sent.", robot_command->DebugString());
+      // message_sender_->send(*robot_command);
+  }}
 }
 
 } // namespace communication
