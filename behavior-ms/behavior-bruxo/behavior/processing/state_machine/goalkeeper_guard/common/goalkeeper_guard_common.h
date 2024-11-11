@@ -33,7 +33,7 @@ class GoalkeeperGuardCommon {
                              robocin::Point2Df goalkeeper_target_position,
                              robocin::Point2Df goal_center,
                              float radius);
-  static float distance_from_ball_to_closest_area_segment(const World& world);
+  static float distanceFromBallToClosestAreaSegment(const World& world);
 
   // Constants
   static constexpr float APPROACH_ANGLE_THRESHOLD = 0.26f;

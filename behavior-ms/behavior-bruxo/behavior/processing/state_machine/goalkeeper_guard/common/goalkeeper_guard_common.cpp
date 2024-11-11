@@ -108,7 +108,7 @@ GoalkeeperGuardCommon::getCircleLineIntersections(robocin::Point2Df ball_positio
   return intersections;
 }
 
-float GoalkeeperGuardCommon::distance_from_ball_to_closest_area_segment(const World& world) {
+float GoalkeeperGuardCommon::distanceFromBallToClosestAreaSegment(const World& world) {
   auto&& field = world.field;
   robocin::Point2Df ball_position
       = robocin::Point2Df{world.ball.position->x, world.ball.position->y};
