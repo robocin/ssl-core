@@ -9,6 +9,7 @@
 #include "behavior/processing/messages/common/robot_id/robot_id.h"
 #include "behavior/processing/messages/perception/robot/robot_message.h"
 
+#include <cctype>
 #include <robocin/geometry/line.h>
 #include <robocin/geometry/mathematics.h>
 #include <robocin/geometry/point2d.h>
@@ -22,6 +23,17 @@ class GoalkeeperGuardCommon {
   static bool isBallInsideGoalkeeperArea(const World& world);
   static bool isBallGoingToPassAreaLine(const World& world);
   static bool isBallMovingToOurGoal(const World& world);
+  static robocin::Point2Df getGoalkeeperBisectorVector(const World& world);
+  static float getGoalkeeperTargetY(const World& world,
+                                    robocin::Point2Df base_point,
+                                    float angular_coefficient,
+                                    float x_target);
+  static std::vector<robocin::Point2Df>
+  getCircleLineIntersections(robocin::Point2Df ball_position,
+                             robocin::Point2Df goalkeeper_target_position,
+                             robocin::Point2Df goal_center,
+                             float radius);
+  static float distance_from_ball_to_closest_area_segment(const World& world);
 
   // Constants
   static constexpr float APPROACH_ANGLE_THRESHOLD = 0.26f;
