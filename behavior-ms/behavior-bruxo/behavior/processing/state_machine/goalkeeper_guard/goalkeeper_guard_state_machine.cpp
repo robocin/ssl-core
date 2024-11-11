@@ -1,13 +1,11 @@
 #include "behavior/processing/state_machine/goalkeeper_guard/goalkeeper_guard_state_machine.h"
 
-#include "behavior/processing/state_machine/goalkeeper_guard/states/go_to_ball.h"
-
 #include <stdio.h>
 
 namespace behavior {
 
 GoalkeeperGuardStateMachine::GoalkeeperGuardStateMachine() : current_state_(nullptr) {
-  GoalkeeperGuardStateMachine::transitionTo(new GoToBall);
+  GoalkeeperGuardStateMachine::transitionTo(new DefendKick);
 };
 
 void GoalkeeperGuardStateMachine::transitionTo(IState* state) {
