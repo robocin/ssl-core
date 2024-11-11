@@ -9,9 +9,10 @@
 #include "communication/processing/messages/common/robot_velocity/robot_velocity.h"
 #include "communication/processing/messages/communication/communication_message.h"
 #include "communication/processing/messages/flags/flags.h"
+#include "robocin/parameters/parameters.h"
 
 #include <protocols/communication/communication.pb.h>
-#include <robocin/parameters/parameters.h>
+#include <protocols/perception/detection.pb.h>
 
 namespace communication {
 
@@ -40,7 +41,7 @@ class CommunicationProcessor : public ICommunicationProcessor {
 
  private:
   std::unique_ptr<::robocin::parameters::IHandlerEngine> parameters_handler_engine_;
-
+  std::optional<::protocols::perception::Detection> last_detection_;
   std::optional<::protocols::third_party::game_controller::Referee> last_game_controller_referee_;
 };
 

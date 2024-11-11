@@ -221,7 +221,7 @@ services:
     depends_on:
       - perception-ms
       - referee-ms
-    attach: true
+    attach: false
 
   behavior-ms:
     container_name: behavior-ms
@@ -242,7 +242,7 @@ services:
     depends_on:
       - gateway
     network_mode: "host"
-    attach: false
+    attach: true
 
 
 volumes:

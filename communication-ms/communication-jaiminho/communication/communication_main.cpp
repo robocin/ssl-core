@@ -5,6 +5,7 @@
 #include <print>
 #include <robocin/detection_util/clock.h>
 #include <robocin/memory/object_ptr.h>
+#include <robocin/network/udp_multicast_socket_sender.h>
 #include <robocin/network/zmq_poller.h>
 #include <robocin/network/zmq_subscriber_socket.h>
 #include <robocin/parameters/parameters.h>
@@ -43,6 +44,7 @@ using ::robocin::ZmqSubscriberSocket;
 std::unique_ptr<IMessageReceiver> makeMessageReceiver() {
   static constexpr std::array kNavigationTopics = {service_discovery::kNavigationOutputTopic};
   static constexpr std::array kGatewayTopics = {service_discovery::kGameControllerRefereeTopic};
+  static constexpr std::array kPerceptionTopics = {service_discovery::kPerceptionDetectionTopic};
 
   std::unique_ptr<IZmqSubscriberSocket> gateway_socket = std::make_unique<ZmqSubscriberSocket>();
   gateway_socket->connect(service_discovery::kGatewayAddress, kGatewayTopics);
@@ -50,14 +52,19 @@ std::unique_ptr<IMessageReceiver> makeMessageReceiver() {
   std::unique_ptr<IZmqSubscriberSocket> navigation_socket = std::make_unique<ZmqSubscriberSocket>();
   navigation_socket->connect(service_discovery::kNavigationAddress, kNavigationTopics);
 
+  std::unique_ptr<IZmqSubscriberSocket> perception_socket = std::make_unique<ZmqSubscriberSocket>();
+  perception_socket->connect(service_discovery::kPerceptionAddress, kPerceptionTopics);
+
   std::unique_ptr<IZmqPoller> zmq_poller = std::make_unique<ZmqPoller>();
   zmq_poller->push(*gateway_socket);
   zmq_poller->push(*navigation_socket);
+  zmq_poller->push(*perception_socket);
 
   std::unique_ptr<IPayloadMapper> payload_mapper = std::make_unique<PayloadMapper>();
 
   return std::make_unique<MessageReceiver>(std::move(navigation_socket),
                                            std::move(gateway_socket),
+                                           std::move(perception_socket),
                                            std::move(zmq_poller),
                                            std::move(payload_mapper));
 }
@@ -81,7 +88,13 @@ std::unique_ptr<IMessageSender> makeMessageSender() {
       = std::make_unique<UdpMulticastSocketSender>();
   robot_socket->connect(service_discovery::kRobotAddress, service_discovery::kRobotPort);
 
-  return std::make_unique<MessageSender>(std::move(communication_socket), std::move(robot_socket));
+  std::unique_ptr<IUdpMulticastSocketSender> simm_socket
+      = std::make_unique<UdpMulticastSocketSender>();
+  simm_socket->connect(service_discovery::kSimmAddress, service_discovery::kSimmPort);
+
+  return std::make_unique<MessageSender>(std::move(communication_socket),
+                                         std::move(robot_socket),
+                                         std::move(simm_socket));
 }
 
 std::unique_ptr<IController> makeConsumer(object_ptr<IConcurrentQueue<Payload>> messages) {
