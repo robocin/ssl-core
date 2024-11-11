@@ -17,6 +17,9 @@ class GoalkeeperCommon {
   // Common utility functions used across states
   static bool riskOfCollideWithPosts(const World& world, int ally_id);
   static bool robotBallTooClosePosts(const World& world, int ally_id);
+  static std::optional<RobotMessage> getAlly(const World& world, int id);
+  static robocin::Point2Df getSafePositionToAvoidPosts(const World& world);
+  static robocin::Point2Df getKickTargetPosition(const World& world);
 
   // Constants
   static constexpr float APPROACH_ANGLE_THRESHOLD = 0.26f;
@@ -25,8 +28,9 @@ class GoalkeeperCommon {
   static constexpr float UPPER_POST_THRESHOLD_TO_CONSIDER_POST = 190.0f;
 
  private:
-  static std::optional<RobotMessage> getAlly(const World& world, int id);
-  static robocin::Point2Df getSafePositionToAvoidPosts(const World& world);
+  static bool robotMustKickToEnemyGoal(const World& world);
+  static bool isBallCloseToAreaFront(const World& world);
+  static bool isBallNearTheMiddleOfArea(const World& world);
 };
 
 } // namespace behavior

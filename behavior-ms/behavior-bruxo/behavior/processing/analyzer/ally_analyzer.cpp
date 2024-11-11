@@ -1,5 +1,7 @@
 #include "behavior/processing/analyzer/ally_analyzer.h"
 
+#include <robocin/geometry/point2d.h>
+
 namespace behavior {
 
 std::optional<RobotMessage> AllyAnalyzer::getAlly(const World& world, int id) {

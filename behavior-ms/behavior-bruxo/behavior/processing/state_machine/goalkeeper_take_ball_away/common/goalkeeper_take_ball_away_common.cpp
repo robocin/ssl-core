@@ -142,4 +142,38 @@ robocin::Point2Df GoalkeeperCommon::getSafePositionToAvoidPosts(const World& wor
   return safe_position;
 }
 
+bool GoalkeeperCommon::isBallCloseToAreaFront(const World& world) {
+  robocin::Point2Df ball_position
+      = robocin::Point2Df{world.ball.position->x, world.ball.position->y};
+  auto&& field = world.field;
+  const float distance_from_ball_to_area_front = 300;
+  return std::abs(ball_position.x - field.allyPenaltyAreaCenter().x)
+         < distance_from_ball_to_area_front;
+}
+
+bool GoalkeeperCommon::isBallNearTheMiddleOfArea(const World& world) {
+  return std::abs(world.ball.position->y) < 1000;
+}
+
+bool GoalkeeperCommon::robotMustKickToEnemyGoal(const World& world) {
+  return isBallNearTheMiddleOfArea(world) && !isBallCloseToAreaFront(world);
+}
+
+robocin::Point2Df GoalkeeperCommon::getKickTargetPosition(const World& world) {
+  auto&& field = world.field;
+
+  if (robotMustKickToEnemyGoal(world)) {
+    return field.enemyGoalOutsideCenter();
+  }
+
+  robocin::Point2Df ball_position
+      = robocin::Point2Df{world.ball.position->x, world.ball.position->y};
+
+  float kickTargetY
+      = ball_position.y > 0 ? world.field.topCenter().y : world.field.bottomCenter().y;
+  robocin::Point2Df kickTarget = {0, kickTargetY};
+
+  return kickTarget;
+}
+
 } // namespace behavior

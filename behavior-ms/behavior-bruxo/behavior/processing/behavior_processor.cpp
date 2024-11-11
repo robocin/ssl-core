@@ -98,6 +98,16 @@ BehaviorProcessor::BehaviorProcessor(
     goalkeeper_take_ball_away_state_machine_{std::move(goalkeeper_take_ball_away_state_machine)} {}
 
 std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> payloads) {
+
+  if (std::vector<rc::Decision> decision_messages = decisionfromPayloads(payloads);
+      !decision_messages.empty()) {
+    last_decision_ = decision_messages.back();
+  }
+
+  if (!last_decision_) {
+    return std::nullopt;
+  }
+
   if (std::vector<rc::GameStatus> game_status_messages = gameStatusFromPayloads(payloads);
       !game_status_messages.empty()) {
     last_game_status_ = game_status_messages.back();
@@ -135,6 +145,8 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
                              GoToPointMessage::PrecisionToTarget::HIGH,
                              true /* sync_rotate_with_linear_movement */}});
   }
+
+  goalkeeper_take_ball_away_state_machine_->run();
 
   return behavior_message.toProto();
 }
