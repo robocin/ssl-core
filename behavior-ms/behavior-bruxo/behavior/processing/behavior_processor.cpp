@@ -49,12 +49,11 @@ using ::protocols::referee::GameStatus;
 
 } // namespace rc
 
-RobotMessage findMyRobot(int number, std::vector<RobotMessage>& robots) {
+std::optional<RobotMessage> findMyRobot(int number, std::vector<RobotMessage>& robots) {
   // This function does not handle a case where it does not find a robot
   for (auto& robot : robots) {
     auto number_match = robot.robot_id->number.value() == number;
     if (number_match) {
-
       return RobotMessage{
           robot.confidence.value(),
           RobotIdMessage{robot.robot_id->color.value(), robot.robot_id->number.value()},
@@ -69,8 +68,7 @@ RobotMessage findMyRobot(int number, std::vector<RobotMessage>& robots) {
     }
   }
 
-  // Unreachble hopefully
-  return RobotMessage{};
+  return std::nullopt;
 }
 
 std::vector<rc::Detection> detectionFromPayloads(std::span<const Payload> payloads) {
@@ -91,12 +89,17 @@ std::vector<rc::GameStatus> gameStatusFromPayloads(std::span<const Payload> payl
 } // namespace
 
 // CBR: function for every game command
-void onStop(BehaviorMessage& behavior_message, World& world) {
-  auto robot = findMyRobot(2, world.allies);
+void onRun(BehaviorMessage& behavior_message, World& world) {
+  // Take forward
+  int forward_number = 2;
+
+  auto robot = findMyRobot(forward_number, world.allies);
+
   // Ball 2D is required because .angle() method is implemented from a Point2Df object.
   auto ball_2_d = robocin::Point2Df(world.ball.position->x, world.ball.position->y);
-  auto target_angle = (ball_2_d - robot.position.value()).angle();
-  bool shouldKick = false;
+  auto target_angle = (ball_2_d - robot->position.value()).angle();
+  bool shouldKick = true;
+
   // process should kick
   std::optional<PeripheralActuationMessage> peripheral_actuation = std::nullopt;
   if (shouldKick) {
@@ -104,14 +107,14 @@ void onStop(BehaviorMessage& behavior_message, World& world) {
         7.0 /* strength */,
         true /* is_front */,
         false /* is_chip */,
-        false /* charge_capacitor */,
+        true /* charge_capacitor */,
         false /* bypass_ir */
     }});
   }
 
   // Always send go to point
   behavior_message.output.emplace_back(
-      RobotIdMessage{pAllyColor, 0},
+      RobotIdMessage{pAllyColor, forward_number},
       MotionMessage{
           GoToPointMessage{robocin::Point2Df{world.ball.position->x, world.ball.position->y},
                            target_angle,
@@ -135,12 +138,15 @@ BehaviorProcessor::BehaviorProcessor(
 std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> payloads) {
   BehaviorProcessor::update(payloads);
   BehaviorMessage behavior_message;
-  if (world_.isStop()) {
-      (behavior_message, world_);
+
+  if (!world_.isStop()) {
+    onRun(behavior_message, world_);
   }
+
   if (world_.isHalt()) {
     onHalt();
   }
+
   return behavior_message.toProto();
 }
 
