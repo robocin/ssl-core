@@ -91,11 +91,12 @@ std::vector<rc::GameStatus> gameStatusFromPayloads(std::span<const Payload> payl
 // CBR: function for every game command
 void onRun(BehaviorMessage& behavior_message, World& world) {
   // Take forward
-  int forward_number = 2;
+  int forward_number = 7;
 
   auto robot = findMyRobot(forward_number, world.allies);
   if (!robot.has_value()) {
     ilog("Robot with id {} not found from detection packets.", forward_number);
+    return;
   }
 
   // Ball 2D is required because .angle() method is implemented from a Point2Df object.
