@@ -1,7 +1,5 @@
 #include "behavior/processing/state_machine/goalkeeper_take_ball_away/states/kick_ball.h"
 
-#include <robocin/geometry/point2d.h>
-
 namespace behavior {
 
 KickBall::KickBall() = default;
@@ -32,7 +30,7 @@ bool KickBall::shouldTransitionToSafePosition(const World& world) const {
 
 bool KickBall::shouldTransitionToGoToBall(const World& world) const {
   const int ally_id = 0;
-  robocin::Point2Df target_position = getTargetPosition(world);
+  robocin::Point2Df target_position = GoalkeeperCommon::getKickTargetPosition(world);
 
   bool is_ally_looking_to_target_and_ball
       = AllyAnalyzer::isAllyLookingToTargetAndBall(world,
@@ -46,8 +44,14 @@ bool KickBall::shouldTransitionToGoToBall(const World& world) const {
   return !is_ally_looking_to_target_and_ball || !is_ball_in_range_to_kick;
 }
 
-robocin::Point2Df KickBall::getTargetPosition(const World& world) const {
-  return world.field.enemyGoalInsideCenter();
+robocin::Point2Df KickBall::getMotionTarget(const World& world) const {
+  robocin::Point2Df ball_position
+      = robocin::Point2Df{world.ball.position->x, world.ball.position->y};
+  return ball_position;
+}
+
+float KickBall::getMotionAngle(const World& world) const {
+  return (GoalkeeperCommon::getKickTargetPosition(world) - getMotionTarget(world)).angle();
 }
 
 OutputMessage KickBall::makeKickBallOutput(const World& world) {
@@ -63,12 +67,15 @@ RobotIdMessage KickBall::makeKickBallRobotId(const World& world) {
 
 MotionMessage KickBall::makeKickBallMotion(const World& world) {
   // TODO(mlv): Create the motion message
-  return MotionMessage{};
-}
+  GoToPointMessage go_to_point
+      = GoToPointMessage{getMotionTarget(world),
+                         getMotionAngle(world),
+                         GoToPointMessage::MovingProfile::DirectSafeKickBallSpeed};
+  return MotionMessage{std::move(go_to_point)};
+};
 
 PlanningMessage KickBall::makeKickBallPlanning(const World& world) {
   // TODO(mlv): Create the planning message
   return PlanningMessage{};
 }
-
 }; // namespace behavior

@@ -1,15 +1,25 @@
 #include "behavior/processing/analyzer/ally_analyzer.h"
 
+#include <robocin/geometry/point2d.h>
+
 namespace behavior {
 
 std::optional<RobotMessage> AllyAnalyzer::getAlly(const World& world, int id) {
   for (const auto& ally : world.allies) {
     if (ally.robot_id.value().number == id) {
-      RobotMessage ally = std::move(ally);
-      return ally;
+      return RobotMessage{
+          ally.confidence.value(),
+          RobotIdMessage{ally.robot_id->color.value(), ally.robot_id->number.value()},
+          ally.position.value(),
+          ally.angle.value(),
+          ally.velocity.value(),
+          ally.angular_velocity.value(),
+          ally.radius.value(),
+          ally.height.value(),
+          ally.dribbler_width.value(),
+          std::nullopt /* Feedback */};
     }
   }
-
   return std::nullopt;
 }
 

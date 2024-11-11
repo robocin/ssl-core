@@ -5,8 +5,17 @@ namespace behavior {
 std::optional<RobotMessage> GoalkeeperCommon::getAlly(const World& world, int id) {
   for (const auto& ally : world.allies) {
     if (ally.robot_id.value().number == id) {
-      RobotMessage ally = std::move(ally);
-      return ally;
+      return RobotMessage{
+          ally.confidence.value(),
+          RobotIdMessage{ally.robot_id->color.value(), ally.robot_id->number.value()},
+          ally.position.value(),
+          ally.angle.value(),
+          ally.velocity.value(),
+          ally.angular_velocity.value(),
+          ally.radius.value(),
+          ally.height.value(),
+          ally.dribbler_width.value(),
+          std::nullopt /* Feedback */};
     }
   }
   return std::nullopt;
@@ -131,6 +140,40 @@ robocin::Point2Df GoalkeeperCommon::getSafePositionToAvoidPosts(const World& wor
   }();
 
   return safe_position;
+}
+
+bool GoalkeeperCommon::isBallCloseToAreaFront(const World& world) {
+  robocin::Point2Df ball_position
+      = robocin::Point2Df{world.ball.position->x, world.ball.position->y};
+  auto&& field = world.field;
+  const float distance_from_ball_to_area_front = 300;
+  return std::abs(ball_position.x - field.allyPenaltyAreaCenter().x)
+         < distance_from_ball_to_area_front;
+}
+
+bool GoalkeeperCommon::isBallNearTheMiddleOfArea(const World& world) {
+  return std::abs(world.ball.position->y) < 1000;
+}
+
+bool GoalkeeperCommon::robotMustKickToEnemyGoal(const World& world) {
+  return isBallNearTheMiddleOfArea(world) && !isBallCloseToAreaFront(world);
+}
+
+robocin::Point2Df GoalkeeperCommon::getKickTargetPosition(const World& world) {
+  auto&& field = world.field;
+
+  if (robotMustKickToEnemyGoal(world)) {
+    return field.enemyGoalOutsideCenter();
+  }
+
+  robocin::Point2Df ball_position
+      = robocin::Point2Df{world.ball.position->x, world.ball.position->y};
+
+  float kickTargetY
+      = ball_position.y > 0 ? world.field.topCenter().y : world.field.bottomCenter().y;
+  robocin::Point2Df kickTarget = {0, kickTargetY};
+
+  return kickTarget;
 }
 
 } // namespace behavior

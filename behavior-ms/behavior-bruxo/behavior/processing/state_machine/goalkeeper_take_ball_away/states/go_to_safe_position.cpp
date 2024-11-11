@@ -32,12 +32,12 @@ bool GoToSafePosition::shouldStayInSafePosition(const World& world) const {
 
 bool GoToSafePosition::shouldTransitionToKickBall(const World& world) const {
   const int ally_id = 0;
-  robocin::Point2Df target_position = getTargetPosition(world);
+  robocin::Point2Df kick_target_position = GoalkeeperCommon::getKickTargetPosition(world);
 
   bool is_ally_looking_to_target_and_ball
       = AllyAnalyzer::isAllyLookingToTargetAndBall(world,
                                                    ally_id,
-                                                   target_position,
+                                                   kick_target_position,
                                                    approach_angle_threshold_);
 
   bool is_ball_in_range_to_kick
@@ -46,8 +46,22 @@ bool GoToSafePosition::shouldTransitionToKickBall(const World& world) const {
   return is_ally_looking_to_target_and_ball && is_ball_in_range_to_kick;
 }
 
-robocin::Point2Df GoToSafePosition::getTargetPosition(const World& world) const {
-  return world.field.enemyGoalInsideCenter();
+robocin::Point2Df GoToSafePosition::getMotionTarget(const World& world) const {
+  return GoalkeeperCommon::getSafePositionToAvoidPosts(world);
+}
+
+float GoToSafePosition::getMotionAngle(const World& world) const {
+  const int ally_id = 0;
+  std::optional<RobotMessage> ally = GoalkeeperCommon::getAlly(world, ally_id);
+  if (!ally.has_value()) {
+    return 0.0f;
+  }
+
+  robocin::Point2Df ally_position = ally->position.value();
+  robocin::Point2Df ball_position
+      = robocin::Point2Df{world.ball.position->x, world.ball.position->y};
+
+  return (ball_position - ally_position).angle();
 }
 
 OutputMessage GoToSafePosition::makeGoToSafePositionOutput(const World& world) {
@@ -63,7 +77,8 @@ RobotIdMessage GoToSafePosition::makeGoToSafePositionRobotId(const World& world)
 
 MotionMessage GoToSafePosition::makeGoToSafePositionMotion(const World& world) {
   // TODO(mlv): Create the motion message
-  return MotionMessage{};
+  GoToPointMessage go_to_point = GoToPointMessage{getMotionTarget(world), getMotionAngle(world)};
+  return MotionMessage{std::move(go_to_point)};
 }
 
 PlanningMessage GoToSafePosition::makeGoToSafePositionPlanning(const World& world) {

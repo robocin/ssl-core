@@ -4,6 +4,7 @@
 
 #include "behavior/processing/analyzer/ally_analyzer.h"
 #include "behavior/processing/messages/behavior/behavior_message.h"
+#include "behavior/processing/messages/motion/motion_message.h"
 #include "behavior/processing/state_machine/goalkeeper_take_ball_away/common/goalkeeper_take_ball_away_common.h"
 #include "behavior/processing/state_machine/goalkeeper_take_ball_away/goalkeeper_take_ball_away_state_machine.h"
 #include "behavior/processing/state_machine/goalkeeper_take_ball_away/states/go_to_ball.h"
@@ -29,7 +30,8 @@ class KickBall : public IState {
   [[nodiscard]] bool shouldTransitionToGoToBall(const World& world) const;
 
   // Utility methods
-  [[nodiscard]] robocin::Point2Df getTargetPosition(const World& world) const;
+  [[nodiscard]] robocin::Point2Df getMotionTarget(const World& world) const;
+  [[nodiscard]] float getMotionAngle(const World& world) const;
 
   // State parameters
   float approach_angle_threshold_ = GoalkeeperCommon::APPROACH_ANGLE_THRESHOLD * 2.0f;

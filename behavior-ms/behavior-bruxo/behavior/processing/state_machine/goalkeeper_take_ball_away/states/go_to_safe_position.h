@@ -1,6 +1,7 @@
 #ifndef BEHAVIOR_STATE_MACHINE_GO_TO_SAFE_POSITION_H
 #define BEHAVIOR_STATE_MACHINE_GO_TO_SAFE_POSITION_H
 
+#include "behavior/parameters/parameters.h"
 #include "behavior/processing/messages/behavior/behavior_message.h"
 #include "behavior/processing/state_machine/goalkeeper_take_ball_away/common/goalkeeper_take_ball_away_common.h"
 #include "behavior/processing/state_machine/goalkeeper_take_ball_away/states/go_to_ball.h"
@@ -26,7 +27,8 @@ class GoToSafePosition : public IState {
   [[nodiscard]] bool shouldTransitionToKickBall(const World& world) const;
 
   // Utility methods
-  [[nodiscard]] robocin::Point2Df getTargetPosition(const World& world) const;
+  [[nodiscard]] robocin::Point2Df getMotionTarget(const World& world) const;
+  [[nodiscard]] float getMotionAngle(const World& world) const;
 
   // State parameters
   float approach_angle_threshold_ = GoalkeeperCommon::APPROACH_ANGLE_THRESHOLD * 1.5f;
