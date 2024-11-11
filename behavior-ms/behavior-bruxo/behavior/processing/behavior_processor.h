@@ -39,11 +39,12 @@ class BehaviorProcessor : public IBehaviorProcessor {
  public:
   explicit BehaviorProcessor(
       std::unique_ptr<::robocin::parameters::IHandlerEngine> parameters_handler_engine,
-      std::unique_ptr<::behavior::GoalkeeperTakeBallAwayStateMachine>
-          goalkeeper_take_ball_away_state_machine);
+      std::unique_ptr<GoalkeeperTakeBallAwayStateMachine> goalkeeper_take_ball_away_state_machine);
 
   std::optional<::protocols::behavior::unification::Behavior>
   process(std::span<const Payload> payloads) override;
+
+  bool update(std::span<const Payload>& payloads);
 
  private:
   World world_;

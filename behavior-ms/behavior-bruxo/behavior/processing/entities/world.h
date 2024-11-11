@@ -40,10 +40,14 @@ class World {
               const protocols::perception::Field& field,
               const protocols::referee::GameStatus& game_status);
 
+  // CBR: checker for every command
+  bool isStop();
+  bool isHalt();
+
  private:
   void takeBallHighConfidence(const std::vector<protocols::perception::Ball>& balls);
   void takeAlliesAndEnemies(const std::vector<protocols::perception::Robot>& robots);
-  void takeDecision(const protocols::decision::Decision& decision);
+  void takeDecision(const protocols::decision::Decision& decision); // unused in cbr early version
   void takeGameStatus(const protocols::referee::GameStatus& game_status);
   void takeField(const protocols::perception::Field& field);
 
