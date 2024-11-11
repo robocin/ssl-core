@@ -78,6 +78,7 @@ services:
     network_mode: host
     extra_hosts:
       - "playback-db:127.0.0.1"
+    attach: false
 
   player-bff:
     container_name: player-bff
@@ -164,7 +165,7 @@ services:
     depends_on:
       - gateway
     network_mode: "host"
-    attach: false
+    attach: true
     
 volumes:
   .ssl-core:

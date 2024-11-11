@@ -209,7 +209,7 @@ services:
       dockerfile: navigation-ms/navigation-luffy/navigation-luffy.Dockerfile
     volumes:
       - .ssl-core:/tmp/.ssl-core
-    attach: true
+    attach: false
 
   decision-ms:
     container_name: decision-ms
@@ -242,7 +242,7 @@ services:
     depends_on:
       - gateway
     network_mode: "host"
-    attach: false
+    attach: true
 
 
 volumes:
