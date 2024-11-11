@@ -49,12 +49,11 @@ using ::protocols::referee::GameStatus;
 
 } // namespace rc
 
-RobotMessage findMyRobot(int number, std::vector<RobotMessage>& robots) {
+std::optional<RobotMessage> findMyRobot(int number, std::vector<RobotMessage>& robots) {
   // This function does not handle a case where it does not find a robot
   for (auto& robot : robots) {
     auto number_match = robot.robot_id->number.value() == number;
     if (number_match) {
-
       return RobotMessage{
           robot.confidence.value(),
           RobotIdMessage{robot.robot_id->color.value(), robot.robot_id->number.value()},
@@ -70,7 +69,7 @@ RobotMessage findMyRobot(int number, std::vector<RobotMessage>& robots) {
   }
 
   // Unreachble hopefully
-  return RobotMessage{};
+  return std::nullopt;
 }
 
 std::vector<rc::Detection> detectionFromPayloads(std::span<const Payload> payloads) {
@@ -104,7 +103,7 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
     last_decision_ = decision_messages.back();
   }
 
-  if (!last_decision_) {
+  if (!last_decision_.has_value()) {
     return std::nullopt;
   }
 
@@ -113,7 +112,7 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
     last_game_status_ = game_status_messages.back();
   }
 
-  if (!last_game_status_) {
+  if (!last_game_status_.has_value()) {
     return std::nullopt;
   }
 
@@ -122,6 +121,7 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
     // a new package must be generated only when a new detection is received.
     return std::nullopt;
   }
+
   const rc::Detection last_detection = detection_messages.back();
 
   BehaviorMessage behavior_message;
@@ -133,17 +133,19 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
 
   if (!world_.game_status.command->stop.has_value()) {
     auto robot = findMyRobot(2, world_.allies);
-    auto ball_2_d = robocin::Point2Df(world_.ball.position->x, world_.ball.position->y);
-    auto target_angle = (ball_2_d - robot.position.value()).angle();
+    if (robot.has_value()) {
+      auto ball_2_d = robocin::Point2Df(world_.ball.position->x, world_.ball.position->y);
+      auto target_angle = (ball_2_d - robot->position.value()).angle();
 
-    behavior_message.output.emplace_back(
-        RobotIdMessage{pAllyColor, 0},
-        MotionMessage{
-            GoToPointMessage{robocin::Point2Df{world_.ball.position->x, world_.ball.position->y},
-                             target_angle,
-                             GoToPointMessage::MovingProfile::DirectApproachBallSpeed,
-                             GoToPointMessage::PrecisionToTarget::HIGH,
-                             true /* sync_rotate_with_linear_movement */}});
+      behavior_message.output.emplace_back(
+          RobotIdMessage{pAllyColor, 0},
+          MotionMessage{
+              GoToPointMessage{robocin::Point2Df{world_.ball.position->x, world_.ball.position->y},
+                               target_angle,
+                               GoToPointMessage::MovingProfile::DirectApproachBallSpeed,
+                               GoToPointMessage::PrecisionToTarget::HIGH,
+                               true /* sync_rotate_with_linear_movement */}});
+    }
   }
 
   goalkeeper_take_ball_away_state_machine_->run();
