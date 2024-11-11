@@ -19,4 +19,5 @@ robocin_cpp_library(
          goalkeeper_take_ball_away/states/kick_ball.cpp
          goalkeeper_take_ball_away/common/goalkeeper_take_ball_away_common.cpp
     DEPS common::output
+         messages
 )
