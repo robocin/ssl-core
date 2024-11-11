@@ -22,7 +22,14 @@ DribblerCommandMessage::DribblerCommandMessage(double dribbler_speed, bool is_ac
     is_active(is_active) {}
 
 protocols::common::RobotDribbler::DribblerCommand DribblerCommandMessage::toProto() const {
-  return protocols::common::RobotDribbler::DribblerCommand{};
+  protocols::common::RobotDribbler::DribblerCommand command_proto;
+  if (dribbler_speed.has_value()) {
+    command_proto.set_dribbler_speed(dribbler_speed.value());
+  }
+  if (is_active.has_value()) {
+    command_proto.set_is_active(is_active.value());
+  }
+  return command_proto;
 };
 void DribblerInfoMessage::fromProto(
     const protocols::common::RobotDribbler::DribblerInfo& dribbler_info_proto) {
@@ -45,7 +52,18 @@ DribblerInfoMessage::DribblerInfoMessage(std::optional<double> dribbler_speed,
     is_ball_detected(is_ball_detected) {}
 
 protocols::common::RobotDribbler::DribblerInfo DribblerInfoMessage::toProto() const {
-  return protocols::common::RobotDribbler::DribblerInfo{};
+  protocols::common::RobotDribbler::DribblerInfo info_proto;
+  if (dribbler_speed.has_value()) {
+    info_proto.set_dribbler_speed(dribbler_speed.value());
+  }
+  if (dribbler_current.has_value()) {
+    info_proto.set_dribbler_current(dribbler_current.value());
+  }
+  if (is_ball_detected.has_value()) {
+    info_proto.set_is_ball_detected(is_ball_detected.value());
+  }
+
+  return info_proto;
 };
 
 // RobotDribblerMessage
@@ -53,7 +71,7 @@ void RobotDribblerMessage::fromProto(const protocols::common::RobotDribbler& rob
   if (robot_dribbler_proto.has_dribbler_command()) {
     dribbler_command = DribblerCommandMessage(robot_dribbler_proto.dribbler_command());
   }
-  
+
   if (robot_dribbler_proto.has_dribbler_info()) {
     dribbler_info = DribblerInfoMessage(robot_dribbler_proto.dribbler_info());
   }
@@ -71,7 +89,14 @@ RobotDribblerMessage::RobotDribblerMessage(std::optional<DribblerCommandMessage>
     dribbler_info(std::move(dribbler_info)) {}
 
 protocols::common::RobotDribbler RobotDribblerMessage::toProto() const {
-  return protocols::common::RobotDribbler{};
+  protocols::common::RobotDribbler dribbler_proto;
+  if (dribbler_command.has_value()) {
+    dribbler_proto.mutable_dribbler_command()->CopyFrom(dribbler_command->toProto());
+  }
+  if (dribbler_info.has_value()) {
+    dribbler_proto.mutable_dribbler_info()->CopyFrom(dribbler_info->toProto());
+  }
+  return dribbler_proto;
 };
 
 } // namespace navigation

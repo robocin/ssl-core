@@ -19,9 +19,7 @@ class Wheel : public robocin::IProtoConvertible<protocols::perception::Robot::Fe
   explicit Wheel(std::optional<uint32_t> wheel_id = std::nullopt,
                  std::optional<float> motor_speed = std::nullopt);
 
-  [[nodiscard]] protocols::perception::Robot::Feedback::Wheel toProto() const override {
-    return protocols::perception::Robot::Feedback::Wheel{};
-  }
+  [[nodiscard]] protocols::perception::Robot::Feedback::Wheel toProto() const override;
 
   void fromProto(const protocols::perception::Robot::Feedback::Wheel& wheel_proto) override {};
 };
@@ -41,9 +39,7 @@ class FeedbackMessage : public robocin::IProtoConvertible<protocols::perception:
 
   explicit FeedbackMessage(const protocols::perception::Robot::Feedback& feedback_proto);
 
-  [[nodiscard]] protocols::perception::Robot::Feedback toProto() const override {
-    return protocols::perception::Robot::Feedback{};
-  }
+  [[nodiscard]] protocols::perception::Robot::Feedback toProto() const override;
 
   void fromProto(const protocols::perception::Robot::Feedback& feedback_proto) override;
 };
@@ -74,9 +70,7 @@ class RobotMessage : public robocin::IProtoConvertible<protocols::perception::Ro
 
   explicit RobotMessage(const protocols::perception::Robot& robot_proto);
 
-  [[nodiscard]] protocols::perception::Robot toProto() const override {
-    return protocols::perception::Robot{};
-  }
+  [[nodiscard]] protocols::perception::Robot toProto() const override;
 
   void fromProto(const protocols::perception::Robot& robot_proto) override;
 };

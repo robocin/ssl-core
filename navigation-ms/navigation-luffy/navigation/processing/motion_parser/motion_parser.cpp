@@ -57,20 +57,25 @@ NavigationOutputMessage MotionParser::parseMotion() {
       output_msg.peripheral_actuation = std::move(world_.robot_motion->peripheral_actuation);
     }
 
-    // TODO: Add other fields to output
-
   } else if (world_.robot_planning) {
     // PROCESSAMENTO DO PLANNING
   } else {
     // PROCESSAMENTO DO NAVIGATION
   }
 
+  // TODO: Add other fields to output
+  output_msg.robot_id = std::move(world_.ally.robot_id.value());
+  output_msg.sequence_number = sequence_number_;
+  sequence_number_ += 1;
+
   return output_msg;
 }
-
+////////////////////////////////////////////////////////////////////////////
 RobotMove MotionParser::fromGoToPoint(const GoToPointMessage& go_to_point) {
 
-  robocin::Point2Df s0 = world_.robot.position.value();
+  robocin::ilog("Received from perception: {}", world_.ally.toProto().DebugString());
+
+  robocin::Point2Df s0 = world_.ally.position.value();
   robocin::Point2Df s = go_to_point.target;
   robocin::Point2Df delta_s = (s - s0) / M_to_MM;
 
@@ -93,7 +98,7 @@ RobotMove MotionParser::fromGoToPoint(const GoToPointMessage& go_to_point) {
             DEFAULT_TOLERANCE_TO_DESIRED_POSITION_M;
 
   const float delta_theta
-      = ::robocin::smallestAngleDiff<float>(world_.robot.angle.value(),
+      = ::robocin::smallestAngleDiff<float>(world_.ally.angle.value(),
                                             static_cast<float>(go_to_point.target_angle));
 
   if (delta_s.length() > tolerance_to_target) {
@@ -102,16 +107,23 @@ RobotMove MotionParser::fromGoToPoint(const GoToPointMessage& go_to_point) {
     // angle, using only angular speed and then use linear speed to get into the point
     const float theta = delta_s.angle();
     float acc_prop = moving_profile::ROBOT_DEFAULT_LINEAR_ACCELERATION;
-    auto v0 = world_.robot.velocity.value() / M_to_MM;
+    auto v0 = world_.ally.velocity.value() / M_to_MM;
+    robocin::ilog("v0_x: {}", v0.x);
+    robocin::ilog("v0_y: {}", v0.y);
     auto v = robocin::Point2D<float>::fromPolar(maxVelocity, theta);
     const float v0_decay = std::abs(v.angleTo(v0)) > PI / 3 ? ROBOT_VEL_BREAK_DECAY_FACTOR :
                                                               ROBOT_VEL_FAVORABLE_DECAY_FACTOR;
 
     // v = v0 + a*t
     v0 = v0 - (v0 * v0_decay) * CYCLE_STEP;
+    robocin::ilog("v0f_x: {}", v0.x);
+    robocin::ilog("v0f_y: {}", v0.y);
 
     auto acceleration_required
         = robocin::Point2D<float>((v.x - v0.x) / CYCLE_STEP, (v.y - v0.y) / CYCLE_STEP);
+
+    robocin::ilog("acc_x: {}", acceleration_required.x);
+    robocin::ilog("acc_y: {}", acceleration_required.y);
 
     float alpha = mathematics::map(std::abs(delta_theta),
                                    0.0F,
@@ -141,7 +153,7 @@ RobotMove MotionParser::fromGoToPoint(const GoToPointMessage& go_to_point) {
 
   return RobotMove{{0, 0}, std::clamp(kp * delta_theta, -max_angular_vel, max_angular_vel)};
 }
-
+////////////////////////////////////////////////////////////////////////////
 RobotMove MotionParser::fromRotateInPoint(const RotateInPointMessage& rotate_in_point) {
 
   const float velocity = [&]() {
@@ -152,9 +164,9 @@ RobotMove MotionParser::fromRotateInPoint(const RotateInPointMessage& rotate_in_
   }();
 
   const float robot_radius
-      = (world_.robot.position.value().distanceTo(rotate_in_point.target)) / M_to_MM;
+      = (world_.ally.position.value().distanceTo(rotate_in_point.target)) / M_to_MM;
   const float delta_theta
-      = robocin::smallestAngleDiff(world_.robot.angle.value(), rotate_in_point.target_angle);
+      = robocin::smallestAngleDiff(world_.ally.angle.value(), rotate_in_point.target_angle);
   const float approach_kp = rotate_in_point.approach_kp;
   const float angle_kp = rotate_in_point.angle_kp;
 
@@ -164,18 +176,18 @@ RobotMove MotionParser::fromRotateInPoint(const RotateInPointMessage& rotate_in_
       = robocin::Point2Df(approach_kp * (robot_radius - rotate_in_point.orbit_radius / M_to_MM),
                           orientation_factor * velocity);
   const robocin::Point2Df rotated_coordinates
-      = coordinates.rotatedCounterClockWise(world_.robot.angle.value());
+      = coordinates.rotatedCounterClockWise(world_.ally.angle.value());
   const float angular_velocity
       = ((-(orientation_factor * velocity) / (rotate_in_point.orbit_radius / M_to_MM))
          + (angle_kp * delta_theta));
 
   return RobotMove{rotated_coordinates, angular_velocity};
 }
-
+////////////////////////////////////////////////////////////////////////////
 RobotMove MotionParser::fromRotateOnSelf(const RotateOnSelfMessage& rotate_on_self) {
 
   auto delta_theta
-      = robocin::smallestAngleDiff<float>(world_.robot.angle.value(), rotate_on_self.target_angle);
+      = robocin::smallestAngleDiff<float>(world_.ally.angle.value(), rotate_on_self.target_angle);
 
   return RobotMove{rotate_on_self.velocity, static_cast<float>(rotate_on_self.kp) * delta_theta};
 }

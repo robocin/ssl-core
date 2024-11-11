@@ -2,11 +2,11 @@
 
 namespace navigation {
 KickCommandMessage::KickCommandMessage() = default;
-KickCommandMessage::KickCommandMessage(double strength,
-                                       bool is_front,
-                                       bool is_chip,
-                                       bool charge_capacitor,
-                                       bool is_bypass_ir) :
+KickCommandMessage::KickCommandMessage(std::optional<double> strength,
+                                       std::optional<bool> is_front,
+                                       std::optional<bool> is_chip,
+                                       std::optional<bool> charge_capacitor,
+                                       std::optional<bool> is_bypass_ir) :
     strength(strength),
     is_front(is_front),
     is_chip(is_chip),
@@ -14,7 +14,23 @@ KickCommandMessage::KickCommandMessage(double strength,
     is_bypass_ir(is_bypass_ir) {}
 
 protocols::common::RobotKick::KickCommand KickCommandMessage::toProto() const {
-  return protocols::common::RobotKick::KickCommand{};
+  protocols::common::RobotKick::KickCommand kick_proto;
+  if (strength.has_value()) {
+    kick_proto.set_kick_strength(strength.value());
+  }
+  if (is_front.has_value()) {
+    kick_proto.set_is_front(is_front.value());
+  }
+  if (is_chip.has_value()) {
+    kick_proto.set_is_chip(is_chip.value());
+  }
+  if (charge_capacitor.has_value()) {
+    kick_proto.set_charge_capacitor(charge_capacitor.value());
+  }
+  if (is_bypass_ir.has_value()) {
+    kick_proto.set_is_bypass_ir(is_bypass_ir.value());
+  }
+  return kick_proto;
 };
 
 void KickCommandMessage::fromProto(

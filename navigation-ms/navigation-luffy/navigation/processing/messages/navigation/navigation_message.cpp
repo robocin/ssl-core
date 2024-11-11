@@ -4,7 +4,7 @@ namespace navigation {
 
 void NavigationMessage::fromProto(const protocols::navigation::Navigation& navigation_proto) {
   for (const auto& output_proto : navigation_proto.output()) {
-    output->emplace_back(output_proto);
+    output.emplace_back(output_proto);
   }
 }
 NavigationMessage::NavigationMessage(const protocols::navigation::Navigation& navigation_proto) {
@@ -54,13 +54,50 @@ NavigationOutputMessage::NavigationOutputMessage(
     robot_pose(std::move(robot_pose)) {}
 
 protocols::navigation::Output NavigationOutputMessage::toProto() const {
-  return protocols::navigation::Output{};
+  protocols::navigation::Output output_proto;
+  if (robot_id.has_value()) {
+    output_proto.mutable_robot_id()->CopyFrom(robot_id->toProto());
+  };
+  if (peripheral_actuation.has_value()) {
+    output_proto.mutable_peripheral_actuation()->CopyFrom(peripheral_actuation->toProto());
+  };
+  if (robot_pose.has_value()) {
+    output_proto.mutable_robot_pose()->CopyFrom(robot_pose->toProto());
+  };
+  if (timestamp.has_value()) {
+    output_proto.mutable_timestamp()->set_seconds(timestamp.value());
+  };
+  if (forward_velocity.has_value()) {
+    output_proto.set_forward_velocity(forward_velocity.value());
+  };
+  if (left_velocity.has_value()) {
+    output_proto.set_left_velocity(left_velocity.value());
+  };
+  if (angular_velocity.has_value()) {
+    output_proto.set_angular_velocity(angular_velocity.value());
+  };
+  if (custom_command.has_value()) {
+    output_proto.set_custom_command(custom_command.value());
+  };
+  if (sequence_number.has_value()) {
+    output_proto.set_sequence_number(sequence_number.value());
+  };
+  if (output_global_linear_velocity.has_value()) {
+    output_proto.mutable_output_global_linear_velocity()->set_x(output_global_linear_velocity->x);
+    output_proto.mutable_output_global_linear_velocity()->set_y(output_global_linear_velocity->y);
+  };
+
+  return output_proto;
 };
 
-NavigationMessage::NavigationMessage(std::optional<std::vector<NavigationOutputMessage>> output) :
+NavigationMessage::NavigationMessage(std::vector<NavigationOutputMessage> output) :
     output(std::move(output)) {}
 
 protocols::navigation::Navigation NavigationMessage::toProto() const {
-  return protocols::navigation::Navigation{};
+  protocols::navigation::Navigation nav_msg;
+  for (const auto& output_msg : output) {
+    nav_msg.add_output()->CopyFrom(output_msg.toProto());
+  }
+  return nav_msg;
 }
 } // namespace navigation

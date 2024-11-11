@@ -12,8 +12,8 @@ MovingProfileUtil::minAndMaxVelocityToProfile(GoToPointMessage::MovingProfile pr
       return {moving_profile::APPROACH_BALL_MIN_SPEED, moving_profile::APPROACH_BALL_MAX_SPEED};
 
     case GoToPointMessage::MovingProfile::DirectKickBallwithEnemyClose:
-      return {moving_profile::KICK_BALL_WITH_ENEMY_MAX_SPEED,
-              moving_profile::KICK_BALL_WITH_ENEMY_MIN_SPEED};
+      return {moving_profile::KICK_BALL_WITH_ENEMY_MIN_SPEED,
+              moving_profile::KICK_BALL_WITH_ENEMY_MAX_SPEED};
 
     case GoToPointMessage::MovingProfile::DirectSafeKickBallSpeed:
     case GoToPointMessage::MovingProfile::DirectBalancedKickBallSpeed:
