@@ -1,6 +1,6 @@
 #include "navigation/controller/consumer_controller.h"
 #include "navigation/controller/producer_controller.h"
-#include "world.h"
+#include "navigation/processing/entities/world.h"
 
 #include <memory>
 #include <print>

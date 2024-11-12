@@ -1,12 +1,12 @@
 #include "navigation/processing/entities/world.h"
 
+#include "navigation/processing/entities/ally.h"
 #include "navigation/processing/messages/behavior/behavior_message.h"
 #include "navigation/processing/messages/common/robot_id/robot_id_message.h"
 #include "navigation/processing/messages/perception/ball/ball_message.h"
 #include "navigation/processing/messages/perception/field/field_message.h"
 #include "navigation/processing/messages/perception/robot/robot_message.h"
 #include "navigation/processing/messages/referee/game_status_message.h"
-#include "world.h"
 
 #include <cstdint>
 #include <optional>
@@ -35,12 +35,12 @@ void World::takeRobotsData(OutputMessage& behavior, std::vector<RobotMessage>& r
   }
 
   this->robot_motion = std::nullopt;
-  if (behavior.motion) {
+  if (behavior.motion.has_value()) {
     this->robot_motion = std::move(behavior.motion.value());
   }
 
   this->robot_planning = std::nullopt;
-  if (behavior.planning) {
+  if (behavior.planning.has_value()) {
     this->robot_planning = std::move(behavior.planning.value());
   }
 

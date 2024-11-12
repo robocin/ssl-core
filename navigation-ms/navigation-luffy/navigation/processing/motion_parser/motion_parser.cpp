@@ -176,24 +176,6 @@ RobotMove MotionParser::fromRotateOnSelf(std::unique_ptr<World>& world) {
 std::optional<DiscretizedPathMessage>
 MotionParser::fromGoToPointWithTrajectory(std::unique_ptr<World>& world) {
 
-  GoToPointWithTrajectoryMessage& go_to_point_with_trajectory
-      = world->robot_motion->go_to_point_with_trajectory.value();
-
-  if (MovingProfileUtil::profileRequireDirectGotoPoint(
-          go_to_point_with_trajectory.go_to_point->moving_profile.value())) {
-    return std::nullopt;
-  }
-
-  if (go_to_point_with_trajectory.path_config.has_value()) {
-    //   if (auto result = bangBangPathTrajectory(go_to_point_with_trajectory)) {
-    //     return result.value();
-    //   }
-  }
-
-  // if (auto directResult = bangBangDirectTrajectory(go_to_point_with_trajectory)) {
-  //   return directResult.value();
-  // }
-
   return std::nullopt;
 }
 } // namespace navigation

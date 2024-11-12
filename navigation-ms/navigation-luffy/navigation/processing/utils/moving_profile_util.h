@@ -12,10 +12,10 @@ namespace navigation {
 class MovingProfileUtil {
 
  public:
-  static std::pair<float, float>
+  static std::pair<double, double>
   minAndMaxVelocityToProfile(GoToPointMessage::MovingProfile profile);
 
-  static float propDistanceToProfile(GoToPointMessage::MovingProfile profile);
+  static double propDistanceToProfile(GoToPointMessage::MovingProfile profile);
 };
 
 } // namespace navigation

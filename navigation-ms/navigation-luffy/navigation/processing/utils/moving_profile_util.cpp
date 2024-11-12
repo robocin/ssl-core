@@ -5,7 +5,7 @@
 
 namespace navigation {
 
-std::pair<float, float>
+std::pair<double, double>
 MovingProfileUtil::minAndMaxVelocityToProfile(GoToPointMessage::MovingProfile profile) {
   switch (profile) {
     case GoToPointMessage::MovingProfile::DirectApproachBallSpeed:
@@ -25,7 +25,7 @@ MovingProfileUtil::minAndMaxVelocityToProfile(GoToPointMessage::MovingProfile pr
   }
 }
 
-float MovingProfileUtil::propDistanceToProfile(GoToPointMessage::MovingProfile profile) {
+double MovingProfileUtil::propDistanceToProfile(GoToPointMessage::MovingProfile profile) {
 
   switch (profile) {
     case GoToPointMessage::MovingProfile::DirectApproachBallSpeed:

@@ -7,6 +7,7 @@
 
 #include <cstdint>
 #include <navigation/processing/entities/robot_move.h>
+#include <optional>
 
 #define PI 3.14159265358979323846
 
@@ -33,7 +34,7 @@ class IMotionParser {
   virtual RobotMove fromRotateOnSelf(std::unique_ptr<World>& world) = 0;
 
   virtual std::optional<DiscretizedPathMessage>
-  fromGoToPointWithTrajectory(std::unique_ptr<World>& world);
+  fromGoToPointWithTrajectory(std::unique_ptr<World>& world) = 0;
 };
 
 class MotionParser : public IMotionParser {
