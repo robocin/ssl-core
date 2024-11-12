@@ -1,5 +1,9 @@
 #include "behavior/processing/impl/impl.h"
 
+#include "behavior/processing/messages/common/game_event/game_event_message.h"
+
+#include <robocin/geometry/point2d.h>
+
 namespace behavior {
 
 namespace parameters = ::robocin::parameters;
@@ -30,9 +34,18 @@ using ::protocols::referee::GameStatus;
 
 namespace impl {
 
+constinit float kDistanceToBallToStopChargingCapacitorMM = 200.0;
+
 // Logic
 bool makeChargeCapacitor(RobotMessage& robot, World& world) {
-  // implement
+  // Always charges capacitor, stops charging when gets near the ball
+  robocin::Point2Df ball_position_2_d{world.ball.position.value().x, world.ball.position.value().y};
+  auto distance_to_ball = robot.position.value().distanceTo(ball_position_2_d);
+
+  if (distance_to_ball > kDistanceToBallToStopChargingCapacitorMM) {
+    return true;
+  }
+
   return false;
 }
 
