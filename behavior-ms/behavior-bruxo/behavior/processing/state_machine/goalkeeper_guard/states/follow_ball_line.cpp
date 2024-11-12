@@ -46,42 +46,24 @@ bool FollowBallLine::shouldTransitionToFollowEnemyLine(const World& world) const
 
 robocin::Point2Df FollowBallLine::getMotionTarget(const World& world) const {
   const int ally_id = 0;
-  std::optional<RobotMessage> ally = GoalkeeperGuardCommon::getAlly(world, ally_id);
-  if (!ally.has_value()) {
-    return robocin::Point2Df{0, 0};
-  }
-
-  robocin::Point2Df ally_position = ally->position.value();
-  robocin::Point2Df ball_position
-      = robocin::Point2Df{world.ball.position->x, world.ball.position->y};
-
-  return ball_position;
+  return GoalkeeperGuardCommon::getMotionTarget(
+      world,
+      ally_id,
+      GoalkeeperGuardCommon::getGoalkeeperBisectorVector(world),
+      false);
 }
 
 float FollowBallLine::getMotionAngle(const World& world) const {
   const int ally_id = 0;
-  std::optional<RobotMessage> ally = GoalkeeperGuardCommon::getAlly(world, ally_id);
-  if (!ally.has_value()) {
-    return 0.0f;
-  }
-
-  return 0.0f;
+  return GoalkeeperGuardCommon::getMotionAngle(world, ally_id, getMotionTarget(world));
 }
 
 GoToPointMessage::MovingProfile FollowBallLine::getMotionMovingProfile(const World& world) const {
   const int ally_id = 0;
-  std::optional<RobotMessage> ally = GoalkeeperGuardCommon::getAlly(world, ally_id);
-  if (!ally.has_value()) {
-    return GoToPointMessage::MovingProfile::BalancedInDefaultSpeed;
+  if (GoalkeeperGuardCommon::isLateralMove(world, ally_id, getMotionTarget(world))) {
+    return GoToPointMessage::MovingProfile::GoalkeeperInTopSpeed;
   }
-
-  robocin::Point2Df ally_position = ally->position.value();
-  robocin::Point2Df ball_position
-      = robocin::Point2Df{world.ball.position->x, world.ball.position->y};
-
-  return ally_position.distanceTo(ball_position) < pRobotDiameter() * 2.2f ?
-             GoToPointMessage::MovingProfile::BalancedInSlowSpeed :
-             GoToPointMessage::MovingProfile::BalancedInDefaultSpeed;
+  return GoToPointMessage::MovingProfile::BalancedInMedianSpeed;
 }
 
 OutputMessage FollowBallLine::makeFollowBallLineOutput(const World& world) {

@@ -7,6 +7,7 @@
 #include "behavior/processing/entities/world.h"
 #include "behavior/processing/messages/behavior/behavior_message.h"
 #include "behavior/processing/messages/common/robot_id/robot_id.h"
+#include "behavior/processing/messages/motion/motion_message.h"
 #include "behavior/processing/messages/perception/robot/robot_message.h"
 
 #include <cctype>
@@ -49,6 +50,11 @@ class GoalkeeperGuardCommon {
   static robocin::Point2Df getKickTargetOfEnemyRobot(const World& world,
                                                      const RobotMessage& closestEnemy);
   static robocin::Point2Df getEnemyToGoalDisplacedVector(const World& world);
+  static robocin::Point2Df getMotionTarget(const World& world,
+                                           int ally_id,
+                                           robocin::Point2Df ball_to_goalkeeper_target_vector,
+                                           bool is_in_follow_enemy_line);
+  static float getMotionAngle(const World& world, int ally_id, robocin::Point2Df goalkeeper_target);
 
   // Constants
   static constexpr float APPROACH_ANGLE_THRESHOLD = 0.26f;
@@ -57,6 +63,8 @@ class GoalkeeperGuardCommon {
   static constexpr float IN_LINE_OFFSET_X = 140.0f;
   static constexpr float IN_LINE_OFFSET_Y = 10.0f;
   static constexpr float GOALKEEPER_ARC_CURVE_THRESHOLD = 1200.0f;
+  static constexpr float WEIGHT_FOR_ATK_DIRECTION = 0.28f;
+  static constexpr float DISTANCE_FROM_TARGET_TO_ADJUST_MOVIMENT_DIRECTION = 200.0f;
 
  private:
 };

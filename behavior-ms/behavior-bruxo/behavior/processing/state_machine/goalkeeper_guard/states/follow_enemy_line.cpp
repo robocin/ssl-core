@@ -1,6 +1,7 @@
 #include "behavior/processing/state_machine/goalkeeper_guard/states/follow_enemy_line.h"
 
 #include "behavior/processing/analyzer/enemy_analyzer.h"
+#include "behavior/processing/messages/motion/motion_message.h"
 #include "behavior/processing/state_machine/goalkeeper_guard/common/goalkeeper_guard_common.h"
 #include "behavior/processing/state_machine/goalkeeper_guard/states/defend_kick.h"
 
@@ -47,21 +48,25 @@ bool FollowEnemyLine::shouldTransitionToDefendKick(const World& world) const {
 }
 
 robocin::Point2Df FollowEnemyLine::getMotionTarget(const World& world) const {
-  return robocin::Point2Df{};
+  const int ally_id = 0;
+  return GoalkeeperGuardCommon::getMotionTarget(
+      world,
+      ally_id,
+      GoalkeeperGuardCommon::getEnemyToGoalDisplacedVector(world),
+      true);
 }
 
 float FollowEnemyLine::getMotionAngle(const World& world) const {
   const int ally_id = 0;
-  std::optional<RobotMessage> ally = GoalkeeperGuardCommon::getAlly(world, ally_id);
-  if (!ally.has_value()) {
-    return 0.0f;
+  return GoalkeeperGuardCommon::getMotionAngle(world, ally_id, getMotionTarget(world));
+}
+
+GoToPointMessage::MovingProfile FollowEnemyLine::getMotionMovingProfile(const World& world) const {
+  const int ally_id = 0;
+  if (GoalkeeperGuardCommon::isLateralMove(world, ally_id, getMotionTarget(world))) {
+    return GoToPointMessage::MovingProfile::GoalkeeperInTopSpeed;
   }
-
-  robocin::Point2Df ally_position = ally->position.value();
-  robocin::Point2Df ball_position
-      = robocin::Point2Df{world.ball.position->x, world.ball.position->y};
-
-  return (ball_position - ally_position).angle();
+  return GoToPointMessage::MovingProfile::BalancedInMedianSpeed;
 }
 
 OutputMessage FollowEnemyLine::makeFollowEnemyLineOutput(const World& world) {
@@ -77,7 +82,9 @@ RobotIdMessage FollowEnemyLine::makeFollowEnemyLineRobotId(const World& world) {
 
 MotionMessage FollowEnemyLine::makeFollowEnemyLineMotion(const World& world) {
   // TODO(mlv): Create the motion message
-  GoToPointMessage go_to_point = GoToPointMessage{getMotionTarget(world), getMotionAngle(world)};
+  GoToPointMessage go_to_point = GoToPointMessage{getMotionTarget(world),
+                                                  getMotionAngle(world),
+                                                  getMotionMovingProfile(world)};
   return MotionMessage{std::move(go_to_point)};
 }
 

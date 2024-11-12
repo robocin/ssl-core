@@ -30,6 +30,7 @@ class FollowEnemyLine : public IState {
   // Utility methods
   [[nodiscard]] robocin::Point2Df getMotionTarget(const World& world) const;
   [[nodiscard]] float getMotionAngle(const World& world) const;
+  [[nodiscard]] GoToPointMessage::MovingProfile getMotionMovingProfile(const World& world) const;
 
   // State parameters
 
