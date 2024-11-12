@@ -26,6 +26,11 @@ void emplaceGoalkeeperOutput(RobotMessage& goalkeeper,
 std::optional<RobotMessage> takeSupport(std::vector<RobotMessage>& robots);
 void emplaceSupportOutput(RobotMessage& support, World& world, BehaviorMessage& behavior_message);
 
+// Logic
+bool makeShouldKick(RobotMessage& robot, World& world);
+bool makeChargeCapacitor(RobotMessage& robot, World& world);
+
+float makeKickStrength(RobotMessage& robot, World& world);
 } // namespace behavior::impl
 
 #endif // BEHAVIOR_PROCESSING_IMPL_H

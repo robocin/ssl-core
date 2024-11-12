@@ -30,6 +30,22 @@ using ::protocols::referee::GameStatus;
 
 namespace impl {
 
+// Logic
+bool makeChargeCapacitor(RobotMessage& robot, World& world) {
+  // implement
+  return false;
+}
+
+bool makeShouldKick(RobotMessage& robot, World& world) {
+  // implement
+  return true;
+}
+
+float makeKickStrength(RobotMessage& robot, World& world) {
+  // implement
+  return 6.0;
+}
+
 // Takes
 std::optional<RobotMessage> findMyRobot(int number, std::vector<RobotMessage>& robots) {
   // This function does not handle a case where it does not find a robot
@@ -69,16 +85,16 @@ void emplaceForwardOutput(RobotMessage& forward, World& world, BehaviorMessage& 
   // Ball 2D is required because .angle() method is implemented from a Point2Df object.
   auto ball_2_d = robocin::Point2Df(world.ball.position->x, world.ball.position->y);
   auto target_angle = (ball_2_d - forward.position.value()).angle();
-  bool shouldKick = true;
+  bool shouldKick = makeShouldKick(forward, world);
 
   // process should kick
   std::optional<PeripheralActuationMessage> peripheral_actuation = std::nullopt;
   if (shouldKick) {
     peripheral_actuation = std::move(PeripheralActuationMessage{KickCommandMessage{
-        7.0 /* strength */,
+        makeKickStrength(forward, world), /* strength */
         true /* is_front */,
         false /* is_chip */,
-        false /* charge_capacitor -> makeChargeCapacitor based on distance to ball */,
+        makeChargeCapacitor(forward, world),
         false /* bypass_ir */
     }});
   }
