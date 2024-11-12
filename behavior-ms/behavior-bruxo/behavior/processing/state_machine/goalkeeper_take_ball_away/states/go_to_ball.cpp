@@ -6,8 +6,9 @@ namespace behavior {
 
 GoToBall::GoToBall() = default;
 
-OutputMessage GoToBall::exec(const World& world) {
+OutputMessage GoToBall::exec(const World& world, RobotIdMessage ally_id) {
   robocin::ilog("Exec GoToBall state");
+  ally_id_ = std::move(ally_id);
 
   // Handle state transitions
   checkAndHandleTransitions(world);
@@ -137,7 +138,7 @@ OutputMessage GoToBall::makeGoToBallOutput(const World& world) {
 
 RobotIdMessage GoToBall::makeGoToBallRobotId(const World& world) {
   // TODO(mlv): Create the robot id message
-  return RobotIdMessage{};
+  return std::move(ally_id_);
 }
 
 MotionMessage GoToBall::makeGoToBallMotion(const World& world) {

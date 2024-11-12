@@ -32,6 +32,8 @@ class FollowEnemyLine : public IState {
   [[nodiscard]] float getMotionAngle(const World& world) const;
   [[nodiscard]] GoToPointMessage::MovingProfile getMotionMovingProfile(const World& world) const;
 
+  RobotIdMessage ally_id_;
+
   // State parameters
 
  protected:
@@ -40,7 +42,7 @@ class FollowEnemyLine : public IState {
  public:
   explicit FollowEnemyLine();
   void setStateMachine(IStateMachine* state_machine) override { state_machine_ = state_machine; }
-  OutputMessage exec(const World& world) override;
+  OutputMessage exec(const World& world, RobotIdMessage ally_id) override;
 };
 
 } // namespace behavior

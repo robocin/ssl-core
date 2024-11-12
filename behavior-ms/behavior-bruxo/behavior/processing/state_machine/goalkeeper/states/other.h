@@ -17,7 +17,7 @@ class Other : public IState {
   explicit Other();
 
   void setStateMachine(IStateMachine* state_machine) override { state_machine_ = state_machine; };
-  OutputMessage exec(const World& world) override;
+  OutputMessage exec(const World& world, RobotIdMessage ally_id) override;
 };
 
 } // namespace behavior

@@ -130,24 +130,26 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
                 last_detection.field(),
                 last_game_status_.value());
 
-  if (!world_.game_status.command->stop.has_value()) {
-    auto robot = findMyRobot(2, world_.allies);
-    if (robot.has_value()) {
-      auto ball_2_d = robocin::Point2Df(world_.ball.position->x, world_.ball.position->y);
-      auto target_angle = (ball_2_d - robot->position.value()).angle();
+  // if (!world_.game_status.command->stop.has_value()) {
+  //   auto robot = findMyRobot(2, world_.allies);
+  //   if (robot.has_value()) {
+  //     auto ball_2_d = robocin::Point2Df(world_.ball.position->x, world_.ball.position->y);
+  //     auto target_angle = (ball_2_d - robot->position.value()).angle();
 
-      behavior_message.output.emplace_back(
-          RobotIdMessage{pAllyColor, 0},
-          MotionMessage{
-              GoToPointMessage{robocin::Point2Df{world_.ball.position->x, world_.ball.position->y},
-                               target_angle,
-                               GoToPointMessage::MovingProfile::DirectApproachBallSpeed,
-                               GoToPointMessage::PrecisionToTarget::HIGH,
-                               true /* sync_rotate_with_linear_movement */}});
-    }
-  }
+  //     behavior_message.output.emplace_back(
+  //         RobotIdMessage{pAllyColor, 0},
+  //         MotionMessage{
+  //             GoToPointMessage{robocin::Point2Df{world_.ball.position->x,
+  //             world_.ball.position->y},
+  //                              target_angle,
+  //                              GoToPointMessage::MovingProfile::DirectApproachBallSpeed,
+  //                              GoToPointMessage::PrecisionToTarget::HIGH,
+  //                              true /* sync_rotate_with_linear_movement */}});
+  //   }
+  // }
+  goalkeeper_guard_state_machine_->run(RobotIdMessage{pAllyColor, 8});
 
-  goalkeeper_guard_state_machine_->run();
+  behavior_message.output.emplace_back(std::move(goalkeeper_guard_state_machine_->output));
 
   return behavior_message.toProto();
 }

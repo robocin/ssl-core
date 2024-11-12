@@ -4,8 +4,9 @@ namespace behavior {
 
 KickBall::KickBall() = default;
 
-OutputMessage KickBall::exec(const World& world) {
+OutputMessage KickBall::exec(const World& world, RobotIdMessage ally_id) {
   robocin::ilog("Exec KickBall state");
+  ally_id_ = std::move(ally_id);
 
   checkAndHandleTransitions(world);
   return makeKickBallOutput(world);
@@ -64,7 +65,7 @@ OutputMessage KickBall::makeKickBallOutput(const World& world) {
 
 RobotIdMessage KickBall::makeKickBallRobotId(const World& world) {
   // TODO(mlv): Create the robot id message
-  return RobotIdMessage{};
+  return std::move(ally_id_);
 }
 
 MotionMessage KickBall::makeKickBallMotion(const World& world) {

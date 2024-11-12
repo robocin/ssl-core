@@ -38,13 +38,15 @@ class GoToBall : public IState {
   mutable bool is_ball_close_to_goal_line_ = false;
   float rotate_in_point_dist_threshold_ = pRobotRadius() * 1.2;
 
+  RobotIdMessage ally_id_;
+
  protected:
   IStateMachine* state_machine_{}; // back reference
 
  public:
   explicit GoToBall();
   void setStateMachine(IStateMachine* state_machine) override { state_machine_ = state_machine; }
-  OutputMessage exec(const World& world) override;
+  OutputMessage exec(const World& world, RobotIdMessage ally_id) override;
 };
 
 } // namespace behavior

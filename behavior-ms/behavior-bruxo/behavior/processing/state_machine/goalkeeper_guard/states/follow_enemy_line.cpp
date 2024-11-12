@@ -11,8 +11,9 @@ namespace behavior {
 
 FollowEnemyLine::FollowEnemyLine() = default;
 
-OutputMessage FollowEnemyLine::exec(const World& world) {
+OutputMessage FollowEnemyLine::exec(const World& world, RobotIdMessage ally_id) {
   robocin::ilog("Exec FollowEnemyLine state");
+  ally_id_ = std::move(ally_id);
 
   checkAndHandleTransitions(world);
   return makeFollowEnemyLineOutput(world);
@@ -77,7 +78,7 @@ OutputMessage FollowEnemyLine::makeFollowEnemyLineOutput(const World& world) {
 
 RobotIdMessage FollowEnemyLine::makeFollowEnemyLineRobotId(const World& world) {
   // TODO(mlv): Create the robot id message
-  return RobotIdMessage{};
+  return std::move(ally_id_);
 }
 
 MotionMessage FollowEnemyLine::makeFollowEnemyLineMotion(const World& world) {

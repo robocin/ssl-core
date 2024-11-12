@@ -11,6 +11,7 @@
 #include "behavior/processing/state_machine/goalkeeper_guard/states/follow_ball_line.h"
 #include "behavior/processing/state_machine/goalkeeper_guard/states/follow_enemy_line.h"
 #include "behavior/processing/state_machine/istate_machine.h"
+#include "common/robot_id/robot_id.h"
 
 #include <robocin/geometry/point2d.h>
 #include <robocin/output/log.h>
@@ -35,6 +36,8 @@ class DefendKick : public IState {
   [[nodiscard]] float getMotionAngle(const World& world) const;
   [[nodiscard]] GoToPointMessage::MovingProfile getMotionMovingProfile(const World& world) const;
 
+  RobotIdMessage ally_id_;
+
   // State parameters
 
  protected:
@@ -43,7 +46,7 @@ class DefendKick : public IState {
  public:
   explicit DefendKick();
   void setStateMachine(IStateMachine* state_machine) override { state_machine_ = state_machine; }
-  OutputMessage exec(const World& world) override;
+  OutputMessage exec(const World& world, RobotIdMessage ally_id) override;
 };
 
 } // namespace behavior

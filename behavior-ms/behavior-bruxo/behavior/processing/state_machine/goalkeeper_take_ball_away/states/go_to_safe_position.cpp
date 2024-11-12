@@ -1,11 +1,14 @@
 #include "behavior/processing/state_machine/goalkeeper_take_ball_away/states/go_to_safe_position.h"
 
+#include "common/robot_id/robot_id.h"
+
 namespace behavior {
 
 GoToSafePosition::GoToSafePosition() = default;
 
-OutputMessage GoToSafePosition::exec(const World& world) {
+OutputMessage GoToSafePosition::exec(const World& world, RobotIdMessage ally_id) {
   robocin::ilog("Exec GoToSafePosition state");
+  ally_id_ = std::move(ally_id);
 
   checkAndHandleTransitions(world);
   return makeGoToSafePositionOutput(world);
@@ -73,7 +76,7 @@ OutputMessage GoToSafePosition::makeGoToSafePositionOutput(const World& world) {
 
 RobotIdMessage GoToSafePosition::makeGoToSafePositionRobotId(const World& world) {
   // TODO(mlv): Create the robot id message
-  return RobotIdMessage{};
+  return std::move(ally_id_);
 }
 
 MotionMessage GoToSafePosition::makeGoToSafePositionMotion(const World& world) {

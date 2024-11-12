@@ -2,14 +2,15 @@
 
 #include "behavior/processing/state_machine/goalkeeper_guard/common/goalkeeper_guard_common.h"
 #include "behavior/processing/state_machine/goalkeeper_guard/states/follow_ball_line.h"
+#include "common/robot_id/robot_id.h"
 
 namespace behavior {
 
 DefendKick::DefendKick() = default;
 
-OutputMessage DefendKick::exec(const World& world) {
+OutputMessage DefendKick::exec(const World& world, RobotIdMessage ally_id) {
   robocin::ilog("Exec DefendKick state");
-
+  ally_id_ = std::move(ally_id);
   checkAndHandleTransitions(world);
   return makeDefendKickOutput(world);
 }
@@ -74,7 +75,7 @@ OutputMessage DefendKick::makeDefendKickOutput(const World& world) {
 
 RobotIdMessage DefendKick::makeDefendKickRobotId(const World& world) {
   // TODO(mlv): Create the robot id message
-  return RobotIdMessage{};
+  return std::move(ally_id_);
 }
 
 MotionMessage DefendKick::makeDefendKickMotion(const World& world) {

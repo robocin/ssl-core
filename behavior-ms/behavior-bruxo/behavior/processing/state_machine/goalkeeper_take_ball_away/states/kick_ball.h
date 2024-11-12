@@ -37,13 +37,15 @@ class KickBall : public IState {
   float approach_angle_threshold_ = GoalkeeperTakeBallAwayCommon::APPROACH_ANGLE_THRESHOLD * 2.0f;
   float distance_to_consider_kick_ = GoalkeeperTakeBallAwayCommon::DISTANCE_TO_CONSIDER_KICK * 1.2f;
 
+  RobotIdMessage ally_id_;
+
  protected:
   IStateMachine* state_machine_{}; // back reference
 
  public:
   explicit KickBall();
   void setStateMachine(IStateMachine* state_machine) override { state_machine_ = state_machine; }
-  OutputMessage exec(const World& world) override;
+  OutputMessage exec(const World& world, RobotIdMessage ally_id) override;
 };
 
 } // namespace behavior

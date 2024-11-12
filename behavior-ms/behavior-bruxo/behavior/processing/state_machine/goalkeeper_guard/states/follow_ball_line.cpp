@@ -8,8 +8,9 @@ namespace behavior {
 
 FollowBallLine::FollowBallLine() = default;
 
-OutputMessage FollowBallLine::exec(const World& world) {
+OutputMessage FollowBallLine::exec(const World& world, RobotIdMessage ally_id) {
   robocin::ilog("Exec FollowBallLine state");
+  ally_id_ = std::move(ally_id);
 
   // Handle state transitions
   checkAndHandleTransitions(world);
@@ -76,7 +77,7 @@ OutputMessage FollowBallLine::makeFollowBallLineOutput(const World& world) {
 
 RobotIdMessage FollowBallLine::makeFollowBallLineRobotId(const World& world) {
   // TODO(mlv): Create the robot id message
-  return RobotIdMessage{};
+  return std::move(ally_id_);
 }
 
 MotionMessage FollowBallLine::makeFollowBallLineMotion(const World& world) {
