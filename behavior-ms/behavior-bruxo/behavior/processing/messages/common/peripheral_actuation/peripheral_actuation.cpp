@@ -12,9 +12,7 @@ void PeripheralActuationMessage::fromProto(
 
 protocols::common::PeripheralActuation PeripheralActuationMessage::toProto() const {
   protocols::common::PeripheralActuation proto;
-  std::printf("OIIIIII");
-  robocin::ilog("{} {} {} {} {}", kick_command.strength, kick_command.is_front, kick_command.is_chip, kick_command.charge_capacitor, kick_command.is_bypass_ir);
-
+  
   proto.mutable_kick_command()->CopyFrom(kick_command.toProto());
 
   return proto;

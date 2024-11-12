@@ -99,10 +99,8 @@ std::optional<rc::Behavior> onRun(World& world) {
   auto robot = findMyRobot(forward_number, world.allies);
   if (!robot.has_value()) {
     ilog("Robot with id {} not found from detection packets.", forward_number);
-    return;
-  } else {
-    ilog("Robot with id {} found.", forward_number);
-  }
+    return std::nullopt;
+  } 
 
   // Ball 2D is required because .angle() method is implemented from a Point2Df object.
   auto ball_2_d = robocin::Point2Df(world.ball.position->x, world.ball.position->y);
@@ -116,7 +114,7 @@ std::optional<rc::Behavior> onRun(World& world) {
         7.0 /* strength */,
         true /* is_front */,
         false /* is_chip */,
-        false /* charge_capacitor */,
+        false /* charge_capacitor -> makeChargeCapacitor based on distance to ball */,
         false /* bypass_ir */
     }});
   }
@@ -153,9 +151,9 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
     return std::nullopt;
   }
 
-  // if (world_.isHalt()) {
-  //   return onHalt();
-  // }
+  if (world_.isHalt()) {
+    return onHalt();
+  }
 
   if (!world_.isStop()) {
     return onRun(world_);
