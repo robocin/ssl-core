@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <optional>
 #include <stdexcept>
 #include <type_traits>
 
@@ -132,6 +133,48 @@ constexpr bool segmentsIntersect(const robocin::Line<T>& a, const robocin::Line<
 }
 
 /*!
+ * @tparam T arithmetic type.
+ * @param a, b, c, d lines (a, b) and (c, d).
+ * @return Returns the intersection point between the two segments (if exists).
+ * @note implementation is based on Graphics Gems III's "Faster Line Segment Intersection"
+ */
+template <class T>
+constexpr std::enable_if_t<std::is_floating_point_v<T>, std::optional<robocin::Point2D<T>>>
+segmentsIntersection(const robocin::Point2D<T>& a,
+                     const robocin::Point2D<T>& b,
+                     const robocin::Point2D<T>& c,
+                     const robocin::Point2D<T>& d) {
+  const robocin::Point2D<T> ba = b - a;
+  const robocin::Point2D<T> cd = c - d;
+  const robocin::Point2D<T> ac = a - c;
+  const auto denominator = cd.cross(ba);
+  if (fuzzyIsNull(denominator)) {
+    return std::nullopt;
+  }
+  const T reciprocal = static_cast<T>(1) / denominator;
+  const T na = ac.cross(cd) * reciprocal;
+  if (!(0 <= na && na <= 1)) {
+    return std::nullopt;
+  }
+  const T nb = ba.cross(ac) * reciprocal;
+  if (!(0 <= nb && nb <= 1)) {
+    return std::nullopt;
+  }
+  return a + ba * na;
+}
+
+/*!
+ * @tparam T arithmetic type.
+ * @param lhs, rhs lines.
+ * @return Returns the intersection point between the two segments (if exists).
+ * @note implementation is based on Graphics Gems III's "Faster Line Segment Intersection"
+ */
+template <class T>
+constexpr auto segmentsIntersection(const robocin::Line<T>& lhs, const robocin::Line<T>& rhs) {
+  return segmentsIntersection(lhs.p1(), lhs.p2(), rhs.p1(), rhs.p2());
+}
+
+/*!
  * @tparam PT Requires '.x()' and '.y()' members.
  * @param lhs, rhs the vectors.
  * @return Computes the angle between lhs and rhs (in the range [-π , +π] radians, the order
@@ -140,6 +183,11 @@ constexpr bool segmentsIntersect(const robocin::Line<T>& a, const robocin::Line<
 template <class PT>
 constexpr auto angleBetween(const PT& lhs, const PT& rhs) {
   return std::atan2(lhs.cross(rhs), lhs.dot(rhs));
+}
+
+template <class T>
+constexpr T degreesToRadians(T degrees) {
+  return degrees * static_cast<T>(M_PI) / static_cast<T>(180);
 }
 
 } // namespace mathematics

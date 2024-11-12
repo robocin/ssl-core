@@ -14,14 +14,14 @@ namespace behavior {
 class GoalkeeperTakeBallAwayStateMachine : IStateMachine {
  private:
   IState* current_state_;
-  OutputMessage output;
   World world_;
 
  public:
   explicit GoalkeeperTakeBallAwayStateMachine();
 
+  OutputMessage output;
   void transitionTo(IState* state) override;
-  void run() override;
+  void run(RobotIdMessage ally_id) override;
 };
 
 } // namespace behavior

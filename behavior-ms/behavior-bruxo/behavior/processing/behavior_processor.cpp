@@ -9,7 +9,7 @@
 #include "motion/motion_message.h"
 #include "perception/robot/robot_message.h"
 #include "state_machine/goalkeeper/goalkeeper_state_machine.h"
-#include "state_machine/goalkeeper_take_ball_away/goalkeeper_take_ball_away_state_machine.h"
+#include "state_machine/goalkeeper_guard/goalkeeper_guard_state_machine.h"
 
 #include <optional>
 #include <protocols/behavior/behavior_unification.pb.h>
@@ -69,9 +69,9 @@ std::vector<rc::GameStatus> gameStatusFromPayloads(std::span<const Payload> payl
 
 BehaviorProcessor::BehaviorProcessor(
     std::unique_ptr<parameters::IHandlerEngine> parameters_handler_engine,
-    std::unique_ptr<GoalkeeperTakeBallAwayStateMachine> goalkeeper_take_ball_away_state_machine) :
+    std::unique_ptr<::behavior::GoalkeeperGuardStateMachine> goalkeeper_guard_state_machine) :
     parameters_handler_engine_{std::move(parameters_handler_engine)},
-    goalkeeper_take_ball_away_state_machine_{std::move(goalkeeper_take_ball_away_state_machine)} {}
+    goalkeeper_guard_state_machine_{std::move(goalkeeper_guard_state_machine)} {}
 
 std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> payloads) {
   if (!BehaviorProcessor::update(payloads)) {

@@ -7,7 +7,7 @@ namespace behavior {
 
 Guard::Guard() = default;
 
-OutputMessage Guard::exec(const World& world) {
+OutputMessage Guard::exec(const World& world, RobotIdMessage ally_id) {
   robocin::ilog("Exec guard state");
   state_machine_->transitionTo(new Other);
 
