@@ -29,6 +29,8 @@ using ::protocols::referee::GameStatus;
 } // namespace
 
 namespace impl {
+
+// Takes
 std::optional<RobotMessage> findMyRobot(int number, std::vector<RobotMessage>& robots) {
   // This function does not handle a case where it does not find a robot
   for (auto& robot : robots) {
@@ -51,22 +53,22 @@ std::optional<RobotMessage> findMyRobot(int number, std::vector<RobotMessage>& r
   return std::nullopt;
 }
 
-std::optional<rc::Behavior> onInGame(World& world) {
-  BehaviorMessage behavior_message;
+std::optional<RobotMessage> takeForward(std::vector<RobotMessage>& robots) {
+  return impl::findMyRobot(pForwardNumber(), robots);
+}
 
-  // Take forward
-  robocin::ilog("Allies detected: {}", world.allies.size());
-  int forward_number = 10;
+std::optional<RobotMessage> takeGoalkeeper(std::vector<RobotMessage>& robots) {
+  return impl::findMyRobot(pGoalkeeperNumber(), robots);
+};
 
-  auto robot = findMyRobot(forward_number, world.allies);
-  if (!robot.has_value()) {
-    ilog("Robot with id {} not found from detection packets.", forward_number);
-    return std::nullopt;
-  }
+std::optional<RobotMessage> takeSupport(std::vector<RobotMessage>& robots) {
+  return impl::findMyRobot(pSupportNumber(), robots);
+};
 
+void emplaceForwardOutput(RobotMessage& forward, World& world, BehaviorMessage& behavior_message) {
   // Ball 2D is required because .angle() method is implemented from a Point2Df object.
   auto ball_2_d = robocin::Point2Df(world.ball.position->x, world.ball.position->y);
-  auto target_angle = (ball_2_d - robot->position.value()).angle();
+  auto target_angle = (ball_2_d - forward.position.value()).angle();
   bool shouldKick = true;
 
   // process should kick
@@ -83,7 +85,7 @@ std::optional<rc::Behavior> onInGame(World& world) {
 
   // Always send go to point
   behavior_message.output.emplace_back(
-      RobotIdMessage{pAllyColor, forward_number},
+      RobotIdMessage{pAllyColor, pForwardNumber()},
       MotionMessage{
           GoToPointMessage{robocin::Point2Df{world.ball.position->x, world.ball.position->y},
                            target_angle,
@@ -94,6 +96,37 @@ std::optional<rc::Behavior> onInGame(World& world) {
           std::nullopt /* rotate_in_point */,
           std::nullopt /* rotate_on_self */,
           std::move(peripheral_actuation)});
+};
+
+void emplaceSupportOutput(RobotMessage& support, World& world, BehaviorMessage& behavior_message) {
+};
+
+void emplaceGoalkeeperOutput(RobotMessage& goalkeeper,
+                             World& world,
+                             BehaviorMessage& behavior_message) {};
+
+// Game running
+std::optional<rc::Behavior> onInGame(World& world) {
+  BehaviorMessage behavior_message;
+  robocin::ilog("Allies detected: {}", world.allies.size());
+
+  // Take forward
+  auto forward = takeForward(world.allies);
+  if (forward.has_value()) {
+    emplaceForwardOutput(forward.value(), world, behavior_message);
+  }
+
+  // Take goalkeeper
+  auto goalkeeper = takeGoalkeeper(world.allies);
+  if (goalkeeper.has_value()) {
+    emplaceGoalkeeperOutput(goalkeeper.value(), world, behavior_message);
+  }
+
+  // Take support
+  auto support = takeSupport(world.allies);
+  if (!support.has_value()) {
+    emplaceSupportOutput(support.value(), world, behavior_message);
+  }
 
   return behavior_message.toProto();
 };
