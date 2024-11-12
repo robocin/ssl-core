@@ -71,7 +71,7 @@ CommunicationProcessor::process(std::span<const Payload> payloads) {
         navigation.angular_velocity(),
         navigation.peripheral_actuation().kick_command().is_front(),
         navigation.peripheral_actuation().kick_command().is_chip(),
-        true /* always charge */,
+        navigation.peripheral_actuation().kick_command().charge_capacitor(), /* always false */,
         navigation.peripheral_actuation().kick_command().kick_strength(),
         false /* dribbler always off */,
         0.0 /* dribbler speed unused */

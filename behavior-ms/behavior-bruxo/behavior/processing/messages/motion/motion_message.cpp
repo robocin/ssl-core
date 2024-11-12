@@ -64,7 +64,7 @@ MotionMessage::MotionMessage(
     go_to_point_with_trajectory{std::move(go_to_point_with_trajectory)},
     rotate_in_point{std::move(rotate_in_point)},
     rotate_on_self{std::move(rotate_on_self)},
-    peripheral_actuation(std::move(peripheral_actuation)) {}
+    peripheral_actuation{std::move(peripheral_actuation)} {}
 
 protocols::behavior::unification::Motion MotionMessage::toProto() const {
   protocols::behavior::unification::Motion motion;
@@ -72,18 +72,26 @@ protocols::behavior::unification::Motion MotionMessage::toProto() const {
     motion.set_allocated_go_to_point(
         new protocols::behavior::GoToPoint(go_to_point.value().toProto()));
   }
+
   if (go_to_point_with_trajectory.has_value()) {
     motion.set_allocated_go_to_point_with_trajectory(
         new protocols::behavior::GoToPointWithTrajectory(
             go_to_point_with_trajectory.value().toProto()));
   }
+
   if (rotate_in_point.has_value()) {
     motion.set_allocated_rotate_in_point(
         new protocols::behavior::RotateInPoint(rotate_in_point.value().toProto()));
   }
+
   if (rotate_on_self.has_value()) {
     motion.set_allocated_rotate_on_self(
         new protocols::behavior::RotateOnSelf(rotate_on_self.value().toProto()));
+  }
+
+  if (peripheral_actuation.has_value()) {
+    motion.set_allocated_peripheral_actuation(
+        new protocols::common::PeripheralActuation(peripheral_actuation.value().toProto()));
   }
 
   return motion;

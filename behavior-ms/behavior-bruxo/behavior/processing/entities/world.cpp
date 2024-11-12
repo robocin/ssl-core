@@ -65,4 +65,8 @@ void World::update(const std::vector<protocols::perception::Robot>& robots,
   World::takeGameStatus(game_status);
 }
 
+bool World::isStop() { return game_status.command->stop.has_value(); }
+
+bool World::isHalt() { return game_status.command->halt.has_value(); }
+
 } // namespace behavior

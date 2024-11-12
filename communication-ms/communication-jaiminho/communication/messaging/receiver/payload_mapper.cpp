@@ -37,7 +37,7 @@ Payload PayloadMapper::fromZmqDatagrams(std::span<const ZmqDatagram> messages) c
     if (zmq_datagram.topic() == service_discovery::kNavigationOutputTopic) {
       rc::Navigation navigation_message;
       navigation_message.ParseFromString(std::string{zmq_datagram.message()});
-      // robocin::ilog("Received from navigation: {}", navigation_message.DebugString());
+      robocin::ilog("Received from navigation: {}", navigation_message.DebugString());
       navigation.emplace_back(std::move(navigation_message));
 
     } else if (zmq_datagram.topic() == service_discovery::kGameControllerRefereeTopic) {
@@ -46,7 +46,7 @@ Payload PayloadMapper::fromZmqDatagrams(std::span<const ZmqDatagram> messages) c
       referee.emplace_back(std::move(referee_message));
 
     } else {
-      // wlog("zmq_datagram with topic '{}' not processed.", zmq_datagram.topic());
+      wlog("zmq_datagram with topic '{}' not processed.", zmq_datagram.topic());
     }
   }
 
