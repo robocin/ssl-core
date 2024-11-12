@@ -151,9 +151,9 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
     return std::nullopt;
   }
 
-  if (world_.isHalt()) {
-    return onHalt();
-  }
+  // if (world_.isHalt()) {
+  //   return onHalt();
+  // }
 
   if (!world_.isStop()) {
     return onRun(world_);
