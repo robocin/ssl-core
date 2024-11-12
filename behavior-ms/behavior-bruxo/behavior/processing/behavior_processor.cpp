@@ -112,7 +112,7 @@ std::optional<rc::Behavior> onRun(World& world) {
         7.0 /* strength */,
         true /* is_front */,
         false /* is_chip */,
-        true /* charge_capacitor */,
+        false /* charge_capacitor */,
         false /* bypass_ir */
     }});
   }
