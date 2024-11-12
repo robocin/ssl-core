@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <optional>
 #include <stdexcept>
 #include <type_traits>
 
@@ -129,6 +130,48 @@ constexpr bool segmentsIntersect(const robocin::Point2D<T>& a,
 template <class T>
 constexpr bool segmentsIntersect(const robocin::Line<T>& a, const robocin::Line<T>& b) {
   return segmentsIntersect(a.p1(), a.p2(), b.p1(), b.p2());
+}
+
+/*!
+ * @tparam T arithmetic type.
+ * @param a, b, c, d lines (a, b) and (c, d).
+ * @return Returns the intersection point between the two segments (if exists).
+ * @note implementation is based on Graphics Gems III's "Faster Line Segment Intersection"
+ */
+template <class T>
+constexpr std::enable_if_t<std::is_floating_point_v<robocin::Point2D<T>>, std::optional<T>>
+segmentsIntersection(const robocin::Point2D<T>& a,
+                     const robocin::Point2D<T>& b,
+                     const robocin::Point2D<T>& c,
+                     const robocin::Point2D<T>& d) {
+  const robocin::Point2D<T> ba = b - a;
+  const robocin::Point2D<T> cd = c - d;
+  const robocin::Point2D<T> ac = a - c;
+  const auto denominator = cd.cross(ba);
+  if (fuzzyIsNull(denominator)) {
+    return std::nullopt;
+  }
+  const robocin::Point2D<T> reciprocal = static_cast<robocin::Point2D<T>>(1) / denominator;
+  const robocin::Point2D<T> na = ac.cross(cd) * reciprocal;
+  if (!(0 <= na && na <= 1)) {
+    return std::nullopt;
+  }
+  const robocin::Point2D<T> nb = ba.cross(ac) * reciprocal;
+  if (!(0 <= nb && nb <= 1)) {
+    return std::nullopt;
+  }
+  return a + ba * na;
+}
+
+/*!
+ * @tparam T arithmetic type.
+ * @param lhs, rhs lines.
+ * @return Returns the intersection point between the two segments (if exists).
+ * @note implementation is based on Graphics Gems III's "Faster Line Segment Intersection"
+ */
+template <class T>
+constexpr auto segmentsIntersection(const robocin::Line<T>& lhs, const robocin::Line<T>& rhs) {
+  return segmentsIntersection(lhs.p1(), lhs.p2(), rhs.p1(), rhs.p2());
 }
 
 /*!
