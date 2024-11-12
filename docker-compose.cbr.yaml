@@ -1,0 +1,170 @@
+services:
+  ssl-vision-client:
+    container_name: ssl-vision-client
+    image: robocupssl/ssl-vision-client:1.7.3
+    command:
+      - "-visionAddress"
+      - "224.5.23.2:10006"
+    restart: unless-stopped
+    ports:
+      - 8082/tcp
+      - 8082:8082
+    logging:
+      driver: none
+    network_mode: host
+
+  # autoref-tigers:
+  #   container_name: autoref-tigers
+  #   image: tigersmannheim/auto-referee:1.2.0
+  #   restart: unless-stopped
+  #   command:
+  #     - "-a"
+  #     - "-visionAddress"
+  #     - "224.5.23.2:10006"
+  #     - "-refereeAddress"
+  #     - "224.5.23.1:11003"
+  #   logging:
+  #     driver: none
+
+  gateway:
+    container_name: gateway
+    build:
+      context: .
+      dockerfile: gateway/gateway-augusto/gateway-augusto.Dockerfile
+    environment:
+      - VISION_PORT=10006
+      - GC_PORT=10003
+    volumes:
+      - .ssl-core:/tmp/.ssl-core
+    network_mode: host
+
+  perception-ms:
+    container_name: perception-ms
+    build:
+      context: .
+      dockerfile: perception-ms/perception-brutus/perception-brutus.Dockerfile
+    volumes:
+      - .ssl-core:/tmp/.ssl-core
+    depends_on:
+      - gateway
+    network_mode: host
+    attach: false
+
+  referee-ms:
+    container_name: referee-ms
+    image: robocin/referee-daronco:manual-419128
+    volumes:
+      - .ssl-core:/tmp/.ssl-core
+    depends_on:
+      - perception-ms
+    network_mode: host
+    attach: false
+
+  playback-db:
+    container_name: playback-db
+    image: "redis:latest"
+    network_mode: host
+
+  playback-ms:
+    container_name: playback-ms
+    build:
+      context: .
+      dockerfile: playback-ms/playback-caze/playback-caze.Dockerfile
+    volumes:
+      - .ssl-core:/tmp/.ssl-core
+    depends_on:
+      - referee-ms
+      - playback-db
+    network_mode: host
+    extra_hosts:
+      - "playback-db:127.0.0.1"
+
+  player-bff:
+    container_name: player-bff
+    build:
+      context: .
+      dockerfile: player-bff/player-sonson/player-sonson.Dockerfile
+    depends_on:
+      - gateway
+      - playback-ms
+    network_mode: host
+    extra_hosts:
+      - "gateway:127.0.0.1"
+
+  player-mfe:
+    build:
+      context: .
+      dockerfile: player-mfe/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=player-mfe
+    command: ["-g", "daemon off;"]
+    depends_on:
+      - player-bff
+    network_mode: host
+
+  viewer-mfe:
+    build:
+      context: .
+      dockerfile: viewer-mfe/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=viewer-mfe
+    command: ["-g", "daemon off;"]
+    network_mode: host
+
+  app-shell:
+    build:
+      context: .
+      dockerfile: app-shell/Dockerfile
+      args:
+        - SOURCE_DIRECTORY=app-shell
+    command: ["-g", "daemon off;"]
+    network_mode: host
+
+  navigation-ms:
+    container_name: navigation-ms
+    build:
+      context: .
+      dockerfile: navigation-ms/navigation-luffy/navigation-luffy.Dockerfile
+    volumes:
+      - .ssl-core:/tmp/.ssl-core
+    network_mode: "host"
+    attach: false
+
+  # Not using decision currently
+  # decision-ms:
+  #   container_name: decision-ms
+  #   build:
+  #     context: .
+  #     dockerfile: decision-ms/decision-guardiola/decision-guardiola.Dockerfile
+  #   volumes:
+  #     - .ssl-core:/tmp/.ssl-core
+  #   depends_on:
+  #     - perception-ms
+  #     - referee-ms
+  #   network_mode: "host"
+  #   attach: false
+
+  behavior-ms:
+    container_name: behavior-ms
+    build:
+      context: .
+      dockerfile: behavior-ms/behavior-bruxo/behavior-bruxo.Dockerfile
+    volumes:
+      - .ssl-core:/tmp/.ssl-core
+    network_mode: "host"
+    attach: true
+  
+  communication-ms:
+    container_name: communication-ms
+    build:
+      context: .
+      dockerfile: communication-ms/communication-jaiminho/communication-jaiminho.Dockerfile
+    volumes:
+      - .ssl-core:/tmp/.ssl-core
+    depends_on:
+      - gateway
+    network_mode: "host"
+    attach: false
+    
+volumes:
+  .ssl-core:

@@ -7,7 +7,7 @@ message Communication {
 }
 
 message OutputRobot {
-  uint32 id = 1;
+  optional uint32 id = 1;
   double vx = 2;
   double vy = 3;
   double vw = 4;
