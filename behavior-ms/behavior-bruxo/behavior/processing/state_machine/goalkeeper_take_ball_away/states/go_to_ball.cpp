@@ -6,7 +6,7 @@ namespace behavior {
 
 GoToBall::GoToBall() = default;
 
-OutputMessage GoToBall::exec(const World& world, RobotIdMessage ally_id) {
+OutputMessage GoToBall::exec(const World& world, RobotIdMessage& ally_id) {
   robocin::ilog("Exec GoToBall state");
   ally_id_ = std::move(ally_id);
 

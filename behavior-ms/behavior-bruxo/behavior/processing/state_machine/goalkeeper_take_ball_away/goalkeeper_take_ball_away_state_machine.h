@@ -21,7 +21,7 @@ class GoalkeeperTakeBallAwayStateMachine : IStateMachine {
 
   OutputMessage output;
   void transitionTo(IState* state) override;
-  void run(RobotIdMessage ally_id) override;
+  void run(const World& world, RobotIdMessage& ally_id) override;
 };
 
 } // namespace behavior

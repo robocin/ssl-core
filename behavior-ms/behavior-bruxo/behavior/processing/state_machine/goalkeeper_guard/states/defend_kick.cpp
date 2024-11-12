@@ -10,7 +10,7 @@ namespace behavior {
 
 DefendKick::DefendKick() = default;
 
-OutputMessage DefendKick::exec(const World& world, RobotIdMessage ally_id) {
+OutputMessage DefendKick::exec(const World& world, RobotIdMessage& ally_id) {
   robocin::ilog("Exec DefendKick state");
   ally_id_ = std::move(ally_id);
   robocin::Point2Df ball_position = world.field.allyGoalInsideBottom();

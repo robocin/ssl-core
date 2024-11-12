@@ -8,7 +8,6 @@
 #include "common/robot_id/robot_id.h"
 #include "motion/motion_message.h"
 #include "perception/robot/robot_message.h"
-#include "state_machine/goalkeeper/goalkeeper_state_machine.h"
 #include "state_machine/goalkeeper_guard/goalkeeper_guard_state_machine.h"
 
 #include <optional>

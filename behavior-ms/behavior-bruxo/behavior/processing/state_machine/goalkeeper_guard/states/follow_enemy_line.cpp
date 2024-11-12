@@ -11,7 +11,7 @@ namespace behavior {
 
 FollowEnemyLine::FollowEnemyLine() = default;
 
-OutputMessage FollowEnemyLine::exec(const World& world, RobotIdMessage ally_id) {
+OutputMessage FollowEnemyLine::exec(const World& world, RobotIdMessage& ally_id) {
   robocin::ilog("Exec FollowEnemyLine state");
   ally_id_ = std::move(ally_id);
 

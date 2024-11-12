@@ -1,5 +1,6 @@
 #include "behavior/processing/entities/world.h"
 
+#include "perception/field/field_message.h"
 #include "world.h"
 
 #include <protocols/common/robot_id.pb.h>
@@ -59,6 +60,9 @@ void World::update(const std::vector<protocols::perception::Robot>& robots,
                    const std::vector<protocols::perception::Ball>& balls,
                    const protocols::perception::Field& field,
                    const protocols::referee::GameStatus& game_status) {
+
+  this->field = std::move(FieldMessage{field});
+
   World::takeAlliesAndEnemies(robots);
   World::takeBallHighConfidence(balls);
   World::takeGameStatus(game_status);

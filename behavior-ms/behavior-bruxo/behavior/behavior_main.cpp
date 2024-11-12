@@ -1,6 +1,5 @@
 #include "behavior/controller/consumer_controller.h"
 #include "behavior/controller/producer_controller.h"
-#include "processing/state_machine/goalkeeper/goalkeeper_state_machine.h"
 
 #include <memory>
 #include <print>

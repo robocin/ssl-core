@@ -29,7 +29,7 @@ class IStateMachine {
   virtual ~IStateMachine() = default;
 
   virtual void transitionTo(IState* state) = 0;
-  virtual void run(RobotIdMessage ally_id) = 0;
+  virtual void run(const World& world, RobotIdMessage& ally_id) = 0;
 };
 
 class IState {
@@ -47,7 +47,7 @@ class IState {
   virtual ~IState() = default;
 
   virtual void setStateMachine(IStateMachine* state_machine) = 0;
-  virtual OutputMessage exec(const World& world, RobotIdMessage ally_id) = 0;
+  virtual OutputMessage exec(const World& world, RobotIdMessage& ally_id) = 0;
 };
 
 } // namespace behavior

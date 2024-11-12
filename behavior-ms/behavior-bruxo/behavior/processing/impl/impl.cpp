@@ -155,7 +155,8 @@ std::optional<rc::Behavior> onInGame(World& world,
   // Take goalkeeper
   auto goalkeeper = takeGoalkeeper(world.allies);
   if (goalkeeper.has_value()) {
-    guard_state_machine.run(RobotIdMessage{pAllyColor, pGoalkeeperNumber()});
+    RobotIdMessage robot_id_message = RobotIdMessage{pAllyColor, pGoalkeeperNumber()};
+    guard_state_machine.run(world, robot_id_message);
     behavior_message.output.emplace_back(std::move(guard_state_machine.output));
   }
 

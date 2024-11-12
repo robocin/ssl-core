@@ -4,7 +4,7 @@ namespace behavior {
 
 KickBall::KickBall() = default;
 
-OutputMessage KickBall::exec(const World& world, RobotIdMessage ally_id) {
+OutputMessage KickBall::exec(const World& world, RobotIdMessage& ally_id) {
   robocin::ilog("Exec KickBall state");
   ally_id_ = std::move(ally_id);
 

@@ -8,7 +8,7 @@ namespace behavior {
 
 FollowBallLine::FollowBallLine() = default;
 
-OutputMessage FollowBallLine::exec(const World& world, RobotIdMessage ally_id) {
+OutputMessage FollowBallLine::exec(const World& world, RobotIdMessage& ally_id) {
   robocin::ilog("Exec FollowBallLine state");
   ally_id_ = std::move(ally_id);
   robocin::Point2Df ball_position = world.field.allyGoalInsideBottom();

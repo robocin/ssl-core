@@ -19,8 +19,8 @@ void GoalkeeperTakeBallAwayStateMachine::transitionTo(IState* state) {
   current_state_->setStateMachine(this);
 }
 
-void GoalkeeperTakeBallAwayStateMachine::run(RobotIdMessage ally_id) {
+void GoalkeeperTakeBallAwayStateMachine::run(const World& world, RobotIdMessage& ally_id) {
   robocin::ilog("GoalkeeperTakeBallAwayStateMachine running!");
-  output = current_state_->exec(world_, std::move(ally_id));
+  output = current_state_->exec(world, ally_id);
 }
 } // namespace behavior
