@@ -25,23 +25,22 @@ void KickBall::checkAndHandleTransitions(const World& world) {
 }
 
 bool KickBall::shouldTransitionToSafePosition(const World& world) const {
-  const int ally_id = 0;
-  return GoalkeeperTakeBallAwayCommon::riskOfCollideWithPosts(world, ally_id)
-         || GoalkeeperTakeBallAwayCommon::robotBallTooClosePosts(world, ally_id);
+  return GoalkeeperTakeBallAwayCommon::riskOfCollideWithPosts(world, ally_id_.number.value())
+         || GoalkeeperTakeBallAwayCommon::robotBallTooClosePosts(world, ally_id_.number.value());
 }
 
 bool KickBall::shouldTransitionToGoToBall(const World& world) const {
-  const int ally_id = 0;
   robocin::Point2Df target_position = GoalkeeperTakeBallAwayCommon::getKickTargetPosition(world);
 
   bool is_ally_looking_to_target_and_ball
       = AllyAnalyzer::isAllyLookingToTargetAndBall(world,
-                                                   ally_id,
+                                                   ally_id_.number.value(),
                                                    target_position,
                                                    approach_angle_threshold_);
 
-  bool is_ball_in_range_to_kick
-      = AllyAnalyzer::isBallInRangeToKick(world, ally_id, distance_to_consider_kick_);
+  bool is_ball_in_range_to_kick = AllyAnalyzer::isBallInRangeToKick(world,
+                                                                    ally_id_.number.value(),
+                                                                    distance_to_consider_kick_);
 
   return !is_ally_looking_to_target_and_ball || !is_ball_in_range_to_kick;
 }

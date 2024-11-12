@@ -49,22 +49,23 @@ bool FollowEnemyLine::shouldTransitionToDefendKick(const World& world) const {
 }
 
 robocin::Point2Df FollowEnemyLine::getMotionTarget(const World& world) const {
-  const int ally_id = 0;
   return GoalkeeperGuardCommon::getMotionTarget(
       world,
-      ally_id,
+      ally_id_.number.value(),
       GoalkeeperGuardCommon::getEnemyToGoalDisplacedVector(world),
       true);
 }
 
 float FollowEnemyLine::getMotionAngle(const World& world) const {
-  const int ally_id = 0;
-  return GoalkeeperGuardCommon::getMotionAngle(world, ally_id, getMotionTarget(world));
+  return GoalkeeperGuardCommon::getMotionAngle(world,
+                                               ally_id_.number.value(),
+                                               getMotionTarget(world));
 }
 
 GoToPointMessage::MovingProfile FollowEnemyLine::getMotionMovingProfile(const World& world) const {
-  const int ally_id = 0;
-  if (GoalkeeperGuardCommon::isLateralMove(world, ally_id, getMotionTarget(world))) {
+  if (GoalkeeperGuardCommon::isLateralMove(world,
+                                           ally_id_.number.value(),
+                                           getMotionTarget(world))) {
     return GoToPointMessage::MovingProfile::GoalkeeperInTopSpeed;
   }
   return GoToPointMessage::MovingProfile::BalancedInMedianSpeed;

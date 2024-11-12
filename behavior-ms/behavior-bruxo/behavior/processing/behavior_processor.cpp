@@ -147,7 +147,7 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
   //                              true /* sync_rotate_with_linear_movement */}});
   //   }
   // }
-  goalkeeper_guard_state_machine_->run(RobotIdMessage{pAllyColor, 8});
+  goalkeeper_guard_state_machine_->run(RobotIdMessage{pAllyColor, 5});
 
   behavior_message.output.emplace_back(std::move(goalkeeper_guard_state_machine_->output));
 

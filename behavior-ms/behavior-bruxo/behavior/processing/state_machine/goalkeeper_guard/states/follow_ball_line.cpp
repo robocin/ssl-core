@@ -48,22 +48,23 @@ bool FollowBallLine::shouldTransitionToFollowEnemyLine(const World& world) const
 }
 
 robocin::Point2Df FollowBallLine::getMotionTarget(const World& world) const {
-  const int ally_id = 0;
   return GoalkeeperGuardCommon::getMotionTarget(
       world,
-      ally_id,
+      ally_id_.number.value(),
       GoalkeeperGuardCommon::getGoalkeeperBisectorVector(world),
       false);
 }
 
 float FollowBallLine::getMotionAngle(const World& world) const {
-  const int ally_id = 0;
-  return GoalkeeperGuardCommon::getMotionAngle(world, ally_id, getMotionTarget(world));
+  return GoalkeeperGuardCommon::getMotionAngle(world,
+                                               ally_id_.number.value(),
+                                               getMotionTarget(world));
 }
 
 GoToPointMessage::MovingProfile FollowBallLine::getMotionMovingProfile(const World& world) const {
-  const int ally_id = 0;
-  if (GoalkeeperGuardCommon::isLateralMove(world, ally_id, getMotionTarget(world))) {
+  if (GoalkeeperGuardCommon::isLateralMove(world,
+                                           ally_id_.number.value(),
+                                           getMotionTarget(world))) {
     return GoToPointMessage::MovingProfile::GoalkeeperInTopSpeed;
   }
   return GoToPointMessage::MovingProfile::BalancedInMedianSpeed;

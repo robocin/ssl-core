@@ -31,33 +31,32 @@ void GoToBall::checkAndHandleTransitions(const World& world) {
 
 bool GoToBall::shouldTransitionToGoToSafePosition(const World& world) const {
   // TODO(mlv): get ally id
-  const int ally_id = 0;
-  return GoalkeeperTakeBallAwayCommon::riskOfCollideWithPosts(world, ally_id)
-         || GoalkeeperTakeBallAwayCommon::robotBallTooClosePosts(world, ally_id);
+  return GoalkeeperTakeBallAwayCommon::riskOfCollideWithPosts(world, ally_id_.number.value())
+         || GoalkeeperTakeBallAwayCommon::robotBallTooClosePosts(world, ally_id_.number.value());
 }
 
 bool GoToBall::shouldTransitionToKickBall(const World& world) const {
   // TODO(mlv): get ally id and kick target position
-  const int ally_id = 0;
   robocin::Point2Df kick_target_position
       = GoalkeeperTakeBallAwayCommon::getKickTargetPosition(world);
 
   bool is_ally_looking_to_target_and_ball
       = AllyAnalyzer::isAllyLookingToTargetAndBall(world,
-                                                   ally_id,
+                                                   ally_id_.number.value(),
                                                    kick_target_position,
                                                    approach_angle_threshold_);
 
-  bool is_ball_in_range_to_kick
-      = AllyAnalyzer::isBallInRangeToKick(world, ally_id, distance_to_consider_kick_);
+  bool is_ball_in_range_to_kick = AllyAnalyzer::isBallInRangeToKick(world,
+                                                                    ally_id_.number.value(),
+                                                                    distance_to_consider_kick_);
 
   return is_ally_looking_to_target_and_ball && is_ball_in_range_to_kick;
 }
 
 bool GoToBall::isBallCloseToGoalLine(const World& world) const {
   auto&& field = world.field;
-  const int ally_id = 0;
-  std::optional<RobotMessage> ally = GoalkeeperTakeBallAwayCommon::getAlly(world, ally_id);
+  std::optional<RobotMessage> ally
+      = GoalkeeperTakeBallAwayCommon::getAlly(world, ally_id_.number.value());
   if (!ally.has_value()) {
     return false;
   }
@@ -79,8 +78,8 @@ bool GoToBall::isBallCloseToGoalLine(const World& world) const {
 }
 
 robocin::Point2Df GoToBall::getMotionTarget(const World& world) const {
-  const int ally_id = 0;
-  std::optional<RobotMessage> ally = GoalkeeperTakeBallAwayCommon::getAlly(world, ally_id);
+  std::optional<RobotMessage> ally
+      = GoalkeeperTakeBallAwayCommon::getAlly(world, ally_id_.number.value());
   if (!ally.has_value()) {
     return robocin::Point2Df{0, 0};
   }
@@ -101,8 +100,8 @@ robocin::Point2Df GoToBall::getMotionTarget(const World& world) const {
 }
 
 float GoToBall::getMotionAngle(const World& world) const {
-  const int ally_id = 0;
-  std::optional<RobotMessage> ally = GoalkeeperTakeBallAwayCommon::getAlly(world, ally_id);
+  std::optional<RobotMessage> ally
+      = GoalkeeperTakeBallAwayCommon::getAlly(world, ally_id_.number.value());
   if (!ally.has_value()) {
     return 0.0f;
   }
@@ -115,8 +114,8 @@ float GoToBall::getMotionAngle(const World& world) const {
 }
 
 GoToPointMessage::MovingProfile GoToBall::getMotionMovingProfile(const World& world) const {
-  const int ally_id = 0;
-  std::optional<RobotMessage> ally = GoalkeeperTakeBallAwayCommon::getAlly(world, ally_id);
+  std::optional<RobotMessage> ally
+      = GoalkeeperTakeBallAwayCommon::getAlly(world, ally_id_.number.value());
   if (!ally.has_value()) {
     return GoToPointMessage::MovingProfile::BalancedInDefaultSpeed;
   }
