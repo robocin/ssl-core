@@ -3,6 +3,7 @@
 #include "behavior/behavior_message.h"
 #include "behavior/messaging/receiver/payload.h"
 #include "behavior/parameters/parameters.h"
+#include "behavior/processing/impl/impl.h"
 #include "common/game_command/game_command_message.h"
 #include "common/robot_id/robot_id.h"
 #include "motion/motion_message.h"
@@ -49,28 +50,6 @@ using ::protocols::referee::GameStatus;
 
 } // namespace rc
 
-std::optional<RobotMessage> findMyRobot(int number, std::vector<RobotMessage>& robots) {
-  // This function does not handle a case where it does not find a robot
-  for (auto& robot : robots) {
-    auto number_match = robot.robot_id->number.value() == number;
-    if (number_match) {
-      return RobotMessage{
-          robot.confidence.value(),
-          RobotIdMessage{robot.robot_id->color.value(), robot.robot_id->number.value()},
-          robot.position.value(),
-          robot.angle.value(),
-          robot.velocity.value(),
-          robot.angular_velocity.value(),
-          robot.radius.value(),
-          robot.height.value(),
-          robot.dribbler_width.value(),
-          std::nullopt /* Feedback */};
-    }
-  }
-
-  return std::nullopt;
-}
-
 std::vector<rc::Detection> detectionFromPayloads(std::span<const Payload> payloads) {
   return payloads | std::views::transform(&Payload::getDetectionMessages) | std::views::join
          | std::ranges::to<std::vector>();
@@ -88,57 +67,6 @@ std::vector<rc::GameStatus> gameStatusFromPayloads(std::span<const Payload> payl
 
 } // namespace
 
-// CBR: function for every game command
-std::optional<rc::Behavior> onRun(World& world) {
-  BehaviorMessage behavior_message;
-
-  // Take forward
-  ilog("Allies detected: {}", world.allies.size());
-  int forward_number = 10;
-
-  auto robot = findMyRobot(forward_number, world.allies);
-  if (!robot.has_value()) {
-    ilog("Robot with id {} not found from detection packets.", forward_number);
-    return std::nullopt;
-  } 
-
-  // Ball 2D is required because .angle() method is implemented from a Point2Df object.
-  auto ball_2_d = robocin::Point2Df(world.ball.position->x, world.ball.position->y);
-  auto target_angle = (ball_2_d - robot->position.value()).angle();
-  bool shouldKick = true;
-
-  // process should kick
-  std::optional<PeripheralActuationMessage> peripheral_actuation = std::nullopt;
-  if (shouldKick) {
-    peripheral_actuation = std::move(PeripheralActuationMessage{KickCommandMessage{
-        7.0 /* strength */,
-        true /* is_front */,
-        false /* is_chip */,
-        false /* charge_capacitor -> makeChargeCapacitor based on distance to ball */,
-        false /* bypass_ir */
-    }});
-  }
-
-  // Always send go to point
-  behavior_message.output.emplace_back(
-      RobotIdMessage{pAllyColor, forward_number},
-      MotionMessage{
-          GoToPointMessage{robocin::Point2Df{world.ball.position->x, world.ball.position->y},
-                           target_angle,
-                           GoToPointMessage::MovingProfile::DirectApproachBallSpeed,
-                           GoToPointMessage::PrecisionToTarget::HIGH,
-                           true /* sync_rotate_with_linear_movement */},
-          std::nullopt /* go_to_point_with_trajectory */,
-          std::nullopt /* rotate_in_point */,
-          std::nullopt /* rotate_on_self */,
-          std::move(peripheral_actuation)});
-
-  return behavior_message.toProto();
-    
-};
-
-std::optional<rc::Behavior> onHalt() { return std::nullopt; };
-
 BehaviorProcessor::BehaviorProcessor(
     std::unique_ptr<parameters::IHandlerEngine> parameters_handler_engine,
     std::unique_ptr<GoalkeeperTakeBallAwayStateMachine> goalkeeper_take_ball_away_state_machine) :
@@ -152,11 +80,11 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
   }
 
   // if (world_.isHalt()) {
-  //   return onHalt();
+  //   return impl::onHalt();
   // }
 
   if (!world_.isStop()) {
-    return onRun(world_);
+    return impl::onInGame(world_);
   }
 
   return std::nullopt;
