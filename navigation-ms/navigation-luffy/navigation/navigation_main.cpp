@@ -1,5 +1,6 @@
 #include "navigation/controller/consumer_controller.h"
 #include "navigation/controller/producer_controller.h"
+#include "world.h"
 
 #include <memory>
 #include <print>
@@ -26,6 +27,7 @@ using navigation::NavigationProcessor;
 using navigation::Payload;
 using navigation::PayloadMapper;
 using navigation::ProducerController;
+using navigation::World;
 using ::robocin::ConditionVariableConcurrentQueue;
 using ::robocin::IConcurrentQueue;
 using ::robocin::ilog;
@@ -58,7 +60,8 @@ std::unique_ptr<IMessageReceiver> makeMessageReceiver() {
   std::unique_ptr<IZmqSubscriberSocket> perception_socket = std::make_unique<ZmqSubscriberSocket>();
   perception_socket->connect(service_discovery::kPerceptionAddress, kPerceptionTopics);
 
-  std::unique_ptr<IZmqSubscriberSocket> game_status_socket = std::make_unique<ZmqSubscriberSocket>();
+  std::unique_ptr<IZmqSubscriberSocket> game_status_socket
+      = std::make_unique<ZmqSubscriberSocket>();
   game_status_socket->connect(service_discovery::kRefereeAddress, kRefereeTopics);
 
   std::unique_ptr<IZmqPoller> zmq_poller = std::make_unique<ZmqPoller>();
@@ -83,7 +86,8 @@ std::unique_ptr<IController> makeProducer(object_ptr<IConcurrentQueue<Payload>> 
 
 std::unique_ptr<INavigationProcessor> makeNavigationProcessor() {
   return std::make_unique<NavigationProcessor>(
-      std::make_unique<MotionParser>()); // TODO: passar os parâmetros aqui
+      std::make_unique<MotionParser>(),
+      std::make_unique<World>()); // TODO: passar os parâmetros aqui
 }
 
 std::unique_ptr<IMessageSender> makeMessageSender() {

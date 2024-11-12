@@ -2,17 +2,17 @@
 
 #include "navigation/processing/messages/behavior/behavior_message.h"
 #include "navigation/processing/messages/common/robot_id/robot_id_message.h"
-#include "navigation/processing/messages/motion/motion_message.h"
 #include "navigation/processing/messages/perception/ball/ball_message.h"
 #include "navigation/processing/messages/perception/field/field_message.h"
 #include "navigation/processing/messages/perception/robot/robot_message.h"
-#include "navigation/processing/messages/planning/planning_message.h"
 #include "navigation/processing/messages/referee/game_status_message.h"
 #include "world.h"
 
+#include <cstdint>
 #include <optional>
 #include <protocols/common/robot_id.pb.h>
 #include <protocols/perception/detection.pb.h>
+#include <utility>
 #include <vector>
 
 namespace navigation {
@@ -44,21 +44,36 @@ void World::takeRobotsData(OutputMessage& behavior, std::vector<RobotMessage>& r
     this->robot_planning = std::move(behavior.planning.value());
   }
 
+  this->allies.emplace_back(std::move(current_ally));
   this->ally_color = behavior.robot_id->color.value();
-
-  allies.clear();
-  enemies.clear();
+  this->enemies.clear();
 
   for (auto& robot_perception : robots) {
 
-    if (robot_perception.robot_id->number == behavior.robot_id->number
-        && isAlly(robot_perception)) {
-      this->ally = std::move(robot_perception);
-    }
+    auto it = findAllyById(robot_perception.robot_id->number);
+    if (isAlly(robot_perception)) { // robot is an ally
 
-    if (isAlly(robot_perception)) {
-      this->allies.emplace_back(std::move(robot_perception));
-    } else {
+      if (robot_perception.robot_id->number == behavior.robot_id->number) { // found current_ally
+        if (it != this->allies.end()) {
+          Ally& ally = *it;
+          ally.update(robot_perception);
+          this->current_ally = std::move(ally);
+          this->allies.erase(it); // Remove current_ally from allies
+        } else {
+          this->current_ally = Ally(std::move(robot_perception));
+        }
+      } else { // other allies
+        if (it != this->allies.end()) {
+          it->update(robot_perception);
+        } else {
+          this->allies.emplace_back(std::move(robot_perception));
+        }
+      }
+
+    } else {                          // robot is an enemy
+      if (it != this->allies.end()) { // but was previously an ally
+        this->allies.erase(it);
+      }
       this->enemies.emplace_back(std::move(robot_perception));
     }
   }
@@ -82,6 +97,12 @@ void World::update(OutputMessage& behavior,
   World::takeBallHighConfidence(balls);
   World::takeGameStatus(game_status);
   World::takeField(field);
+}
+
+std::vector<Ally>::iterator World::findAllyById(uint32_t id) {
+  return std::find_if(this->allies.begin(), this->allies.end(), [id](const Ally& ally) {
+    return ally.robot_id->number == id;
+  });
 }
 
 } // namespace navigation

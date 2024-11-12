@@ -2,11 +2,8 @@
 #define NAVIGATION_PROCESSING_MOTION_PARSER_H
 
 #include "navigation/processing/entities/world.h"
-#include "navigation/processing/messages/behavior/behavior_message.h"
 #include "navigation/processing/messages/motion/motion_message.h"
 #include "navigation/processing/messages/navigation/navigation_message.h"
-#include "navigation/processing/messages/perception/detection/detection_message.h"
-#include "navigation/processing/messages/referee/game_status_message.h"
 
 #include <cstdint>
 #include <navigation/processing/entities/robot_move.h>
@@ -26,38 +23,35 @@ class IMotionParser {
 
   virtual ~IMotionParser() = default;
 
-  virtual NavigationOutputMessage parseMotion() = 0;
-
-  virtual void
-  setWorld(OutputMessage& behavior, DetectionMessage& detection, GameStatusMessage& game_status)
-      = 0;
+  virtual NavigationOutputMessage parseMotion(std::unique_ptr<World>& world) = 0;
 
  private:
-  virtual RobotMove fromGoToPoint(const GoToPointMessage& go_to_point) = 0;
+  virtual RobotMove fromGoToPoint(std::unique_ptr<World>& world) = 0;
 
-  virtual RobotMove fromRotateInPoint(const RotateInPointMessage& rotate_in_point) = 0;
+  virtual RobotMove fromRotateInPoint(std::unique_ptr<World>& world) = 0;
 
-  virtual RobotMove fromRotateOnSelf(const RotateOnSelfMessage& rotate_on_self) = 0;
+  virtual RobotMove fromRotateOnSelf(std::unique_ptr<World>& world) = 0;
+
+  virtual std::optional<DiscretizedPathMessage>
+  fromGoToPointWithTrajectory(std::unique_ptr<World>& world);
 };
 
 class MotionParser : public IMotionParser {
  public:
   MotionParser();
 
-  NavigationOutputMessage parseMotion() override;
-
-  void setWorld(OutputMessage& behavior,
-                DetectionMessage& detection,
-                GameStatusMessage& game_status) override;
+  NavigationOutputMessage parseMotion(std::unique_ptr<World>& world) override;
 
  private:
-  RobotMove fromGoToPoint(const GoToPointMessage& go_to_point) override;
+  RobotMove fromGoToPoint(std::unique_ptr<World>& world) override;
 
-  RobotMove fromRotateInPoint(const RotateInPointMessage& rotate_in_point) override;
+  RobotMove fromRotateInPoint(std::unique_ptr<World>& world) override;
 
-  RobotMove fromRotateOnSelf(const RotateOnSelfMessage& rotate_on_self) override;
+  RobotMove fromRotateOnSelf(std::unique_ptr<World>& world) override;
 
-  World world_;
+  std::optional<DiscretizedPathMessage>
+  fromGoToPointWithTrajectory(std::unique_ptr<World>& world) override;
+
   int8_t sequence_number_ = 0;
 };
 

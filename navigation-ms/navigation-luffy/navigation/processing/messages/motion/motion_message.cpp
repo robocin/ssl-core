@@ -50,11 +50,9 @@ void MotionMessage::fromProto(const protocols::behavior::unification::Motion& mo
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 
-PathNodeMessage::PathNodeMessage() = default;
-
-PathNodeMessage::PathNodeMessage(robocin::Point2Df position,
-                                 robocin::Point2Df velocity,
-                                 double time) :
+PathNodeMessage::PathNodeMessage(std::optional<robocin::Point2Df> position,
+                                 std::optional<robocin::Point2Df> velocity,
+                                 std::optional<double> time) :
     position(position),
     velocity(velocity),
     time(time) {}
@@ -64,12 +62,28 @@ PathNodeMessage::PathNodeMessage(const protocols::behavior::PathNode& path_node_
 }
 
 protocols::behavior::PathNode PathNodeMessage::toProto() const {
-  return protocols::behavior::PathNode{};
+  protocols::behavior::PathNode path_node_proto;
+  if (position.has_value()) {
+    path_node_proto.mutable_position()->set_x(position->x);
+    path_node_proto.mutable_position()->set_y(position->y);
+  }
+  if (velocity.has_value()) {
+    path_node_proto.mutable_velocity()->set_x(velocity->x);
+    path_node_proto.mutable_velocity()->set_y(velocity->y);
+  }
+  if (time.has_value()) {
+    path_node_proto.set_time(time.value());
+  }
+  return path_node_proto;
 }
 
 void PathNodeMessage::fromProto(const protocols::behavior::PathNode& path_node_proto) {
-  position = robocin::Point2Df{path_node_proto.position().x(), path_node_proto.position().y()};
-  velocity = robocin::Point2Df{path_node_proto.velocity().x(), path_node_proto.velocity().y()};
+  if (path_node_proto.has_position()) {
+    position = robocin::Point2Df{path_node_proto.position().x(), path_node_proto.position().y()};
+  }
+  if (path_node_proto.has_velocity()) {
+    velocity = robocin::Point2Df{path_node_proto.velocity().x(), path_node_proto.velocity().y()};
+  }
   time = path_node_proto.time();
 }
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -90,10 +104,12 @@ DiscretizedPathMessage::DiscretizedPathMessage(
 
 void DiscretizedPathMessage::fromProto(
     const protocols::behavior::DiscretizedPath& discretized_path_proto) {
-  for (auto path_proto : discretized_path_proto.path()) {
+  for (const auto& path_proto : discretized_path_proto.path()) {
     path.emplace_back(path_proto);
   }
-  go_to_point = GoToPointMessage(discretized_path_proto.go_to_point());
+  if (discretized_path_proto.has_go_to_point()) {
+    go_to_point = GoToPointMessage(discretized_path_proto.go_to_point());
+  }
 };
 ////////////////////////////////////////////////////////////////////////////////////////
 
@@ -130,21 +146,20 @@ convertToLocalMovingProfile(protocols::behavior::MovingProfile proto_profile) {
 }
 
 GoToPointMessage::PrecisionToTarget
-convertToProtoPrecisionToTarget(protocols::behavior::PrecisionToTarget localPrecision) {
+convertPrecisionToTargetFromProto(protocols::behavior::PrecisionToTarget localPrecision) {
   switch (localPrecision) {
     case protocols::behavior::High: return GoToPointMessage::HIGH;
-    case protocols::behavior::Normal: return GoToPointMessage::NORMAL;
-    default: return GoToPointMessage::NORMAL; // Default to NORMAL or handle as appropriate
+    default:
+      return GoToPointMessage::NORMAL;
+      // Default to NORMAL or handle as appropriate
   }
 }
 
-GoToPointMessage::GoToPointMessage() = default;
-
-GoToPointMessage::GoToPointMessage(robocin::Point2D<float> target,
-                                   double target_angle,
-                                   MovingProfile moving_profile,
-                                   PrecisionToTarget precision_to_target,
-                                   bool sync_rotate_with_linear_movement) :
+GoToPointMessage::GoToPointMessage(std::optional<robocin::Point2D<float>> target,
+                                   std::optional<double> target_angle,
+                                   std::optional<MovingProfile> moving_profile,
+                                   std::optional<PrecisionToTarget> precision_to_target,
+                                   std::optional<bool> sync_rotate_with_linear_movement) :
     target(target),
     target_angle(target_angle),
     moving_profile(moving_profile),
@@ -160,18 +175,19 @@ protocols::behavior::GoToPoint GoToPointMessage::toProto() const {
 };
 
 void GoToPointMessage::fromProto(const protocols::behavior::GoToPoint& go_to_point_proto) {
-  target = robocin::Point2Df{go_to_point_proto.target().x(), go_to_point_proto.target().y()};
+  if (go_to_point_proto.has_target()) {
+    target = robocin::Point2Df{go_to_point_proto.target().x(), go_to_point_proto.target().y()};
+  }
   target_angle = go_to_point_proto.target_angle();
   moving_profile = convertToLocalMovingProfile(go_to_point_proto.moving_profile());
-  precision_to_target = convertToProtoPrecisionToTarget(go_to_point_proto.precision_to_target());
+  precision_to_target = convertPrecisionToTargetFromProto(go_to_point_proto.precision_to_target());
   sync_rotate_with_linear_movement = go_to_point_proto.sync_rotate_with_linear_movement();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
-RotateOnSelfMessage::RotateOnSelfMessage() = default;
-RotateOnSelfMessage::RotateOnSelfMessage(double target_angle,
-                                         robocin::Point2Df velocity,
-                                         double kp) :
+RotateOnSelfMessage::RotateOnSelfMessage(std::optional<double> target_angle,
+                                         std::optional<robocin::Point2Df> velocity,
+                                         std::optional<double> kp) :
     target_angle(target_angle),
     velocity(velocity),
     kp(kp) {}
@@ -183,8 +199,10 @@ RotateOnSelfMessage::RotateOnSelfMessage(
 
 void RotateOnSelfMessage::fromProto(const protocols::behavior::RotateOnSelf& rotate_on_self_proto) {
   double target_angle = rotate_on_self_proto.target_angle();
-  velocity
-      = robocin::Point2Df{rotate_on_self_proto.velocity().x(), rotate_on_self_proto.velocity().y()};
+  if (rotate_on_self_proto.has_velocity()) {
+    velocity = robocin::Point2Df{rotate_on_self_proto.velocity().x(),
+                                 rotate_on_self_proto.velocity().y()};
+  }
   double kp = rotate_on_self_proto.kp();
 }
 
@@ -192,15 +210,14 @@ protocols::behavior::RotateOnSelf RotateOnSelfMessage::toProto() const {
   return protocols::behavior::RotateOnSelf{};
 };
 ////////////////////////////////////////////////////////////////////////////////////////
-RotateInPointMessage::RotateInPointMessage() = default;
-RotateInPointMessage::RotateInPointMessage(robocin::Point2Df target,
-                                           double target_angle,
-                                           bool clockwise,
-                                           double orbit_radius,
-                                           double rotate_velocity,
-                                           double min_velocity,
-                                           double approach_kp,
-                                           double angle_kp) :
+RotateInPointMessage::RotateInPointMessage(std::optional<robocin::Point2Df> target,
+                                           std::optional<double> target_angle,
+                                           std::optional<bool> clockwise,
+                                           std::optional<double> orbit_radius,
+                                           std::optional<double> rotate_velocity,
+                                           std::optional<double> min_velocity,
+                                           std::optional<double> approach_kp,
+                                           std::optional<double> angle_kp) :
     target(target),
     target_angle(target_angle),
     clockwise(clockwise),
@@ -217,8 +234,10 @@ RotateInPointMessage::RotateInPointMessage(
 
 void RotateInPointMessage::fromProto(
     const protocols::behavior::RotateInPoint& rotate_in_point_proto) {
-  target
-      = robocin::Point2Df{rotate_in_point_proto.target().x(), rotate_in_point_proto.target().y()};
+  if (rotate_in_point_proto.has_target()) {
+    target
+        = robocin::Point2Df{rotate_in_point_proto.target().x(), rotate_in_point_proto.target().y()};
+  }
   target_angle = rotate_in_point_proto.target_angle();
   clockwise = rotate_in_point_proto.clockwise();
   orbit_radius = rotate_in_point_proto.orbit_radius();
@@ -233,15 +252,13 @@ protocols::behavior::RotateInPoint RotateInPointMessage::toProto() const {
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////
-PathConfigMessage::PathConfigMessage() = default;
-
-PathConfigMessage::PathConfigMessage(robocin::Point2Df target_velocity,
-                                     bool avoid_ball,
-                                     bool avoid_ball_placement,
-                                     bool avoid_ally_penalty_area,
-                                     bool avoid_enemy_penalty_area,
-                                     bool avoid_ally_robots,
-                                     bool avoid_enemy_robots,
+PathConfigMessage::PathConfigMessage(std::optional<robocin::Point2Df> target_velocity,
+                                     std::optional<bool> avoid_ball,
+                                     std::optional<bool> avoid_ball_placement,
+                                     std::optional<bool> avoid_ally_penalty_area,
+                                     std::optional<bool> avoid_enemy_penalty_area,
+                                     std::optional<bool> avoid_ally_robots,
+                                     std::optional<bool> avoid_enemy_robots,
                                      std::vector<int32_t> ally_skipped,
                                      std::vector<int32_t> enemy_skipped) :
     target_velocity(target_velocity),
@@ -259,8 +276,10 @@ PathConfigMessage::PathConfigMessage(const protocols::behavior::PathConfig& path
 }
 
 void PathConfigMessage::fromProto(const protocols::behavior::PathConfig& path_config_proto) {
-  target_velocity = robocin::Point2Df{path_config_proto.target_velocity().x(),
-                                      path_config_proto.target_velocity().y()};
+  if (path_config_proto.has_target_velocity()) {
+    target_velocity = robocin::Point2Df{path_config_proto.target_velocity().x(),
+                                        path_config_proto.target_velocity().y()};
+  }
   bool avoid_ball = path_config_proto.avoid_ball();
   bool avoid_ball_placement = path_config_proto.avoid_ball_placement();
   bool avoid_ally_penalty_area = path_config_proto.avoid_ally_penalty_area();
@@ -281,8 +300,9 @@ protocols::behavior::PathConfig PathConfigMessage::toProto() const {
 ////////////////////////////////////////////////////////////////////////////////////////
 
 GoToPointWithTrajectoryMessage::GoToPointWithTrajectoryMessage() = default;
-GoToPointWithTrajectoryMessage::GoToPointWithTrajectoryMessage(GoToPointMessage go_to_point,
-                                                               PathConfigMessage path_config) :
+GoToPointWithTrajectoryMessage::GoToPointWithTrajectoryMessage(
+    std::optional<GoToPointMessage> go_to_point,
+    std::optional<PathConfigMessage> path_config) :
     go_to_point(std::move(go_to_point)),
     path_config(std::move(path_config)) {}
 
@@ -297,7 +317,11 @@ protocols::behavior::GoToPointWithTrajectory GoToPointWithTrajectoryMessage::toP
 
 void GoToPointWithTrajectoryMessage::fromProto(
     const protocols::behavior::GoToPointWithTrajectory& go_to_point_with_trajectory_proto) {
-  go_to_point = GoToPointMessage(go_to_point_with_trajectory_proto.go_to_point());
-  path_config = PathConfigMessage(go_to_point_with_trajectory_proto.path_config());
+  if (go_to_point.has_value()) {
+    go_to_point = GoToPointMessage(go_to_point_with_trajectory_proto.go_to_point());
+  }
+  if (path_config.has_value()) {
+    path_config = PathConfigMessage(go_to_point_with_trajectory_proto.path_config());
+  }
 }
 } // namespace navigation

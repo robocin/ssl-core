@@ -1,7 +1,10 @@
+// world.h
+
 #ifndef BEHAVIOR_PROCESSING_ENTITIES_WORLD_H
 #define BEHAVIOR_PROCESSING_ENTITIES_WORLD_H
 
 #include "navigation/parameters/parameters.h"
+#include "navigation/processing/entities/ally.h"
 #include "navigation/processing/messages/behavior/behavior_message.h"
 #include "navigation/processing/messages/common/robot_id/robot_id_message.h"
 #include "navigation/processing/messages/motion/motion_message.h"
@@ -32,9 +35,9 @@ class World {
   GameStatusMessage game_status;
   std::optional<MotionMessage> robot_motion;
   std::optional<PlanningMessage> robot_planning;
-  RobotMessage ally;
 
-  std::vector<RobotMessage> allies;
+  Ally current_ally;
+  std::vector<Ally> allies;
   std::vector<RobotMessage> enemies;
   RobotIdMessage::Color ally_color;
 
@@ -43,6 +46,8 @@ class World {
               std::vector<BallMessage>& balls,
               FieldMessage& field,
               GameStatusMessage& game_status);
+
+  std::vector<Ally>::iterator findAllyById(uint32_t id);
 
  private:
   void takeBallHighConfidence(std::vector<BallMessage>& balls);

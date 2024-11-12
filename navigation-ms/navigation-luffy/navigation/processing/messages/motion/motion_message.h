@@ -55,19 +55,19 @@ class GoToPointMessage : public robocin::IProtoConvertible<protocols::behavior::
     NORMAL = 1,
   };
 
-  GoToPointMessage();
-  GoToPointMessage(robocin::Point2D<float> target,
-                   double target_angle,
-                   MovingProfile moving_profile,
-                   PrecisionToTarget precision_to_target,
-                   bool sync_rotate_with_linear_movement);
-  explicit GoToPointMessage(const protocols::behavior::GoToPoint& go_to_point_proto);
+  std::optional<robocin::Point2D<float>> target;
+  std::optional<double> target_angle;
+  std::optional<MovingProfile> moving_profile;
+  std::optional<PrecisionToTarget> precision_to_target;
+  std::optional<bool> sync_rotate_with_linear_movement;
 
-  robocin::Point2D<float> target;
-  double target_angle;
-  MovingProfile moving_profile;
-  PrecisionToTarget precision_to_target;
-  bool sync_rotate_with_linear_movement;
+  explicit GoToPointMessage(std::optional<robocin::Point2D<float>> target = std::nullopt,
+                            std::optional<double> target_angle = std::nullopt,
+                            std::optional<MovingProfile> moving_profile = std::nullopt,
+                            std::optional<PrecisionToTarget> precision_to_target = std::nullopt,
+                            std::optional<bool> sync_rotate_with_linear_movement = std::nullopt);
+
+  explicit GoToPointMessage(const protocols::behavior::GoToPoint& go_to_point_proto);
 
   [[nodiscard]] protocols::behavior::GoToPoint toProto() const override;
 
@@ -76,44 +76,45 @@ class GoToPointMessage : public robocin::IProtoConvertible<protocols::behavior::
 
 class PathConfigMessage : public robocin::IProtoConvertible<protocols::behavior::PathConfig> {
  public:
-  PathConfigMessage();
-  PathConfigMessage(robocin::Point2Df target_velocity,
-                    bool avoid_ball,
-                    bool avoid_ball_placement,
-                    bool avoid_ally_penalty_area,
-                    bool avoid_enemy_penalty_area,
-                    bool avoid_ally_robots,
-                    bool avoid_enemy_robots,
-                    std::vector<int32_t> ally_skipped,
-                    std::vector<int32_t> enemy_skipped);
-  explicit PathConfigMessage(const protocols::behavior::PathConfig& path_config_proto);
-  [[nodiscard]] protocols::behavior::PathConfig toProto() const override;
-
-  robocin::Point2Df target_velocity;
-  bool avoid_ball;
-  bool avoid_ball_placement;
-  bool avoid_ally_penalty_area;
-  bool avoid_enemy_penalty_area;
-  bool avoid_ally_robots;
-  bool avoid_enemy_robots;
-
+  std::optional<robocin::Point2Df> target_velocity;
+  std::optional<bool> avoid_ball;
+  std::optional<bool> avoid_ball_placement;
+  std::optional<bool> avoid_ally_penalty_area;
+  std::optional<bool> avoid_enemy_penalty_area;
+  std::optional<bool> avoid_ally_robots;
+  std::optional<bool> avoid_enemy_robots;
   std::vector<int32_t> ally_skipped;
   std::vector<int32_t> enemy_skipped;
+
+  PathConfigMessage(std::optional<robocin::Point2Df> target_velocity = std::nullopt,
+                    std::optional<bool> avoid_ball = std::nullopt,
+                    std::optional<bool> avoid_ball_placement = std::nullopt,
+                    std::optional<bool> avoid_ally_penalty_area = std::nullopt,
+                    std::optional<bool> avoid_enemy_penalty_area = std::nullopt,
+                    std::optional<bool> avoid_ally_robots = std::nullopt,
+                    std::optional<bool> avoid_enemy_robots = std::nullopt,
+                    std::vector<int32_t> ally_skipped = {},
+                    std::vector<int32_t> enemy_skipped = {});
+
+  explicit PathConfigMessage(const protocols::behavior::PathConfig& path_config_proto);
+  [[nodiscard]] protocols::behavior::PathConfig toProto() const override;
 
   void fromProto(const protocols::behavior::PathConfig& path_config_proto) override;
 };
 
 class PathNodeMessage : public robocin::IProtoConvertible<protocols::behavior::PathNode> {
  public:
-  PathNodeMessage();
-  PathNodeMessage(robocin::Point2Df position, robocin::Point2Df velocity, double time);
+  std::optional<robocin::Point2Df> position;
+  std::optional<robocin::Point2Df> velocity;
+  std::optional<double> time;
+
+  explicit PathNodeMessage(std::optional<robocin::Point2Df> position = std::nullopt,
+                           std::optional<robocin::Point2Df> velocity = std::nullopt,
+                           std::optional<double> time = std::nullopt);
+
   explicit PathNodeMessage(const protocols::behavior::PathNode& path_node_proto);
 
   [[nodiscard]] protocols::behavior::PathNode toProto() const override;
-
-  robocin::Point2Df position;
-  robocin::Point2Df velocity;
-  double time;
 
   void fromProto(const protocols::behavior::PathNode& path_node_proto) override;
 };
@@ -137,13 +138,14 @@ class GoToPointWithTrajectoryMessage
     : public robocin::IProtoConvertible<protocols::behavior::GoToPointWithTrajectory> {
  public:
   GoToPointWithTrajectoryMessage();
-  GoToPointWithTrajectoryMessage(GoToPointMessage go_to_point, PathConfigMessage path_config);
+  GoToPointWithTrajectoryMessage(std::optional<GoToPointMessage> go_to_point = std::nullopt,
+                                 std::optional<PathConfigMessage> path_config = std::nullopt);
   explicit GoToPointWithTrajectoryMessage(
       const protocols::behavior::GoToPointWithTrajectory& go_to_point_with_trajectory_proto);
   [[nodiscard]] protocols::behavior::GoToPointWithTrajectory toProto() const override;
 
-  GoToPointMessage go_to_point;
-  PathConfigMessage path_config;
+  std::optional<GoToPointMessage> go_to_point;
+  std::optional<PathConfigMessage> path_config;
 
   void fromProto(const protocols::behavior::GoToPointWithTrajectory&
                      go_to_point_with_trajectory_proto) override;
@@ -151,40 +153,40 @@ class GoToPointWithTrajectoryMessage
 
 class RotateInPointMessage : public robocin::IProtoConvertible<protocols::behavior::RotateInPoint> {
  public:
-  RotateInPointMessage();
-  RotateInPointMessage(robocin::Point2Df target,
-                       double target_angle,
-                       bool clockwise,
-                       double orbit_radius,
-                       double rotate_velocity,
-                       double min_velocity,
-                       double approach_kp,
-                       double angle_kp);
+  explicit RotateInPointMessage(std::optional<robocin::Point2Df> target = std::nullopt,
+                                std::optional<double> target_angle = std::nullopt,
+                                std::optional<bool> clockwise = std::nullopt,
+                                std::optional<double> orbit_radius = std::nullopt,
+                                std::optional<double> rotate_velocity = std::nullopt,
+                                std::optional<double> min_velocity = std::nullopt,
+                                std::optional<double> approach_kp = std::nullopt,
+                                std::optional<double> angle_kp = std::nullopt);
   explicit RotateInPointMessage(const protocols::behavior::RotateInPoint& rotate_in_point_proto);
   [[nodiscard]] protocols::behavior::RotateInPoint toProto() const override;
 
-  robocin::Point2Df target;
-  double target_angle;
-  bool clockwise;
-  double orbit_radius;
-  double rotate_velocity;
-  double min_velocity;
-  double approach_kp;
-  double angle_kp;
+  std::optional<robocin::Point2Df> target;
+  std::optional<double> target_angle;
+  std::optional<bool> clockwise;
+  std::optional<double> orbit_radius;
+  std::optional<double> rotate_velocity;
+  std::optional<double> min_velocity;
+  std::optional<double> approach_kp;
+  std::optional<double> angle_kp;
 
   void fromProto(const protocols::behavior::RotateInPoint& rotate_in_point_proto) override;
 };
 
 class RotateOnSelfMessage : public robocin::IProtoConvertible<protocols::behavior::RotateOnSelf> {
  public:
-  RotateOnSelfMessage();
   explicit RotateOnSelfMessage(const protocols::behavior::RotateOnSelf& rotate_on_self_proto);
-  RotateOnSelfMessage(double target_angle, robocin::Point2Df velocity, double kp);
+  explicit RotateOnSelfMessage(std::optional<double> target_angle = std::nullopt,
+                               std::optional<robocin::Point2Df> velocity = std::nullopt,
+                               std::optional<double> kp = std::nullopt);
   [[nodiscard]] protocols::behavior::RotateOnSelf toProto() const override;
 
-  double target_angle;
-  robocin::Point2Df velocity;
-  double kp;
+  std::optional<double> target_angle;
+  std::optional<robocin::Point2Df> velocity;
+  std::optional<double> kp;
 
   void fromProto(const protocols::behavior::RotateOnSelf& rotate_on_self_proto) override;
 };

@@ -35,15 +35,20 @@ class INavigationProcessor {
 
 class NavigationProcessor : public INavigationProcessor {
  public:
-  explicit NavigationProcessor(std::unique_ptr<IMotionParser> motion_parser);
+  explicit NavigationProcessor(std::unique_ptr<IMotionParser> motion_parser,
+                               std::unique_ptr<World> world);
 
   std::optional<::protocols::navigation::Navigation>
   process(std::span<const Payload> payloads) override;
 
  private:
   std::unique_ptr<IMotionParser> motion_parser_;
+  std::unique_ptr<World> world_;
   std::optional<BehaviorUnificationMessage> last_behavior_;
   std::optional<GameStatusMessage> last_game_status_;
+
+  void
+  setWorld(OutputMessage& behavior, DetectionMessage& detection, GameStatusMessage& game_status);
 };
 
 } // namespace navigation

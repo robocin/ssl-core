@@ -2,12 +2,10 @@
 
 #include "navigation/messaging/receiver/payload.h"
 #include "navigation/processing/messages/behavior/behavior_message.h"
-#include "navigation/processing/messages/common/robot_id/robot_id_message.h"
 #include "navigation/processing/messages/navigation/navigation_message.h"
 #include "navigation/processing/messages/perception/detection/detection_message.h"
-#include "navigation/processing/messages/perception/robot/robot_message.h"
-#include "navigation/processing/messages/planning/planning_message.h"
 #include "navigation/processing/messages/referee/game_status_message.h"
+#include "world.h"
 
 #include <optional>
 #include <protocols/behavior/behavior_unification.pb.h>
@@ -18,8 +16,6 @@
 #include <robocin/output/log.h>
 
 namespace navigation {
-
-namespace parameters = ::robocin::parameters;
 
 namespace rc {
 using ::protocols::behavior::unification::Behavior;
@@ -47,8 +43,10 @@ std::vector<rc::GameStatus> gameStatusFromPayloads(std::span<const Payload> payl
 
 } // namespace
 
-NavigationProcessor::NavigationProcessor(std::unique_ptr<IMotionParser> motion_parser) :
-    motion_parser_(std::move(motion_parser)) {}
+NavigationProcessor::NavigationProcessor(std::unique_ptr<IMotionParser> motion_parser,
+                                         std::unique_ptr<World> world) :
+    motion_parser_(std::move(motion_parser)),
+    world_(std::move(world)) {}
 
 std::optional<::protocols::navigation::Navigation>
 NavigationProcessor::process(std::span<const Payload> payloads) {
@@ -76,12 +74,18 @@ NavigationProcessor::process(std::span<const Payload> payloads) {
   NavigationMessage navigation_msg;
 
   for (auto& behavior : last_behavior_->behavior_outputs) {
-    motion_parser_->setWorld(behavior, last_detection, last_game_status_.value());
-    NavigationOutputMessage output_msg = motion_parser_->parseMotion();
+    setWorld(behavior, last_detection, last_game_status_.value());
+    NavigationOutputMessage output_msg = motion_parser_->parseMotion(world_);
     navigation_msg.output.emplace_back(std::move(output_msg));
   }
 
   return navigation_msg.toProto();
+}
+
+void NavigationProcessor::setWorld(OutputMessage& behavior,
+                                   DetectionMessage& detection,
+                                   GameStatusMessage& game_status) {
+  world_->update(behavior, detection.robots, detection.balls, detection.field.value(), game_status);
 }
 
 } // namespace navigation
