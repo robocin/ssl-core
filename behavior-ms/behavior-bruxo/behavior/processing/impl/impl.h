@@ -5,6 +5,8 @@
 #include "behavior/processing/entities/world.h"
 #include "behavior/processing/messages/behavior/behavior_message.h"
 #include "behavior/processing/messages/perception/robot/robot_message.h"
+#include "behavior/processing/state_machine/goalkeeper_guard/goalkeeper_guard_state_machine.h"
+#include "behavior/processing/state_machine/istate_machine.h"
 
 #include <optional>
 
@@ -12,7 +14,8 @@ namespace behavior::impl {
 
 std::optional<RobotMessage> findMyRobot(int number, std::vector<RobotMessage>& robots);
 
-std::optional<protocols::behavior::unification::Behavior> onInGame(World& world);
+std::optional<protocols::behavior::unification::Behavior>
+onInGame(World& world, GoalkeeperGuardStateMachine& guard_state_machine);
 std::optional<protocols::behavior::unification::Behavior> onHalt();
 
 std::optional<RobotMessage> takeForward(std::vector<RobotMessage>& robots);
@@ -21,7 +24,8 @@ void emplaceForwardOutput(RobotMessage& forward, World& world, BehaviorMessage& 
 std::optional<RobotMessage> takeGoalkeeper(std::vector<RobotMessage>& robots);
 void emplaceGoalkeeperOutput(RobotMessage& goalkeeper,
                              World& world,
-                             BehaviorMessage& behavior_message);
+                             BehaviorMessage& behavior_message,
+                             GoalkeeperGuardStateMachine& guard_state_machine);
 
 std::optional<RobotMessage> takeSupport(std::vector<RobotMessage>& robots);
 void emplaceSupportOutput(RobotMessage& support, World& world, BehaviorMessage& behavior_message);

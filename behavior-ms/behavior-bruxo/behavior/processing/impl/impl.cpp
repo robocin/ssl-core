@@ -1,6 +1,10 @@
 #include "behavior/processing/impl/impl.h"
 
+#include "behavior/parameters/parameters.h"
 #include "behavior/processing/messages/common/game_event/game_event_message.h"
+#include "behavior/processing/messages/common/robot_id/robot_id.h"
+#include "behavior/processing/state_machine/goalkeeper_guard/goalkeeper_guard_state_machine.h"
+#include "behavior/processing/state_machine/istate_machine.h"
 
 #include <robocin/geometry/point2d.h>
 
@@ -132,10 +136,12 @@ void emplaceSupportOutput(RobotMessage& support, World& world, BehaviorMessage& 
 
 void emplaceGoalkeeperOutput(RobotMessage& goalkeeper,
                              World& world,
-                             BehaviorMessage& behavior_message) {};
+                             BehaviorMessage& behavior_message,
+                             GoalkeeperGuardStateMachine& guard_state_machine) {};
 
 // Game running
-std::optional<rc::Behavior> onInGame(World& world) {
+std::optional<rc::Behavior> onInGame(World& world,
+                                     GoalkeeperGuardStateMachine& guard_state_machine) {
   BehaviorMessage behavior_message;
   robocin::ilog("Allies detected: {}", world.allies.size());
 
@@ -148,7 +154,8 @@ std::optional<rc::Behavior> onInGame(World& world) {
   // Take goalkeeper
   auto goalkeeper = takeGoalkeeper(world.allies);
   if (goalkeeper.has_value()) {
-    emplaceGoalkeeperOutput(goalkeeper.value(), world, behavior_message);
+    guard_state_machine.run(RobotIdMessage{pAllyColor, pGoalkeeperNumber()});
+    behavior_message.output.emplace_back(std::move(guard_state_machine.output));
   }
 
   // Take support

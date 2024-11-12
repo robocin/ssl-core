@@ -6,4 +6,5 @@ robocin_cpp_library(
          common::output
          common::geometry
          protocols::protobufs
+         state_machine
 )

@@ -30,4 +30,5 @@ robocin_cpp_library(
          goalkeeper_guard/common/goalkeeper_guard_common.cpp
     DEPS common::output               
          messages
+         analyzers
 )
