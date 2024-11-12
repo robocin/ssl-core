@@ -139,7 +139,7 @@ constexpr bool segmentsIntersect(const robocin::Line<T>& a, const robocin::Line<
  * @note implementation is based on Graphics Gems III's "Faster Line Segment Intersection"
  */
 template <class T>
-constexpr std::enable_if_t<std::is_floating_point_v<robocin::Point2D<T>>, std::optional<T>>
+constexpr std::enable_if_t<std::is_floating_point_v<T>, std::optional<robocin::Point2D<T>>>
 segmentsIntersection(const robocin::Point2D<T>& a,
                      const robocin::Point2D<T>& b,
                      const robocin::Point2D<T>& c,
@@ -151,12 +151,12 @@ segmentsIntersection(const robocin::Point2D<T>& a,
   if (fuzzyIsNull(denominator)) {
     return std::nullopt;
   }
-  const robocin::Point2D<T> reciprocal = static_cast<robocin::Point2D<T>>(1) / denominator;
-  const robocin::Point2D<T> na = ac.cross(cd) * reciprocal;
+  const T reciprocal = static_cast<T>(1) / denominator;
+  const T na = ac.cross(cd) * reciprocal;
   if (!(0 <= na && na <= 1)) {
     return std::nullopt;
   }
-  const robocin::Point2D<T> nb = ba.cross(ac) * reciprocal;
+  const T nb = ba.cross(ac) * reciprocal;
   if (!(0 <= nb && nb <= 1)) {
     return std::nullopt;
   }
@@ -183,6 +183,11 @@ constexpr auto segmentsIntersection(const robocin::Line<T>& lhs, const robocin::
 template <class PT>
 constexpr auto angleBetween(const PT& lhs, const PT& rhs) {
   return std::atan2(lhs.cross(rhs), lhs.dot(rhs));
+}
+
+template <class T>
+constexpr T degreesToRadians(T degrees) {
+  return degrees * static_cast<T>(M_PI) / static_cast<T>(180);
 }
 
 } // namespace mathematics

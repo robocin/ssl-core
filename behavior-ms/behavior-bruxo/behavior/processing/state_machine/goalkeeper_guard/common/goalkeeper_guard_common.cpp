@@ -1,5 +1,6 @@
 #include "behavior/processing/state_machine/goalkeeper_guard/common/goalkeeper_guard_common.h"
 
+#include "behavior/processing/analyzer/ball_analyzer.h"
 #include "behavior/processing/analyzer/enemy_analyzer.h"
 #include "behavior/processing/messages/motion/motion_message.h"
 #include "behavior/processing/messages/perception/robot/robot_message.h"
@@ -61,6 +62,10 @@ bool GoalkeeperGuardCommon::isBallGoingToPassAreaLine(const World& world) {
   }
 
   return ball_is_going_to_pass_area_line;
+}
+
+bool GoalkeeperGuardCommon::isBallMovingToOurGoal(const World& world) {
+  return BallAnalyzer::isBallMovingToDefensiveGoal(world.field, world.ball);
 }
 
 robocin::Point2Df GoalkeeperGuardCommon::getGoalkeeperBisectorVector(const World& world) {
@@ -439,16 +444,16 @@ float GoalkeeperGuardCommon::getMotionAngle(const World& world,
       > GoalkeeperGuardCommon::DISTANCE_FROM_TARGET_TO_ADJUST_MOVIMENT_DIRECTION) {
     bool will_robot_move_upwards
         = std::abs(mathematics::angleBetween(to_high_vector, delta_move_vector))
-          < 45.0 * 3.1415 / 360.0;
+          < mathematics::degreesToRadians(45.0);
     bool will_robot_move_downwards
         = std::abs(mathematics::angleBetween(to_lower_vector, delta_move_vector))
-          < 45.0 * 3.1415 / 360.0;
+          < mathematics::degreesToRadians(45.0);
     bool target_to_vector_is_upwards
         = std::abs(mathematics::angleBetween(to_high_vector, goalkeeper_target_to_ball_vector))
-          < 90.0 * 3.1415 / 360.0;
+          < mathematics::degreesToRadians(90.0);
     bool target_to_vector_is_downwards
         = std::abs(mathematics::angleBetween(to_lower_vector, goalkeeper_target_to_ball_vector))
-          < 80.0 * 3.1415 / 360.0;
+          < mathematics::degreesToRadians(80.0);
 
     bool should_move_upwards_looking_upwards
         = will_robot_move_upwards && target_to_vector_is_upwards;
@@ -460,13 +465,17 @@ float GoalkeeperGuardCommon::getMotionAngle(const World& world,
         = will_robot_move_downwards && target_to_vector_is_downwards;
 
     if (should_move_upwards_looking_downward || should_move_downwards_looking_downwards) {
-      target_angle = ((attack_direction.x > 0) ?
-                          to_lower_vector.rotatedCounterClockWise(30.0 * 3.1415 / 360.0).angle() :
-                          to_lower_vector.rotatedClockWise(30.0 * 3.1415 / 360.0).angle());
+      target_angle
+          = ((attack_direction.x > 0) ?
+                 to_lower_vector.rotatedCounterClockWise(mathematics::degreesToRadians(30.0))
+                     .angle() :
+                 to_lower_vector.rotatedClockWise(mathematics::degreesToRadians(30.0)).angle());
     } else if (should_move_upwards_looking_upwards || should_move_downwards_looking_upwards) {
-      target_angle = ((attack_direction.x > 0) ?
-                          to_high_vector.rotatedClockWise(30.0 * 3.1415 / 360.0).angle() :
-                          to_high_vector.rotatedCounterClockWise(30.0 * 3.1415 / 360.0).angle());
+      target_angle
+          = ((attack_direction.x > 0) ?
+                 to_high_vector.rotatedClockWise(mathematics::degreesToRadians(30.0)).angle() :
+                 to_high_vector.rotatedCounterClockWise(mathematics::degreesToRadians(30.0))
+                     .angle());
     }
   }
 

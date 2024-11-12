@@ -82,8 +82,9 @@ std::unique_ptr<IController> makeProducer(object_ptr<IConcurrentQueue<Payload>> 
 
 std::unique_ptr<IBehaviorProcessor> makeBehaviorProcessor() {
 
-  return std::make_unique<BehaviorProcessor>(std::make_unique<parameters::HandlerEngine>(),
-                                             std::make_unique<behavior::GoalkeeperTakeBallAwayStateMachine>());
+  return std::make_unique<BehaviorProcessor>(
+      std::make_unique<parameters::HandlerEngine>(),
+      std::make_unique<behavior::GoalkeeperGuardStateMachine>());
 }
 
 std::unique_ptr<IMessageSender> makeMessageSender() {

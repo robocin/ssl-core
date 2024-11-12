@@ -1,6 +1,8 @@
 #include "behavior/processing/state_machine/goalkeeper_guard/states/follow_ball_line.h"
 
 #include "behavior/processing/state_machine/goalkeeper_guard/common/goalkeeper_guard_common.h"
+#include "behavior/processing/state_machine/goalkeeper_guard/states/defend_kick.h"
+#include "behavior/processing/state_machine/goalkeeper_guard/states/follow_enemy_line.h"
 
 namespace behavior {
 
