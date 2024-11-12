@@ -14,7 +14,15 @@ KickCommandMessage::KickCommandMessage(float strength,
     is_bypass_ir(is_bypass_ir) {};
 
 [[nodiscard]] protocols::common::RobotKick::KickCommand KickCommandMessage::toProto() const {
-  return protocols::common::RobotKick::KickCommand{};
+  protocols::common::RobotKick::KickCommand proto;
+
+  proto.set_kick_strength(strength);
+  proto.set_is_front(is_front);
+  proto.set_is_chip(is_chip);
+  proto.set_charge_capacitor(charge_capacitor);
+  proto.set_is_bypass_ir(is_bypass_ir);
+
+  return proto;
 };
 
 void KickCommandMessage::fromProto(

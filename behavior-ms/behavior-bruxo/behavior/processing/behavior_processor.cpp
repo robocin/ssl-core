@@ -89,11 +89,12 @@ std::vector<rc::GameStatus> gameStatusFromPayloads(std::span<const Payload> payl
 } // namespace
 
 // CBR: function for every game command
-void onRun(BehaviorMessage& behavior_message, World& world) {
-  // Take forward
-  int forward_number = 7;
+std::optional<rc::Behavior> onRun(World& world) {
+  BehaviorMessage behavior_message;
 
+  // Take forward
   ilog("Allies detected: {}", world.allies.size());
+  int forward_number = 10;
 
   auto robot = findMyRobot(forward_number, world.allies);
   if (!robot.has_value()) {
@@ -115,7 +116,7 @@ void onRun(BehaviorMessage& behavior_message, World& world) {
         7.0 /* strength */,
         true /* is_front */,
         false /* is_chip */,
-        true /* charge_capacitor */,
+        false /* charge_capacitor */,
         false /* bypass_ir */
     }});
   }
@@ -133,9 +134,12 @@ void onRun(BehaviorMessage& behavior_message, World& world) {
           std::nullopt /* rotate_in_point */,
           std::nullopt /* rotate_on_self */,
           std::move(peripheral_actuation)});
+
+  return behavior_message.toProto();
+    
 };
 
-void onHalt() { /* Implement */ };
+std::optional<rc::Behavior> onHalt() { return std::nullopt; };
 
 BehaviorProcessor::BehaviorProcessor(
     std::unique_ptr<parameters::IHandlerEngine> parameters_handler_engine,
@@ -144,18 +148,20 @@ BehaviorProcessor::BehaviorProcessor(
     goalkeeper_take_ball_away_state_machine_{std::move(goalkeeper_take_ball_away_state_machine)} {}
 
 std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> payloads) {
-  BehaviorProcessor::update(payloads);
-  BehaviorMessage behavior_message;
+  if (!BehaviorProcessor::update(payloads)) {
+    ilog("Failed to update world.");
+    return std::nullopt;
+  }
+
+  // if (world_.isHalt()) {
+  //   return onHalt();
+  // }
 
   if (!world_.isStop()) {
-    onRun(behavior_message, world_);
+    return onRun(world_);
   }
 
-  if (world_.isHalt()) {
-    onHalt();
-  }
-
-  return behavior_message.toProto();
+  return std::nullopt;
 }
 
 bool BehaviorProcessor::update(std::span<const Payload>& payloads) {
