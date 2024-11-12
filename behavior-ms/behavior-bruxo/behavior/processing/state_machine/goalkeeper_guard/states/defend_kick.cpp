@@ -4,6 +4,8 @@
 #include "behavior/processing/state_machine/goalkeeper_guard/states/follow_ball_line.h"
 #include "common/robot_id/robot_id.h"
 
+#include <robocin/geometry/point2d.h>
+
 namespace behavior {
 
 DefendKick::DefendKick() = default;
@@ -11,6 +13,9 @@ DefendKick::DefendKick() = default;
 OutputMessage DefendKick::exec(const World& world, RobotIdMessage ally_id) {
   robocin::ilog("Exec DefendKick state");
   ally_id_ = std::move(ally_id);
+  robocin::Point2Df ball_position = world.field.allyGoalInsideBottom();
+  std::cout << " ball position in goalkeeper fsm: " << ball_position.x << " " << ball_position.y
+            << std::endl;
   checkAndHandleTransitions(world);
   return makeDefendKickOutput(world);
 }

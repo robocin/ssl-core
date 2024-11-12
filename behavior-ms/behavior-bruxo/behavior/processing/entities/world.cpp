@@ -59,7 +59,6 @@ void World::update(const std::vector<protocols::perception::Robot>& robots,
                    const std::vector<protocols::perception::Ball>& balls,
                    const protocols::perception::Field& field,
                    const protocols::referee::GameStatus& game_status) {
-
   World::takeAlliesAndEnemies(robots);
   World::takeBallHighConfidence(balls);
   World::takeGameStatus(game_status);
