@@ -43,6 +43,13 @@ class World {
   // CBR: checker for every command
   bool isStop();
   bool isHalt();
+  bool isInGame();
+
+  bool isTimeout();
+  bool isInterval();
+  bool isKickOff();
+  bool isPenalty();
+  bool isDirectFreeKick();
 
  private:
   void takeBallHighConfidence(const std::vector<protocols::perception::Ball>& balls);
