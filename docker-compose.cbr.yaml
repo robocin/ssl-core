@@ -1,30 +1,16 @@
 services:
-  # ssl-vision-client:
-  #   container_name: ssl-vision-client
-  #   image: robocupssl/ssl-vision-client:1.7.3
-  #   command:
-  #     - "-visionAddress"
-  #     - "224.5.23.2:10006"
-  #   restart: unless-stopped
-  #   ports:
-  #     - 8082/tcp
-  #     - 8082:8082
-  #   logging:
-  #     driver: none
-  #   network_mode: host
-
-  # autoref-tigers:
-  #   container_name: autoref-tigers
-  #   image: tigersmannheim/auto-referee:1.2.0
-  #   restart: unless-stopped
-  #   command:
-  #     - "-a"
-  #     - "-visionAddress"
-  #     - "224.5.23.2:10006"
-  #     - "-refereeAddress"
-  #     - "224.5.23.1:11003"
-  #   logging:
-  #     driver: none
+  autoref-tigers:
+    container_name: autoref-tigers
+    image: tigersmannheim/auto-referee:1.2.0
+    restart: unless-stopped
+    command:
+      - "-a"
+      - "-visionAddress"
+      - "224.5.23.2:10006"
+      - "-refereeAddress"
+      - "224.5.23.1:11003"
+    logging:
+      driver: none
 
   gateway:
     container_name: gateway
@@ -130,20 +116,6 @@ services:
       - .ssl-core:/tmp/.ssl-core
     network_mode: "host"
     attach: false
-
-  # Not using decision currently
-  # decision-ms:
-  #   container_name: decision-ms
-  #   build:
-  #     context: .
-  #     dockerfile: decision-ms/decision-guardiola/decision-guardiola.Dockerfile
-  #   volumes:
-  #     - .ssl-core:/tmp/.ssl-core
-  #   depends_on:
-  #     - perception-ms
-  #     - referee-ms
-  #   network_mode: "host"
-  #   attach: false
 
   behavior-ms:
     container_name: behavior-ms
