@@ -36,7 +36,7 @@ inline const static double DIST_TO_ADJUST_EXCLUSIVE_ZONE_MM = 400;
 // larc 2023 parameters
 inline const static double FACTOR_TO_MULTIPLY_BOUNDARY_WIDTH_WHEN_HITTING_WALLS = 0.6;
 
-inline const static double CYCLE_STEP = 0.16;
+inline const static double CYCLE_STEP = 1;
 inline const static double ROBOT_VEL_BREAK_DECAY_FACTOR = 3.1;
 inline const static double ROBOT_VEL_FAVORABLE_DECAY_FACTOR = 0.003;
 

@@ -39,7 +39,7 @@ Payload PayloadMapper::fromZmqDatagrams(std::span<const ZmqDatagram> messages) c
     if (zmq_datagram.topic() == service_discovery::kPerceptionDetectionTopic) {
       rc::Detection detection;
       detection.ParseFromString(std::string{zmq_datagram.message()});
-      // ilog("Received from perception: {}", detection.DebugString());
+      ilog("Received from perception: {}", detection.DebugString());
       detections.emplace_back(std::move(detection));
     }
     if (zmq_datagram.topic() == service_discovery::kRefereeGameStatusTopic) {

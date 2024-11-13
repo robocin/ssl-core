@@ -49,8 +49,11 @@ NavigationOutputMessage MotionParser::parseMotion() {
       // PROCESSAMENTO DO GO_TO_POINT_WITH_TRAJECTORY
     }
 
-    output_msg.left_velocity = move.velocity().y;
-    output_msg.forward_velocity = move.velocity().x;
+    const auto [frontVelocity, leftVelocity]
+        = move.velocity().rotatedClockWise(world_.ally.angle.value());
+
+    output_msg.left_velocity = leftVelocity;
+    output_msg.forward_velocity = frontVelocity;
     output_msg.angular_velocity = move.angularVelocity();
 
     if (world_.robot_motion->peripheral_actuation) {
@@ -72,6 +75,8 @@ NavigationOutputMessage MotionParser::parseMotion() {
 }
 ////////////////////////////////////////////////////////////////////////////
 RobotMove MotionParser::fromGoToPoint(const GoToPointMessage& go_to_point) {
+  robocin::ilog("motion_parser position_x: {}", world_.ally.position.value().x);
+  robocin::ilog("motion_parser position_y: {}", world_.ally.position.value().y);
   robocin::Point2Df s0 = world_.ally.position.value();
   robocin::Point2Df s = go_to_point.target;
   robocin::Point2Df delta_s = (s - s0) / M_to_MM;
@@ -105,25 +110,20 @@ RobotMove MotionParser::fromGoToPoint(const GoToPointMessage& go_to_point) {
     const float theta = delta_s.angle();
     float acc_prop = moving_profile::ROBOT_DEFAULT_LINEAR_ACCELERATION;
     auto v0 = world_.ally.velocity.value() / M_to_MM;
-    robocin::ilog("v0_x: {}", v0.x);
-    robocin::ilog("v0_y: {}", v0.y);
+
     auto v = robocin::Point2D<float>::fromPolar(maxVelocity, theta);
-    const float v0_decay = std::abs(mathematics::angleBetween(v, v0)) > PI / 3 ? ROBOT_VEL_BREAK_DECAY_FACTOR :
-                                                              ROBOT_VEL_FAVORABLE_DECAY_FACTOR;
+    const float v0_decay = std::abs(mathematics::angleBetween(v, v0)) > PI / 3 ?
+                               ROBOT_VEL_BREAK_DECAY_FACTOR :
+                               ROBOT_VEL_FAVORABLE_DECAY_FACTOR;
 
     // v = v0 + a*t
     v0 = v0 - (v0 * v0_decay) * CYCLE_STEP;
-    robocin::ilog("v0f_x: {}", v0.x);
-    robocin::ilog("v0f_y: {}", v0.y);
 
     auto acceleration_required
         = robocin::Point2D<float>((v.x - v0.x) / CYCLE_STEP, (v.y - v0.y) / CYCLE_STEP);
 
-    robocin::ilog("acc_x: {}", acceleration_required.x);
-    robocin::ilog("acc_y: {}", acceleration_required.y);
-
     float alpha = mathematics::map(std::abs(delta_theta),
-                                   0.0F,
+                                   -static_cast<float>(std::numbers::pi),
                                    static_cast<float>(std::numbers::pi),
                                    0.0F,
                                    1.0F);
