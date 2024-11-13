@@ -86,6 +86,14 @@ GoToPointMessage::MovingProfile GoToBall::getMotionMovingProfile(const World& wo
   return GoToPointMessage::MovingProfile::BalancedInDefaultSpeed;
 }
 
+KickCommandMessage GoToBall::makeKickCommandMessage(const World& world) {
+  return KickCommandMessage{0.0, false, false, true, false};
+}
+
+PeripheralActuationMessage GoToBall::makePeripheralActuation(const World& world) {
+  return PeripheralActuationMessage{makeKickCommandMessage(world)};
+}
+
 OutputMessage GoToBall::makeGoToBallOutput(const World& world) {
   return OutputMessage{RobotIdMessage{makeGoToBallRobotId(world)},
                        MotionMessage{makeGoToBallMotion(world)},
@@ -102,7 +110,11 @@ MotionMessage GoToBall::makeGoToBallMotion(const World& world) {
   GoToPointMessage go_to_point = GoToPointMessage{getMotionTarget(world),
                                                   getMotionAngle(world),
                                                   getMotionMovingProfile(world)};
-  return MotionMessage{std::move(go_to_point)};
+  return MotionMessage{std::move(go_to_point),
+                       std::nullopt,
+                       std::nullopt,
+                       std::nullopt,
+                       makePeripheralActuation(world)};
 };
 
 PlanningMessage GoToBall::makeGoToBallPlanning(const World& world) {

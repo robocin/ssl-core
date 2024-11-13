@@ -11,6 +11,7 @@
 #include "behavior/processing/state_machine/forward_follow_and_kick_ball/states/align.h"
 #include "behavior/processing/state_machine/forward_follow_and_kick_ball/states/go_to_ball.h"
 #include "behavior/processing/state_machine/istate_machine.h"
+#include "common/peripheral_actuation/peripheral_actuation.h"
 #include "common/robot_id/robot_id.h"
 
 #include <robocin/geometry/point2d.h>
@@ -24,6 +25,8 @@ class KickBall : public IState {
   OutputMessage makeKickBallOutput(const World& world);
   RobotIdMessage makeKickBallRobotId(const World& world);
   MotionMessage makeKickBallMotion(const World& world);
+  KickCommandMessage makeKickCommandMessage(const World& world);
+  PeripheralActuationMessage makePeripheralActuation(const World& world);
   PlanningMessage makeKickBallPlanning(const World& world);
 
   // Transition logic

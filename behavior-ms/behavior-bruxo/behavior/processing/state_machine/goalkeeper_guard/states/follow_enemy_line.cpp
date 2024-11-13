@@ -62,6 +62,14 @@ float FollowEnemyLine::getMotionAngle(const World& world) const {
                                                getMotionTarget(world));
 }
 
+KickCommandMessage FollowEnemyLine::makeKickCommandMessage(const World& world) {
+  return KickCommandMessage{0.0, false, false, true, false};
+}
+
+PeripheralActuationMessage FollowEnemyLine::makePeripheralActuation(const World& world) {
+  return PeripheralActuationMessage{makeKickCommandMessage(world)};
+}
+
 GoToPointMessage::MovingProfile FollowEnemyLine::getMotionMovingProfile(const World& world) const {
   if (GoalkeeperGuardCommon::isLateralMove(world,
                                            ally_id_.number.value(),
@@ -87,7 +95,11 @@ MotionMessage FollowEnemyLine::makeFollowEnemyLineMotion(const World& world) {
   GoToPointMessage go_to_point = GoToPointMessage{getMotionTarget(world),
                                                   getMotionAngle(world),
                                                   getMotionMovingProfile(world)};
-  return MotionMessage{std::move(go_to_point)};
+  return MotionMessage{std::move(go_to_point),
+                       std::nullopt,
+                       std::nullopt,
+                       std::nullopt,
+                       makePeripheralActuation(world)};
 }
 
 PlanningMessage FollowEnemyLine::makeFollowEnemyLinePlanning(const World& world) {

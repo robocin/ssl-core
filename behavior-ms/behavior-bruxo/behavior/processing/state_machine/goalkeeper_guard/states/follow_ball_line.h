@@ -23,6 +23,8 @@ class FollowBallLine : public IState {
   RobotIdMessage makeFollowBallLineRobotId(const World& world);
   MotionMessage makeFollowBallLineMotion(const World& world);
   PlanningMessage makeFollowBallLinePlanning(const World& world);
+  KickCommandMessage makeKickCommandMessage(const World& world);
+  PeripheralActuationMessage makePeripheralActuation(const World& world);
 
   // Transition logic
   void checkAndHandleTransitions(const World& world);

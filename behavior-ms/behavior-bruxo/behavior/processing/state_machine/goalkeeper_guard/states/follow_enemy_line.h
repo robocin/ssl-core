@@ -21,6 +21,8 @@ class FollowEnemyLine : public IState {
   RobotIdMessage makeFollowEnemyLineRobotId(const World& world);
   MotionMessage makeFollowEnemyLineMotion(const World& world);
   PlanningMessage makeFollowEnemyLinePlanning(const World& world);
+  KickCommandMessage makeKickCommandMessage(const World& world);
+  PeripheralActuationMessage makePeripheralActuation(const World& world);
 
   // Transition logic
   void checkAndHandleTransitions(const World& world);

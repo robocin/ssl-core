@@ -1,6 +1,9 @@
 #include "behavior/processing/state_machine/forward_follow_and_kick_ball/states/kick_ball.h"
 
+#include "behavior/parameters/parameters.h"
 #include "behavior/processing/state_machine/forward_follow_and_kick_ball/common/forward_follow_and_kick_ball_common.h"
+#include "common/peripheral_actuation/peripheral_actuation.h"
+#include "common/robot_kick/kick_command.h"
 
 #include <robocin/geometry/point2d.h>
 
@@ -58,6 +61,14 @@ GoToPointMessage::MovingProfile KickBall::getMotionMovingProfile(const World& wo
   return GoToPointMessage::MovingProfile::DirectBalancedKickBallSpeed;
 }
 
+KickCommandMessage KickBall::makeKickCommandMessage(const World& world) {
+  return KickCommandMessage{pFrontKickStrenght(), true, false, false, false};
+}
+
+PeripheralActuationMessage KickBall::makePeripheralActuation(const World& world) {
+  return PeripheralActuationMessage{makeKickCommandMessage(world)};
+}
+
 OutputMessage KickBall::makeKickBallOutput(const World& world) {
   return OutputMessage{RobotIdMessage{makeKickBallRobotId(world)},
                        MotionMessage{makeKickBallMotion(world)},
@@ -74,7 +85,11 @@ MotionMessage KickBall::makeKickBallMotion(const World& world) {
   GoToPointMessage go_to_point = GoToPointMessage{getMotionTarget(world),
                                                   getMotionAngle(world),
                                                   getMotionMovingProfile(world)};
-  return MotionMessage{std::move(go_to_point)};
+  return MotionMessage{std::move(go_to_point),
+                       std::nullopt,
+                       std::nullopt,
+                       std::nullopt,
+                       makePeripheralActuation(world)};
 };
 
 PlanningMessage KickBall::makeKickBallPlanning(const World& world) {

@@ -83,6 +83,14 @@ GoToPointMessage::MovingProfile Align::getMotionMovingProfile(const World& world
   return GoToPointMessage::MovingProfile{};
 }
 
+KickCommandMessage Align::makeKickCommandMessage(const World& world) {
+  return KickCommandMessage{0.0, false, false, true, false};
+}
+
+PeripheralActuationMessage Align::makePeripheralActuation(const World& world) {
+  return PeripheralActuationMessage{makeKickCommandMessage(world)};
+}
+
 OutputMessage Align::makeAlignOutput(const World& world) {
   return OutputMessage{RobotIdMessage{makeAlignRobotId(world)},
                        MotionMessage{makeAlignMotion(world)},
@@ -99,7 +107,11 @@ MotionMessage Align::makeAlignMotion(const World& world) {
   GoToPointMessage go_to_point = GoToPointMessage{getMotionTarget(world),
                                                   getMotionAngle(world),
                                                   getMotionMovingProfile(world)};
-  return MotionMessage{std::move(go_to_point)};
+  return MotionMessage{std::move(go_to_point),
+                       std::nullopt,
+                       std::nullopt,
+                       std::nullopt,
+                       makePeripheralActuation(world)};
 };
 
 PlanningMessage Align::makeAlignPlanning(const World& world) {

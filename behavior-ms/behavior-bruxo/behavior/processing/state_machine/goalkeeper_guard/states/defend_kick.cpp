@@ -1,5 +1,6 @@
 #include "behavior/processing/state_machine/goalkeeper_guard/states/defend_kick.h"
 
+#include "behavior/parameters/parameters.h"
 #include "behavior/processing/state_machine/goalkeeper_guard/common/goalkeeper_guard_common.h"
 #include "behavior/processing/state_machine/goalkeeper_guard/states/follow_ball_line.h"
 #include "common/robot_id/robot_id.h"
@@ -64,6 +65,14 @@ float DefendKick::getMotionAngle(const World& world) const {
                                                getMotionTarget(world));
 }
 
+KickCommandMessage DefendKick::makeKickCommandMessage(const World& world) {
+  return KickCommandMessage{pChipKickStrenght(), false, true, false, false};
+}
+
+PeripheralActuationMessage DefendKick::makePeripheralActuation(const World& world) {
+  return PeripheralActuationMessage{makeKickCommandMessage(world)};
+}
+
 GoToPointMessage::MovingProfile DefendKick::getMotionMovingProfile(const World& world) const {
   if (GoalkeeperGuardCommon::isLateralMove(world,
                                            ally_id_.number.value(),
@@ -89,7 +98,11 @@ MotionMessage DefendKick::makeDefendKickMotion(const World& world) {
   GoToPointMessage go_to_point = GoToPointMessage{getMotionTarget(world),
                                                   getMotionAngle(world),
                                                   getMotionMovingProfile(world)};
-  return MotionMessage{std::move(go_to_point)};
+  return MotionMessage{std::move(go_to_point),
+                       std::nullopt,
+                       std::nullopt,
+                       std::nullopt,
+                       makePeripheralActuation(world)};
 };
 
 PlanningMessage DefendKick::makeDefendKickPlanning(const World& world) {

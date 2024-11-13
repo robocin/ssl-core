@@ -23,6 +23,8 @@ class Align : public IState {
   // Output generation
   OutputMessage makeAlignOutput(const World& world);
   RobotIdMessage makeAlignRobotId(const World& world);
+  KickCommandMessage makeKickCommandMessage(const World& world);
+  PeripheralActuationMessage makePeripheralActuation(const World& world);
   MotionMessage makeAlignMotion(const World& world);
   PlanningMessage makeAlignPlanning(const World& world);
 

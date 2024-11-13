@@ -25,6 +25,8 @@ class DefendKick : public IState {
   RobotIdMessage makeDefendKickRobotId(const World& world);
   MotionMessage makeDefendKickMotion(const World& world);
   PlanningMessage makeDefendKickPlanning(const World& world);
+  KickCommandMessage makeKickCommandMessage(const World& world);
+  PeripheralActuationMessage makePeripheralActuation(const World& world);
 
   // Transition logic
   void checkAndHandleTransitions(const World& world);
