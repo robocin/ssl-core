@@ -11,6 +11,12 @@ robocin_cpp_library(
          goalkeeper_guard/states/follow_ball_line.h
          goalkeeper_guard/states/follow_enemy_line.h
          goalkeeper_guard/common/goalkeeper_guard_common.h
+         forward_follow_and_kick_ball/forward_follow_and_kick_ball_state_machine.h
+         forward_follow_and_kick_ball/states/align.h
+         forward_follow_and_kick_ball/states/go_to_ball.h
+         forward_follow_and_kick_ball/states/kick_ball.h
+         forward_follow_and_kick_ball/common/forward_follow_and_kick_ball_common.h
+
     SRCS istate_machine.cpp
          goalkeeper_take_ball_away/goalkeeper_take_ball_away_state_machine.cpp
          goalkeeper_take_ball_away/states/go_to_ball.cpp
@@ -22,6 +28,11 @@ robocin_cpp_library(
          goalkeeper_guard/states/follow_ball_line.cpp
          goalkeeper_guard/states/follow_enemy_line.cpp
          goalkeeper_guard/common/goalkeeper_guard_common.cpp
+         forward_follow_and_kick_ball/forward_follow_and_kick_ball_state_machine.cpp
+         forward_follow_and_kick_ball/states/align.cpp
+         forward_follow_and_kick_ball/states/go_to_ball.cpp
+         forward_follow_and_kick_ball/states/kick_ball.cpp
+         forward_follow_and_kick_ball/common/forward_follow_and_kick_ball_common.cpp
     DEPS common::output               
          messages
          analyzers
