@@ -5,6 +5,7 @@
 #include "behavior/parameters/parameters.h"
 #include "behavior/processing/entities/world.h"
 #include "behavior/processing/state_machine/forward_follow_and_kick_ball/common/forward_follow_and_kick_ball_common.h"
+#include "field_analyzer.h"
 
 #include <robocin/geometry/point2d.h>
 
@@ -45,11 +46,15 @@ bool GoToBall::shouldTransitionToKickBall(const World& world) const {
 }
 
 robocin::Point2Df GoToBall::getMotionTarget(const World& world) const {
-  return AllyAnalyzer::targetBehindBallLookingToTarget(
+  robocin::Point2Df target_behind_ball_point = AllyAnalyzer::targetBehindBallLookingToTarget(
       world,
       ally_id_.number.value(),
       ForwardFollowAndKickBallCommon::getKickTarget(),
       pApproachAngleThreshold());
+
+  auto&& field = world.field;
+
+  return FieldAnalyzer::nearestPointInsideFieldOutsidePenaltyAreas(field, target_behind_ball_point);
 }
 
 float GoToBall::getMotionAngle(const World& world) const {

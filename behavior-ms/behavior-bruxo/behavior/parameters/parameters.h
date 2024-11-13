@@ -11,7 +11,7 @@ namespace behavior {
 constinit const auto pBehaviorPollerTimeoutMs
     = ::robocin::parameters::View<1>::asInt32(10 /*ms ~= 100Hz*/);
 
-constinit const auto pAllyColor = Color::COLOR_YELLOW; // COLOR_BLUE
+constinit const auto pAllyColor = Color::COLOR_BLUE; // COLOR_BLUE
 
 constinit const auto isAttackingToRight = ::robocin::parameters::View<1>::asBool(false);
 
@@ -22,9 +22,10 @@ constinit const auto pRobotRadius = ::robocin::parameters::View<4>::asInt32(90);
 constinit const auto pRobotDiameter = ::robocin::parameters::View<5>::asInt32(180);
 
 // CBR:
-constinit const auto pGoalkeeperNumber = ::robocin::parameters::View<6>::asInt32(2);
-constinit const auto pForwardNumber = ::robocin::parameters::View<7>::asInt32(0);
-constinit const auto pSupportNumber = ::robocin::parameters::View<8>::asInt32(1);
+constinit const auto pGoalkeeperNumber = ::robocin::parameters::View<6>::asInt32(0);
+constinit const auto pForwardNumber = ::robocin::parameters::View<7>::asInt32(1);
+constinit const auto pSupportNumber = ::robocin::parameters::View<8>::asInt32(2);
+constinit const double pMarginEps = 20.0;
 
 constinit const auto pForwardDistToEnterKickBallWhenMovingAway
     = ::robocin::parameters::View<9>::asInt32(200);
