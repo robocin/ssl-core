@@ -8,7 +8,10 @@ services:
       REALISM: "RC2021"
     logging:
       driver: none
-
+    ports:
+      - "10301:10301/udp"
+      - "10302:10302/udp"
+      
   autoref-tigers:
     container_name: autoref-tigers
     image: tigersmannheim/auto-referee:1.2.0
@@ -247,7 +250,6 @@ services:
       - navigation-ms
     network_mode: "host"
     attach: true
-
 
 volumes:
   .ssl-core:
