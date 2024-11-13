@@ -72,9 +72,6 @@ NavigationOutputMessage MotionParser::parseMotion() {
 }
 ////////////////////////////////////////////////////////////////////////////
 RobotMove MotionParser::fromGoToPoint(const GoToPointMessage& go_to_point) {
-
-  robocin::ilog("Received from perception: {}", world_.ally.toProto().DebugString());
-
   robocin::Point2Df s0 = world_.ally.position.value();
   robocin::Point2Df s = go_to_point.target;
   robocin::Point2Df delta_s = (s - s0) / M_to_MM;
@@ -111,7 +108,7 @@ RobotMove MotionParser::fromGoToPoint(const GoToPointMessage& go_to_point) {
     robocin::ilog("v0_x: {}", v0.x);
     robocin::ilog("v0_y: {}", v0.y);
     auto v = robocin::Point2D<float>::fromPolar(maxVelocity, theta);
-    const float v0_decay = std::abs(v.angleTo(v0)) > PI / 3 ? ROBOT_VEL_BREAK_DECAY_FACTOR :
+    const float v0_decay = std::abs(mathematics::angleBetween(v, v0)) > PI / 3 ? ROBOT_VEL_BREAK_DECAY_FACTOR :
                                                               ROBOT_VEL_FAVORABLE_DECAY_FACTOR;
 
     // v = v0 + a*t
