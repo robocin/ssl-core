@@ -1,16 +1,17 @@
 services:
-  autoref-tigers:
-    container_name: autoref-tigers
-    image: tigersmannheim/auto-referee:1.2.0
-    restart: unless-stopped
-    command:
-      - "-a"
-      - "-visionAddress"
-      - "224.5.23.2:10006"
-      - "-refereeAddress"
-      - "224.5.23.1:11003"
-    logging:
-      driver: none
+  # autoref-tigers:
+  #   container_name: autoref-tigers
+  #   image: tigersmannheim/auto-referee:1.2.0
+  #   restart: unless-stopped
+  #   command:
+  #     - "-a"
+  #     - "-visionAddress"
+  #     - "224.5.23.2:10006"
+  #     - "-refereeAddress"
+  #     - "224.5.23.1:11003"
+  #   logging:
+  #     driver: none
+  #   attach: false
 
   gateway:
     container_name: gateway
@@ -22,8 +23,8 @@ services:
       - GC_PORT=10003
     volumes:
       - .ssl-core:/tmp/.ssl-core
-    depends_on:
-      - autoref-tigers
+    # depends_on:
+      # - autoref-tigers
     network_mode: host
 
   perception-ms:
@@ -120,7 +121,7 @@ services:
     depends_on:
       - perception-ms
       - referee-ms
-    attach: true
+    attach: false
 
   navigation-ms:
     container_name: navigation-ms
@@ -144,7 +145,7 @@ services:
     depends_on:
       - navigation-ms
     network_mode: "host"
-    attach: false
+    attach: true
     
 volumes:
   .ssl-core:

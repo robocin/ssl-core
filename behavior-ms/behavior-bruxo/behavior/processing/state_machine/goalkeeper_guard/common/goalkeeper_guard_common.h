@@ -60,7 +60,7 @@ class GoalkeeperGuardCommon {
   static constexpr float APPROACH_ANGLE_THRESHOLD = 0.26f;
   static constexpr float MAX_ENEMY_SPEED_ANGLE_TO_BALL_THRESHOLD = 0.3f;
   static constexpr float DISTANCE_TO_CONSIDER_ENEMY_AS_CLOSE_TO_BALL = 230.0f;
-  static constexpr float IN_LINE_OFFSET_X = 140.0f;
+  static constexpr float IN_LINE_OFFSET_X = 250.0f;
   static constexpr float IN_LINE_OFFSET_Y = 10.0f;
   static constexpr float GOALKEEPER_ARC_CURVE_THRESHOLD = 1200.0f;
   static constexpr float WEIGHT_FOR_ATK_DIRECTION = 0.28f;

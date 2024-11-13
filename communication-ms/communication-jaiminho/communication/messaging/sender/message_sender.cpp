@@ -36,7 +36,7 @@ MessageSender::MessageSender(std::unique_ptr<::robocin::IZmqPublisherSocket> com
     simm_socket_{std::move(simm_socket)} {}
 
 void MessageSender::send(const rc::Communication& robot_command) {
-  // ilog("sending...robot_command {}", robot_command.DebugString());
+  ilog("sending...robot_command {}", robot_command.DebugString());
 
   communication_socket_->send({
       service_discovery::kCommunicationCommandTopic,

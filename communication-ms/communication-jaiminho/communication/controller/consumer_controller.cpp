@@ -65,7 +65,7 @@ void ConsumerController::exec(std::span<const Payload> payloads) {
              = communication_processor_->processReal(payloads);
              robot_command != std::nullopt) {
       ilog("command: {} sent.", robot_command->DebugString());
-      // message_sender_->send(*robot_command);
+      message_sender_->send(*robot_command);
   }}
 }
 
