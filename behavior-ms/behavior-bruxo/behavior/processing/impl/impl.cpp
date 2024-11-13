@@ -6,6 +6,7 @@
 #include "behavior/processing/state_machine/goalkeeper_guard/goalkeeper_guard_state_machine.h"
 #include "behavior/processing/state_machine/istate_machine.h"
 #include "forward_follow_and_kick_ball/forward_follow_and_kick_ball_state_machine.h"
+#include "goalkeeper_take_ball_away/goalkeeper_take_ball_away_state_machine.h"
 
 #include <robocin/geometry/point2d.h>
 
@@ -141,11 +142,14 @@ void emplaceGoalkeeperOutput(RobotMessage& goalkeeper,
                              BehaviorMessage& behavior_message,
                              GoalkeeperGuardStateMachine& guard_state_machine) {};
 
+bool shouldTakeBallAway(World& world);
+
 // Game running
 std::optional<rc::Behavior>
 onInGame(World& world,
          GoalkeeperGuardStateMachine& guard_state_machine,
-         ForwardFollowAndKickBallStateMachine& follow_and_kick_ball_state_machine) {
+         ForwardFollowAndKickBallStateMachine& follow_and_kick_ball_state_machine,
+         GoalkeeperTakeBallAwayStateMachine& take_ball_away_state_machine) {
   BehaviorMessage behavior_message;
   robocin::ilog("Allies detected: {}", world.allies.size());
 
@@ -159,6 +163,7 @@ onInGame(World& world,
   // Take goalkeeper
   auto goalkeeper = takeGoalkeeper(world.allies);
   if (goalkeeper.has_value()) {
+
     guard_state_machine.run(world, goalkeeper->robot_id.value());
     behavior_message.output.emplace_back(std::move(guard_state_machine.output));
   }

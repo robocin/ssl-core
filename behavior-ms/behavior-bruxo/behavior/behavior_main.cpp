@@ -1,6 +1,8 @@
 #include "behavior/controller/consumer_controller.h"
 #include "behavior/controller/producer_controller.h"
 #include "forward_follow_and_kick_ball/forward_follow_and_kick_ball_state_machine.h"
+#include "goalkeeper_take_ball_away/common/goalkeeper_take_ball_away_common.h"
+#include "goalkeeper_take_ball_away/goalkeeper_take_ball_away_state_machine.h"
 
 #include <memory>
 #include <print>
@@ -85,7 +87,8 @@ std::unique_ptr<IBehaviorProcessor> makeBehaviorProcessor() {
   return std::make_unique<BehaviorProcessor>(
       std::make_unique<parameters::HandlerEngine>(),
       std::make_unique<behavior::GoalkeeperGuardStateMachine>(),
-      std::make_unique<behavior::ForwardFollowAndKickBallStateMachine>());
+      std::make_unique<behavior::ForwardFollowAndKickBallStateMachine>(),
+      std::make_unique<behavior::GoalkeeperTakeBallAwayStateMachine>());
 }
 
 std::unique_ptr<IMessageSender> makeMessageSender() {
