@@ -1,5 +1,8 @@
 #include "behavior/processing/state_machine/forward_follow_and_kick_ball/states/go_to_ball.h"
 
+#include "ball_analyzer.h"
+#include "behavior/processing/state_machine/forward_follow_and_kick_ball/common/forward_follow_and_kick_ball_common.h"
+
 namespace behavior {
 
 GoToBall::GoToBall() = default;
@@ -12,13 +15,29 @@ OutputMessage GoToBall::exec(const World& world, RobotIdMessage& ally_id) {
   return makeGoToBallOutput(world);
 }
 
-void GoToBall::checkAndHandleTransitions(const World& world) { return; }
+void GoToBall::checkAndHandleTransitions(const World& world) {
+  if (shouldTransitionToKickBall(world)) {
+    state_machine_->transitionTo(new KickBall);
+    return;
+  }
+  if (shouldTransitionToAlign(world)) {
+    state_machine_->transitionTo(new Align);
+    return;
+  }
+}
 
-bool GoToBall::shouldStayInGoToBall(const World& world) const { return true; }
+bool GoToBall::shouldTransitionToAlign(const World& world) const {
+  return (ForwardFollowAndKickBallCommon::isAllyBehindBall(world, ally_id_.number.value())
+          && ForwardFollowAndKickBallCommon::isBallInRangeToKick(world, ally_id_.number.value())
+          && BallAnalyzer::isBallMoving(world.ball));
+}
 
-bool GoToBall::shouldTransitionToAlign(const World& world) const { return true; }
-
-bool GoToBall::shouldTransitionToKickBall(const World& world) const { return true; }
+bool GoToBall::shouldTransitionToKickBall(const World& world) const {
+  return (
+      ForwardFollowAndKickBallCommon::isAllyLookingToTargetAndBall(world, ally_id_.number.value())
+      && ForwardFollowAndKickBallCommon::isBallInRangeToKick(world, ally_id_.number.value())
+      && !ForwardFollowAndKickBallCommon::isBallInsideEnemyArea(world));
+}
 
 float GoToBall::getMotionAngle(const World& world) const { return true; }
 

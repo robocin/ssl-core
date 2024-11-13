@@ -33,10 +33,10 @@ bool KickBall::shouldTransitionToGoToBall(const World& world) const {
   robocin::Point2Df target_position = GoalkeeperTakeBallAwayCommon::getKickTargetPosition(world);
 
   bool is_ally_looking_to_target_and_ball
-      = AllyAnalyzer::isAllyLookingToTargetAndBall(world,
-                                                   ally_id_.number.value(),
-                                                   target_position,
-                                                   approach_angle_threshold_);
+      = AllyAnalyzer::isLookingToTargetAndBall(world,
+                                               ally_id_.number.value(),
+                                               target_position,
+                                               approach_angle_threshold_);
 
   bool is_ball_in_range_to_kick = AllyAnalyzer::isBallInRangeToKick(world,
                                                                     ally_id_.number.value(),

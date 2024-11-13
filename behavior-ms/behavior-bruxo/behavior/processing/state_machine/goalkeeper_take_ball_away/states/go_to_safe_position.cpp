@@ -37,10 +37,10 @@ bool GoToSafePosition::shouldTransitionToKickBall(const World& world) const {
       = GoalkeeperTakeBallAwayCommon::getKickTargetPosition(world);
 
   bool is_ally_looking_to_target_and_ball
-      = AllyAnalyzer::isAllyLookingToTargetAndBall(world,
-                                                   ally_id_.number.value(),
-                                                   kick_target_position,
-                                                   approach_angle_threshold_);
+      = AllyAnalyzer::isLookingToTargetAndBall(world,
+                                               ally_id_.number.value(),
+                                               kick_target_position,
+                                               approach_angle_threshold_);
 
   bool is_ball_in_range_to_kick = AllyAnalyzer::isBallInRangeToKick(world,
                                                                     ally_id_.number.value(),

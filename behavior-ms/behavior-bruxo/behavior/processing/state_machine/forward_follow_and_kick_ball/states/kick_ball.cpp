@@ -1,5 +1,7 @@
 #include "behavior/processing/state_machine/forward_follow_and_kick_ball/states/kick_ball.h"
 
+#include "behavior/processing/state_machine/forward_follow_and_kick_ball/common/forward_follow_and_kick_ball_common.h"
+
 namespace behavior {
 
 KickBall::KickBall() = default;
@@ -12,13 +14,31 @@ OutputMessage KickBall::exec(const World& world, RobotIdMessage& ally_id) {
   return makeKickBallOutput(world);
 }
 
-void KickBall::checkAndHandleTransitions(const World& world) { return; }
+void KickBall::checkAndHandleTransitions(const World& world) {
+  if (shouldTransitionToGoToBall(world)) {
+    state_machine_->transitionTo(new GoToBall);
+    return;
+  }
+  if (shouldTransitionToAlign(world)) {
+    state_machine_->transitionTo(new Align);
+    return;
+  }
+}
 
-bool KickBall::shouldStayInKickBall(const World& world) const { return true; }
+bool KickBall::shouldTransitionToAlign(const World& world) const {
+  return (ForwardFollowAndKickBallCommon::isAllyNotLookingToTargetAndBall(world,
+                                                                          ally_id_.number.value())
+          && !ForwardFollowAndKickBallCommon::allyLostBall(world, ally_id_.number.value())
+          && !ForwardFollowAndKickBallCommon::isBallOnDribblerWithoutCheckingForAlignment(
+              world,
+              ally_id_.number.value()));
+}
 
-bool KickBall::shouldTransitionToAlign(const World& world) const { return true; }
-
-bool KickBall::shouldTransitionToGoToBall(const World& world) const { return true; }
+bool KickBall::shouldTransitionToGoToBall(const World& world) const {
+  return (!ForwardFollowAndKickBallCommon::isAllyBehindBall(world, ally_id_.number.value())
+          || ForwardFollowAndKickBallCommon::allyLostBall(world, ally_id_.number.value())
+          || ForwardFollowAndKickBallCommon::isBallInsideEnemyArea(world));
+}
 
 float KickBall::getMotionAngle(const World& world) const { return true; }
 

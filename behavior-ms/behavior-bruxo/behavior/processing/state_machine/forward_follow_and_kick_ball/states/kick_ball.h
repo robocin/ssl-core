@@ -28,7 +28,6 @@ class KickBall : public IState {
 
   // Transition logic
   void checkAndHandleTransitions(const World& world);
-  [[nodiscard]] bool shouldStayInKickBall(const World& world) const;
   [[nodiscard]] bool shouldTransitionToAlign(const World& world) const;
   [[nodiscard]] bool shouldTransitionToGoToBall(const World& world) const;
 

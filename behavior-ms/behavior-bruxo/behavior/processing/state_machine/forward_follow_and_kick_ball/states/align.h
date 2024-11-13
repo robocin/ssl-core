@@ -28,7 +28,6 @@ class Align : public IState {
 
   // Transition logic
   void checkAndHandleTransitions(const World& world);
-  [[nodiscard]] bool shouldStayInAlign(const World& world) const;
   [[nodiscard]] bool shouldTransitionToGoToBall(const World& world) const;
   [[nodiscard]] bool shouldTransitionToKickBall(const World& world) const;
 
