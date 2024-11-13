@@ -157,4 +157,107 @@ float AllyAnalyzer::distanceThresholdForCloseToKick(const World& world, const in
 bool AllyAnalyzer::lostBall(const World& world, const int ally_id) {
   return !isCloseEnoughToBallToKick(world, ally_id);
 }
+
+float AllyAnalyzer::getBallCountourMargin(const World& world,
+                                          int ally_id,
+                                          robocin::Point2Df kick_target_position,
+                                          float approach_angle_threshold,
+                                          float max_angle_to_rotate) {
+  std::optional<RobotMessage> ally = getAlly(world, ally_id);
+  if (!ally.has_value()) {
+    return false;
+  }
+  robocin::Point2Df ball_position
+      = robocin::Point2Df{world.ball.position->x, world.ball.position->y};
+  robocin::Point2Df ally_position = ally->position.value();
+
+  robocin::Point2Df ally_front_position
+      = ally_position + robocin::Point2Df::fromPolar(pRobotRadius(), ally->angle.value());
+
+  robocin::Point2Df kick_target_to_ball_position_vector = ball_position - kick_target_position;
+  robocin::Point2Df ball_position_to_ally_front_vector = ally_front_position - ball_position;
+
+  bool is_robot_aligned_with_point_target_line
+      = std::abs(kick_target_to_ball_position_vector.angleTo(ball_position_to_ally_front_vector))
+        < approach_angle_threshold;
+
+  if (is_robot_aligned_with_point_target_line) {
+    return std::min(pRobotRadius() * 1.5f, ball_position.distanceTo(ally_front_position));
+  }
+
+  float angle_to_rotate
+      = std::abs(ball_position_to_ally_front_vector.angleTo(kick_target_to_ball_position_vector));
+  angle_to_rotate
+      = std::clamp(angle_to_rotate, 0.0f, std::numbers::pi_v<float> - max_angle_to_rotate);
+
+  float suplement_of_angle = std::numbers::pi_v<float> - angle_to_rotate;
+  float big_axis_default = 420.0f;
+  float small_axis = 210.0f;
+
+  const int degree = 2;
+
+  auto big_axis = [&](float angle) {
+    if (std::abs(angle) > std::numbers::pi_v<float> / 2) {
+      return big_axis_default * std::sin(angle);
+    }
+    return big_axis_default;
+  };
+
+  auto radius = [suplement_of_angle, big_axis, small_axis, degree]() {
+    float first_term
+        = std::pow(std::abs(std::cos(suplement_of_angle) / big_axis(suplement_of_angle)), degree);
+    float second_term = std::pow(std::abs(std::sin(suplement_of_angle) / small_axis), degree);
+    float result = std::pow(first_term + second_term, -1.0f / degree);
+    return result;
+  }();
+
+  return radius;
+}
+
+robocin::Point2Df AllyAnalyzer::getPointContourVector(const World& world,
+                                                      int ally_id,
+                                                      robocin::Point2Df kick_target_position,
+                                                      float max_angle_to_rotate) {
+  std::optional<RobotMessage> ally = getAlly(world, ally_id);
+  if (!ally.has_value()) {
+    return {0.0f, 0.0f};
+  }
+  robocin::Point2Df ball_position
+      = robocin::Point2Df{world.ball.position->x, world.ball.position->y};
+  robocin::Point2Df ally_position = ally->position.value();
+
+  robocin::Point2Df ally_front_position
+      = ally_position + robocin::Point2Df::fromPolar(pRobotRadius(), ally->angle.value());
+
+  robocin::Point2Df kick_target_to_ball_position_vector = ball_position - kick_target_position;
+  robocin::Point2Df ball_position_to_ally_front_vector = ally_front_position - ball_position;
+
+  float angle_to_rotate
+      = std::clamp(ball_position_to_ally_front_vector.angleTo(kick_target_to_ball_position_vector),
+                   -max_angle_to_rotate,
+                   max_angle_to_rotate);
+
+  ball_position_to_ally_front_vector.rotateCounterClockWise(angle_to_rotate);
+
+  return ball_position_to_ally_front_vector;
+}
+
+robocin::Point2Df
+AllyAnalyzer::targetBehindBallLookingToTarget(const World& world,
+                                              int ally_id,
+                                              robocin::Point2Df kick_target_position,
+                                              float angle_threshold) {
+  robocin::Point2Df ball_position
+      = robocin::Point2Df{world.ball.position->x, world.ball.position->y};
+  const float angle_to_clamp_vector = std::numbers::pi_v<float> / 3;
+  float contour_margin = getBallCountourMargin(world,
+                                               ally_id,
+                                               kick_target_position,
+                                               angle_threshold,
+                                               angle_to_clamp_vector);
+  robocin::Point2Df contour_vector
+      = getPointContourVector(world, ally_id, kick_target_position, angle_to_clamp_vector);
+
+  return ball_position + contour_vector.resized(contour_margin);
+}
 } // namespace behavior

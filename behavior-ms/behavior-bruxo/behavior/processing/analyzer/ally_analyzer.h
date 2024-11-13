@@ -44,6 +44,22 @@ class AllyAnalyzer {
 
   static bool lostBall(const World& world, int ally_id);
 
+  static float getBallCountourMargin(const World& world,
+                                     int ally_id,
+                                     robocin::Point2Df kick_target_position,
+                                     float approach_angle_threshold,
+                                     float max_angle_to_rotate);
+
+  static robocin::Point2Df getPointContourVector(const World& world,
+                                                 int ally_id,
+                                                 robocin::Point2Df kick_target_position,
+                                                 float max_angle_to_rotate);
+
+  static robocin::Point2Df targetBehindBallLookingToTarget(const World& world,
+                                                           int ally_id,
+                                                           robocin::Point2Df kick_target_position,
+                                                           float angle_threshold);
+
  private:
   static std::optional<RobotMessage> getAlly(const World& world, int id);
 };

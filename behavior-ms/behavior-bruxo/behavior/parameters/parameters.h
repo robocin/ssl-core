@@ -32,6 +32,8 @@ constinit const auto pForwardDistToEnterKickBallWhenMovingAway
 constinit const auto pForwardMaxDistToMoveAroundBallWhenIsStoppedAndLookingToBallAndTarget
     = ::robocin::parameters::View<10>::asInt32(330);
 
+constinit const auto pApproachAngleThreshold = ::robocin::parameters::View<10>::asFloat(0.13f);
+
 // NOLINTEND(*comment*)
 } // namespace behavior
 

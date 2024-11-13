@@ -34,7 +34,7 @@ class KickBall : public IState {
   [[nodiscard]] float getMotionAngle(const World& world) const;
 
   // State parameters
-  float approach_angle_threshold_ = GoalkeeperTakeBallAwayCommon::APPROACH_ANGLE_THRESHOLD * 2.0f;
+  float approach_angle_threshold_ = pApproachAngleThreshold() * 2.0f;
   float distance_to_consider_kick_ = GoalkeeperTakeBallAwayCommon::DISTANCE_TO_CONSIDER_KICK * 1.2f;
 
   RobotIdMessage ally_id_;

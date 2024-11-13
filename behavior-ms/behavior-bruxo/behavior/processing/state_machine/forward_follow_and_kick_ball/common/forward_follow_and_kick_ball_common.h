@@ -29,7 +29,6 @@ class ForwardFollowAndKickBallCommon {
   static bool isAllyLookingToTargetAndBall(const World& world, const int ally_id);
 
   // Constants
-  static constexpr float APPROACH_ANGLE_THRESHOLD = 0.26f;
   static constexpr float ANGLE_FAR_TO_KICK_LINE = 1.3f;
   static constexpr float ANGLE_CLOSE_TO_KICK_LINE_UPPER = 0.42f;
   static constexpr float ANGLE_CLOSE_TO_KICK_LINE_LOWER = 0.32f;

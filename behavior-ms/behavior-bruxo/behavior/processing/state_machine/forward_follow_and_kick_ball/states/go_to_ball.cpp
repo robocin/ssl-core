@@ -1,5 +1,6 @@
 #include "behavior/processing/state_machine/forward_follow_and_kick_ball/states/go_to_ball.h"
 
+#include "ally_analyzer.h"
 #include "ball_analyzer.h"
 #include "behavior/parameters/parameters.h"
 #include "behavior/processing/entities/world.h"
@@ -44,11 +45,11 @@ bool GoToBall::shouldTransitionToKickBall(const World& world) const {
 }
 
 robocin::Point2Df GoToBall::getMotionTarget(const World& world) const {
-  robocin::Point2Df ball_position
-      = robocin::Point2Df{world.ball.position->x, world.ball.position->y};
-  robocin::Point2Df kick_target = ForwardFollowAndKickBallCommon::getKickTarget();
-  robocin::Point2Df ball_to_kick_target_vector = kick_target - ball_position;
-  return ball_position - ball_to_kick_target_vector.resized(pRobotRadius() * 2);
+  return AllyAnalyzer::targetBehindBallLookingToTarget(
+      world,
+      ally_id_.number.value(),
+      ForwardFollowAndKickBallCommon::getKickTarget(),
+      pApproachAngleThreshold());
 }
 
 float GoToBall::getMotionAngle(const World& world) const {
