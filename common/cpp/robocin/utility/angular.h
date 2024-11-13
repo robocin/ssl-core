@@ -46,11 +46,32 @@ constexpr auto normalizeAngle(T angle) {
   return result;
 }
 
+template <class T>
+[[maybe_unused]] constexpr T modularize(T x, const T& mod) {
+  if (!(-mod <= x && x < mod)) {
+    if constexpr (std::is_floating_point_v<T>) {
+      x = std::fmod(x, mod);
+    } else {
+      x %= mod;
+    }
+  }
+  if (x < 0) {
+    x += mod;
+  }
+  return x;
+}
+
 template <arithmetic T, arithmetic U>
 constexpr auto smallestAngleDiff(T lhs, U rhs) {
-  using F = std::conditional_t<std::floating_point<std::common_type_t<T, U>>, T, double>;
-
-  return normalizeAngle<F>(rhs - lhs);
+  auto kPi = std::numbers::pi_v<float>;
+  T angle = modularize<T>(rhs - lhs, static_cast<T>(2) * kPi);
+  if (angle >= kPi) {
+    return angle - static_cast<T>(2) * kPi;
+  }
+  if (angle < -kPi) {
+    return angle + static_cast<T>(2) * kPi;
+  }
+  return angle;
 }
 
 template <arithmetic T, arithmetic U>
