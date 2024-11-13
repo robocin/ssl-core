@@ -1,6 +1,8 @@
 #include "behavior/processing/analyzer/ball_analyzer.h"
 
 #include "behavior/parameters/parameters.h"
+#include "behavior/processing/analyzer/field_analyzer.h"
+#include "perception/field/field_message.h"
 
 #include <robocin/geometry/mathematics.h>
 #include <robocin/geometry/point2d.h>
@@ -143,6 +145,11 @@ bool BallAnalyzer::isMovingToDefensiveGoal(const FieldMessage& field, const Ball
                                        ball_position + ball_velocity.resized(field.length.value()));
 
   return is_ball_moving_to_defensive_goal;
+}
+
+bool BallAnalyzer::isBallInsideEnemyArea(const FieldMessage& field, const BallMessage& ball) {
+  robocin::Point2Df ball_position = robocin::Point2Df{ball.position->x, ball.position->y};
+  return FieldAnalyzer::enemyPenaltyAreaContains(ball_position, field);
 }
 
 } // namespace behavior

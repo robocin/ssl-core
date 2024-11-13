@@ -29,6 +29,7 @@ class BallAnalyzer {
   static bool isBallMovingToEnemySide(const FieldMessage& field, const BallMessage& ball);
   static robocin::Point2Df getProjectedBallPosition(const BallMessage& ball, double target_speed);
   static bool isMovingToDefensiveGoal(const FieldMessage& field, const BallMessage& ball);
+  static bool isBallInsideEnemyArea(const FieldMessage& field, const BallMessage& ball);
 
  private:
   static float torricelli(float v, float v0, float a);
