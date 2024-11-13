@@ -7,6 +7,7 @@
 #include "behavior/processing/messages/perception/robot/robot_message.h"
 #include "behavior/processing/state_machine/goalkeeper_guard/goalkeeper_guard_state_machine.h"
 #include "behavior/processing/state_machine/istate_machine.h"
+#include "forward_follow_and_kick_ball/forward_follow_and_kick_ball_state_machine.h"
 
 #include <optional>
 
@@ -14,8 +15,11 @@ namespace behavior::impl {
 
 std::optional<RobotMessage> findMyRobot(int number, std::vector<RobotMessage>& robots);
 
+// Game states
 std::optional<protocols::behavior::unification::Behavior>
-onInGame(World& world, GoalkeeperGuardStateMachine& guard_state_machine);
+onInGame(World& world,
+         GoalkeeperGuardStateMachine& guard_state_machine,
+         ForwardFollowAndKickBallStateMachine& forward_follow_and_kick_ball_state_machine);
 std::optional<protocols::behavior::unification::Behavior> onHalt();
 
 std::optional<RobotMessage> takeForward(std::vector<RobotMessage>& robots);

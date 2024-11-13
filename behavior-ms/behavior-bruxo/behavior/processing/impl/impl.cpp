@@ -5,6 +5,7 @@
 #include "behavior/processing/messages/common/robot_id/robot_id.h"
 #include "behavior/processing/state_machine/goalkeeper_guard/goalkeeper_guard_state_machine.h"
 #include "behavior/processing/state_machine/istate_machine.h"
+#include "forward_follow_and_kick_ball/forward_follow_and_kick_ball_state_machine.h"
 
 #include <robocin/geometry/point2d.h>
 
@@ -141,22 +142,26 @@ void emplaceGoalkeeperOutput(RobotMessage& goalkeeper,
                              GoalkeeperGuardStateMachine& guard_state_machine) {};
 
 // Game running
-std::optional<rc::Behavior> onInGame(World& world,
-                                     GoalkeeperGuardStateMachine& guard_state_machine) {
+std::optional<rc::Behavior>
+onInGame(World& world,
+         GoalkeeperGuardStateMachine& guard_state_machine,
+         ForwardFollowAndKickBallStateMachine& follow_and_kick_ball_state_machine) {
   BehaviorMessage behavior_message;
   robocin::ilog("Allies detected: {}", world.allies.size());
 
   // Take forward
   auto forward = takeForward(world.allies);
   if (forward.has_value()) {
-    emplaceForwardOutput(forward.value(), world, behavior_message);
+    RobotIdMessage fw_id = RobotIdMessage{pAllyColor, pForwardNumber()};
+    follow_and_kick_ball_state_machine.run(world, fw_id);
+    behavior_message.output.emplace_back(std::move(follow_and_kick_ball_state_machine.output));
   }
 
   // Take goalkeeper
   auto goalkeeper = takeGoalkeeper(world.allies);
   if (goalkeeper.has_value()) {
-    RobotIdMessage robot_id_message = RobotIdMessage{pAllyColor, pGoalkeeperNumber()};
-    guard_state_machine.run(world, robot_id_message);
+    RobotIdMessage gk_id = RobotIdMessage{pAllyColor, pGoalkeeperNumber()};
+    guard_state_machine.run(world, gk_id);
     behavior_message.output.emplace_back(std::move(guard_state_machine.output));
   }
 
