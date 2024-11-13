@@ -19,10 +19,12 @@ using ::robocin::ZmqDatagram;
 
 MessageReceiver::MessageReceiver(std::unique_ptr<IZmqSubscriberSocket> navigation_socket,
                                  std::unique_ptr<IZmqSubscriberSocket> gateway_socket,
+                                 std::unique_ptr<IZmqSubscriberSocket> perception_socket,
                                  std::unique_ptr<IZmqPoller> zmq_poller,
                                  std::unique_ptr<IPayloadMapper> payload_mapper) :
     navigation_socket_{std::move(navigation_socket)},
     gateway_socket_{std::move(gateway_socket)},
+    perception_socket_{std::move(perception_socket)},
     zmq_poller_{std::move(zmq_poller)},
     payload_mapper_{std::move(payload_mapper)} {}
 
@@ -32,6 +34,14 @@ Payload MessageReceiver::receive() {
 
   while (datagrams.empty()) {
     zmq_poller_->poll(pCommunicationPollerTimeoutMs());
+
+    while (true) {
+      ZmqDatagram perception_zmq_datagram = zmq_poller_->receive(*perception_socket_);
+      if (perception_zmq_datagram.empty()) {
+        break;
+      }
+      datagrams.emplace_back(std::move(perception_zmq_datagram));
+    }
 
     while (true) {
       ZmqDatagram navigation_zmq_datagram = zmq_poller_->receive(*navigation_socket_);
