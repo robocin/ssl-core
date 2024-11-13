@@ -10,6 +10,7 @@
 #include <protocols/third_party/simulation/robot_control.pb.h>
 #include <ranges>
 #include <robocin/output/log.h>
+#include <vector>
 
 namespace communication {
 
@@ -57,7 +58,7 @@ CommunicationProcessor::CommunicationProcessor(
     parameters_handler_engine_{std::move(parameters_handler_engine)} {}
 
 std::optional<tp::RobotControl>
-CommunicationProcessor::processSimulator(std::span<const Payload> payloads){
+CommunicationProcessor::processSimulator(std::span<const Payload> payloads) {
 
   if (std::vector<rc::Detection> detection_messages = detectionFromPayloads(payloads);
       !detection_messages.empty()) {
@@ -86,20 +87,21 @@ CommunicationProcessor::processSimulator(std::span<const Payload> payloads){
 
   tp::RobotControl robot_control;
 
-  for (const auto& robot : last_detection_->robots()) {
-    tp::RobotCommand* robot_command = robot_control.add_robot_commands();
-    robot_command->set_id(robot.robot_id().number());
+  for (auto navigation : last_navigation.output()) {
+    tp::RobotCommand* ith_robot_command = robot_control.add_robot_commands();
 
-    tp::MoveLocalVelocity* move_local_velocity
-        = robot_command->mutable_move_command()->mutable_local_velocity();
-    move_local_velocity->set_forward(0.0);
-    move_local_velocity->set_left(0.0);
-    move_local_velocity->set_angular(3.0);
+    ith_robot_command->set_id(navigation.robot_id().number());
+
+    tp::RobotMoveCommand* ith_move_command = ith_robot_command->mutable_move_command();
+
+    tp::MoveLocalVelocity* ith_move_local_velocity = ith_move_command->mutable_local_velocity();
+    ith_move_local_velocity->set_forward(navigation.forward_velocity());
+    ith_move_local_velocity->set_left(navigation.left_velocity());
+    ith_move_local_velocity->set_angular(navigation.angular_velocity());
   }
 
   robocin::ilog("RobotControl: {}", robot_control.DebugString());
   return robot_control;
-
 }
 
 std::optional<rc::Communication>
@@ -139,7 +141,7 @@ CommunicationProcessor::processReal(std::span<const Payload> payloads) {
         navigation.angular_velocity(),
         navigation.peripheral_actuation().kick_command().is_front(),
         navigation.peripheral_actuation().kick_command().is_chip(),
-        navigation.peripheral_actuation().kick_command().charge_capacitor(), /* always false */
+        navigation.peripheral_actuation().kick_command().charge_capacitor(),
         navigation.peripheral_actuation().kick_command().kick_strength(),
         false /* dribbler always off */,
         0.0 /* dribbler speed unused */
