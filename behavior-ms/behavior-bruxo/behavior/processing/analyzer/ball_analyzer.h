@@ -12,20 +12,26 @@ class BallAnalyzer {
  public:
   BallAnalyzer();
 
-  static bool isBallStopped(BallMessage& ball);
-  static bool isBallMovingFast(BallMessage& ball);
-  static bool isBallMoving(BallMessage& ball);
-  static bool isBallMovingSlowly(BallMessage& ball);
-  static bool isBallMovingWithVelocity(double min_velocity, BallMessage& ball);
+  static bool isBallStopped(const BallMessage& ball);
+  static bool isBallMovingFast(const BallMessage& ball);
+  static bool isBallMoving(const BallMessage& ball);
+  static bool isBallMovingSlowly(const BallMessage& ball);
+  static bool isBallMovingWithVelocity(double min_velocity, const BallMessage& ball);
   static bool isBallMovingTowards(const robocin::Point2Df& target,
-                                  BallMessage& ball,
+                                  const BallMessage& ball,
                                   double max_angle_difference = 1.047);
-  static bool isBallMovingAway(const robocin::Point2Df& target, BallMessage& ball);
-  static bool
-  isBallMovingAwayWithVelocity(const robocin::Point2Df& target, double velocity, BallMessage& ball);
-  static bool isBallMovingToOffensiveGoal(const FieldMessage& field, BallMessage& ball);
-  static bool isBallMovingToDefensiveGoal(const FieldMessage& field, BallMessage& ball);
-  static bool isBallMovingToEnemySide(const FieldMessage& field, BallMessage& ball);
+  static bool isBallMovingAway(const robocin::Point2Df& target, const BallMessage& ball);
+  static bool isBallMovingAwayWithVelocity(const robocin::Point2Df& target,
+                                           double velocity,
+                                           const BallMessage& ball);
+  static bool isBallMovingToOffensiveGoal(const FieldMessage& field, const BallMessage& ball);
+  static bool isBallMovingToDefensiveGoal(const FieldMessage& field, const BallMessage& ball);
+  static bool isBallMovingToEnemySide(const FieldMessage& field, const BallMessage& ball);
+  static robocin::Point2Df getProjectedBallPosition(const BallMessage& ball, double target_speed);
+  static bool isMovingToDefensiveGoal(const FieldMessage& field, const BallMessage& ball);
+
+ private:
+  static float torricelli(float v, float v0, float a);
 };
 
 } // namespace behavior

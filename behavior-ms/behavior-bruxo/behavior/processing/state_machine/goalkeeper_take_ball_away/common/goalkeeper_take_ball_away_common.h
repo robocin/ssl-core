@@ -12,7 +12,7 @@
 
 namespace behavior {
 
-class GoalkeeperCommon {
+class GoalkeeperTakeBallAwayCommon {
  public:
   // Common utility functions used across states
   static bool riskOfCollideWithPosts(const World& world, int ally_id);

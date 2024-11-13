@@ -10,7 +10,7 @@
 #include "behavior/processing/messages/perception/ball/ball_message.h"
 #include "behavior/processing/messages/perception/robot/robot_message.h"
 #include "behavior/processing/messages/referee/game_status_message.h"
-#include "state_machine/goalkeeper_take_ball_away/goalkeeper_take_ball_away_state_machine.h"
+#include "state_machine/goalkeeper_guard/goalkeeper_guard_state_machine.h"
 
 #include <protocols/behavior/behavior_unification.pb.h>
 #include <protocols/decision/decision.pb.h>
@@ -39,7 +39,7 @@ class BehaviorProcessor : public IBehaviorProcessor {
  public:
   explicit BehaviorProcessor(
       std::unique_ptr<::robocin::parameters::IHandlerEngine> parameters_handler_engine,
-      std::unique_ptr<GoalkeeperTakeBallAwayStateMachine> goalkeeper_take_ball_away_state_machine);
+      std::unique_ptr<::behavior::GoalkeeperGuardStateMachine> goalkeeper_guard_state_machine);
 
   std::optional<::protocols::behavior::unification::Behavior>
   process(std::span<const Payload> payloads) override;
@@ -49,8 +49,7 @@ class BehaviorProcessor : public IBehaviorProcessor {
  private:
   World world_;
   std::unique_ptr<::robocin::parameters::IHandlerEngine> parameters_handler_engine_;
-  std::unique_ptr<behavior::GoalkeeperTakeBallAwayStateMachine>
-      goalkeeper_take_ball_away_state_machine_;
+  std::unique_ptr<behavior::GoalkeeperGuardStateMachine> goalkeeper_guard_state_machine_;
   std::optional<::protocols::decision::Decision> last_decision_;
   std::optional<::protocols::referee::GameStatus> last_game_status_;
 };

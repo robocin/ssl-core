@@ -1,11 +1,14 @@
 #include "behavior/processing/state_machine/goalkeeper_take_ball_away/states/go_to_safe_position.h"
 
+#include "common/robot_id/robot_id.h"
+
 namespace behavior {
 
 GoToSafePosition::GoToSafePosition() = default;
 
-OutputMessage GoToSafePosition::exec(const World& world) {
+OutputMessage GoToSafePosition::exec(const World& world, RobotIdMessage& ally_id) {
   robocin::ilog("Exec GoToSafePosition state");
+  ally_id_ = std::move(ally_id);
 
   checkAndHandleTransitions(world);
   return makeGoToSafePositionOutput(world);
@@ -25,34 +28,34 @@ void GoToSafePosition::checkAndHandleTransitions(const World& world) {
 }
 
 bool GoToSafePosition::shouldStayInSafePosition(const World& world) const {
-  const int ally_id = 0;
-  return GoalkeeperCommon::riskOfCollideWithPosts(world, ally_id)
-         || GoalkeeperCommon::robotBallTooClosePosts(world, ally_id);
+  return GoalkeeperTakeBallAwayCommon::riskOfCollideWithPosts(world, ally_id_.number.value())
+         || GoalkeeperTakeBallAwayCommon::robotBallTooClosePosts(world, ally_id_.number.value());
 }
 
 bool GoToSafePosition::shouldTransitionToKickBall(const World& world) const {
-  const int ally_id = 0;
-  robocin::Point2Df kick_target_position = GoalkeeperCommon::getKickTargetPosition(world);
+  robocin::Point2Df kick_target_position
+      = GoalkeeperTakeBallAwayCommon::getKickTargetPosition(world);
 
   bool is_ally_looking_to_target_and_ball
       = AllyAnalyzer::isAllyLookingToTargetAndBall(world,
-                                                   ally_id,
+                                                   ally_id_.number.value(),
                                                    kick_target_position,
                                                    approach_angle_threshold_);
 
-  bool is_ball_in_range_to_kick
-      = AllyAnalyzer::isBallInRangeToKick(world, ally_id, distance_to_consider_kick_);
+  bool is_ball_in_range_to_kick = AllyAnalyzer::isBallInRangeToKick(world,
+                                                                    ally_id_.number.value(),
+                                                                    distance_to_consider_kick_);
 
   return is_ally_looking_to_target_and_ball && is_ball_in_range_to_kick;
 }
 
 robocin::Point2Df GoToSafePosition::getMotionTarget(const World& world) const {
-  return GoalkeeperCommon::getSafePositionToAvoidPosts(world);
+  return GoalkeeperTakeBallAwayCommon::getSafePositionToAvoidPosts(world);
 }
 
 float GoToSafePosition::getMotionAngle(const World& world) const {
-  const int ally_id = 0;
-  std::optional<RobotMessage> ally = GoalkeeperCommon::getAlly(world, ally_id);
+  std::optional<RobotMessage> ally
+      = GoalkeeperTakeBallAwayCommon::getAlly(world, ally_id_.number.value());
   if (!ally.has_value()) {
     return 0.0f;
   }
@@ -72,7 +75,7 @@ OutputMessage GoToSafePosition::makeGoToSafePositionOutput(const World& world) {
 
 RobotIdMessage GoToSafePosition::makeGoToSafePositionRobotId(const World& world) {
   // TODO(mlv): Create the robot id message
-  return RobotIdMessage{};
+  return std::move(ally_id_);
 }
 
 MotionMessage GoToSafePosition::makeGoToSafePositionMotion(const World& world) {

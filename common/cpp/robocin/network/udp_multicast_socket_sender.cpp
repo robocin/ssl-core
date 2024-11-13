@@ -10,6 +10,8 @@
 #include <netinet/in.h>
 #include <stdexcept>
 #include <string>
+#include <cstring>
+#include <iostream>
 #include <sys/select.h>
 #include <sys/socket.h>
 #include <sys/time.h>
@@ -48,17 +50,35 @@ void UdpMulticastSocketSender::connect(std::string_view ip_address, int port) co
 }
 
 void UdpMulticastSocketSender::send(const send_type& message) const {
-  if (::send(fd_, message.data(), message.size(), 0) == -1)
-    throw std::runtime_error("failed to send message.");
-  else if (static_cast<size_t>(::send(fd_, message.data(), message.size(), 0)) != message.size())
-    throw std::runtime_error("failed to send all message.");
+  // Simulator uses this one
+  uint32_t message_size = message.size();
+  ssize_t bytes_sent = ::send(fd_, message.data(), message_size, 0);
+
+  if (bytes_sent == message_size) {
+    // Sent successfully
+    return;
+  }
+
+  // Error occured
+  int err = errno;
+  const char* error_message = strerror(err);
+  std::cout << "[" << bytes_sent << "]: " << error_message << "\n";
 }
 
 void UdpMulticastSocketSender::send(std::string_view message) const {
-  if (::send(fd_, message.data(), message.size(), 0) == -1)
-    throw std::runtime_error("failed to send message.");
-  else if (static_cast<size_t>(::send(fd_, message.data(), message.size(), 0)) != message.size())
-    throw std::runtime_error("failed to send all message.");
+  // Simulator uses this one
+  uint32_t message_size = message.size();
+  ssize_t bytes_sent = ::send(fd_, message.data(), message_size, 0);
+
+  if (bytes_sent == message_size) {
+    // Sent successfully
+    return;
+  }
+
+  // Error occured
+  int err = errno;
+  const char* error_message = strerror(err);
+  std::cout << "[" << bytes_sent << "]: " << error_message << "\n";
 }
 
 int UdpMulticastSocketSender::fd() const { return fd_; }

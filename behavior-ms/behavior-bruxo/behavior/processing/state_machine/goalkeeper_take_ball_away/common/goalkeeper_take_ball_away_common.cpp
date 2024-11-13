@@ -2,7 +2,7 @@
 
 namespace behavior {
 
-std::optional<RobotMessage> GoalkeeperCommon::getAlly(const World& world, int id) {
+std::optional<RobotMessage> GoalkeeperTakeBallAwayCommon::getAlly(const World& world, int id) {
   for (const auto& ally : world.allies) {
     if (ally.robot_id.value().number == id) {
       return RobotMessage{
@@ -21,7 +21,7 @@ std::optional<RobotMessage> GoalkeeperCommon::getAlly(const World& world, int id
   return std::nullopt;
 }
 
-bool GoalkeeperCommon::riskOfCollideWithPosts(const World& world, const int ally_id) {
+bool GoalkeeperTakeBallAwayCommon::riskOfCollideWithPosts(const World& world, const int ally_id) {
   std::optional<RobotMessage> ally = getAlly(world, ally_id);
   if (!ally.has_value()) {
     return false;
@@ -78,7 +78,7 @@ bool GoalkeeperCommon::riskOfCollideWithPosts(const World& world, const int ally
   return is_ally_crossing_back_post;
 }
 
-bool GoalkeeperCommon::robotBallTooClosePosts(const World& world, int ally_id) {
+bool GoalkeeperTakeBallAwayCommon::robotBallTooClosePosts(const World& world, int ally_id) {
   std::optional<RobotMessage> ally = getAlly(world, ally_id);
   auto&& field = world.field;
   if (!ally.has_value()) {
@@ -102,7 +102,7 @@ bool GoalkeeperCommon::robotBallTooClosePosts(const World& world, int ally_id) {
   return robotBallTooClosePosts;
 }
 
-robocin::Point2Df GoalkeeperCommon::getSafePositionToAvoidPosts(const World& world) {
+robocin::Point2Df GoalkeeperTakeBallAwayCommon::getSafePositionToAvoidPosts(const World& world) {
   auto&& field = world.field;
   auto&& ball = world.ball;
 
@@ -142,7 +142,7 @@ robocin::Point2Df GoalkeeperCommon::getSafePositionToAvoidPosts(const World& wor
   return safe_position;
 }
 
-bool GoalkeeperCommon::isBallCloseToAreaFront(const World& world) {
+bool GoalkeeperTakeBallAwayCommon::isBallCloseToAreaFront(const World& world) {
   robocin::Point2Df ball_position
       = robocin::Point2Df{world.ball.position->x, world.ball.position->y};
   auto&& field = world.field;
@@ -151,15 +151,15 @@ bool GoalkeeperCommon::isBallCloseToAreaFront(const World& world) {
          < distance_from_ball_to_area_front;
 }
 
-bool GoalkeeperCommon::isBallNearTheMiddleOfArea(const World& world) {
+bool GoalkeeperTakeBallAwayCommon::isBallNearTheMiddleOfArea(const World& world) {
   return std::abs(world.ball.position->y) < 1000;
 }
 
-bool GoalkeeperCommon::robotMustKickToEnemyGoal(const World& world) {
+bool GoalkeeperTakeBallAwayCommon::robotMustKickToEnemyGoal(const World& world) {
   return isBallNearTheMiddleOfArea(world) && !isBallCloseToAreaFront(world);
 }
 
-robocin::Point2Df GoalkeeperCommon::getKickTargetPosition(const World& world) {
+robocin::Point2Df GoalkeeperTakeBallAwayCommon::getKickTargetPosition(const World& world) {
   auto&& field = world.field;
 
   if (robotMustKickToEnemyGoal(world)) {

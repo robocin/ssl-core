@@ -1,5 +1,6 @@
 #include "behavior/processing/entities/world.h"
 
+#include "perception/field/field_message.h"
 #include "world.h"
 
 #include <protocols/common/robot_id.pb.h>
@@ -60,6 +61,8 @@ void World::update(const std::vector<protocols::perception::Robot>& robots,
                    const protocols::perception::Field& field,
                    const protocols::referee::GameStatus& game_status) {
 
+  this->field = std::move(FieldMessage{field});
+
   World::takeAlliesAndEnemies(robots);
   World::takeBallHighConfidence(balls);
   World::takeGameStatus(game_status);
@@ -68,5 +71,28 @@ void World::update(const std::vector<protocols::perception::Robot>& robots,
 bool World::isStop() { return game_status.command->stop.has_value(); }
 
 bool World::isHalt() { return game_status.command->halt.has_value(); }
+
+bool World::isInGame() { return game_status.command->in_game.has_value(); }
+
+bool World::isTimeout() {
+  return game_status.command->away_timeout.has_value()
+         || game_status.command->home_timeout.has_value();
+}
+
+bool World::isInterval() { return game_status.command->interval.has_value(); }
+
+bool World::isPenalty() {
+  return game_status.command->away_penalty.has_value()
+         || game_status.command->home_penalty.has_value()
+         || game_status.command->away_prepare_penalty.has_value()
+         || game_status.command->home_prepare_penalty.has_value();
+}
+
+bool World::isDirectFreeKick() {
+  return game_status.command->home_direct_free_kick.has_value()
+         || game_status.command->away_direct_free_kick.has_value()
+         || game_status.command->away_prepare_direct_free_kick.has_value()
+         || game_status.command->home_prepare_direct_free_kick.has_value();
+}
 
 } // namespace behavior

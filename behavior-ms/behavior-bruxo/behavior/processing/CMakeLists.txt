@@ -7,4 +7,5 @@ robocin_cpp_library(
          entities
          state_machine
          analyzers
+         impl
 )

@@ -29,6 +29,9 @@ inline constexpr std::string_view kNavigationOutputTopic = "navigation-output";
 inline constexpr std::string_view kRobotAddress = "224.0.0.1";
 inline constexpr int kRobotPort = 19901;
 
+inline constexpr std::string_view kSimmAddress = "127.0.0.1";
+inline constexpr int kSimmPort = 10301;
+
 inline constexpr std::string_view kDecisionAddress = "ipc:///tmp/.ssl-core/decision.ipc";
 inline constexpr std::string_view kDecisionTopic = "decision";
 
