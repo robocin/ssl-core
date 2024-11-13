@@ -22,6 +22,8 @@ services:
       - GC_PORT=10003
     volumes:
       - .ssl-core:/tmp/.ssl-core
+    depends_on:
+      - autoref-tigers
     network_mode: host
 
   perception-ms:
@@ -106,6 +108,19 @@ services:
         - SOURCE_DIRECTORY=app-shell
     command: ["-g", "daemon off;"]
     network_mode: host
+    
+  behavior-ms:
+    container_name: behavior-ms
+    build:
+      context: .
+      dockerfile: behavior-ms/behavior-bruxo/behavior-bruxo.Dockerfile
+    volumes:
+      - .ssl-core:/tmp/.ssl-core
+    network_mode: "host"
+    depends_on:
+      - perception-ms
+      - referee-ms
+    attach: true
 
   navigation-ms:
     container_name: navigation-ms
@@ -115,17 +130,9 @@ services:
     volumes:
       - .ssl-core:/tmp/.ssl-core
     network_mode: "host"
+    depends_on:
+      - behavior-ms
     attach: false
-
-  behavior-ms:
-    container_name: behavior-ms
-    build:
-      context: .
-      dockerfile: behavior-ms/behavior-bruxo/behavior-bruxo.Dockerfile
-    volumes:
-      - .ssl-core:/tmp/.ssl-core
-    network_mode: "host"
-    attach: true
   
   communication-ms:
     container_name: communication-ms
@@ -135,7 +142,7 @@ services:
     volumes:
       - .ssl-core:/tmp/.ssl-core
     depends_on:
-      - gateway
+      - navigation-ms
     network_mode: "host"
     attach: false
     
