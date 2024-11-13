@@ -43,7 +43,7 @@ bool Align::shouldTransitionToKickBall(const World& world) const {
          && ForwardFollowAndKickBallCommon::isBallInRangeToKick(world, ally_id_.number.value());
 }
 
-robocin::Point2Df KickBall::getMotionTarget(const World& world) const {
+robocin::Point2Df Align::getMotionTarget(const World& world) const {
   std::optional<RobotMessage> ally
       = ForwardFollowAndKickBallCommon::getAlly(world, ally_id_.number.value());
   if (!ally.has_value()) {
@@ -72,7 +72,7 @@ robocin::Point2Df KickBall::getMotionTarget(const World& world) const {
   return target_point;
 }
 
-float KickBall::getMotionAngle(const World& world) const {
+float Align::getMotionAngle(const World& world) const {
   robocin::Point2Df kick_target = ForwardFollowAndKickBallCommon::getKickTarget();
   robocin::Point2Df ball_position
       = robocin::Point2Df{world.ball.position->x, world.ball.position->y};

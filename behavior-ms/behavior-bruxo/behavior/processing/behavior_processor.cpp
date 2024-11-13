@@ -68,9 +68,13 @@ std::vector<rc::GameStatus> gameStatusFromPayloads(std::span<const Payload> payl
 
 BehaviorProcessor::BehaviorProcessor(
     std::unique_ptr<parameters::IHandlerEngine> parameters_handler_engine,
-    std::unique_ptr<::behavior::GoalkeeperGuardStateMachine> goalkeeper_guard_state_machine) :
+    std::unique_ptr<::behavior::GoalkeeperGuardStateMachine> goalkeeper_guard_state_machine,
+    std::unique_ptr<::behavior::ForwardFollowAndKickBallStateMachine>
+        forward_follow_and_kick_ball_state_machine) :
     parameters_handler_engine_{std::move(parameters_handler_engine)},
-    goalkeeper_guard_state_machine_{std::move(goalkeeper_guard_state_machine)} {}
+    goalkeeper_guard_state_machine_{std::move(goalkeeper_guard_state_machine)},
+    forward_follow_and_kick_ball_state_machine_{
+        std::move(forward_follow_and_kick_ball_state_machine)} {}
 
 std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> payloads) {
   if (!BehaviorProcessor::update(payloads)) {

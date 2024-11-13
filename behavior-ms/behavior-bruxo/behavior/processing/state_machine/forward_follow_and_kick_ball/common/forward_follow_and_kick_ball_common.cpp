@@ -4,6 +4,8 @@
 
 namespace behavior {
 
+robocin::Point2Df ForwardFollowAndKickBallCommon::kick_target_ = {0.0f, 0.0f};
+
 std::optional<RobotMessage> ForwardFollowAndKickBallCommon::getAlly(const World& world, int id) {
   for (const auto& ally : world.allies) {
     if (ally.robot_id.value().number == id) {
@@ -24,7 +26,7 @@ std::optional<RobotMessage> ForwardFollowAndKickBallCommon::getAlly(const World&
 }
 
 void ForwardFollowAndKickBallCommon::setKickTarget(robocin::Point2Df kick_target) {
-  kick_target_ = kick_target;
+  ForwardFollowAndKickBallCommon::kick_target_ = kick_target;
 }
 
 robocin::Point2Df ForwardFollowAndKickBallCommon::getKickTarget() { return kick_target_; }
