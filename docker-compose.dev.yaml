@@ -202,15 +202,6 @@ services:
       - metrics-db
     attach: false
 
-  navigation-ms:
-    container_name: navigation-ms
-    build:
-      context: .
-      dockerfile: navigation-ms/navigation-luffy/navigation-luffy.Dockerfile
-    volumes:
-      - .ssl-core:/tmp/.ssl-core
-    attach: false
-
   decision-ms:
     container_name: decision-ms
     build:
@@ -230,8 +221,21 @@ services:
       dockerfile: behavior-ms/behavior-bruxo/behavior-bruxo.Dockerfile
     volumes:
       - .ssl-core:/tmp/.ssl-core
+    depends_on:
+      - decision-ms
     attach: false
-  
+
+  navigation-ms:
+    container_name: navigation-ms
+    build:
+      context: .
+      dockerfile: navigation-ms/navigation-luffy/navigation-luffy.Dockerfile
+    volumes:
+      - .ssl-core:/tmp/.ssl-core
+    depends_on:
+      - behavior-ms
+    attach: false
+
   communication-ms:
     container_name: communication-ms
     build:
@@ -240,7 +244,7 @@ services:
     volumes:
       - .ssl-core:/tmp/.ssl-core
     depends_on:
-      - gateway
+      - navigation-ms
     network_mode: "host"
     attach: true
 
