@@ -98,6 +98,9 @@ CommunicationProcessor::processSimulator(std::span<const Payload> payloads) {
     ith_move_local_velocity->set_forward(navigation.forward_velocity());
     ith_move_local_velocity->set_left(navigation.left_velocity());
     ith_move_local_velocity->set_angular(navigation.angular_velocity());
+
+    ith_robot_command->set_kick_speed(
+        navigation.peripheral_actuation().kick_command().kick_strength());
   }
 
   robocin::ilog("RobotControl: {}", robot_control.DebugString());

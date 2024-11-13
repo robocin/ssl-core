@@ -11,6 +11,7 @@ services:
     ports:
       - "10301:10301/udp"
       - "10302:10302/udp"
+      - "10300:10300/udp"
       
   autoref-tigers:
     container_name: autoref-tigers

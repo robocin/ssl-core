@@ -75,8 +75,6 @@ NavigationOutputMessage MotionParser::parseMotion() {
 }
 ////////////////////////////////////////////////////////////////////////////
 RobotMove MotionParser::fromGoToPoint(const GoToPointMessage& go_to_point) {
-  robocin::ilog("motion_parser position_x: {}", world_.ally.position.value().x);
-  robocin::ilog("motion_parser position_y: {}", world_.ally.position.value().y);
   robocin::Point2Df s0 = world_.ally.position.value();
   robocin::Point2Df s = go_to_point.target;
   robocin::Point2Df delta_s = (s - s0) / M_to_MM;
