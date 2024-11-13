@@ -162,7 +162,7 @@ std::optional<rc::Behavior> onInGame(World& world,
 
   // Take support
   auto support = takeSupport(world.allies);
-  if (!support.has_value()) {
+  if (support.has_value()) {
     emplaceSupportOutput(support.value(), world, behavior_message);
   }
 
