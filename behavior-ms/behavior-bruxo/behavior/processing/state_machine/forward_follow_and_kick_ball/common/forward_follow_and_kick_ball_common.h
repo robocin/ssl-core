@@ -19,6 +19,7 @@ class ForwardFollowAndKickBallCommon {
   // Common utility functions used across states
   static std::optional<RobotMessage> getAlly(const World& world, int id);
   static void setKickTarget(robocin::Point2Df kick_target);
+  static robocin::Point2Df getKickTarget();
   static bool isAllyBehindBall(const World& world, const int ally_id);
   static bool allyLostBall(const World& world, int ally_id);
   static bool isBallInsideEnemyArea(const World& world);

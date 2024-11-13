@@ -4,6 +4,7 @@
 #include "behavior/processing/state_machine/forward_follow_and_kick_ball/states/go_to_ball.h"
 #include "behavior/processing/state_machine/istate_machine.h"
 
+#include <robocin/geometry/point2d.h>
 #include <robocin/output/log.h>
 
 /**

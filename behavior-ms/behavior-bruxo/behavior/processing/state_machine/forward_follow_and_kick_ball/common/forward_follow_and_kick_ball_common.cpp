@@ -1,5 +1,7 @@
 #include "behavior/processing/state_machine/forward_follow_and_kick_ball/common/forward_follow_and_kick_ball_common.h"
 
+#include <robocin/geometry/point2d.h>
+
 namespace behavior {
 
 std::optional<RobotMessage> ForwardFollowAndKickBallCommon::getAlly(const World& world, int id) {
@@ -24,6 +26,8 @@ std::optional<RobotMessage> ForwardFollowAndKickBallCommon::getAlly(const World&
 void ForwardFollowAndKickBallCommon::setKickTarget(robocin::Point2Df kick_target) {
   kick_target_ = kick_target;
 }
+
+robocin::Point2Df ForwardFollowAndKickBallCommon::getKickTarget() { return kick_target_; }
 
 bool ForwardFollowAndKickBallCommon::isAllyBehindBall(const World& world, const int ally_id) {
   return AllyAnalyzer::isAllyBehindBall(world, ally_id, kick_target_, ANGLE_FAR_TO_KICK_LINE);

@@ -2,6 +2,8 @@
 
 #include "behavior/processing/state_machine/forward_follow_and_kick_ball/common/forward_follow_and_kick_ball_common.h"
 
+#include <robocin/geometry/point2d.h>
+
 namespace behavior {
 
 KickBall::KickBall() = default;
@@ -40,10 +42,20 @@ bool KickBall::shouldTransitionToGoToBall(const World& world) const {
           || ForwardFollowAndKickBallCommon::isBallInsideEnemyArea(world));
 }
 
-float KickBall::getMotionAngle(const World& world) const { return true; }
+robocin::Point2Df KickBall::getMotionTarget(const World& world) const {
+  robocin::Point2Df ball_position
+      = robocin::Point2Df{world.ball.position->x, world.ball.position->y};
+  return ball_position;
+}
+
+float KickBall::getMotionAngle(const World& world) const {
+  robocin::Point2Df kick_target = ForwardFollowAndKickBallCommon::getKickTarget();
+  robocin::Point2Df target_position = getMotionTarget(world);
+  return (kick_target - target_position).angle();
+}
 
 GoToPointMessage::MovingProfile KickBall::getMotionMovingProfile(const World& world) const {
-  return GoToPointMessage::MovingProfile::BalancedInMedianSpeed;
+  return GoToPointMessage::MovingProfile::DirectBalancedKickBallSpeed;
 }
 
 OutputMessage KickBall::makeKickBallOutput(const World& world) {

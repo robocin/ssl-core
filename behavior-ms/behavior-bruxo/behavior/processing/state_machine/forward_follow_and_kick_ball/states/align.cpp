@@ -1,6 +1,10 @@
 #include "behavior/processing/state_machine/forward_follow_and_kick_ball/states/align.h"
 
+#include "behavior/parameters/parameters.h"
 #include "behavior/processing/state_machine/forward_follow_and_kick_ball/common/forward_follow_and_kick_ball_common.h"
+#include "behavior/processing/state_machine/goalkeeper_take_ball_away/common/goalkeeper_take_ball_away_common.h"
+
+#include <robocin/geometry/point2d.h>
 
 namespace behavior {
 
@@ -39,10 +43,44 @@ bool Align::shouldTransitionToKickBall(const World& world) const {
          && ForwardFollowAndKickBallCommon::isBallInRangeToKick(world, ally_id_.number.value());
 }
 
-float Align::getMotionAngle(const World& world) const { return true; }
+robocin::Point2Df KickBall::getMotionTarget(const World& world) const {
+  std::optional<RobotMessage> ally
+      = ForwardFollowAndKickBallCommon::getAlly(world, ally_id_.number.value());
+  if (!ally.has_value()) {
+    return {0.0f, 0.0f};
+  }
+  robocin::Point2Df ball_position
+      = robocin::Point2Df{world.ball.position->x, world.ball.position->y};
+  robocin::Point2Df ally_position = ally->position.value();
+  robocin::Point2Df kick_target = ForwardFollowAndKickBallCommon::getKickTarget();
+
+  robocin::Line kick_target_to_ball_line = {kick_target, ball_position};
+  robocin::Point2Df target_point = ally_position.projectedOntoLine(kick_target_to_ball_line.p1(),
+                                                                   kick_target_to_ball_line.p2());
+  robocin::Point2Df ball_to_target_point_vector = target_point - ball_position;
+
+  float original_size = ball_to_target_point_vector.norm();
+  const float FACTOR_TO_MULTIPLY_TOTAL_DIST = 0.85;
+  float vector_size
+      = std::clamp(original_size,
+                   static_cast<float>(1.5 * pRobotRadius()),
+                   ForwardFollowAndKickBallCommon::DISTANCE_TO_CONSIDER_IN_RANGE_TO_KICK_BALL
+                       * FACTOR_TO_MULTIPLY_TOTAL_DIST);
+
+  target_point = ball_position + ball_to_target_point_vector.resized(vector_size);
+
+  return target_point;
+}
+
+float KickBall::getMotionAngle(const World& world) const {
+  robocin::Point2Df kick_target = ForwardFollowAndKickBallCommon::getKickTarget();
+  robocin::Point2Df ball_position
+      = robocin::Point2Df{world.ball.position->x, world.ball.position->y};
+  return (kick_target - ball_position).angle();
+}
 
 GoToPointMessage::MovingProfile Align::getMotionMovingProfile(const World& world) const {
-  return GoToPointMessage::MovingProfile::BalancedInMedianSpeed;
+  return GoToPointMessage::MovingProfile{};
 }
 
 OutputMessage Align::makeAlignOutput(const World& world) {
