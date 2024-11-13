@@ -22,7 +22,7 @@ void ForwardFollowAndKickBallStateMachine::transitionTo(IState* state) {
 
 void ForwardFollowAndKickBallStateMachine::run(const World& world, RobotIdMessage& ally_id) {
   robocin::ilog("ForwardFollowAndKickBallStateMachine running!");
-  ForwardFollowAndKickBallCommon::setKickTarget(world.field.allyGoalOutsideCenter());
+  ForwardFollowAndKickBallCommon::setKickTarget(world.field.enemyGoalOutsideCenter());
   output = current_state_->exec(world, ally_id);
 }
 } // namespace behavior

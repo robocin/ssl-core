@@ -152,16 +152,14 @@ onInGame(World& world,
   // Take forward
   auto forward = takeForward(world.allies);
   if (forward.has_value()) {
-    RobotIdMessage fw_id = RobotIdMessage{pAllyColor, pForwardNumber()};
-    follow_and_kick_ball_state_machine.run(world, fw_id);
+    follow_and_kick_ball_state_machine.run(world, forward->robot_id.value());
     behavior_message.output.emplace_back(std::move(follow_and_kick_ball_state_machine.output));
   }
 
   // Take goalkeeper
   auto goalkeeper = takeGoalkeeper(world.allies);
   if (goalkeeper.has_value()) {
-    RobotIdMessage gk_id = RobotIdMessage{pAllyColor, pGoalkeeperNumber()};
-    guard_state_machine.run(world, gk_id);
+    guard_state_machine.run(world, goalkeeper->robot_id.value());
     behavior_message.output.emplace_back(std::move(guard_state_machine.output));
   }
 
