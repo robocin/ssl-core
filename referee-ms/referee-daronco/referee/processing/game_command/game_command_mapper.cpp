@@ -601,7 +601,9 @@ rc::GameCommand GameCommandMapper::fromDetectionAndReferee(const rc::Detection& 
     return factory.makePrepareKickoff();
   }
   if (referee_util.isPrepareDirectFreeKick()) {
-    return factory.makePrepareDirectFreeKick();
+    std::cout << "PREPARE DIRECT FREE KICK\n";
+    return factory.makeDirectFreeKick(team_kicking_direct_free_kick_);
+    // return factory.makePrepareDirectFreeKick();
   }
   if (referee_util.isPreparePenalty()) {
     return factory.makePreparePenalty();
@@ -629,11 +631,11 @@ rc::GameCommand GameCommandMapper::fromDetectionAndReferee(const rc::Detection& 
     return factory.makeInGame();
   }
 
-  if (!referee_util.isHalt()) {
-    // elog("the expected command was halt, but '{}' was found.",
-    // static_cast<int>(referee.command()));
+  if (referee_util.isHalt()) {
+    return factory.makeHalt();
   }
-  return factory.makeHalt();
+
+  return factory.makeInGame();
 }
 
 } // namespace referee

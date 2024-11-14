@@ -41,6 +41,7 @@ Payload PayloadMapper::fromZmqDatagrams(std::span<const ZmqDatagram> messages) c
     } else if (zmq_datagram.topic() == service_discovery::kGameControllerRefereeTopic) {
       tp::Referee game_controller_referee;
       game_controller_referee.ParseFromString(std::string{zmq_datagram.message()});
+      robocin::ilog("Received from GC: {}", game_controller_referee.DebugString());
       game_controller_referees.emplace_back(std::move(game_controller_referee));
     } else {
       // wlog("zmq_datagram with topic '{}' not processed.", zmq_datagram.topic());
