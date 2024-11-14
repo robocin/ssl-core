@@ -276,39 +276,78 @@ AllyAnalyzer::safeTargetPoint(const World& world, int ally_id, robocin::Point2Df
 
   robocin::Line ally_to_target_line = {target, ally->position.value()};
 
-  robocin::Line penalty_area_top_line
+  robocin::Line enemy_penalty_area_top_line
       = {world.field.enemyPenaltyAreaGoalCornerTop(), world.field.enemyPenaltyAreaCornerTop()};
 
-  robocin::Line penalty_area_bottom_line = {world.field.enemyPenaltyAreaGoalCornerBottom(),
-                                            world.field.enemyPenaltyAreaCornerBottom()};
+  robocin::Line enemy_penalty_area_bottom_line = {world.field.enemyPenaltyAreaGoalCornerBottom(),
+                                                  world.field.enemyPenaltyAreaCornerBottom()};
 
-  bool intersect_top = mathematics::segmentsIntersect(penalty_area_top_line, ally_to_target_line);
-  bool intersect_bottom
-      = mathematics::segmentsIntersect(penalty_area_bottom_line, ally_to_target_line);
+  robocin::Line ally_penalty_area_top_line
+      = {world.field.allyPenaltyAreaGoalCornerTop(), world.field.allyPenaltyAreaCornerTop()};
 
-  if (!(intersect_bottom or intersect_top)) {
+  robocin::Line ally_penalty_area_bottom_line
+      = {world.field.allyPenaltyAreaGoalCornerBottom(), world.field.allyPenaltyAreaCornerBottom()};
+
+  bool intersect_top_enemy
+      = mathematics::segmentsIntersect(enemy_penalty_area_top_line, ally_to_target_line);
+  bool intersect_bottom_enemy
+      = mathematics::segmentsIntersect(enemy_penalty_area_bottom_line, ally_to_target_line);
+
+  bool intersect_top_ally
+      = mathematics::segmentsIntersect(ally_penalty_area_top_line, ally_to_target_line);
+  bool intersect_bottom_ally
+      = mathematics::segmentsIntersect(ally_penalty_area_bottom_line, ally_to_target_line);
+
+  if (!(intersect_bottom_ally or intersect_bottom_enemy or intersect_top_ally
+        or intersect_top_enemy)) {
     return target;
   }
 
-  robocin::Point2Df corner_point = ally_position.y < 0 ?
-                                       world.field.enemyPenaltyAreaCornerBottom() :
-                                       world.field.enemyPenaltyAreaCornerTop();
+  if (intersect_top_enemy or intersect_bottom_enemy) {
+    robocin::Point2Df corner_point = ally_position.y < 0 ?
+                                         world.field.enemyPenaltyAreaCornerBottom() :
+                                         world.field.enemyPenaltyAreaCornerTop();
 
-  robocin::Point2Df corner_target = [&]() {
-    if (intersect_bottom && intersect_top) {
-      return corner_point;
-    }
-    if (intersect_bottom) {
-      return world.field.enemyPenaltyAreaCornerBottom();
-    }
-    if (intersect_top) {
-      return world.field.enemyPenaltyAreaCornerTop();
-    }
-    return target;
-  }();
+    robocin::Point2Df corner_target = [&]() {
+      if (intersect_bottom_enemy && intersect_top_enemy) {
+        return corner_point;
+      }
+      if (intersect_bottom_enemy) {
+        return world.field.enemyPenaltyAreaCornerBottom();
+      }
+      if (intersect_top_enemy) {
+        return world.field.enemyPenaltyAreaCornerTop();
+      }
+      return target;
+    }();
 
-  return corner_target
-         + (corner_target - world.field.enemyGoalOutsideCenter()).resized(pRobotDiameter() * 2);
+    return corner_target
+           + (corner_target - world.field.enemyGoalOutsideCenter()).resized(pRobotDiameter() * 2);
+  }
+
+  if (intersect_top_ally or intersect_bottom_ally) {
+    robocin::Point2Df corner_point = ally_position.y < 0 ?
+                                         world.field.allyPenaltyAreaCornerBottom() :
+                                         world.field.allyPenaltyAreaCornerTop();
+
+    robocin::Point2Df corner_target = [&]() {
+      if (intersect_bottom_ally && intersect_top_ally) {
+        return corner_point;
+      }
+      if (intersect_bottom_ally) {
+        return world.field.allyPenaltyAreaCornerBottom();
+      }
+      if (intersect_top_ally) {
+        return world.field.allyPenaltyAreaCornerTop();
+      }
+      return target;
+    }();
+
+    return corner_target
+           + (corner_target - world.field.allyGoalOutsideCenter()).resized(pRobotDiameter() * 2);
+  }
+
+  return target;
 }
 
 } // namespace behavior

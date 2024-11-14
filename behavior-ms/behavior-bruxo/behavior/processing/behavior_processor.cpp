@@ -85,12 +85,12 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
     return std::nullopt;
   }
 
-  // if (world_.isHalt() || world_.isTimeout()) {
-  //   ilog("HALT");
-  //   return impl::onHalt();
-  // }
+  if (world_.isHalt() || world_.isTimeout()) {
+    ilog("HALT");
+    return impl::onHalt();
+  }
 
-  if (world_.isInGame() || true) {
+  if (world_.isInGame()) {
     ilog("IN GAME");
     return impl::onInGame(world_,
                           *goalkeeper_guard_state_machine_,
