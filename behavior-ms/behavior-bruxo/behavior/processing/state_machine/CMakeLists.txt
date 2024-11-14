@@ -36,5 +36,4 @@ robocin_cpp_library(
     DEPS common::output               
          messages
          analyzers
-         common::detection_util
 )

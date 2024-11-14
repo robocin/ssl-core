@@ -202,7 +202,7 @@ void GameCommandMessage::fromProto(const protocols::common::GameCommand& game_co
 
   if (game_command_proto.has_away_direct_free_kick()) {
     away_direct_free_kick = DirectFreeKickMessage(
-        game_command_proto.away_direct_free_kick().remaining_time().seconds());
+        game_command_proto.home_direct_free_kick().remaining_time().seconds());
   }
 };
 

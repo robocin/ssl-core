@@ -449,7 +449,7 @@ class KickingTeamUtil {
               rc::Team& team_kicking_direct_free_kick, // NOLINT(*swappable*)
               rc::Team& team_kicking_penalty) {
     team_kicking_kickoff = getTeamKickingKickoff(team_kicking_kickoff);
-    team_kicking_direct_free_kick = getTeamKickingDirectFreeKick(team_kicking_direct_free_kick);
+    team_kicking_direct_free_kick = getTeamKickingKickoff(team_kicking_direct_free_kick);
     team_kicking_penalty = getTeamKickingPenalty(team_kicking_penalty);
   }
 
