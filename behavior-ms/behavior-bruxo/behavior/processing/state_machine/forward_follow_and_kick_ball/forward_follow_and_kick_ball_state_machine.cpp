@@ -5,14 +5,18 @@
 #include "behavior/processing/state_machine/forward_follow_and_kick_ball/common/forward_follow_and_kick_ball_common.h"
 #include "perception/robot/robot_message.h"
 
+#include <chrono>
+#include <optional>
 #include <robocin/geometry/point2d.h>
 #include <stdio.h>
 
 namespace behavior {
 
 ForwardFollowAndKickBallStateMachine::ForwardFollowAndKickBallStateMachine() :
-    current_state_(nullptr) {
+    current_state_(nullptr),
+    target_kick_(std::nullopt) {
   ForwardFollowAndKickBallStateMachine::transitionTo(new GoToBall);
+  timer_ = std::chrono::steady_clock::now();
 };
 
 void ForwardFollowAndKickBallStateMachine::transitionTo(IState* state) {
@@ -28,12 +32,27 @@ void ForwardFollowAndKickBallStateMachine::run(const World& world, RobotIdMessag
   robocin::ilog("ForwardFollowAndKickBallStateMachine running!");
   robocin::Point2Df ball_position
       = robocin::Point2Df{world.ball.position->x, world.ball.position->y};
-  ForwardFollowAndKickBallCommon::setKickTarget(
-      ShooterAnalyzer::findBestPlaceToKickOnGoal(world.field,
-                                                 world.ball,
-                                                 world.enemies,
-                                                 ball_position,
-                                                 true));
+  if (target_kick_.has_value()) {
+    auto curr_time = std::chrono::steady_clock::now();
+    auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(curr_time - timer_);
+    if (elapsed.count() > 3) {
+      timer_ = curr_time;
+      target_kick_ = ShooterAnalyzer::findBestPlaceToKickOnGoal(world.field,
+                                                                world.ball,
+                                                                world.enemies,
+                                                                ball_position,
+                                                                true);
+      ForwardFollowAndKickBallCommon::setKickTarget(target_kick_.value());
+    }
+  } else {
+    timer_ = std::chrono::steady_clock::now();
+    target_kick_ = ShooterAnalyzer::findBestPlaceToKickOnGoal(world.field,
+                                                              world.ball,
+                                                              world.enemies,
+                                                              ball_position,
+                                                              /*consider_enemy_velocity=*/true);
+    ForwardFollowAndKickBallCommon::setKickTarget(target_kick_.value());
+  }
   output = current_state_->exec(world, ally_id);
 }
 } // namespace behavior
