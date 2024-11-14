@@ -13,7 +13,7 @@ constinit const auto pBehaviorPollerTimeoutMs
 
 constinit const auto pAllyColor = Color::COLOR_BLUE; // COLOR_BLUE
 
-constinit const auto isAttackingToRight = ::robocin::parameters::View<1>::asBool(false);
+constinit const auto isAttackingToRight = ::robocin::parameters::View<1>::asBool(true);
 
 constinit const auto pBallIsMovingVelocity = ::robocin::parameters::View<2>::asInt32(300);
 constinit const auto pBallIsMovingFastVelocity = ::robocin::parameters::View<3>::asInt32(850);

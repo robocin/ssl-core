@@ -238,7 +238,7 @@ services:
       - .ssl-core:/tmp/.ssl-core
     depends_on:
       - behavior-ms
-    attach: true
+    attach: false
 
   communication-ms:
     container_name: communication-ms
@@ -250,7 +250,7 @@ services:
     depends_on:
       - navigation-ms
     network_mode: "host"
-    attach: false
+    attach: true
 
 volumes:
   .ssl-core:

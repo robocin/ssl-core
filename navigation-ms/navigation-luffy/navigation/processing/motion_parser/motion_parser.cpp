@@ -73,6 +73,7 @@ NavigationOutputMessage MotionParser::parseMotion() {
 
   return output_msg;
 }
+
 ////////////////////////////////////////////////////////////////////////////
 RobotMove MotionParser::fromGoToPoint(const GoToPointMessage& go_to_point) {
   robocin::Point2Df s0 = world_.ally.position.value();
