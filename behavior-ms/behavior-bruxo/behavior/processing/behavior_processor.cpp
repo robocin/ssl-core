@@ -85,7 +85,7 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
     return std::nullopt;
   }
 
-  if (world_.isHalt()) {
+  if (world_.isHalt() || world_.isTimeout()) {
     return impl::onHalt();
   }
 
@@ -98,6 +98,12 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
 
   if (world_.isStop()) {
     return impl::onStop(world_, *goalkeeper_guard_state_machine_);
+  }
+
+  if (world_.isPenalty()) {
+    if (world_.game_status.command->away_penalty.has_value() || world_.game_status.command->away_prepare_penalty.has_value()) {
+      impl::onAwayPenalty(world_, *goalkeeper_guard_state_machine_);
+    }
   }
 
   return std::nullopt;

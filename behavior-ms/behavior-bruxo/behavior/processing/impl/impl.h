@@ -27,6 +27,7 @@ onInGame(World& world,
          GoalkeeperTakeBallAwayStateMachine& take_ball_away_state_machine);
 std::optional<protocols::behavior::unification::Behavior> onHalt();
 std::optional<protocols::behavior::unification::Behavior> onStop(World& world, GoalkeeperGuardStateMachine& guard_state_machine);
+std::optional<protocols::behavior::unification::Behavior> onAwayPenalty(World& world, GoalkeeperGuardStateMachine& guard_state_machine);
 
 std::optional<RobotMessage> takeForward(std::vector<RobotMessage>& robots);
 void emplaceForwardOutput(RobotMessage& forward, World& world, BehaviorMessage& behavior_message);
