@@ -15,8 +15,7 @@ namespace behavior {
 
 ForwardFollowAndKickBallStateMachine::ForwardFollowAndKickBallStateMachine() :
     current_state_(nullptr),
-    target_kick_(std::nullopt),
-    initial_time_(0) {
+    target_kick_(std::nullopt) {
   ForwardFollowAndKickBallStateMachine::transitionTo(new GoToBall);
   timer_.start();
 };
@@ -35,9 +34,8 @@ void ForwardFollowAndKickBallStateMachine::run(const World& world, RobotIdMessag
   robocin::Point2Df ball_position
       = robocin::Point2Df{world.ball.position->x, world.ball.position->y};
   if (target_kick_.has_value()) {
-    if (timer_.elapsed().ms() - initial_time_ > 3000) {
+    if (timer_.elapsed().ms() > 3000) {
       timer_.restart();
-      initial_time_ = 0;
       target_kick_ = ShooterAnalyzer::findBestPlaceToKickOnGoal(world.field,
                                                                 world.ball,
                                                                 world.enemies,
