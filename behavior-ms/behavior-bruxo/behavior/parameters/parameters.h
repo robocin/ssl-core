@@ -26,6 +26,16 @@ constinit const auto pGoalkeeperNumber = ::robocin::parameters::View<6>::asInt32
 constinit const auto pForwardNumber = ::robocin::parameters::View<7>::asInt32(1);
 constinit const auto pSupportNumber = ::robocin::parameters::View<8>::asInt32(2);
 constinit const auto pMarginEps = ::robocin::parameters::View<9>::asInt32(20);
+constinit const auto pFrontKickStrenght = ::robocin::parameters::View<12>::asFloat(6.5f);
+
+namespace shoot {
+inline static double MIN_Y_DISTANCE_TO_CHANGE_TO_KICK_TO_POST = 2000;
+inline static double MAX_DIFF_TO_CHANGE_TO_POST = 1000;
+inline static bool ONLY_KICK_IN_GOAL_CENTER = false;
+inline static bool ALLOWED_KICK_ON_POST = true;
+inline static double DONT_HAVE_ANGLE_TO_KICK_THRESHOLD = 0.12;
+inline static double HOW_MANY_DIAMETERS_DISCOUNT_OUT_GOAL_LINE_WHEN_KICK_ON_CORNER = 2.5;
+}; // namespace shoot
 
 constinit const auto pForwardDistToEnterKickBallWhenMovingAway
     = ::robocin::parameters::View<9>::asInt32(200);

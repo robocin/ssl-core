@@ -10,4 +10,5 @@ robocin_cpp_library(
        enemy_analyzer.cpp
   DEPS common::geometry
        messages
+       common::utility
 )
