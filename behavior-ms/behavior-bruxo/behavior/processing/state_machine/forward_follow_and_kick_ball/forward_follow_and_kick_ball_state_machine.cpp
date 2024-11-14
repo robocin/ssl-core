@@ -5,14 +5,20 @@
 #include "behavior/processing/state_machine/forward_follow_and_kick_ball/common/forward_follow_and_kick_ball_common.h"
 #include "perception/robot/robot_message.h"
 
+#include <chrono>
+#include <optional>
+#include <robocin/detection_util/duration.h>
 #include <robocin/geometry/point2d.h>
 #include <stdio.h>
 
 namespace behavior {
 
 ForwardFollowAndKickBallStateMachine::ForwardFollowAndKickBallStateMachine() :
-    current_state_(nullptr) {
+    current_state_(nullptr),
+    target_kick_(std::nullopt),
+    initial_time_(0) {
   ForwardFollowAndKickBallStateMachine::transitionTo(new GoToBall);
+  timer_.start();
 };
 
 void ForwardFollowAndKickBallStateMachine::transitionTo(IState* state) {
@@ -28,12 +34,25 @@ void ForwardFollowAndKickBallStateMachine::run(const World& world, RobotIdMessag
   robocin::ilog("ForwardFollowAndKickBallStateMachine running!");
   robocin::Point2Df ball_position
       = robocin::Point2Df{world.ball.position->x, world.ball.position->y};
-  ForwardFollowAndKickBallCommon::setKickTarget(
-      ShooterAnalyzer::findBestPlaceToKickOnGoal(world.field,
-                                                 world.ball,
-                                                 world.enemies,
-                                                 ball_position,
-                                                 true));
+  if (target_kick_.has_value()) {
+    if (timer_.elapsed().ms() - initial_time_ > 3000) {
+      timer_.restart();
+      initial_time_ = 0;
+      target_kick_ = ShooterAnalyzer::findBestPlaceToKickOnGoal(world.field,
+                                                                world.ball,
+                                                                world.enemies,
+                                                                ball_position,
+                                                                true);
+      ForwardFollowAndKickBallCommon::setKickTarget(target_kick_.value());
+    }
+  } else {
+    target_kick_ = ShooterAnalyzer::findBestPlaceToKickOnGoal(world.field,
+                                                              world.ball,
+                                                              world.enemies,
+                                                              ball_position,
+                                                              /*consider_enemy_velocity=*/true);
+    ForwardFollowAndKickBallCommon::setKickTarget(target_kick_.value());
+  }
   output = current_state_->exec(world, ally_id);
 }
 } // namespace behavior
