@@ -1,7 +1,10 @@
 #include "behavior/processing/analyzer/ally_analyzer.h"
 
 #include "behavior/processing/analyzer/ball_analyzer.h"
+#include "common/robot_id/robot_id.h"
+#include "perception/robot/robot_message.h"
 
+#include <robocin/geometry/line.h>
 #include <robocin/geometry/point2d.h>
 
 namespace behavior {
@@ -260,4 +263,21 @@ AllyAnalyzer::targetBehindBallLookingToTarget(const World& world,
 
   return ball_position + contour_vector.resized(contour_margin);
 }
+
+bool AllyAnalyzer::targetPointCrossesArea(const World& world,
+                                          int ally_id,
+                                          robocin::Point2Df target) {
+  std::optional<RobotMessage> ally = AllyAnalyzer::getAlly(world, ally_id);
+  if (!ally.has_value()) {
+    return false;
+  }
+
+  robocin::Line ally_to_target_line = {target, ally->position.value()};
+
+  return false;
+}
+
+robocin::Point2Df AllyAnalyzer::safeTargetPoint(const World& world,
+                                                robocin::Point2Df invalid_target) {}
+
 } // namespace behavior

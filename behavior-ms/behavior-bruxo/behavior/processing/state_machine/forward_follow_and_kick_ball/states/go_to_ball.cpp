@@ -46,6 +46,7 @@ bool GoToBall::shouldTransitionToKickBall(const World& world) const {
 }
 
 robocin::Point2Df GoToBall::getMotionTarget(const World& world) const {
+
   robocin::Point2Df target_behind_ball_point = AllyAnalyzer::targetBehindBallLookingToTarget(
       world,
       ally_id_.number.value(),
@@ -53,6 +54,10 @@ robocin::Point2Df GoToBall::getMotionTarget(const World& world) const {
       pApproachAngleThreshold());
 
   auto&& field = world.field;
+
+  if (AllyAnalyzer::targetPointCrossesArea(world, target_behind_ball_point)) {
+    target_behind_ball_point = AllyAnalyzer::safeTargetPoint(world, target_behind_ball_point);
+  }
 
   return FieldAnalyzer::nearestPointInsideFieldOutsidePenaltyAreas(field, target_behind_ball_point);
 }
