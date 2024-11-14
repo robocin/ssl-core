@@ -120,13 +120,18 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
   }
 
   if (world_.isDirectFreeKick()) {
+    // Se eh prepare de algum dos dois
     if (world_.game_status.command->home_prepare_direct_free_kick.has_value()
         || world_.game_status.command->away_prepare_direct_free_kick.has_value()) {
       return impl::onStop(world_, *goalkeeper_guard_state_machine_);
     }
 
+    // Se eh direct deles e ainda tem tempo
     if (world_.game_status.command->away_direct_free_kick.has_value()) {
-      return impl::onStop(world_, *goalkeeper_guard_state_machine_);
+      if (world_.game_status.command->away_direct_free_kick->remaining_time.has_value()) {
+        if (world_.game_status.command->away_direct_free_kick->remaining_time.value() > 0)
+          return impl::onStop(world_, *goalkeeper_guard_state_machine_);
+      }
     }
 
     return impl::onInGame(world_,
@@ -136,7 +141,22 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
   }
 
   if (world_.isKickOff()) {
-    return impl::onStop(world_, *goalkeeper_guard_state_machine_);
+    if (world_.game_status.command->away_prepare_kickoff.has_value()) {
+      return impl::onStop(world_, *goalkeeper_guard_state_machine_);
+    }
+
+    if (world_.game_status.command->away_kickoff.has_value()) {
+      if (world_.game_status.command->away_kickoff->remaining_time.has_value()) {
+        if (world_.game_status.command->away_kickoff->remaining_time.value() > 0) {
+          return impl::onStop(world_, *goalkeeper_guard_state_machine_);
+        }
+      }
+    }
+
+    return impl::onInGame(world_,
+                          *goalkeeper_guard_state_machine_,
+                          *forward_follow_and_kick_ball_state_machine_,
+                          *goalkeeper_take_ball_away_state_machine_);
   }
 
   return std::nullopt;

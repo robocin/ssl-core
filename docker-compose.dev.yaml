@@ -215,7 +215,7 @@ services:
       dockerfile: behavior-ms/behavior-bruxo/behavior-bruxo.Dockerfile
     volumes:
       - .ssl-core:/tmp/.ssl-core
-    attach: true
+    attach: false
 
   navigation-ms:
     container_name: navigation-ms
