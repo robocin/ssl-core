@@ -177,7 +177,54 @@ onInGame(World& world,
   return behavior_message.toProto();
 };
 
-std::optional<rc::Behavior> onHalt() { return std::nullopt; };
+std::optional<rc::Behavior> onHalt() { 
+  // Suficiente!
+  return std::nullopt; 
+}
+
+std::optional<rc::Behavior> onStop(World& world, GoalkeeperGuardStateMachine& guard_state_machine) {
+  BehaviorMessage behavior_message;
+  robocin::Point2Df ball_position = robocin::Point2Df(world.ball.position.value().x, world.ball.position.value().y);
+  robocin::Point2Df ball_to_goal_center_vector = (world.field.allyGoalOutsideCenter() - ball_position);
+  robocin::Point2Df forward_target = ball_position + ball_to_goal_center_vector.resized(pStopRadius());
+  float target_angle = (ball_position - forward_target).angle();
+
+  // Take forward
+  auto forward = takeForward(world.allies);
+  if (forward.has_value()) {
+    behavior_message.output.emplace_back(
+        RobotIdMessage{pAllyColor, pForwardNumber()},
+        MotionMessage{
+            GoToPointMessage{forward_target,
+                            target_angle,
+                            GoToPointMessage::MovingProfile::DirectApproachBallSpeed,
+                            GoToPointMessage::PrecisionToTarget::HIGH,
+                            true /* sync_rotate_with_linear_movement */},
+            std::nullopt /* go_to_point_with_trajectory */,
+            std::nullopt /* rotate_in_point */,
+            std::nullopt /* rotate_on_self */,
+            PeripheralActuationMessage{KickCommandMessage{
+        0.0, /* strength */
+        false /* is_front */,
+        false /* is_chip */,
+        true /* charge */,
+        false /* bypass_ir */
+      }
+    }});
+  }
+
+
+  // Take goalkeeper
+  auto goalkeeper = takeGoalkeeper(world.allies);
+  if (goalkeeper.has_value()) {
+
+    guard_state_machine.run(world, goalkeeper->robot_id.value());
+    behavior_message.output.emplace_back(std::move(guard_state_machine.output));
+  }
+
+  return behavior_message.toProto();
+
+};
 
 } // namespace impl
 

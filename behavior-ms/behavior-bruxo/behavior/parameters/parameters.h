@@ -38,6 +38,8 @@ constinit const auto pApproachAngleThreshold = ::robocin::parameters::View<11>::
 constinit const auto pFrontKickStrenght = ::robocin::parameters::View<12>::asFloat(6.5f);
 constinit const auto pChipKickStrenght = ::robocin::parameters::View<13>::asFloat(6.0f);
 
+constinit const auto pStopRadius = ::robocin::parameters::View<13>::asFloat(600.0f);
+
 
 // NOLINTEND(*comment*)
 } // namespace behavior

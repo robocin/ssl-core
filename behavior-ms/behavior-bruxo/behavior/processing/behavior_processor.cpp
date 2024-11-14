@@ -85,14 +85,20 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
     return std::nullopt;
   }
 
-  // if (world_.isHalt()) {
-  //   return impl::onHalt();
-  // }
+  if (world_.isHalt()) {
+    return impl::onHalt();
+  }
 
-  return impl::onInGame(world_,
-                        *goalkeeper_guard_state_machine_,
-                        *forward_follow_and_kick_ball_state_machine_,
-                        *goalkeeper_take_ball_away_state_machine_);
+  if (world_.isInGame()) {
+    return impl::onInGame(world_,
+                          *goalkeeper_guard_state_machine_,
+                          *forward_follow_and_kick_ball_state_machine_,
+                          *goalkeeper_take_ball_away_state_machine_);
+  }
+
+  if (world_.isStop()) {
+    return impl::onStop(world_, *goalkeeper_guard_state_machine_);
+  }
 
   return std::nullopt;
 }
