@@ -3,8 +3,8 @@
 
 #include "behavior/processing/state_machine/forward_follow_and_kick_ball/states/go_to_ball.h"
 #include "behavior/processing/state_machine/istate_machine.h"
-#include "robocin/detection_util/elapsed_timer.h"
 
+#include <chrono>
 #include <cstdint>
 #include <robocin/detection_util/duration.h>
 #include <robocin/geometry/point2d.h>
@@ -21,7 +21,7 @@ class ForwardFollowAndKickBallStateMachine : IStateMachine {
   IState* current_state_;
   World world_;
   std::optional<robocin::Point2Df> target_kick_;
-  robocin::detection_util::ElapsedTimer timer_;
+  std::chrono::time_point<std::chrono::steady_clock> timer_;
 
  public:
   explicit ForwardFollowAndKickBallStateMachine();

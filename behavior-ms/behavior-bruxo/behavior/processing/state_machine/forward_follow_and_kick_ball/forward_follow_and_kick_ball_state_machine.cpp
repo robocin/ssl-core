@@ -7,8 +7,6 @@
 
 #include <chrono>
 #include <optional>
-#include <robocin/detection_util/duration.h>
-#include <robocin/detection_util/elapsed_timer.h>
 #include <robocin/geometry/point2d.h>
 #include <stdio.h>
 
@@ -18,7 +16,7 @@ ForwardFollowAndKickBallStateMachine::ForwardFollowAndKickBallStateMachine() :
     current_state_(nullptr),
     target_kick_(std::nullopt) {
   ForwardFollowAndKickBallStateMachine::transitionTo(new GoToBall);
-  timer_.start();
+  timer_ = std::chrono::steady_clock::now();
 };
 
 void ForwardFollowAndKickBallStateMachine::transitionTo(IState* state) {
@@ -35,8 +33,10 @@ void ForwardFollowAndKickBallStateMachine::run(const World& world, RobotIdMessag
   robocin::Point2Df ball_position
       = robocin::Point2Df{world.ball.position->x, world.ball.position->y};
   if (target_kick_.has_value()) {
-    if (timer_.elapsed().ms() > 3000) {
-      timer_.restart();
+    auto curr_time = std::chrono::steady_clock::now();
+    auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(curr_time - timer_);
+    if (elapsed.count() > 3) {
+      timer_ = curr_time;
       target_kick_ = ShooterAnalyzer::findBestPlaceToKickOnGoal(world.field,
                                                                 world.ball,
                                                                 world.enemies,
@@ -45,6 +45,7 @@ void ForwardFollowAndKickBallStateMachine::run(const World& world, RobotIdMessag
       ForwardFollowAndKickBallCommon::setKickTarget(target_kick_.value());
     }
   } else {
+    timer_ = std::chrono::steady_clock::now();
     target_kick_ = ShooterAnalyzer::findBestPlaceToKickOnGoal(world.field,
                                                               world.ball,
                                                               world.enemies,
