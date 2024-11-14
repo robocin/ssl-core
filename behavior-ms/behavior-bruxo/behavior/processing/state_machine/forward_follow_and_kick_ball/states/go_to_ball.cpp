@@ -46,15 +46,21 @@ bool GoToBall::shouldTransitionToKickBall(const World& world) const {
 }
 
 robocin::Point2Df GoToBall::getMotionTarget(const World& world) const {
+
+  auto&& field = world.field;
   robocin::Point2Df target_behind_ball_point = AllyAnalyzer::targetBehindBallLookingToTarget(
       world,
       ally_id_.number.value(),
       ForwardFollowAndKickBallCommon::getKickTarget(),
       pApproachAngleThreshold());
 
-  auto&& field = world.field;
+  robocin::Point2Df target_inside_field
+      = FieldAnalyzer::nearestPointInsideFieldOutsidePenaltyAreas(field, target_behind_ball_point);
 
-  return FieldAnalyzer::nearestPointInsideFieldOutsidePenaltyAreas(field, target_behind_ball_point);
+  robocin::Point2Df target_inside_field_without_cross_areas
+      = AllyAnalyzer::safeTargetPoint(world, ally_id_.number.value(), target_inside_field);
+
+  return target_inside_field_without_cross_areas;
 }
 
 float GoToBall::getMotionAngle(const World& world) const {

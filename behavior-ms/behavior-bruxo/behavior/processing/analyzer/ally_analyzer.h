@@ -60,6 +60,9 @@ class AllyAnalyzer {
                                                            robocin::Point2Df kick_target_position,
                                                            float angle_threshold);
 
+  static robocin::Point2Df
+  safeTargetPoint(const World& world, int ally_id, robocin::Point2Df target);
+
  private:
   static std::optional<RobotMessage> getAlly(const World& world, int id);
 };

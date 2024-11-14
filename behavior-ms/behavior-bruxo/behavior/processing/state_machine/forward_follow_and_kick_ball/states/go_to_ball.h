@@ -24,6 +24,7 @@ class GoToBall : public IState {
   OutputMessage makeGoToBallOutput(const World& world);
   RobotIdMessage makeGoToBallRobotId(const World& world);
   KickCommandMessage makeKickCommandMessage(const World& world);
+
   PeripheralActuationMessage makePeripheralActuation(const World& world);
   MotionMessage makeGoToBallMotion(const World& world);
   PlanningMessage makeGoToBallPlanning(const World& world);
