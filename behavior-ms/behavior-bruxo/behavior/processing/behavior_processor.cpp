@@ -87,7 +87,12 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
 
   if (world_.isHalt() || world_.isTimeout()) {
     ilog("HALT");
-    return impl::onHalt();
+    // return impl::onHalt();
+  }
+
+  if (world_.isStop()) {
+    ilog("STOP");
+    return impl::onStop(world_, *goalkeeper_guard_state_machine_);
   }
 
   if (world_.isInGame()) {
@@ -98,21 +103,20 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
                           *goalkeeper_take_ball_away_state_machine_);
   }
 
-  if (world_.isStop()) {
-    ilog("STOP");
-    return impl::onStop(world_, *goalkeeper_guard_state_machine_);
-  }
-
   if (world_.isPenalty()) {
+    ilog("IN PENALTY");
     if (world_.game_status.command->away_penalty.has_value()
         || world_.game_status.command->away_prepare_penalty.has_value()) {
+      ilog("AWAY PENALTY");
       return impl::onAwayPenalty(world_, *goalkeeper_guard_state_machine_);
     }
 
     if (world_.game_status.command->home_prepare_penalty.has_value()) {
+      ilog("PREPARE HOME PENALTY");
       return impl::onPrepareHomePenalty(world_, *goalkeeper_guard_state_machine_);
     }
 
+      ilog("IN GAME FROM PENALTY");
     return impl::onInGame(world_,
                           *goalkeeper_guard_state_machine_,
                           *forward_follow_and_kick_ball_state_machine_,
@@ -122,13 +126,24 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
   if (world_.isDirectFreeKick()) {
     if (world_.game_status.command->home_prepare_direct_free_kick.has_value()
         || world_.game_status.command->away_prepare_direct_free_kick.has_value()) {
+      ilog("PREPARE FREE KICK");
       return impl::onStop(world_, *goalkeeper_guard_state_machine_);
+    }
+
+    if (world_.game_status.command->home_direct_free_kick.has_value()) {
+      ilog("HOME FREE KICK");
+      return impl::onInGame(world_,
+                            *goalkeeper_guard_state_machine_,
+                            *forward_follow_and_kick_ball_state_machine_,
+                            *goalkeeper_take_ball_away_state_machine_);
     }
 
     if (world_.game_status.command->away_direct_free_kick.has_value()) {
+      ilog("AWAY FREE KICK");
       return impl::onStop(world_, *goalkeeper_guard_state_machine_);
     }
 
+    ilog("IN GAME FROM FREE KICK");
     return impl::onInGame(world_,
                           *goalkeeper_guard_state_machine_,
                           *forward_follow_and_kick_ball_state_machine_,
@@ -136,9 +151,11 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
   }
 
   if (world_.isKickOff()) {
+    ilog("IN KICKOFF");
     return impl::onStop(world_, *goalkeeper_guard_state_machine_);
   }
 
+  ilog("NADA");
   return std::nullopt;
 }
 
