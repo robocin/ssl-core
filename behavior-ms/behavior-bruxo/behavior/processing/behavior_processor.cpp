@@ -113,11 +113,11 @@ bool BehaviorProcessor::update(std::span<const Payload>& payloads) {
     return false;
   }
 
-  const rc::Detection last_detection = detection_messages.back();
+  last_detection_ = detection_messages.back();
 
-  world_.update({last_detection.robots().begin(), last_detection.robots().end()},
-                {last_detection.balls().begin(), last_detection.balls().end()},
-                last_detection.field(),
+  world_.update({last_detection_->robots().begin(), last_detection_->robots().end()},
+                {last_detection_->balls().begin(), last_detection_->balls().end()},
+                last_detection_->field(),
                 last_game_status_.value());
 
   return true;

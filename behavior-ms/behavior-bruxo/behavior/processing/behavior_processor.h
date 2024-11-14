@@ -63,6 +63,7 @@ class BehaviorProcessor : public IBehaviorProcessor {
       forward_follow_and_kick_ball_state_machine_;
   std::optional<::protocols::decision::Decision> last_decision_;
   std::optional<::protocols::referee::GameStatus> last_game_status_;
+  std::optional<::protocols::perception::Detection> last_detection_;
 };
 
 } // namespace behavior
