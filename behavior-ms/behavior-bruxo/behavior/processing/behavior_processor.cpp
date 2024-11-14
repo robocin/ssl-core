@@ -115,6 +115,22 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
                           *goalkeeper_take_ball_away_state_machine_);
   }
 
+  if (world_.isDirectFreeKick()) {
+    if (world_.game_status.command->home_prepare_direct_free_kick.has_value() || 
+        world_.game_status.command->away_prepare_direct_free_kick.has_value()) {
+          return impl::onStop(world_, *goalkeeper_guard_state_machine_);
+        }
+
+    if (world_.game_status.command->away_direct_free_kick.has_value()) {
+      return impl::onStop(world_, *goalkeeper_guard_state_machine_);
+    }
+
+    return implt::onInGame(world_,
+                          *goalkeeper_guard_state_machine_,
+                          *forward_follow_and_kick_ball_state_machine_,
+                          *goalkeeper_take_ball_away_state_machine_);
+  }
+
   return std::nullopt;
 }
 
