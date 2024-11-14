@@ -149,7 +149,7 @@ class FieldAnalyzer {
   [[nodiscard]] static constexpr robocin::Point2Df
   nearestPointInsideField(robocin::Point2Df point,
                           const FieldMessage& field,
-                          float margin = 2 * pRobotRadius() + pMarginEps) {
+                          float margin = 2 * pRobotRadius() + pMarginEps()) {
     return robocin::Point2Df{std::clamp(point.x, field.min().x + margin, field.max().x - margin),
                              std::clamp(point.y, field.min().y + margin, field.max().y - margin)};
   }
@@ -157,9 +157,9 @@ class FieldAnalyzer {
   [[nodiscard]] static constexpr robocin::Point2Df nearestPointInsideFieldOutsidePenaltyAreas(
       const FieldMessage& field,
       robocin::Point2Df point,
-      float field_margin = 2 * pRobotRadius() + pMarginEps,
-      double ally_penalty_area_margin = 2 * pRobotRadius() + pMarginEps,
-      double enemy_penalty_area_margin = 2 * pRobotRadius() + pMarginEps) {
+      float field_margin = 2 * pRobotRadius() + pMarginEps(),
+      double ally_penalty_area_margin = 2 * pRobotRadius() + pMarginEps(),
+      double enemy_penalty_area_margin = 2 * pRobotRadius() + pMarginEps()) {
 
     point = nearestPointInsideField(point, field, field_margin);
 

@@ -4,7 +4,6 @@
 #include "decision/processing/messages/perception/field/field_message.h"
 
 #include <robocin/geometry/point2d.h>
-#include <behavior/parameters/parameters.h>
 
 namespace decision {
 
@@ -138,58 +137,6 @@ class FieldAnalyzer {
   enemyPenaltyAreaContains(const robocin::Point2Df& point, FieldMessage& field, double radius = 0) {
     return isAttackingToRight() ? rightPenaltyAreaContains(point, field, radius) :
                                   leftPenaltyAreaContains(point, field, radius);
-  }
-
-  [[nodiscard]] constexpr robocin::Point2Df
-  nearestPointInsideField(FieldMessage& field,robocin::Point2Df point, real_t margin = 2 * Env::ROBOT_RADIUS + MARGIN_EPS) const {
-    return robocin::Point2Df{std::clamp(point.x, min().x() + margin, field.max().x() - margin),
-                 std::clamp(point.y, field.min().y() + margin, field.max().y() - margin)};
-  }
-
-  [[nodiscard]] constexpr robocin::Point2Df nearestPointInsideFieldOutsidePenaltyAreas(
-      FieldMessage& field,
-      robocin::Point2Df point,
-      real_t fieldMargin = 2 * Env::ROBOT_RADIUS + MARGIN_EPS,
-      real_t allyPenaltyAreaMargin = 2 * Env::ROBOT_RADIUS + MARGIN_EPS,
-      real_t enemyPenaltyAreaMargin = 2 * Env::ROBOT_RADIUS + MARGIN_EPS) const {
-
-    point = nearestPointInsideField(point, fieldMargin); //TODO: nearestPointInsideField
-
-    auto getClosestProjectedPoint = [point](const std::array<robocin::Point2Df, 4>& area) {
-      robocin::Point2Df projected = point.projectOnSegment(area[0], area[1]);
-      for (int i = 1; i < 3; ++i) {
-        robocin::Point2Df current = point.projectOnSegment(area[i], area[i + 1]);
-        if (current.distanceSquaredTo(point) < projected.distanceSquaredTo(point)) {
-          projected = current;
-        }
-      }
-      return projected;
-    };
-
-    if (auto penaltyMargin = allyPenaltyAreaMargin; allyPenaltyAreaContains(point, penaltyMargin)) {
-      auto sign = isAttackingToRight() ? 1 : -1;
-      const std::array area
-          = {field.allyPenaltyAreaGoalCornerBottom() + robocin::Point2Df{sign * fieldMargin, -penaltyMargin},
-             field.allyPenaltyAreaCornerBottom() + robocin::Point2Df{sign * penaltyMargin, -penaltyMargin},
-             field.allyPenaltyAreaCornerTop() + robocin::Point2Df{sign * penaltyMargin, penaltyMargin},
-             field.allyPenaltyAreaGoalCornerTop() + robocin::Point2Df{sign * fieldMargin, penaltyMargin}};
-
-      return getClosestProjectedPoint(area);
-    }
-
-    if (auto penaltyMargin = enemyPenaltyAreaMargin;
-        enemyPenaltyAreaContains(point, penaltyMargin)) {
-      auto sign = isAttackingToRight() ? -1 : 1;
-      const std::array area
-          = {field.enemyPenaltyAreaGoalCornerBottom() + robocin::Point2Df{sign * fieldMargin, -penaltyMargin},
-             field.enemyPenaltyAreaCornerBottom() + robocin::Point2Df{sign * penaltyMargin, -penaltyMargin},
-             field.enemyPenaltyAreaCornerTop() + robocin::Point2Df{sign * penaltyMargin, penaltyMargin},
-             field.enemyPenaltyAreaGoalCornerTop() + robocin::Point2Df{sign * fieldMargin, penaltyMargin}};
-
-      return getClosestProjectedPoint(area);
-    }
-
-    return point;
   }
 
  protected:
