@@ -25,8 +25,16 @@ constinit const auto pRobotDiameter = ::robocin::parameters::View<5>::asInt32(18
 constinit const auto pGoalkeeperNumber = ::robocin::parameters::View<6>::asInt32(0);
 constinit const auto pForwardNumber = ::robocin::parameters::View<7>::asInt32(1);
 constinit const auto pSupportNumber = ::robocin::parameters::View<8>::asInt32(2);
-constinit const auto pMarginEps = ::robocin::parameters::View<9>::asInt32(20);
+constinit const auto pForwardDistToEnterKickBallWhenMovingAway
+    = ::robocin::parameters::View<9>::asInt32(200);
+constinit const auto pForwardMaxDistToMoveAroundBallWhenIsStoppedAndLookingToBallAndTarget
+    = ::robocin::parameters::View<10>::asInt32(330);
+constinit const auto pApproachAngleThreshold = ::robocin::parameters::View<11>::asFloat(0.13f);
 constinit const auto pFrontKickStrenght = ::robocin::parameters::View<12>::asFloat(6.5f);
+constinit const auto pMarginEps = ::robocin::parameters::View<13>::asInt32(20);
+
+constinit const auto pStopRadius = ::robocin::parameters::View<14>::asFloat(600.0f);
+constinit const auto pChipKickStrenght = ::robocin::parameters::View<15>::asFloat(6.0f);
 
 namespace shoot {
 inline static double MIN_Y_DISTANCE_TO_CHANGE_TO_KICK_TO_POST = 2000;
@@ -36,20 +44,6 @@ inline static bool ALLOWED_KICK_ON_POST = true;
 inline static double DONT_HAVE_ANGLE_TO_KICK_THRESHOLD = 0.12;
 inline static double HOW_MANY_DIAMETERS_DISCOUNT_OUT_GOAL_LINE_WHEN_KICK_ON_CORNER = 2.5;
 }; // namespace shoot
-
-constinit const auto pForwardDistToEnterKickBallWhenMovingAway
-    = ::robocin::parameters::View<9>::asInt32(200);
-
-constinit const auto pForwardMaxDistToMoveAroundBallWhenIsStoppedAndLookingToBallAndTarget
-    = ::robocin::parameters::View<10>::asInt32(330);
-
-constinit const auto pApproachAngleThreshold = ::robocin::parameters::View<11>::asFloat(0.13f);
-
-constinit const auto pFrontKickStrenght = ::robocin::parameters::View<12>::asFloat(6.5f);
-constinit const auto pChipKickStrenght = ::robocin::parameters::View<13>::asFloat(6.0f);
-
-constinit const auto pStopRadius = ::robocin::parameters::View<13>::asFloat(600.0f);
-
 
 // NOLINTEND(*comment*)
 } // namespace behavior

@@ -14,29 +14,10 @@
 namespace behavior {
 
 class ShooterAnalyzer {
-  std::vector<RobotMessage> setEnemies(const std::vector<RobotMessage>& robots) {
-    std::vector<RobotMessage> enemies;
-    for (const auto& robot : robots) {
-      if (!(robot.robot_id->color == pAllyColor)) {
-        enemies.emplace_back(RobotMessage{
-            robot.confidence.value(),
-            RobotIdMessage{robot.robot_id->color.value(), robot.robot_id->number.value()},
-            robot.position.value(),
-            robot.angle.value(),
-            robot.velocity.value(),
-            robot.angular_velocity.value(),
-            robot.radius.value(),
-            robot.height.value(),
-            robot.dribbler_width.value(),
-            std::nullopt /* Feedback */});
-      }
-    }
 
-    return enemies;
-  }
-
-  inline float getAngularCoefficient(robocin::Point2Df sourcePoint,
-                                     robocin::Point2Df destinationPoint) {
+ public:
+  static inline float getAngularCoefficient(robocin::Point2Df sourcePoint,
+                                            robocin::Point2Df destinationPoint) {
     float a;
     float angle = robocin::Point2Df{sourcePoint - destinationPoint}.angle();
     float eps = 0.001;
@@ -49,12 +30,11 @@ class ShooterAnalyzer {
     return a;
   }
 
-  robocin::Point2Df findBestPlaceToKickOnGoal(const FieldMessage& field,
-                                              const BallMessage& ball,
-                                              const std::vector<RobotMessage>& robots,
-                                              robocin::Point2Df kick_start_position,
-                                              bool consider_enemy_velocity) {
-    auto enemies = setEnemies(robots);
+  static robocin::Point2Df findBestPlaceToKickOnGoal(const FieldMessage& field,
+                                                     const BallMessage& ball,
+                                                     const std::vector<RobotMessage>& enemies,
+                                                     robocin::Point2Df kick_start_position,
+                                                     bool consider_enemy_velocity) {
     robocin::Point2Df decrease_goal_size_by = robocin::Point2Df(0, pRobotRadius() * 1.2);
     robocin::Point2Df upper_post = field.enemyGoalOutsideTop() - decrease_goal_size_by;
     robocin::Point2Df bottom_post = field.enemyGoalOutsideBottom() + decrease_goal_size_by;
