@@ -4,8 +4,8 @@
 #include "behavior/parameters/parameters.h"
 #include "behavior/processing/messages/behavior/behavior_message.h"
 #include "behavior/processing/state_machine/goalkeeper_take_ball_away/common/goalkeeper_take_ball_away_common.h"
-#include "behavior/processing/state_machine/goalkeeper_take_ball_away/states/go_to_ball.h"
-#include "behavior/processing/state_machine/goalkeeper_take_ball_away/states/kick_ball.h"
+#include "behavior/processing/state_machine/goalkeeper_take_ball_away/states/go_to_ball_gk.h"
+#include "behavior/processing/state_machine/goalkeeper_take_ball_away/states/kick_ball_gk.h"
 #include "behavior/processing/state_machine/istate_machine.h"
 
 #include <robocin/geometry/point2d.h>

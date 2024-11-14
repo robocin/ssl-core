@@ -7,7 +7,7 @@
 #include "behavior/processing/messages/motion/motion_message.h"
 #include "behavior/processing/state_machine/goalkeeper_take_ball_away/common/goalkeeper_take_ball_away_common.h"
 #include "behavior/processing/state_machine/goalkeeper_take_ball_away/goalkeeper_take_ball_away_state_machine.h"
-#include "behavior/processing/state_machine/goalkeeper_take_ball_away/states/go_to_ball.h"
+#include "behavior/processing/state_machine/goalkeeper_take_ball_away/states/go_to_ball_gk.h"
 #include "behavior/processing/state_machine/goalkeeper_take_ball_away/states/go_to_safe_position.h"
 #include "behavior/processing/state_machine/istate_machine.h"
 
@@ -16,13 +16,13 @@
 
 namespace behavior {
 
-class KickBall : public IState {
+class KickBallGK : public IState {
  private:
   // Output generation
-  OutputMessage makeKickBallOutput(const World& world);
-  RobotIdMessage makeKickBallRobotId(const World& world);
-  MotionMessage makeKickBallMotion(const World& world);
-  PlanningMessage makeKickBallPlanning(const World& world);
+  OutputMessage makeKickBallGKOutput(const World& world);
+  RobotIdMessage makeKickBallGKRobotId(const World& world);
+  MotionMessage makeKickBallGKMotion(const World& world);
+  PlanningMessage makeKickBallGKPlanning(const World& world);
 
   // Transition logic
   void checkAndHandleTransitions(const World& world);
@@ -43,7 +43,7 @@ class KickBall : public IState {
   IStateMachine* state_machine_{}; // back reference
 
  public:
-  explicit KickBall();
+  explicit KickBallGK();
   void setStateMachine(IStateMachine* state_machine) override { state_machine_ = state_machine; }
   OutputMessage exec(const World& world, RobotIdMessage& ally_id) override;
 };

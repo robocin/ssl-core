@@ -86,10 +86,12 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
   }
 
   if (world_.isHalt() || world_.isTimeout()) {
+    ilog("HALT");
     return impl::onHalt();
   }
 
   if (world_.isInGame()) {
+    ilog("IN GAME");
     return impl::onInGame(world_,
                           *goalkeeper_guard_state_machine_,
                           *forward_follow_and_kick_ball_state_machine_,
@@ -97,11 +99,13 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
   }
 
   if (world_.isStop()) {
+    ilog("STOP");
     return impl::onStop(world_, *goalkeeper_guard_state_machine_);
   }
 
   if (world_.isPenalty()) {
-    if (world_.game_status.command->away_penalty.has_value() || world_.game_status.command->away_prepare_penalty.has_value()) {
+    if (world_.game_status.command->away_penalty.has_value()
+        || world_.game_status.command->away_prepare_penalty.has_value()) {
       return impl::onAwayPenalty(world_, *goalkeeper_guard_state_machine_);
     }
 
@@ -116,10 +120,10 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
   }
 
   if (world_.isDirectFreeKick()) {
-    if (world_.game_status.command->home_prepare_direct_free_kick.has_value() || 
-        world_.game_status.command->away_prepare_direct_free_kick.has_value()) {
-          return impl::onStop(world_, *goalkeeper_guard_state_machine_);
-        }
+    if (world_.game_status.command->home_prepare_direct_free_kick.has_value()
+        || world_.game_status.command->away_prepare_direct_free_kick.has_value()) {
+      return impl::onStop(world_, *goalkeeper_guard_state_machine_);
+    }
 
     if (world_.game_status.command->away_direct_free_kick.has_value()) {
       return impl::onStop(world_, *goalkeeper_guard_state_machine_);
@@ -145,11 +149,13 @@ bool BehaviorProcessor::update(std::span<const Payload>& payloads) {
   }
 
   if (!last_game_status_) {
+    ilog("NO GAME STATUS");
     return false;
   }
 
   std::vector<rc::Detection> detection_messages = detectionFromPayloads(payloads);
   if (detection_messages.empty()) {
+    ilog("NO DETECTION");
     // a new package must be generated only when a new detection is received.
     return false;
   }

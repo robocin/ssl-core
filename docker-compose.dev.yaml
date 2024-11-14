@@ -12,6 +12,7 @@ services:
       - "10301:10301/udp"
       - "10302:10302/udp"
       - "10300:10300/udp"
+      - "11003:11003/udp"
       
   autoref-tigers:
     container_name: autoref-tigers
@@ -99,6 +100,7 @@ services:
       - .ssl-core:/tmp/.ssl-core
     depends_on:
       - perception-ms
+    attach: false
 
   playback-ms:
     container_name: playback-ms
@@ -206,18 +208,6 @@ services:
       - metrics-db
     attach: false
 
-  decision-ms:
-    container_name: decision-ms
-    build:
-      context: .
-      dockerfile: decision-ms/decision-guardiola/decision-guardiola.Dockerfile
-    volumes:
-      - .ssl-core:/tmp/.ssl-core
-    depends_on:
-      - perception-ms
-      - referee-ms
-    attach: false
-
   behavior-ms:
     container_name: behavior-ms
     build:
@@ -225,9 +215,7 @@ services:
       dockerfile: behavior-ms/behavior-bruxo/behavior-bruxo.Dockerfile
     volumes:
       - .ssl-core:/tmp/.ssl-core
-    depends_on:
-      - decision-ms
-    attach: false
+    attach: true
 
   navigation-ms:
     container_name: navigation-ms
@@ -250,7 +238,7 @@ services:
     depends_on:
       - navigation-ms
     network_mode: "host"
-    attach: true
+    attach: false
 
 volumes:
   .ssl-core:

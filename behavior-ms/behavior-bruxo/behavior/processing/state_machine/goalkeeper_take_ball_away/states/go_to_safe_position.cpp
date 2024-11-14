@@ -20,11 +20,11 @@ void GoToSafePosition::checkAndHandleTransitions(const World& world) {
   }
 
   if (shouldTransitionToKickBall(world)) {
-    state_machine_->transitionTo(new KickBall);
+    state_machine_->transitionTo(new KickBallGK);
     return;
   }
 
-  state_machine_->transitionTo(new GoToBall);
+  state_machine_->transitionTo(new GoToBallGK);
 }
 
 bool GoToSafePosition::shouldStayInSafePosition(const World& world) const {

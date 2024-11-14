@@ -1,13 +1,13 @@
 #include "behavior/processing/state_machine/goalkeeper_take_ball_away/goalkeeper_take_ball_away_state_machine.h"
 
-#include "behavior/processing/state_machine/goalkeeper_take_ball_away/states/go_to_ball.h"
+#include "behavior/processing/state_machine/goalkeeper_take_ball_away/states/go_to_ball_gk.h"
 
 #include <stdio.h>
 
 namespace behavior {
 
 GoalkeeperTakeBallAwayStateMachine::GoalkeeperTakeBallAwayStateMachine() : current_state_(nullptr) {
-  GoalkeeperTakeBallAwayStateMachine::transitionTo(new GoToBall);
+  GoalkeeperTakeBallAwayStateMachine::transitionTo(new GoToBallGK);
 };
 
 void GoalkeeperTakeBallAwayStateMachine::transitionTo(IState* state) {

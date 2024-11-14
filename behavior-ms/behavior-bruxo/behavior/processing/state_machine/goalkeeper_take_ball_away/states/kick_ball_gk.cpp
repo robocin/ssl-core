@@ -1,35 +1,35 @@
-#include "behavior/processing/state_machine/goalkeeper_take_ball_away/states/kick_ball.h"
+#include "behavior/processing/state_machine/goalkeeper_take_ball_away/states/kick_ball_gk.h"
 
 namespace behavior {
 
-KickBall::KickBall() = default;
+KickBallGK::KickBallGK() = default;
 
-OutputMessage KickBall::exec(const World& world, RobotIdMessage& ally_id) {
-  robocin::ilog("Exec KickBall state");
+OutputMessage KickBallGK::exec(const World& world, RobotIdMessage& ally_id) {
+  robocin::ilog("Exec KickBallGK state");
   ally_id_ = std::move(ally_id);
 
   checkAndHandleTransitions(world);
-  return makeKickBallOutput(world);
+  return makeKickBallGKOutput(world);
 }
 
-void KickBall::checkAndHandleTransitions(const World& world) {
+void KickBallGK::checkAndHandleTransitions(const World& world) {
   if (shouldTransitionToSafePosition(world)) {
     state_machine_->transitionTo(new GoToSafePosition);
     return;
   }
 
   if (shouldTransitionToGoToBall(world)) {
-    state_machine_->transitionTo(new GoToBall);
+    state_machine_->transitionTo(new GoToBallGK);
     return;
   }
 }
 
-bool KickBall::shouldTransitionToSafePosition(const World& world) const {
+bool KickBallGK::shouldTransitionToSafePosition(const World& world) const {
   return GoalkeeperTakeBallAwayCommon::riskOfCollideWithPosts(world, ally_id_.number.value())
          || GoalkeeperTakeBallAwayCommon::robotBallTooClosePosts(world, ally_id_.number.value());
 }
 
-bool KickBall::shouldTransitionToGoToBall(const World& world) const {
+bool KickBallGK::shouldTransitionToGoToBall(const World& world) const {
   robocin::Point2Df target_position = GoalkeeperTakeBallAwayCommon::getKickTargetPosition(world);
 
   bool is_ally_looking_to_target_and_ball
@@ -45,29 +45,29 @@ bool KickBall::shouldTransitionToGoToBall(const World& world) const {
   return !is_ally_looking_to_target_and_ball || !is_ball_in_range_to_kick;
 }
 
-robocin::Point2Df KickBall::getMotionTarget(const World& world) const {
+robocin::Point2Df KickBallGK::getMotionTarget(const World& world) const {
   robocin::Point2Df ball_position
       = robocin::Point2Df{world.ball.position->x, world.ball.position->y};
   return ball_position;
 }
 
-float KickBall::getMotionAngle(const World& world) const {
+float KickBallGK::getMotionAngle(const World& world) const {
   return (GoalkeeperTakeBallAwayCommon::getKickTargetPosition(world) - getMotionTarget(world))
       .angle();
 }
 
-OutputMessage KickBall::makeKickBallOutput(const World& world) {
-  return OutputMessage{RobotIdMessage{makeKickBallRobotId(world)},
-                       MotionMessage{makeKickBallMotion(world)},
-                       PlanningMessage{makeKickBallPlanning(world)}};
+OutputMessage KickBallGK::makeKickBallGKOutput(const World& world) {
+  return OutputMessage{RobotIdMessage{makeKickBallGKRobotId(world)},
+                       MotionMessage{makeKickBallGKMotion(world)},
+                       PlanningMessage{makeKickBallGKPlanning(world)}};
 }
 
-RobotIdMessage KickBall::makeKickBallRobotId(const World& world) {
+RobotIdMessage KickBallGK::makeKickBallGKRobotId(const World& world) {
   // TODO(mlv): Create the robot id message
   return std::move(ally_id_);
 }
 
-MotionMessage KickBall::makeKickBallMotion(const World& world) {
+MotionMessage KickBallGK::makeKickBallGKMotion(const World& world) {
   // TODO(mlv): Create the motion message
   GoToPointMessage go_to_point
       = GoToPointMessage{getMotionTarget(world),
@@ -76,7 +76,7 @@ MotionMessage KickBall::makeKickBallMotion(const World& world) {
   return MotionMessage{std::move(go_to_point)};
 };
 
-PlanningMessage KickBall::makeKickBallPlanning(const World& world) {
+PlanningMessage KickBallGK::makeKickBallGKPlanning(const World& world) {
   // TODO(mlv): Create the planning message
   return PlanningMessage{};
 }
