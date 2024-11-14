@@ -29,6 +29,14 @@ void GoToBallGK::checkAndHandleTransitions(const World& world) {
   }
 }
 
+KickCommandMessage GoToBallGK::makeKickCommandMessage(const World& world) {
+  return KickCommandMessage{pChipKickStrenght(), false, false, true, false};
+}
+
+PeripheralActuationMessage GoToBallGK::makePeripheralActuation(const World& world) {
+  return PeripheralActuationMessage{makeKickCommandMessage(world)};
+}
+
 bool GoToBallGK::shouldTransitionToGoToSafePosition(const World& world) const {
   // TODO(mlv): get ally id
   return GoalkeeperTakeBallAwayCommon::riskOfCollideWithPosts(world, ally_id_.number.value())
@@ -145,7 +153,11 @@ MotionMessage GoToBallGK::makeGoToBallGKMotion(const World& world) {
   GoToPointMessage go_to_point = GoToPointMessage{getMotionTarget(world),
                                                   getMotionAngle(world),
                                                   getMotionMovingProfile(world)};
-  return MotionMessage{std::move(go_to_point)};
+  return MotionMessage{std::move(go_to_point),
+                        std::nullopt,
+                        std::nullopt,
+                        std::nullopt, 
+                        makePeripheralActuation(world)};
 }
 
 PlanningMessage GoToBallGK::makeGoToBallGKPlanning(const World& world) {

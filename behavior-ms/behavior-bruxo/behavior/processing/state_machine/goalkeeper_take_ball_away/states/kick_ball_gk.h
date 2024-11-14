@@ -23,6 +23,8 @@ class KickBallGK : public IState {
   RobotIdMessage makeKickBallGKRobotId(const World& world);
   MotionMessage makeKickBallGKMotion(const World& world);
   PlanningMessage makeKickBallGKPlanning(const World& world);
+  KickCommandMessage makeKickCommandMessage(const World& world);
+  PeripheralActuationMessage makePeripheralActuation(const World& world);
 
   // Transition logic
   void checkAndHandleTransitions(const World& world);

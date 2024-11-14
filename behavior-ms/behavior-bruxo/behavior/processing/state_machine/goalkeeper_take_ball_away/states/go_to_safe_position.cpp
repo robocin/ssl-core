@@ -27,6 +27,14 @@ void GoToSafePosition::checkAndHandleTransitions(const World& world) {
   state_machine_->transitionTo(new GoToBallGK);
 }
 
+KickCommandMessage GoToSafePosition::makeKickCommandMessage(const World& world) {
+  return KickCommandMessage{pChipKickStrenght(), false, false, true, false};
+}
+
+PeripheralActuationMessage GoToSafePosition::makePeripheralActuation(const World& world) {
+  return PeripheralActuationMessage{makeKickCommandMessage(world)};
+}
+
 bool GoToSafePosition::shouldStayInSafePosition(const World& world) const {
   return GoalkeeperTakeBallAwayCommon::riskOfCollideWithPosts(world, ally_id_.number.value())
          || GoalkeeperTakeBallAwayCommon::robotBallTooClosePosts(world, ally_id_.number.value());
@@ -81,7 +89,12 @@ RobotIdMessage GoToSafePosition::makeGoToSafePositionRobotId(const World& world)
 MotionMessage GoToSafePosition::makeGoToSafePositionMotion(const World& world) {
   // TODO(mlv): Create the motion message
   GoToPointMessage go_to_point = GoToPointMessage{getMotionTarget(world), getMotionAngle(world)};
-  return MotionMessage{std::move(go_to_point)};
+  
+  return MotionMessage{std::move(go_to_point),
+                      std::nullopt,
+                      std::nullopt,
+                      std::nullopt, 
+                      makePeripheralActuation(world)};
 }
 
 PlanningMessage GoToSafePosition::makeGoToSafePositionPlanning(const World& world) {

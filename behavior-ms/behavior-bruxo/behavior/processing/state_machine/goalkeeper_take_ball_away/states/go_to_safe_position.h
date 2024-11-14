@@ -20,6 +20,8 @@ class GoToSafePosition : public IState {
   RobotIdMessage makeGoToSafePositionRobotId(const World& world);
   MotionMessage makeGoToSafePositionMotion(const World& world);
   PlanningMessage makeGoToSafePositionPlanning(const World& world);
+  KickCommandMessage makeKickCommandMessage(const World& world);
+  PeripheralActuationMessage makePeripheralActuation(const World& world);
 
   // Transition logic
   void checkAndHandleTransitions(const World& world);

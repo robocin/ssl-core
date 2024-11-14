@@ -22,6 +22,8 @@ class GoToBallGK : public IState {
   RobotIdMessage makeGoToBallGKRobotId(const World& world);
   MotionMessage makeGoToBallGKMotion(const World& world);
   PlanningMessage makeGoToBallGKPlanning(const World& world);
+  KickCommandMessage makeKickCommandMessage(const World& world);
+  PeripheralActuationMessage makePeripheralActuation(const World& world);
 
   // Transition logic
   void checkAndHandleTransitions(const World& world);

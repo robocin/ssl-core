@@ -67,13 +67,26 @@ RobotIdMessage KickBallGK::makeKickBallGKRobotId(const World& world) {
   return std::move(ally_id_);
 }
 
+KickCommandMessage KickBallGK::makeKickCommandMessage(const World& world) {
+  return KickCommandMessage{pChipKickStrenght(), false, true, false, false};
+}
+
+PeripheralActuationMessage KickBallGK::makePeripheralActuation(const World& world) {
+  return PeripheralActuationMessage{makeKickCommandMessage(world)};
+}
+
 MotionMessage KickBallGK::makeKickBallGKMotion(const World& world) {
   // TODO(mlv): Create the motion message
   GoToPointMessage go_to_point
       = GoToPointMessage{getMotionTarget(world),
                          getMotionAngle(world),
                          GoToPointMessage::MovingProfile::DirectSafeKickBallSpeed};
-  return MotionMessage{std::move(go_to_point)};
+
+  return MotionMessage{std::move(go_to_point),
+                        std::nullopt,
+                        std::nullopt,
+                        std::nullopt, 
+                        makePeripheralActuation(world)};
 };
 
 PlanningMessage KickBallGK::makeKickBallGKPlanning(const World& world) {
