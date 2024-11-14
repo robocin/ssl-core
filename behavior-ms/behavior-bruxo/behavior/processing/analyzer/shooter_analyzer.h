@@ -153,7 +153,7 @@ class ShooterAnalyzer {
     double angle_diff_posts = std::abs(
         robocin::smallestAngleDiff(ball_line_bottom_post_angle, ball_line_upper_post_angle));
 
-    // If don't have space enough between EnemyGK and the near post, then kick on opposite post
+    // If we don't have enough space between EnemyGK and the nearest post, then kick on opposite post
     if (angle_diff_posts < shoot::DONT_HAVE_ANGLE_TO_KICK_THRESHOLD
         && shoot::ALLOWED_KICK_ON_POST) {
       double distance_ball_to_goal_line_axis_x
