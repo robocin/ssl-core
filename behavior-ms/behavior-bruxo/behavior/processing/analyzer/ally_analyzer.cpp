@@ -1,10 +1,12 @@
 #include "behavior/processing/analyzer/ally_analyzer.h"
 
+#include "behavior/parameters/parameters.h"
 #include "behavior/processing/analyzer/ball_analyzer.h"
 #include "common/robot_id/robot_id.h"
 #include "perception/robot/robot_message.h"
 
 #include <robocin/geometry/line.h>
+#include <robocin/geometry/mathematics.h>
 #include <robocin/geometry/point2d.h>
 
 namespace behavior {
@@ -264,20 +266,49 @@ AllyAnalyzer::targetBehindBallLookingToTarget(const World& world,
   return ball_position + contour_vector.resized(contour_margin);
 }
 
-bool AllyAnalyzer::targetPointCrossesArea(const World& world,
-                                          int ally_id,
-                                          robocin::Point2Df target) {
+robocin::Point2Df
+AllyAnalyzer::safeTargetPoint(const World& world, int ally_id, robocin::Point2Df target) {
   std::optional<RobotMessage> ally = AllyAnalyzer::getAlly(world, ally_id);
   if (!ally.has_value()) {
-    return false;
+    return robocin::Point2Df{};
   }
+  robocin::Point2Df ally_position = ally->position.value();
 
   robocin::Line ally_to_target_line = {target, ally->position.value()};
 
-  return false;
-}
+  robocin::Line penalty_area_top_line
+      = {world.field.enemyPenaltyAreaGoalCornerTop(), world.field.enemyPenaltyAreaCornerTop()};
 
-robocin::Point2Df AllyAnalyzer::safeTargetPoint(const World& world,
-                                                robocin::Point2Df invalid_target) {}
+  robocin::Line penalty_area_bottom_line = {world.field.enemyPenaltyAreaGoalCornerBottom(),
+                                            world.field.enemyPenaltyAreaCornerBottom()};
+
+  bool intersect_top = mathematics::segmentsIntersect(penalty_area_top_line, ally_to_target_line);
+  bool intersect_bottom
+      = mathematics::segmentsIntersect(penalty_area_bottom_line, ally_to_target_line);
+
+  if (!(intersect_bottom or intersect_top)) {
+    return target;
+  }
+
+  robocin::Point2Df corner_point = ally_position.y < 0 ?
+                                       world.field.enemyPenaltyAreaCornerBottom() :
+                                       world.field.enemyPenaltyAreaCornerTop();
+
+  robocin::Point2Df corner_target = [&]() {
+    if (intersect_bottom && intersect_top) {
+      return corner_point;
+    }
+    if (intersect_bottom) {
+      return world.field.enemyPenaltyAreaCornerBottom();
+    }
+    if (intersect_top) {
+      return world.field.enemyPenaltyAreaCornerTop();
+    }
+    return target;
+  }();
+
+  return corner_target
+         + (corner_target - world.field.enemyGoalOutsideCenter()).resized(pRobotDiameter() * 2);
+}
 
 } // namespace behavior
