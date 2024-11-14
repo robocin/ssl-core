@@ -1,10 +1,12 @@
 #include "behavior/processing/impl/impl.h"
 
+#include "ball_analyzer.h"
 #include "behavior/parameters/parameters.h"
 #include "behavior/processing/messages/common/game_event/game_event_message.h"
 #include "behavior/processing/messages/common/robot_id/robot_id.h"
 #include "behavior/processing/state_machine/goalkeeper_guard/goalkeeper_guard_state_machine.h"
 #include "behavior/processing/state_machine/istate_machine.h"
+#include "field_analyzer.h"
 #include "forward_follow_and_kick_ball/forward_follow_and_kick_ball_state_machine.h"
 #include "goalkeeper_take_ball_away/goalkeeper_take_ball_away_state_machine.h"
 
@@ -142,7 +144,23 @@ void emplaceGoalkeeperOutput(RobotMessage& goalkeeper,
                              BehaviorMessage& behavior_message,
                              GoalkeeperGuardStateMachine& guard_state_machine) {};
 
-bool shouldTakeBallAway(World& world);
+bool shouldTakeBallAway(World& world) {
+  auto&& field = world.field;
+  auto&& ball = world.ball;
+
+  robocin::Point2Df ball_position = {ball.position.value().x, ball.position.value().y};
+
+  bool is_ball_inside_area = FieldAnalyzer::allyPenaltyAreaContains(ball_position, field);
+  bool is_ball_stopped = BallAnalyzer::isBallStopped(ball);
+  bool is_ball_slowly = BallAnalyzer::isBallMovingSlowly(ball);
+  bool is_ball_moving_away_from_our_goal = BallAnalyzer::isBallMovingToEnemySide(field, ball);
+
+  bool shouldTakeBallAway
+      = is_ball_inside_area
+        && (is_ball_stopped or (is_ball_slowly && is_ball_moving_away_from_our_goal));
+
+  return shouldTakeBallAway;
+}
 
 // Game running
 std::optional<rc::Behavior>
@@ -163,9 +181,13 @@ onInGame(World& world,
   // Take goalkeeper
   auto goalkeeper = takeGoalkeeper(world.allies);
   if (goalkeeper.has_value()) {
-
-    guard_state_machine.run(world, goalkeeper->robot_id.value());
-    behavior_message.output.emplace_back(std::move(guard_state_machine.output));
+    if (shouldTakeBallAway(world)) {
+      take_ball_away_state_machine.run(world, goalkeeper->robot_id.value());
+      behavior_message.output.emplace_back(std::move(take_ball_away_state_machine.output));
+    } else {
+      guard_state_machine.run(world, goalkeeper->robot_id.value());
+      behavior_message.output.emplace_back(std::move(guard_state_machine.output));
+    }
   }
 
   // Take support
