@@ -24,7 +24,7 @@ constinit const auto pPenaltyAreaWidth = ::robocin::parameters::View<11>::asFloa
 constinit const auto pBoundaryWidth = ::robocin::parameters::View<12>::asFloat(300);
 constinit const auto pGoalCenterToPenaltyMark = ::robocin::parameters::View<13>::asFloat(8'000);
 
-constinit const auto pConsiderEntitiesInPositiveSide = ::robocin::parameters::View<14>::asBool(false);
+constinit const auto pConsiderEntitiesInPositiveSide = ::robocin::parameters::View<14>::asBool(true);
 constinit const auto pConsiderEntitiesInNegativeSide = ::robocin::parameters::View<15>::asBool(true);
 
 // NOLINTEND(*comment*)
