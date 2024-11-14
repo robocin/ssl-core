@@ -102,8 +102,17 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
 
   if (world_.isPenalty()) {
     if (world_.game_status.command->away_penalty.has_value() || world_.game_status.command->away_prepare_penalty.has_value()) {
-      impl::onAwayPenalty(world_, *goalkeeper_guard_state_machine_);
+      return impl::onAwayPenalty(world_, *goalkeeper_guard_state_machine_);
     }
+
+    if (world_.game_status.command->home_prepare_penalty.has_value()) {
+      return impl::onPrepareHomePenalty(world_, *goalkeeper_guard_state_machine_);
+    }
+
+    return impl::onInGame(world_,
+                          *goalkeeper_guard_state_machine_,
+                          *forward_follow_and_kick_ball_state_machine_,
+                          *goalkeeper_take_ball_away_state_machine_);
   }
 
   return std::nullopt;

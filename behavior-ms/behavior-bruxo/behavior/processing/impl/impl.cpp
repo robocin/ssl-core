@@ -260,7 +260,44 @@ std::optional<rc::Behavior> onAwayPenalty(World& world, GoalkeeperGuardStateMach
   }
   
   return behavior_message.toProto();
-
 };
+
+std::optional<rc::Behavior> onPrepareHomePenalty(World& world, GoalkeeperGuardStateMachine& guard_state_machine) {
+BehaviorMessage behavior_message;
+
+  // Take goalkeeper
+  auto goalkeeper = takeGoalkeeper(world.allies);
+  if (goalkeeper.has_value()) {
+    guard_state_machine.run(world, goalkeeper->robot_id.value());
+    behavior_message.output.emplace_back(std::move(guard_state_machine.output));
+  }
+
+  // Take forward
+  auto forward = takeForward(world.allies);
+  if (forward.has_value()) {
+    behavior_message.output.emplace_back(
+        RobotIdMessage{pAllyColor, pForwardNumber()},
+        MotionMessage{
+            GoToPointMessage{world.field.enemyPenaltyAreaCenter(),
+                            0.0,
+                            GoToPointMessage::MovingProfile::DirectApproachBallSpeed,
+                            GoToPointMessage::PrecisionToTarget::HIGH,
+                            true /* sync_rotate_with_linear_movement */},
+            std::nullopt /* go_to_point_with_trajectory */,
+            std::nullopt /* rotate_in_point */,
+            std::nullopt /* rotate_on_self */,
+            PeripheralActuationMessage{KickCommandMessage{
+        0.0, /* strength */
+        false /* is_front */,
+        false /* is_chip */,
+        true /* charge */,
+        false /* bypass_ir */
+      }
+    }});
+  }
+  
+  return behavior_message.toProto();
+};
+
 }
 } // namespace behavior
