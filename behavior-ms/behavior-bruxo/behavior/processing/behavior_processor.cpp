@@ -85,17 +85,17 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
     return std::nullopt;
   }
 
-  if (world_.isHalt() || world_.isTimeout()) {
-    ilog("HALT");
-    // return impl::onHalt();
-  }
+  // if (world_.isHalt() || world_.isTimeout()) {
+  //   ilog("HALT");
+  //   return impl::onHalt();
+  // }
 
   if (world_.isStop()) {
     ilog("STOP");
     return impl::onStop(world_, *goalkeeper_guard_state_machine_);
   }
 
-  if (world_.isInGame()) {
+  if (world_.isInGame() || true) {
     ilog("IN GAME");
     return impl::onInGame(world_,
                           *goalkeeper_guard_state_machine_,
@@ -116,7 +116,7 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
       return impl::onPrepareHomePenalty(world_, *goalkeeper_guard_state_machine_);
     }
 
-      ilog("IN GAME FROM PENALTY");
+    ilog("IN GAME FROM PENALTY");
     return impl::onInGame(world_,
                           *goalkeeper_guard_state_machine_,
                           *forward_follow_and_kick_ball_state_machine_,
@@ -134,8 +134,10 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
     // Se eh direct deles e ainda tem tempo
     if (world_.game_status.command->away_direct_free_kick.has_value()) {
       if (world_.game_status.command->away_direct_free_kick->remaining_time.has_value()) {
-        if (world_.game_status.command->away_direct_free_kick->remaining_time.value() > 0)
+        if (world_.game_status.command->away_direct_free_kick->remaining_time.value() > 0) {
+          ilog("DIRECT FREE KICK REMAINING");
           return impl::onStop(world_, *goalkeeper_guard_state_machine_);
+        }
       }
     }
 
@@ -147,18 +149,22 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
   }
 
   if (world_.isKickOff()) {
-    if (world_.game_status.command->away_prepare_kickoff.has_value()) {
+    if (world_.game_status.command->away_prepare_kickoff.has_value()
+        || world_.game_status.command->home_prepare_kickoff.has_value()) {
+      ilog("PREPARE KICKOFF");
       return impl::onStop(world_, *goalkeeper_guard_state_machine_);
     }
 
     if (world_.game_status.command->away_kickoff.has_value()) {
       if (world_.game_status.command->away_kickoff->remaining_time.has_value()) {
         if (world_.game_status.command->away_kickoff->remaining_time.value() > 0) {
+          ilog("KICKOFF REMAINING");
           return impl::onStop(world_, *goalkeeper_guard_state_machine_);
         }
       }
     }
 
+    ilog("IN GAME FROM KICKOFF");
     return impl::onInGame(world_,
                           *goalkeeper_guard_state_machine_,
                           *forward_follow_and_kick_ball_state_machine_,
