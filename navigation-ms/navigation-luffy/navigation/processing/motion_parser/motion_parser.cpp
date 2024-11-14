@@ -149,6 +149,7 @@ RobotMove MotionParser::fromGoToPoint(const GoToPointMessage& go_to_point) {
 
   return RobotMove{{0, 0}, std::clamp(kp * delta_theta, -max_angular_vel, max_angular_vel)};
 }
+
 ////////////////////////////////////////////////////////////////////////////
 RobotMove MotionParser::fromRotateInPoint(const RotateInPointMessage& rotate_in_point) {
 
@@ -179,6 +180,7 @@ RobotMove MotionParser::fromRotateInPoint(const RotateInPointMessage& rotate_in_
 
   return RobotMove{rotated_coordinates, angular_velocity};
 }
+
 ////////////////////////////////////////////////////////////////////////////
 RobotMove MotionParser::fromRotateOnSelf(const RotateOnSelfMessage& rotate_on_self) {
 

@@ -215,6 +215,9 @@ services:
       dockerfile: behavior-ms/behavior-bruxo/behavior-bruxo.Dockerfile
     volumes:
       - .ssl-core:/tmp/.ssl-core
+    depends_on:
+      - game-controller
+      - perception-ms
     attach: true
 
   navigation-ms:
