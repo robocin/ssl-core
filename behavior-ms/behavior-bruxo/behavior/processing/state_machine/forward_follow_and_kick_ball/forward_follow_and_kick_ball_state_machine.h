@@ -22,7 +22,6 @@ class ForwardFollowAndKickBallStateMachine : IStateMachine {
   World world_;
   std::optional<robocin::Point2Df> target_kick_;
   robocin::detection_util::ElapsedTimer timer_;
-  int64_t initial_time_;
 
  public:
   explicit ForwardFollowAndKickBallStateMachine();
