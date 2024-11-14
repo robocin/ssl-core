@@ -95,4 +95,9 @@ bool World::isDirectFreeKick() {
          || game_status.command->home_prepare_direct_free_kick.has_value();
 }
 
+bool World::isKickOff() {
+  return game_status.command->away_kickoff.has_value()
+         || game_status.command->home_kickoff.has_value();
+}
+
 } // namespace behavior
