@@ -16,14 +16,6 @@ void World::takeBallHighConfidence(const std::vector<protocols::perception::Ball
 
   auto max_ball
       = std::max_element(balls.begin(), balls.end(), [](const auto& ball, const auto& candidate) {
-          if (!pConsiderEntitiesInNegativeSide() && (ball.position.x <= 0)) {
-            return false;
-          }
-
-          if (!pConsiderEntitiesInPositiveSide() && (ball.position.x > 0)) {
-            return false;
-          }
-
           return ball.confidence() < candidate.confidence();
         });
 
@@ -41,20 +33,6 @@ void World::takeAlliesAndEnemies(const std::vector<protocols::perception::Robot>
   for (const auto& robot : robots) {
     RobotMessage robot_message;
     robot_message.fromProto(robot);
-
-    if (!pConsiderEntitiesInNegativeSide() && robot_message.position.value().x <= 0) {
-      continue;
-    }
-
-    if (!pConsiderEntitiesInPositiveSide() && robot_message.position.value().x > 0) {
-      continue;
-    }
-
-    if (!pConsiderEntitiesInPositiveSide()) {
-      if (robot_message.position.value().x) {
-        
-      }
-    }
 
     if (isAlly(robot_message)) {
       this->allies.emplace_back(std::move(robot_message));
