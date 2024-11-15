@@ -35,6 +35,8 @@ constinit const auto pMarginEps = ::robocin::parameters::View<13>::asInt32(20);
 
 constinit const auto pStopRadius = ::robocin::parameters::View<14>::asFloat(600.0f);
 constinit const auto pChipKickStrenght = ::robocin::parameters::View<15>::asFloat(6.0f);
+constinit const auto pWaitDirectFreeKick = ::robocin::parameters::View<16>::asInt32(10);
+constinit const auto pWaitKickOff = ::robocin::parameters::View<17>::asInt32(10);
 
 namespace shoot {
 inline static double MIN_Y_DISTANCE_TO_CHANGE_TO_KICK_TO_POST = 2000;

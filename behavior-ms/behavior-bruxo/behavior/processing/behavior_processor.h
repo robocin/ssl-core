@@ -15,6 +15,7 @@
 #include "goalkeeper_take_ball_away/goalkeeper_take_ball_away_state_machine.h"
 #include "state_machine/goalkeeper_guard/goalkeeper_guard_state_machine.h"
 
+#include <bits/types/timer_t.h>
 #include <protocols/behavior/behavior_unification.pb.h>
 #include <protocols/decision/decision.pb.h>
 #include <protocols/perception/detection.pb.h>
@@ -64,6 +65,10 @@ class BehaviorProcessor : public IBehaviorProcessor {
   std::optional<::protocols::decision::Decision> last_decision_;
   std::optional<::protocols::referee::GameStatus> last_game_status_;
   std::optional<::protocols::perception::Detection> last_detection_;
+  std::chrono::time_point<std::chrono::steady_clock> kick_off_timer_
+      = std::chrono::steady_clock::now();
+  std::chrono::time_point<std::chrono::steady_clock> direct_timer_
+      = std::chrono::steady_clock::now();
 };
 
 } // namespace behavior

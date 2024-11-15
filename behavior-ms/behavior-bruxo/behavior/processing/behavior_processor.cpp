@@ -10,6 +10,10 @@
 #include "perception/robot/robot_message.h"
 #include "state_machine/goalkeeper_guard/goalkeeper_guard_state_machine.h"
 
+#include <chrono>
+#include <ctime>
+#include <iomanip>
+#include <iostream>
 #include <optional>
 #include <protocols/behavior/behavior_unification.pb.h>
 #include <protocols/behavior/motion.pb.h>
@@ -21,10 +25,6 @@
 #include <robocin/memory/object_ptr.h>
 #include <robocin/output/log.h>
 #include <vector>
-#include <iostream>
-#include <chrono>
-#include <iomanip>
-#include <ctime>
 
 namespace behavior {
 
@@ -90,21 +90,32 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
   }
   auto now = std::chrono::system_clock::now();
   std::time_t now_time = std::chrono::system_clock::to_time_t(now);
-    auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(
-                            now.time_since_epoch()) % 1000;
-  std::cout << "PROCESSING BEHAVIOR " << std::put_time(std::localtime(&now_time), "%Y-%m-%d %H:%M:%S") << '.' << std::setw(3) << std::setfill('0') << milliseconds.count() << std::endl;
+  auto milliseconds
+      = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000;
+  std::cout << "PROCESSING BEHAVIOR "
+            << std::put_time(std::localtime(&now_time), "%Y-%m-%d %H:%M:%S") << '.' << std::setw(3)
+            << std::setfill('0') << milliseconds.count() << std::endl;
 
   if (world_.isHalt() || world_.isTimeout()) {
+    direct_timer_ = std::chrono::steady_clock::now();
+    kick_off_timer_ = std::chrono::steady_clock::now();
+
     ilog("HALT");
     return impl::onHalt(world_);
   }
 
   if (world_.isStop()) {
+    direct_timer_ = std::chrono::steady_clock::now();
+    kick_off_timer_ = std::chrono::steady_clock::now();
+
     ilog("STOP");
     return impl::onStop(world_, *goalkeeper_guard_state_machine_);
   }
 
   if (world_.isInGame()) {
+    direct_timer_ = std::chrono::steady_clock::now();
+    kick_off_timer_ = std::chrono::steady_clock::now();
+
     ilog("IN GAME");
     return impl::onInGame(world_,
                           *goalkeeper_guard_state_machine_,
@@ -113,6 +124,9 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
   }
 
   if (world_.isPenalty()) {
+    direct_timer_ = std::chrono::steady_clock::now();
+    kick_off_timer_ = std::chrono::steady_clock::now();
+
     ilog("IN PENALTY");
     if (world_.game_status.command->away_penalty.has_value()
         || world_.game_status.command->away_prepare_penalty.has_value()) {
@@ -133,13 +147,17 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
   }
 
   if (world_.isDirectFreeKick()) {
-    // Se eh direct deles e ainda tem tempo
+    kick_off_timer_ = std::chrono::steady_clock::now();
+
+    auto curr_time = std::chrono::steady_clock::now();
+    auto time_since_last_direct
+        = std::chrono::duration_cast<std::chrono::seconds>(curr_time - direct_timer_);
+
     if (world_.game_status.command->away_direct_free_kick.has_value()) {
-      if (world_.game_status.command->away_direct_free_kick->remaining_time.has_value()) {
-        if (world_.game_status.command->away_direct_free_kick->remaining_time.value() > 0) {
-          ilog("DIRECT FREE KICK REMAINING");
-          return impl::onStop(world_, *goalkeeper_guard_state_machine_);
-        }
+
+      if (time_since_last_direct.count() < pWaitDirectFreeKick()) {
+        ilog("Waiting direct free kick: {}s", time_since_last_direct.count());
+        return impl::onStop(world_, *goalkeeper_guard_state_machine_);
       }
     }
 
@@ -151,18 +169,21 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
   }
 
   if (world_.isKickOff()) {
-    if (world_.game_status.command->away_prepare_kickoff.has_value()
-        || world_.game_status.command->home_prepare_kickoff.has_value()) {
-      ilog("PREPARE KICKOFF");
+    direct_timer_ = std::chrono::steady_clock::now();
+
+    auto curr_time = std::chrono::steady_clock::now();
+    auto time_since_last_kickoff
+        = std::chrono::duration_cast<std::chrono::seconds>(curr_time - kick_off_timer_);
+
+    if (world_.game_status.command->away_prepare_kickoff.has_value()) {
+      ilog("IN GAME FROM KICKOFF");
       return impl::onStop(world_, *goalkeeper_guard_state_machine_);
     }
 
     if (world_.game_status.command->away_kickoff.has_value()) {
-      if (world_.game_status.command->away_kickoff->remaining_time.has_value()) {
-        if (world_.game_status.command->away_kickoff->remaining_time.value() > 0) {
-          ilog("KICKOFF REMAINING");
-          return impl::onStop(world_, *goalkeeper_guard_state_machine_);
-        }
+      if (time_since_last_kickoff.count() < pWaitKickOff()) {
+        ilog("Waiting kickoff: {}s", time_since_last_kickoff.count());
+        return impl::onStop(world_, *goalkeeper_guard_state_machine_);
       }
     }
 
