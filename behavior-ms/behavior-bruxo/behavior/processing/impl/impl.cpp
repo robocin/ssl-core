@@ -181,6 +181,8 @@ void emplaceSupportOutput(RobotMessage& support, World& world, BehaviorMessage& 
 
   KickCommandMessage kick_message = [&]() {
     robocin::Point2Df robot_to_ball_vector = ball_position - support.position.value();
+    robocin::Point2Df robot_projection_in_center_vertical_line(field.center().x,
+                                                               support.position.value().x);
 
     bool robot_is_close_to_ball = ball_position.distanceTo(support.position.value()) < 300;
     bool robot_to_ball_is_looking_forward = robot_to_ball_vector.x && field.attackDirection().x > 0;

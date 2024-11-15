@@ -70,7 +70,9 @@ class RefereeUtil {
       is_next_command_(is_next_command),
       referee_(&referee) {}
 
-  [[nodiscard]] bool homeIsBlueTeam() const { return referee_->blue().name() == "RobôCin"; }
+  [[nodiscard]] bool homeIsBlueTeam() const { 
+    return true;
+    return referee_->blue().name() == "RobôCin"; }
 
   [[nodiscard]] rc::Team getTeamFromCommand() const {
     std::string_view referee_command_name = tp::Referee_Command_Name(getCommand());

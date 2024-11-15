@@ -247,7 +247,7 @@ services:
     depends_on:
       - navigation-ms
     network_mode: "host"
-    attach: true
+    attach: false
     restart: on-failure
 
 volumes:
