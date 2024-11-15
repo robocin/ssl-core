@@ -11,7 +11,7 @@ namespace behavior {
 constinit const auto pBehaviorPollerTimeoutMs
     = ::robocin::parameters::View<1>::asInt32(10 /*ms ~= 100Hz*/);
 
-constinit const auto pAllyColor = Color::COLOR_BLUE; // COLOR_BLUE
+constinit const auto pAllyColor = Color::COLOR_YELLOW; // COLOR_BLUE
 
 constinit const auto isAttackingToRight = ::robocin::parameters::View<1>::asBool(false);
 
