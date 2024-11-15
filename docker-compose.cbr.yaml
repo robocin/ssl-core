@@ -24,6 +24,7 @@ services:
     volumes:
       - .ssl-core:/tmp/.ssl-core
     network_mode: host
+    restart: on-failure
 
   perception-ms:
     container_name: perception-ms
@@ -36,6 +37,7 @@ services:
       - gateway
     network_mode: host
     attach: true
+    restart: on-failure
 
   referee-ms:
     container_name: referee-ms
@@ -49,6 +51,7 @@ services:
       - perception-ms
     network_mode: host
     attach: false
+    restart: on-failure
 
   playback-db:
     container_name: playback-db
@@ -123,6 +126,7 @@ services:
       - perception-ms
       - referee-ms
     attach: true
+    restart: on-failure
 
   navigation-ms:
     container_name: navigation-ms
@@ -135,6 +139,7 @@ services:
     depends_on:
       - behavior-ms
     attach: false
+    restart: on-failure
   
   communication-ms:
     container_name: communication-ms
@@ -147,5 +152,7 @@ services:
       - navigation-ms
     network_mode: "host"
     attach: false
+    restart: on-failure
+    
 volumes:
   .ssl-core:

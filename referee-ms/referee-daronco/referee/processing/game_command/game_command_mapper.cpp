@@ -455,17 +455,17 @@ class KickingTeamUtil {
   getTeamKickingDirectFreeKick(rc::Team last_team_kicking_direct_free_kick) const {
     if (referee_util_->isDirectFreeKick()) {
       return referee_util_->getTeamFromCommand();
-    } else {
-      if (hasHomeTeamMovedBall() && last_team_kicking_direct_free_kick == rc::Team::TEAM_HOME) {
-        return rc::Team::TEAM_UNSPECIFIED;
-      }
-      if (hasAwayTeamMovedBall() && last_team_kicking_direct_free_kick == rc::Team::TEAM_AWAY) {
-        return rc::Team::TEAM_UNSPECIFIED;
-      }
-      if (referee_util_->isCurrentActionTimeUnexpired()) {
-        return last_team_kicking_direct_free_kick;
-      }
     }
+    if (hasHomeTeamMovedBall() && last_team_kicking_direct_free_kick == rc::Team::TEAM_HOME) {
+      return rc::Team::TEAM_UNSPECIFIED;
+    }
+    if (hasAwayTeamMovedBall() && last_team_kicking_direct_free_kick == rc::Team::TEAM_AWAY) {
+      return rc::Team::TEAM_UNSPECIFIED;
+    }
+    if (referee_util_->isCurrentActionTimeUnexpired()) {
+      return last_team_kicking_direct_free_kick;
+    }
+
     return rc::Team::TEAM_UNSPECIFIED;
   }
 
