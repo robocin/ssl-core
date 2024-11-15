@@ -60,8 +60,8 @@ inline const static double MAX_SPEED_IN_CARRY_BALL = 0.27;                   // 
 inline const static double GOALKEEPER_MAX_SPEED = 3.400; // m/s
 inline const static double ROBOT_LATERAL_CRITICAL_ACCELERATION = 5.400;
 
-inline const static double APPROACH_BALL_MAX_SPEED = 0.400;     // m/s
-inline const static double APPROACH_BALL_MIN_SPEED = 0.150;     // m/s
+inline const static double APPROACH_BALL_MAX_SPEED = 1.000;     // m/s
+inline const static double APPROACH_BALL_MIN_SPEED = 0.300;     // m/s
 inline const static double APPROACH_BALL_PROP_DISTANCE = 1.000; // m/s
 
 inline const static double KICK_BALL_MAX_SPEED = 0.340;                // m/s

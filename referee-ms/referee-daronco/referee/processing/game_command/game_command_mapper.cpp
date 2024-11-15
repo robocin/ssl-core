@@ -478,9 +478,9 @@ class KickingTeamUtil {
     if (referee_util_->isPreparePenalty()) {
       return referee_util_->getTeamFromCommand();
     }
-    if (referee_util_->isNormalStart()) {
+    // if (referee_util_->isNormalStart()) {
       return last_team_kicking_penalty;
-    }
+    // }
 
     // a spontaneous transition is expected in order to end the penalty.
     return rc::Team::TEAM_UNSPECIFIED;
