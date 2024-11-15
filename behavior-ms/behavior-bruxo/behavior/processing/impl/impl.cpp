@@ -6,9 +6,11 @@
 #include "behavior/processing/messages/common/robot_id/robot_id.h"
 #include "behavior/processing/state_machine/goalkeeper_guard/goalkeeper_guard_state_machine.h"
 #include "behavior/processing/state_machine/istate_machine.h"
+#include "common/peripheral_actuation/peripheral_actuation.h"
 #include "field_analyzer.h"
 #include "forward_follow_and_kick_ball/forward_follow_and_kick_ball_state_machine.h"
 #include "goalkeeper_take_ball_away/goalkeeper_take_ball_away_state_machine.h"
+#include "perception/ball/ball_message.h"
 
 #include <robocin/geometry/mathematics.h>
 #include <robocin/geometry/point2d.h>
@@ -151,7 +153,7 @@ void emplaceSupportOutput(RobotMessage& support, World& world, BehaviorMessage& 
 
   robocin::Point2Df intersect_area_point = [&]() {
     for (int i = 0; i < 3; i++) {
-      robocin::Line area_side = {goalkeeper_area[i], goalkeeper_area[i+1]};
+      robocin::Line area_side = {goalkeeper_area[i], goalkeeper_area[i + 1]};
       std::optional<robocin::Point2Df> intersect
           = mathematics::segmentsIntersection(ball_to_our_goal_vector, area_side);
       if (intersect.has_value()) {
@@ -176,18 +178,30 @@ void emplaceSupportOutput(RobotMessage& support, World& world, BehaviorMessage& 
 
   const float target_angle = (ball_position - support_target_point).angle();
 
+  bool should_kick = ball_position.distanceTo(support.position.value()) < 300;
+
+  KickCommandMessage kick_message = [&]() {
+    if (should_kick) {
+      return KickCommandMessage{5, true, false, false, false};
+    }
+    return KickCommandMessage{0.0, false, false, true, false};
+  }();
+
+  std::optional<PeripheralActuationMessage> peripheral_message
+      = PeripheralActuationMessage{std::move(kick_message)};
+
   // Always send go to point
   behavior_message.output.emplace_back(
       RobotIdMessage{pAllyColor, pForwardNumber()},
       MotionMessage{GoToPointMessage{support_target_point,
                                      target_angle,
-                                     GoToPointMessage::MovingProfile::DirectApproachBallSpeed,
+                                     GoToPointMessage::MovingProfile::BalancedInDefaultSpeed,
                                      GoToPointMessage::PrecisionToTarget::HIGH,
                                      true /* sync_rotate_with_linear_movement */},
                     std::nullopt /* go_to_point_with_trajectory */,
                     std::nullopt /* rotate_in_point */,
                     std::nullopt /* rotate_on_self */,
-                    std::nullopt});
+                    std::move(peripheral_message)});
 };
 
 void emplaceGoalkeeperOutput(RobotMessage& goalkeeper,
@@ -285,6 +299,11 @@ std::optional<rc::Behavior> onStop(World& world, GoalkeeperGuardStateMachine& gu
                           true /* charge */,
                           false /* bypass_ir */
                       }}});
+
+    auto support = takeSupport(world.allies);
+    if (support.has_value()) {
+      emplaceSupportOutput(support.value(), world, behavior_message);
+    }
   }
 
   // Take goalkeeper
