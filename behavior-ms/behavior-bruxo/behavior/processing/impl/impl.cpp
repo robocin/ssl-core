@@ -178,7 +178,12 @@ void emplaceSupportOutput(RobotMessage& support, World& world, BehaviorMessage& 
 
   const float target_angle = (ball_position - support_target_point).angle();
 
-  bool should_kick = ball_position.distanceTo(support.position.value()) < 300;
+  robocin::Point2Df robot_to_ball_vector = ball_position - support.position.value();
+
+  bool robot_is_close_to_ball = ball_position.distanceTo(support.position.value()) < 300;
+  bool robot_to_ball_is_looking_forward = robot_to_ball_vector.x && field.attackDirection().x > 0;
+
+  bool should_kick = robot_is_close_to_ball && robot_to_ball_is_looking_forward;
 
   KickCommandMessage kick_message = [&]() {
     if (should_kick) {
