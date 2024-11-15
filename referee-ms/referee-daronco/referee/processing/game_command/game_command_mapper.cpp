@@ -70,7 +70,7 @@ class RefereeUtil {
       is_next_command_(is_next_command),
       referee_(&referee) {}
 
-  [[nodiscard]] bool homeIsBlueTeam() const { return !referee_->blue_team_on_positive_half(); }
+  [[nodiscard]] bool homeIsBlueTeam() const { return referee_->blue().name() == "robocin"; }
 
   [[nodiscard]] rc::Team getTeamFromCommand() const {
     std::string_view referee_command_name = tp::Referee_Command_Name(getCommand());
@@ -455,8 +455,7 @@ class KickingTeamUtil {
   getTeamKickingDirectFreeKick(rc::Team last_team_kicking_direct_free_kick) const {
     if (referee_util_->isDirectFreeKick()) {
       return referee_util_->getTeamFromCommand();
-    }
-    else {
+    } else {
       if (hasHomeTeamMovedBall() && last_team_kicking_direct_free_kick == rc::Team::TEAM_HOME) {
         return rc::Team::TEAM_UNSPECIFIED;
       }
@@ -599,7 +598,7 @@ rc::GameCommand GameCommandMapper::fromDetectionAndReferee(const rc::Detection& 
     if (team_kicking_penalty_ != rc::Team::TEAM_UNSPECIFIED) {
       return factory.makePenalty(team_kicking_penalty_);
     }
-    return factory.makeInGame();
+    return factory.makeHalt();
   }
 
   return factory.makeHalt();
