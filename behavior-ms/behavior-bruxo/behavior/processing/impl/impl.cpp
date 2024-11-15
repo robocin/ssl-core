@@ -201,29 +201,30 @@ onInGame(World& world,
 
 std::optional<rc::Behavior> onHalt(World& world) {
   BehaviorMessage behavior_message;
-  
+
   auto goalkeeper = takeGoalkeeper(world.allies);
   if (goalkeeper.has_value()) {
-    behavior_message.output.emplace_back(
-        RobotIdMessage{pAllyColor, pGoalkeeperNumber()},
-        MotionMessage{});
+    behavior_message.output.emplace_back(RobotIdMessage{pAllyColor, pGoalkeeperNumber()},
+                                         MotionMessage{});
   }
-  
+
   auto forward = takeForward(world.allies);
   if (forward.has_value()) {
-    behavior_message.output.emplace_back(
-        RobotIdMessage{pAllyColor, pForwardNumber()},
-        MotionMessage{});
-  } 
+    behavior_message.output.emplace_back(RobotIdMessage{pAllyColor, pForwardNumber()},
+                                         MotionMessage{});
+  }
 
   return behavior_message.toProto();
 }
 
 std::optional<rc::Behavior> onStop(World& world, GoalkeeperGuardStateMachine& guard_state_machine) {
   BehaviorMessage behavior_message;
-  robocin::Point2Df ball_position = robocin::Point2Df(world.ball.position.value().x, world.ball.position.value().y);
-  robocin::Point2Df ball_to_goal_center_vector = (world.field.allyGoalOutsideCenter() - ball_position);
-  robocin::Point2Df forward_target = ball_position + ball_to_goal_center_vector.resized(pStopRadius());
+  robocin::Point2Df ball_position
+      = robocin::Point2Df(world.ball.position.value().x, world.ball.position.value().y);
+  robocin::Point2Df ball_to_goal_center_vector
+      = (world.field.allyGoalOutsideCenter() - ball_position);
+  robocin::Point2Df forward_target
+      = ball_position + ball_to_goal_center_vector.resized(pStopRadius());
   float target_angle = (ball_position - forward_target).angle();
 
   // Take forward
@@ -231,23 +232,21 @@ std::optional<rc::Behavior> onStop(World& world, GoalkeeperGuardStateMachine& gu
   if (forward.has_value()) {
     behavior_message.output.emplace_back(
         RobotIdMessage{pAllyColor, pForwardNumber()},
-        MotionMessage{
-            GoToPointMessage{forward_target,
-                            target_angle,
-                            GoToPointMessage::MovingProfile::BalancedInMedianSpeed,
-                            GoToPointMessage::PrecisionToTarget::HIGH,
-                            true /* sync_rotate_with_linear_movement */},
-            std::nullopt /* go_to_point_with_trajectory */,
-            std::nullopt /* rotate_in_point */,
-            std::nullopt /* rotate_on_self */,
-            PeripheralActuationMessage{KickCommandMessage{
-        0.0, /* strength */
-        false /* is_front */,
-        false /* is_chip */,
-        true /* charge */,
-        false /* bypass_ir */
-      }
-    }});
+        MotionMessage{GoToPointMessage{forward_target,
+                                       target_angle,
+                                       GoToPointMessage::MovingProfile::BalancedInSlowSpeed,
+                                       GoToPointMessage::PrecisionToTarget::HIGH,
+                                       true /* sync_rotate_with_linear_movement */},
+                      std::nullopt /* go_to_point_with_trajectory */,
+                      std::nullopt /* rotate_in_point */,
+                      std::nullopt /* rotate_on_self */,
+                      PeripheralActuationMessage{KickCommandMessage{
+                          0.0, /* strength */
+                          false /* is_front */,
+                          false /* is_chip */,
+                          true /* charge */,
+                          false /* bypass_ir */
+                      }}});
   }
 
   // Take goalkeeper
@@ -259,10 +258,10 @@ std::optional<rc::Behavior> onStop(World& world, GoalkeeperGuardStateMachine& gu
   }
 
   return behavior_message.toProto();
-
 };
 
-std::optional<rc::Behavior> onAwayPenalty(World& world, GoalkeeperGuardStateMachine& guard_state_machine) {
+std::optional<rc::Behavior> onAwayPenalty(World& world,
+                                          GoalkeeperGuardStateMachine& guard_state_machine) {
   BehaviorMessage behavior_message;
 
   // Take goalkeeper
@@ -277,30 +276,29 @@ std::optional<rc::Behavior> onAwayPenalty(World& world, GoalkeeperGuardStateMach
   if (forward.has_value()) {
     behavior_message.output.emplace_back(
         RobotIdMessage{pAllyColor, pForwardNumber()},
-        MotionMessage{
-            GoToPointMessage{world.field.enemyPenaltyAreaCornerTop(),
-                            0.0,
-                            GoToPointMessage::MovingProfile::DirectApproachBallSpeed,
-                            GoToPointMessage::PrecisionToTarget::HIGH,
-                            true /* sync_rotate_with_linear_movement */},
-            std::nullopt /* go_to_point_with_trajectory */,
-            std::nullopt /* rotate_in_point */,
-            std::nullopt /* rotate_on_self */,
-            PeripheralActuationMessage{KickCommandMessage{
-        0.0, /* strength */
-        false /* is_front */,
-        false /* is_chip */,
-        true /* charge */,
-        false /* bypass_ir */
-      }
-    }});
+        MotionMessage{GoToPointMessage{world.field.enemyPenaltyAreaCornerTop(),
+                                       0.0,
+                                       GoToPointMessage::MovingProfile::DirectApproachBallSpeed,
+                                       GoToPointMessage::PrecisionToTarget::HIGH,
+                                       true /* sync_rotate_with_linear_movement */},
+                      std::nullopt /* go_to_point_with_trajectory */,
+                      std::nullopt /* rotate_in_point */,
+                      std::nullopt /* rotate_on_self */,
+                      PeripheralActuationMessage{KickCommandMessage{
+                          0.0, /* strength */
+                          false /* is_front */,
+                          false /* is_chip */,
+                          true /* charge */,
+                          false /* bypass_ir */
+                      }}});
   }
-  
+
   return behavior_message.toProto();
 };
 
-std::optional<rc::Behavior> onPrepareHomePenalty(World& world, GoalkeeperGuardStateMachine& guard_state_machine) {
-BehaviorMessage behavior_message;
+std::optional<rc::Behavior> onPrepareHomePenalty(World& world,
+                                                 GoalkeeperGuardStateMachine& guard_state_machine) {
+  BehaviorMessage behavior_message;
 
   // Take goalkeeper
   auto goalkeeper = takeGoalkeeper(world.allies);
@@ -314,27 +312,25 @@ BehaviorMessage behavior_message;
   if (forward.has_value()) {
     behavior_message.output.emplace_back(
         RobotIdMessage{pAllyColor, pForwardNumber()},
-        MotionMessage{
-            GoToPointMessage{world.field.enemyPenaltyAreaCenter(),
-                            0.0,
-                            GoToPointMessage::MovingProfile::DirectApproachBallSpeed,
-                            GoToPointMessage::PrecisionToTarget::HIGH,
-                            true /* sync_rotate_with_linear_movement */},
-            std::nullopt /* go_to_point_with_trajectory */,
-            std::nullopt /* rotate_in_point */,
-            std::nullopt /* rotate_on_self */,
-            PeripheralActuationMessage{KickCommandMessage{
-        0.0, /* strength */
-        false /* is_front */,
-        false /* is_chip */,
-        true /* charge */,
-        false /* bypass_ir */
-      }
-    }});
+        MotionMessage{GoToPointMessage{world.field.enemyPenaltyAreaCenter(),
+                                       0.0,
+                                       GoToPointMessage::MovingProfile::DirectApproachBallSpeed,
+                                       GoToPointMessage::PrecisionToTarget::HIGH,
+                                       true /* sync_rotate_with_linear_movement */},
+                      std::nullopt /* go_to_point_with_trajectory */,
+                      std::nullopt /* rotate_in_point */,
+                      std::nullopt /* rotate_on_self */,
+                      PeripheralActuationMessage{KickCommandMessage{
+                          0.0, /* strength */
+                          false /* is_front */,
+                          false /* is_chip */,
+                          true /* charge */,
+                          false /* bypass_ir */
+                      }}});
   }
-  
+
   return behavior_message.toProto();
 };
 
-}
+} // namespace impl
 } // namespace behavior
