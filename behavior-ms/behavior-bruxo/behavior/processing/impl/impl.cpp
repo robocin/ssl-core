@@ -192,7 +192,7 @@ void emplaceSupportOutput(RobotMessage& support, World& world, BehaviorMessage& 
 
   // Always send go to point
   behavior_message.output.emplace_back(
-      RobotIdMessage{pAllyColor, pForwardNumber()},
+      RobotIdMessage{pAllyColor, pSupportNumber()},
       MotionMessage{GoToPointMessage{support_target_point,
                                      target_angle,
                                      GoToPointMessage::MovingProfile::BalancedInDefaultSpeed,
