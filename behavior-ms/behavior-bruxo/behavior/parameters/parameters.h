@@ -40,7 +40,7 @@ namespace shoot {
 inline static double MIN_Y_DISTANCE_TO_CHANGE_TO_KICK_TO_POST = 2000;
 inline static double MAX_DIFF_TO_CHANGE_TO_POST = 1000;
 inline static bool ONLY_KICK_IN_GOAL_CENTER = false;
-inline static bool ALLOWED_KICK_ON_POST = true;
+inline static bool ALLOWED_KICK_ON_POST = false;
 inline static double DONT_HAVE_ANGLE_TO_KICK_THRESHOLD = 0.12;
 inline static double HOW_MANY_DIAMETERS_DISCOUNT_OUT_GOAL_LINE_WHEN_KICK_ON_CORNER = 3.5;
 }; // namespace shoot

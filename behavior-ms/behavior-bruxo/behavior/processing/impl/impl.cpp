@@ -147,11 +147,11 @@ void emplaceSupportOutput(RobotMessage& support, World& world, BehaviorMessage& 
                                                     field.allyPenaltyAreaCornerBottom(),
                                                     field.allyPenaltyAreaGoalCornerBottom()};
 
-  robocin::Point2Df ball_to_our_goal_vector = field.allyGoalOutsideCenter() - ball_position;
+  robocin::Line ball_to_our_goal_vector = {field.allyGoalOutsideCenter(), ball_position};
 
   robocin::Point2Df intersect_area_point = [&]() {
     for (int i = 0; i < 3; i++) {
-      robocin::Line area_side = {goalkeeper_area[0], goalkeeper_area[1]};
+      robocin::Line area_side = {goalkeeper_area[i], goalkeeper_area[i+1]};
       std::optional<robocin::Point2Df> intersect
           = mathematics::segmentsIntersection(ball_to_our_goal_vector, area_side);
       if (intersect.has_value()) {
