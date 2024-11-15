@@ -158,10 +158,12 @@ class RefereeUtil {
   }
 
   [[nodiscard]] bool isCurrentActionTimeUnexpired() const {
+    // robocin::ilog("ACBOU TEMPO, VAI");
     return referee_->current_action_time_remaining() >= 0LL;
   }
 
   [[nodiscard]] google::protobuf::Duration getCurrentActionTimeRemaining() const {
+    // robocin::ilog("TEMPO");
     return durationFromMicros(referee_->current_action_time_remaining());
   }
 
@@ -436,18 +438,21 @@ class KickingTeamUtil {
     if (referee_util_->isPrepareKickoff()) {
       return referee_util_->getTeamFromCommand();
     }
-    if (referee_util_->isNormalStart()) {
-      if (hasHomeTeamMovedBall() && last_team_kicking_kickoff == rc::Team::TEAM_HOME) {
-        return rc::Team::TEAM_UNSPECIFIED;
-      }
-      if (hasAwayTeamMovedBall() && last_team_kicking_kickoff == rc::Team::TEAM_AWAY) {
-        return rc::Team::TEAM_UNSPECIFIED;
-      }
+    // if (referee_util_->isNormalStart()) {
 
-      if (referee_util_->isCurrentActionTimeUnexpired()) {
-        return last_team_kicking_kickoff;
-      }
+    // }
+    
+    if (hasHomeTeamMovedBall() && last_team_kicking_kickoff == rc::Team::TEAM_HOME) {
+      return rc::Team::TEAM_UNSPECIFIED;
     }
+    if (hasAwayTeamMovedBall() && last_team_kicking_kickoff == rc::Team::TEAM_AWAY) {
+      return rc::Team::TEAM_UNSPECIFIED;
+    }
+
+    if (referee_util_->isCurrentActionTimeUnexpired()) {
+      return last_team_kicking_kickoff;
+    }
+
     return rc::Team::TEAM_UNSPECIFIED;
   }
 
@@ -592,6 +597,7 @@ rc::GameCommand GameCommandMapper::fromDetectionAndReferee(const rc::Detection& 
     return factory.makeInGame();
   }
   if (referee_util.isNormalStart()) {
+    // std::cout << "IS NORMAL START\n";
     if (team_kicking_kickoff_ != rc::Team::TEAM_UNSPECIFIED) {
       return factory.makeKickoff(team_kicking_kickoff_);
     }
