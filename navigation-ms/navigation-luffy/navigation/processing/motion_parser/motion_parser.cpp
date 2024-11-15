@@ -38,12 +38,12 @@ NavigationOutputMessage MotionParser::parseMotion() {
   NavigationOutputMessage output_msg;
   RobotMove move;
 
-  if (world_.robot_motion) {
+  if (world_.robot_motion.has_value()) {
     if (world_.robot_motion->go_to_point) {
       move = fromGoToPoint(world_.robot_motion->go_to_point.value());
-    } else if (world_.robot_motion->rotate_in_point) {
+    } else if (world_.robot_motion->rotate_in_point.has_value()) {
       move = fromRotateInPoint(world_.robot_motion->rotate_in_point.value());
-    } else if (world_.robot_motion->rotate_on_self) {
+    } else if (world_.robot_motion->rotate_on_self.has_value()) {
       move = fromRotateOnSelf(world_.robot_motion->rotate_on_self.value());
     } else {
       // PROCESSAMENTO DO GO_TO_POINT_WITH_TRAJECTORY
@@ -56,7 +56,7 @@ NavigationOutputMessage MotionParser::parseMotion() {
     output_msg.forward_velocity = frontVelocity;
     output_msg.angular_velocity = move.angularVelocity();
 
-    if (world_.robot_motion->peripheral_actuation) {
+    if (world_.robot_motion->peripheral_actuation.has_value()) {
       output_msg.peripheral_actuation = std::move(world_.robot_motion->peripheral_actuation);
     }
 
