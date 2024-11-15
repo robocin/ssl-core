@@ -84,6 +84,7 @@ services:
     depends_on:
       - simulator
     network_mode: host
+    restart: on-failure
 
   perception-ms:
     container_name: perception-ms
@@ -94,6 +95,7 @@ services:
       - .ssl-core:/tmp/.ssl-core
     depends_on:
       - gateway
+    restart: on-failure
 
   referee-ms:
     container_name: referee-ms
@@ -105,6 +107,7 @@ services:
     depends_on:
       - perception-ms
     attach: true
+    restart: on-failure
 
   playback-ms:
     container_name: playback-ms
@@ -219,7 +222,8 @@ services:
       dockerfile: behavior-ms/behavior-bruxo/behavior-bruxo.Dockerfile
     volumes:
       - .ssl-core:/tmp/.ssl-core
-    attach: true
+    attach: false
+    restart: on-failure
 
   navigation-ms:
     container_name: navigation-ms
@@ -231,6 +235,7 @@ services:
     depends_on:
       - behavior-ms
     attach: false
+    restart: on-failure
 
   communication-ms:
     container_name: communication-ms
@@ -242,7 +247,8 @@ services:
     depends_on:
       - navigation-ms
     network_mode: "host"
-    attach: false
+    attach: true
+    restart: on-failure
 
 volumes:
   .ssl-core:

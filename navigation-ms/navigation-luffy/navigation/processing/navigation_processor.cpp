@@ -2,11 +2,8 @@
 
 #include "navigation/messaging/receiver/payload.h"
 #include "navigation/processing/messages/behavior/behavior_message.h"
-#include "navigation/processing/messages/common/robot_id/robot_id_message.h"
 #include "navigation/processing/messages/navigation/navigation_message.h"
 #include "navigation/processing/messages/perception/detection/detection_message.h"
-#include "navigation/processing/messages/perception/robot/robot_message.h"
-#include "navigation/processing/messages/planning/planning_message.h"
 #include "navigation/processing/messages/referee/game_status_message.h"
 
 #include <optional>
@@ -18,9 +15,6 @@
 #include <robocin/output/log.h>
 
 namespace navigation {
-
-namespace parameters = ::robocin::parameters;
-
 namespace rc {
 using ::protocols::behavior::unification::Behavior;
 using ::protocols::perception::Detection;

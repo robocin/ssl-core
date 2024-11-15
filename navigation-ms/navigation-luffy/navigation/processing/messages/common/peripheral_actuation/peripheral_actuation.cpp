@@ -6,8 +6,12 @@ namespace navigation {
 
 void PeripheralActuationMessage::fromProto(
     const protocols::common::PeripheralActuation& peripheral_actuation_proto) {
-  kick_command = KickCommandMessage(peripheral_actuation_proto.kick_command());
-  robot_dribbler = RobotDribblerMessage(peripheral_actuation_proto.robot_dribbler());
+  if (peripheral_actuation_proto.has_kick_command()) {
+    kick_command = KickCommandMessage(peripheral_actuation_proto.kick_command());
+  }
+  if (peripheral_actuation_proto.has_robot_dribbler()) {
+    robot_dribbler = RobotDribblerMessage(peripheral_actuation_proto.robot_dribbler());
+  }
 }
 
 PeripheralActuationMessage::PeripheralActuationMessage(
