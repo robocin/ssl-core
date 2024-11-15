@@ -23,7 +23,7 @@ services:
       - "-visionAddress"
       - "224.5.23.2:10020"
       - "-refereeAddress"
-      - "224.5.23.1:11003"
+      - "224.5.23.1:10003"
     logging:
       driver: none
     depends_on:
@@ -247,7 +247,7 @@ services:
     depends_on:
       - navigation-ms
     network_mode: "host"
-    attach: false
+    attach: true
     restart: on-failure
 
 volumes:

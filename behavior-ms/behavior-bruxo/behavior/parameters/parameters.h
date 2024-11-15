@@ -13,7 +13,7 @@ constinit const auto pBehaviorPollerTimeoutMs
 
 constinit const auto pAllyColor = Color::COLOR_BLUE; // COLOR_BLUE
 
-constinit const auto isAttackingToRight = ::robocin::parameters::View<1>::asBool(true);
+constinit const auto isAttackingToRight = ::robocin::parameters::View<1>::asBool(false);
 
 constinit const auto pBallIsMovingVelocity = ::robocin::parameters::View<2>::asInt32(300);
 constinit const auto pBallIsMovingFastVelocity = ::robocin::parameters::View<3>::asInt32(850);
@@ -37,6 +37,9 @@ constinit const auto pStopRadius = ::robocin::parameters::View<14>::asFloat(600.
 constinit const auto pChipKickStrenght = ::robocin::parameters::View<15>::asFloat(6.0f);
 constinit const auto pWaitDirectFreeKick = ::robocin::parameters::View<16>::asInt32(10);
 constinit const auto pWaitKickOff = ::robocin::parameters::View<17>::asInt32(10);
+
+constinit const auto pBallRadius = ::robocin::parameters::View<18>::asInt32(22);
+constinit const auto pDistanceThreshold = ::robocin::parameters::View<19>::asInt32(200);
 
 namespace shoot {
 inline static double MIN_Y_DISTANCE_TO_CHANGE_TO_KICK_TO_POST = 2000;

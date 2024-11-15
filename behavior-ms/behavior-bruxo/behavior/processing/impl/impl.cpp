@@ -72,7 +72,7 @@ float makeKickStrength(RobotMessage& robot, World& world) {
 }
 
 // Takes
-std::optional<RobotMessage> findMyRobot(int number, std::vector<RobotMessage>& robots) {
+std::optional<RobotMessage> findMyRobot(int number, const std::vector<RobotMessage>& robots) {
   // This function does not handle a case where it does not find a robot
   for (auto& robot : robots) {
     auto number_match = robot.robot_id->number.value() == number;
@@ -241,10 +241,6 @@ bool shouldTakeBallAway(World& world) {
   bool is_ball_slowly = BallAnalyzer::isBallMovingSlowly(ball);
   bool is_ball_moving_away_from_our_goal = BallAnalyzer::isBallMovingToEnemySide(field, ball);
 
-  std::cout << "is_ball_slowly " << is_ball_slowly  << std::endl;
-  std::cout << "is_ball_inside_area " << is_ball_inside_area  << std::endl;
-
-
   bool shouldTakeBallAway
       = is_ball_inside_area
         && (is_ball_stopped or (is_ball_slowly && is_ball_moving_away_from_our_goal));
@@ -314,7 +310,7 @@ std::optional<rc::Behavior> onStop(World& world, GoalkeeperGuardStateMachine& gu
   robocin::Point2Df ball_to_goal_center_vector
       = (world.field.allyGoalOutsideCenter() - ball_position);
   robocin::Point2Df forward_target
-      = ball_position + ball_to_goal_center_vector.resized(1.5*pStopRadius());
+      = ball_position + ball_to_goal_center_vector.resized(1.5 * pStopRadius());
   float target_angle = (ball_position - forward_target).angle();
 
   // Take forward

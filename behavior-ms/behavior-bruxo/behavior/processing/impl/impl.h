@@ -17,7 +17,7 @@
 
 namespace behavior::impl {
 
-std::optional<RobotMessage> findMyRobot(int number, std::vector<RobotMessage>& robots);
+std::optional<RobotMessage> findMyRobot(int number, const std::vector<RobotMessage>& robots);
 
 // Game states
 std::optional<protocols::behavior::unification::Behavior>
@@ -26,9 +26,12 @@ onInGame(World& world,
          ForwardFollowAndKickBallStateMachine& forward_follow_and_kick_ball_state_machine,
          GoalkeeperTakeBallAwayStateMachine& take_ball_away_state_machine);
 std::optional<protocols::behavior::unification::Behavior> onHalt(World& world);
-std::optional<protocols::behavior::unification::Behavior> onStop(World& world, GoalkeeperGuardStateMachine& guard_state_machine);
-std::optional<protocols::behavior::unification::Behavior> onAwayPenalty(World& world, GoalkeeperGuardStateMachine& guard_state_machine);
-std::optional<protocols::behavior::unification::Behavior> onPrepareHomePenalty(World& world, GoalkeeperGuardStateMachine& guard_state_machine);
+std::optional<protocols::behavior::unification::Behavior>
+onStop(World& world, GoalkeeperGuardStateMachine& guard_state_machine);
+std::optional<protocols::behavior::unification::Behavior>
+onAwayPenalty(World& world, GoalkeeperGuardStateMachine& guard_state_machine);
+std::optional<protocols::behavior::unification::Behavior>
+onPrepareHomePenalty(World& world, GoalkeeperGuardStateMachine& guard_state_machine);
 
 std::optional<RobotMessage> takeForward(std::vector<RobotMessage>& robots);
 void emplaceForwardOutput(RobotMessage& forward, World& world, BehaviorMessage& behavior_message);
