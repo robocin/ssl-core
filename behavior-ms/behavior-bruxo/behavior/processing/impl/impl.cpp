@@ -314,7 +314,7 @@ std::optional<rc::Behavior> onStop(World& world, GoalkeeperGuardStateMachine& gu
   robocin::Point2Df ball_to_goal_center_vector
       = (world.field.allyGoalOutsideCenter() - ball_position);
   robocin::Point2Df forward_target
-      = ball_position + ball_to_goal_center_vector.resized(pStopRadius());
+      = ball_position + ball_to_goal_center_vector.resized(1.5*pStopRadius());
   float target_angle = (ball_position - forward_target).angle();
 
   // Take forward

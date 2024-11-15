@@ -41,7 +41,7 @@ void ForwardFollowAndKickBallStateMachine::run(const World& world, RobotIdMessag
                                                                 world.ball,
                                                                 world.enemies,
                                                                 ball_position,
-                                                                true);
+                                                                /*consider_enemy_velocity=*/true);
       ForwardFollowAndKickBallCommon::setKickTarget(target_kick_.value());
     }
   } else {

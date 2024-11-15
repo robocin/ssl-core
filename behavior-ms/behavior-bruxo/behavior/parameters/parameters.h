@@ -23,8 +23,8 @@ constinit const auto pRobotDiameter = ::robocin::parameters::View<5>::asInt32(18
 
 // CBR:
 constinit const auto pGoalkeeperNumber = ::robocin::parameters::View<6>::asInt32(0);
-constinit const auto pForwardNumber = ::robocin::parameters::View<7>::asInt32(1);
-constinit const auto pSupportNumber = ::robocin::parameters::View<8>::asInt32(2);
+constinit const auto pForwardNumber = ::robocin::parameters::View<7>::asInt32(2);
+constinit const auto pSupportNumber = ::robocin::parameters::View<8>::asInt32(1);
 constinit const auto pForwardDistToEnterKickBallWhenMovingAway
     = ::robocin::parameters::View<9>::asInt32(200);
 constinit const auto pForwardMaxDistToMoveAroundBallWhenIsStoppedAndLookingToBallAndTarget
