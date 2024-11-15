@@ -94,7 +94,7 @@ float GoToBall::getMotionAngle(const World& world) const {
 }
 
 GoToPointMessage::MovingProfile GoToBall::getMotionMovingProfile(const World& world) const {
-  return GoToPointMessage::MovingProfile::BalancedInDefaultSpeed;
+  return GoToPointMessage::MovingProfile::BalancedInMedianSpeed;
 }
 
 KickCommandMessage GoToBall::makeKickCommandMessage(const World& world) {

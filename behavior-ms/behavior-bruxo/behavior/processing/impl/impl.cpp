@@ -1,15 +1,19 @@
 #include "behavior/processing/impl/impl.h"
 
+#include "ally_analyzer.h"
 #include "ball_analyzer.h"
 #include "behavior/parameters/parameters.h"
 #include "behavior/processing/messages/common/game_event/game_event_message.h"
 #include "behavior/processing/messages/common/robot_id/robot_id.h"
 #include "behavior/processing/state_machine/goalkeeper_guard/goalkeeper_guard_state_machine.h"
 #include "behavior/processing/state_machine/istate_machine.h"
+#include "common/peripheral_actuation/peripheral_actuation.h"
 #include "field_analyzer.h"
 #include "forward_follow_and_kick_ball/forward_follow_and_kick_ball_state_machine.h"
 #include "goalkeeper_take_ball_away/goalkeeper_take_ball_away_state_machine.h"
+#include "perception/ball/ball_message.h"
 
+#include <robocin/geometry/mathematics.h>
 #include <robocin/geometry/point2d.h>
 
 namespace behavior {
@@ -137,6 +141,88 @@ void emplaceForwardOutput(RobotMessage& forward, World& world, BehaviorMessage& 
 };
 
 void emplaceSupportOutput(RobotMessage& support, World& world, BehaviorMessage& behavior_message) {
+  robocin::Point2Df ball_position
+      = robocin::Point2Df(world.ball.position->x, world.ball.position->y);
+  auto&& field = world.field;
+
+  std::vector<robocin::Point2Df> goalkeeper_area = {field.allyPenaltyAreaGoalCornerTop(),
+                                                    field.allyPenaltyAreaCornerTop(),
+                                                    field.allyPenaltyAreaCornerBottom(),
+                                                    field.allyPenaltyAreaGoalCornerBottom()};
+
+  robocin::Line ball_to_our_goal_vector = {field.allyGoalOutsideCenter(), ball_position};
+
+  robocin::Point2Df intersect_area_point = [&]() {
+    for (int i = 0; i < 3; i++) {
+      robocin::Line area_side = {goalkeeper_area[i], goalkeeper_area[i + 1]};
+      std::optional<robocin::Point2Df> intersect
+          = mathematics::segmentsIntersection(ball_to_our_goal_vector, area_side);
+      if (intersect.has_value()) {
+        return intersect.value();
+      }
+    }
+    return field.allyPenaltyAreaCenter();
+  }();
+
+  robocin::Point2Df support_target_point = [&]() {
+    if (!FieldAnalyzer::contains(ball_position, field)
+        || FieldAnalyzer::allyPenaltyAreaContains(ball_position, field)
+        || FieldAnalyzer::allyGoalContains(ball_position, field)) {
+      return intersect_area_point + field.attackDirection().resized(pRobotDiameter());
+    }
+    return intersect_area_point + (ball_position - intersect_area_point).resized(pRobotDiameter());
+  }();
+
+  if (FieldAnalyzer::allyPenaltyAreaContains(support_target_point, field)) {
+    support_target_point = intersect_area_point + field.attackDirection().resized(pRobotDiameter());
+  }
+
+  const float target_angle = (ball_position - support_target_point).angle();
+
+  KickCommandMessage kick_message = [&]() {
+    robocin::Point2Df robot_to_ball_vector = ball_position - support.position.value();
+
+    bool robot_is_close_to_ball = ball_position.distanceTo(support.position.value()) < 300;
+    bool robot_to_ball_is_looking_forward = robot_to_ball_vector.x && field.attackDirection().x > 0;
+
+    bool should_kick = robot_is_close_to_ball && robot_to_ball_is_looking_forward;
+
+    if (should_kick) {
+      return KickCommandMessage{5, true, false, false, false};
+    }
+    return KickCommandMessage{0.0, false, false, true, false};
+  }();
+
+  std::optional<PeripheralActuationMessage> peripheral_message
+      = PeripheralActuationMessage{std::move(kick_message)};
+
+  support_target_point
+      = AllyAnalyzer::safeTargetPoint(world, pSupportNumber(), support_target_point);
+
+  auto forward = takeForward(world.allies);
+
+  if (forward.has_value()) {
+    robocin::Point2Df forward_position = forward->position.value();
+    robocin::Point2Df support_position = support.position.value();
+    if (support.position->distanceTo(forward_position) < pRobotDiameter()) {
+      robocin::Point2Df support_to_forward_vector = forward_position - support_position;
+      support_target_point
+          = support_target_point - support_to_forward_vector.resized(3 * pRobotRadius());
+    }
+  }
+
+  // Always send go to point
+  behavior_message.output.emplace_back(
+      RobotIdMessage{pAllyColor, pSupportNumber()},
+      MotionMessage{GoToPointMessage{support_target_point,
+                                     target_angle,
+                                     GoToPointMessage::MovingProfile::BalancedInDefaultSpeed,
+                                     GoToPointMessage::PrecisionToTarget::HIGH,
+                                     true /* sync_rotate_with_linear_movement */},
+                    std::nullopt /* go_to_point_with_trajectory */,
+                    std::nullopt /* rotate_in_point */,
+                    std::nullopt /* rotate_on_self */,
+                    std::move(peripheral_message)});
 };
 
 void emplaceGoalkeeperOutput(RobotMessage& goalkeeper,
@@ -154,6 +240,10 @@ bool shouldTakeBallAway(World& world) {
   bool is_ball_stopped = BallAnalyzer::isBallStopped(ball);
   bool is_ball_slowly = BallAnalyzer::isBallMovingSlowly(ball);
   bool is_ball_moving_away_from_our_goal = BallAnalyzer::isBallMovingToEnemySide(field, ball);
+
+  std::cout << "is_ball_slowly " << is_ball_slowly  << std::endl;
+  std::cout << "is_ball_inside_area " << is_ball_inside_area  << std::endl;
+
 
   bool shouldTakeBallAway
       = is_ball_inside_area
@@ -249,6 +339,11 @@ std::optional<rc::Behavior> onStop(World& world, GoalkeeperGuardStateMachine& gu
                       }}});
   }
 
+  auto support = takeSupport(world.allies);
+  if (support.has_value()) {
+    emplaceSupportOutput(support.value(), world, behavior_message);
+  }
+
   // Take goalkeeper
   auto goalkeeper = takeGoalkeeper(world.allies);
   if (goalkeeper.has_value()) {
@@ -315,6 +410,27 @@ std::optional<rc::Behavior> onPrepareHomePenalty(World& world,
         MotionMessage{GoToPointMessage{world.field.enemyPenaltyAreaCenter(),
                                        0.0,
                                        GoToPointMessage::MovingProfile::DirectApproachBallSpeed,
+                                       GoToPointMessage::PrecisionToTarget::HIGH,
+                                       true /* sync_rotate_with_linear_movement */},
+                      std::nullopt /* go_to_point_with_trajectory */,
+                      std::nullopt /* rotate_in_point */,
+                      std::nullopt /* rotate_on_self */,
+                      PeripheralActuationMessage{KickCommandMessage{
+                          0.0, /* strength */
+                          false /* is_front */,
+                          false /* is_chip */,
+                          true /* charge */,
+                          false /* bypass_ir */
+                      }}});
+  }
+
+  auto support = takeSupport(world.allies);
+  if (support.has_value()) {
+    behavior_message.output.emplace_back(
+        RobotIdMessage{pAllyColor, pSupportNumber()},
+        MotionMessage{GoToPointMessage{world.field.enemyPenaltyAreaCornerBottom(),
+                                       0.0,
+                                       GoToPointMessage::MovingProfile::BalancedInSlowSpeed,
                                        GoToPointMessage::PrecisionToTarget::HIGH,
                                        true /* sync_rotate_with_linear_movement */},
                       std::nullopt /* go_to_point_with_trajectory */,
