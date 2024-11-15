@@ -178,14 +178,14 @@ void emplaceSupportOutput(RobotMessage& support, World& world, BehaviorMessage& 
 
   const float target_angle = (ball_position - support_target_point).angle();
 
-  robocin::Point2Df robot_to_ball_vector = ball_position - support.position.value();
-
-  bool robot_is_close_to_ball = ball_position.distanceTo(support.position.value()) < 300;
-  bool robot_to_ball_is_looking_forward = robot_to_ball_vector.x && field.attackDirection().x > 0;
-
-  bool should_kick = robot_is_close_to_ball && robot_to_ball_is_looking_forward;
-
   KickCommandMessage kick_message = [&]() {
+    robocin::Point2Df robot_to_ball_vector = ball_position - support.position.value();
+
+    bool robot_is_close_to_ball = ball_position.distanceTo(support.position.value()) < 300;
+    bool robot_to_ball_is_looking_forward = robot_to_ball_vector.x && field.attackDirection().x > 0;
+
+    bool should_kick = robot_is_close_to_ball && robot_to_ball_is_looking_forward;
+
     if (should_kick) {
       return KickCommandMessage{5, true, false, false, false};
     }
@@ -194,6 +194,9 @@ void emplaceSupportOutput(RobotMessage& support, World& world, BehaviorMessage& 
 
   std::optional<PeripheralActuationMessage> peripheral_message
       = PeripheralActuationMessage{std::move(kick_message)};
+
+  support_target_point
+      = AllyAnalyzer::safeTargetPoint(world, pSupportNumber(), support_target_point);
 
   // Always send go to point
   behavior_message.output.emplace_back(
