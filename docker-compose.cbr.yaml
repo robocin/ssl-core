@@ -125,7 +125,7 @@ services:
     depends_on:
       - perception-ms
       - referee-ms
-    attach: true
+    attach: false
     restart: on-failure
 
   navigation-ms:

@@ -25,7 +25,7 @@ onInGame(World& world,
          GoalkeeperGuardStateMachine& guard_state_machine,
          ForwardFollowAndKickBallStateMachine& forward_follow_and_kick_ball_state_machine,
          GoalkeeperTakeBallAwayStateMachine& take_ball_away_state_machine);
-std::optional<protocols::behavior::unification::Behavior> onHalt();
+std::optional<protocols::behavior::unification::Behavior> onHalt(World& world);
 std::optional<protocols::behavior::unification::Behavior> onStop(World& world, GoalkeeperGuardStateMachine& guard_state_machine);
 std::optional<protocols::behavior::unification::Behavior> onAwayPenalty(World& world, GoalkeeperGuardStateMachine& guard_state_machine);
 std::optional<protocols::behavior::unification::Behavior> onPrepareHomePenalty(World& world, GoalkeeperGuardStateMachine& guard_state_machine);

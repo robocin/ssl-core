@@ -199,9 +199,24 @@ onInGame(World& world,
   return behavior_message.toProto();
 };
 
-std::optional<rc::Behavior> onHalt() { 
-  // Suficiente!
-  return std::nullopt; 
+std::optional<rc::Behavior> onHalt(World& world) {
+  BehaviorMessage behavior_message;
+  
+  auto goalkeeper = takeGoalkeeper(world.allies);
+  if (goalkeeper.has_value()) {
+    behavior_message.output.emplace_back(
+        RobotIdMessage{pAllyColor, pGoalkeeperNumber()},
+        MotionMessage{});
+  }
+  
+  auto forward = takeForward(world.allies);
+  if (forward.has_value()) {
+    behavior_message.output.emplace_back(
+        RobotIdMessage{pAllyColor, pForwardNumber()},
+        MotionMessage{});
+  } 
+
+  return behavior_message.toProto();
 }
 
 std::optional<rc::Behavior> onStop(World& world, GoalkeeperGuardStateMachine& guard_state_machine) {
@@ -219,7 +234,7 @@ std::optional<rc::Behavior> onStop(World& world, GoalkeeperGuardStateMachine& gu
         MotionMessage{
             GoToPointMessage{forward_target,
                             target_angle,
-                            GoToPointMessage::MovingProfile::DirectApproachBallSpeed,
+                            GoToPointMessage::MovingProfile::BalancedInMedianSpeed,
                             GoToPointMessage::PrecisionToTarget::HIGH,
                             true /* sync_rotate_with_linear_movement */},
             std::nullopt /* go_to_point_with_trajectory */,

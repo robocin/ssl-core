@@ -96,7 +96,7 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
 
   if (world_.isHalt() || world_.isTimeout()) {
     ilog("HALT");
-    return impl::onHalt();
+    return impl::onHalt(world_);
   }
 
   if (world_.isStop()) {

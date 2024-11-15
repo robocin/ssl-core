@@ -49,10 +49,12 @@ NavigationProcessor::process(std::span<const Payload> payloads) {
   if (std::vector<rc::Behavior> behaviors = behaviorFromPayloads(payloads); !behaviors.empty()) {
     last_behavior_ = BehaviorUnificationMessage(behaviors.back());
   }
-
+  
+  bool isHalt = false;
   if (std::vector<rc::GameStatus> game_statuses = gameStatusFromPayloads(payloads);
       !game_statuses.empty()) {
     last_game_status_ = GameStatusMessage(game_statuses.back());
+    isHalt = game_statuses.back().command().has_halt();
   }
 
   if (!last_behavior_ or !last_game_status_) {
