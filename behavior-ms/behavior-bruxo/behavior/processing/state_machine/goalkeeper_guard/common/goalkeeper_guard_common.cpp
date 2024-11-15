@@ -372,7 +372,7 @@ GoalkeeperGuardCommon::getMotionTarget(const World& world,
     std::optional<robocin::Point2Df> goalkeeper_final_target_point
         = mathematics::segmentsIntersection(guard_line, ball_to_goal_line_target_line);
 
-    if (!goalkeeper_final_target_point.has_value() && is_in_follow_enemy_line) {
+    if (!goalkeeper_final_target_point.has_value()) {
       ball_to_goal_line_target_point
           = ball_position + getGoalkeeperBisectorVector(world).resized(10000);
       ball_to_goal_line_target_line = {ball_position, ball_to_goal_line_target_point};
@@ -381,18 +381,7 @@ GoalkeeperGuardCommon::getMotionTarget(const World& world,
     }
 
     if (!goalkeeper_final_target_point.has_value()) {
-      robocin::Point2Df defensive_corner_upper = {defensive_goal_x, field.width.value()};
-      robocin::Point2Df defensive_corner_bottom = {defensive_goal_x, -field.width.value()};
-      robocin::Line defensive_line = {defensive_corner_bottom, defensive_corner_upper};
-
-      goalkeeper_final_target_point
-          = mathematics::segmentsIntersection(defensive_line, ball_to_goal_line_target_line);
-
-      if (!goalkeeper_final_target_point.has_value()) {
-        return field.allyGoalOutsideCenter();
-      }
-
-      return goalkeeper_final_target_point->y > 0 ? guard_line.p1() : guard_line.p2();
+      return field.allyGoalOutsideCenter();
     }
 
     return goalkeeper_final_target_point.value();
