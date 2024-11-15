@@ -7,7 +7,7 @@ namespace behavior {
 GoToSafePosition::GoToSafePosition() = default;
 
 OutputMessage GoToSafePosition::exec(const World& world, RobotIdMessage& ally_id) {
-  robocin::ilog("Exec GoToSafePosition state");
+  // robocin::ilog("Exec GoToSafePosition state");
   ally_id_ = std::move(ally_id);
 
   checkAndHandleTransitions(world);

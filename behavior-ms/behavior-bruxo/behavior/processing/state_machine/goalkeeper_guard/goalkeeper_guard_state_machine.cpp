@@ -18,7 +18,7 @@ void GoalkeeperGuardStateMachine::transitionTo(IState* state) {
 }
 
 void GoalkeeperGuardStateMachine::run(const World& world, RobotIdMessage& ally_id) {
-  robocin::ilog("GoalkeeperGuardStateMachine running!");
+  // robocin::ilog("GoalkeeperGuardStateMachine running!");
   output = current_state_->exec(world, ally_id);
 }
 } // namespace behavior

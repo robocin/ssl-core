@@ -105,7 +105,7 @@ std::optional<RobotMessage> takeSupport(std::vector<RobotMessage>& robots) {
 void emplaceForwardOutput(RobotMessage& forward, World& world, BehaviorMessage& behavior_message) {
   // Ball 2D is required because .angle() method is implemented from a Point2Df object.
   auto ball_2_d = robocin::Point2Df(world.ball.position->x, world.ball.position->y);
-  std::cout << " ball position in forward: " << ball_2_d.x << " " << ball_2_d.y << std::endl;
+  // std::cout << " ball position in forward: " << ball_2_d.x << " " << ball_2_d.y << std::endl;
   auto target_angle = (ball_2_d - forward.position.value()).angle();
   bool shouldKick = makeShouldKick(forward, world);
 
@@ -169,7 +169,7 @@ onInGame(World& world,
          ForwardFollowAndKickBallStateMachine& follow_and_kick_ball_state_machine,
          GoalkeeperTakeBallAwayStateMachine& take_ball_away_state_machine) {
   BehaviorMessage behavior_message;
-  robocin::ilog("Allies detected: {}", world.allies.size());
+  // robocin::ilog("Allies detected: {}", world.allies.size());
 
   // Take forward
   auto forward = takeForward(world.allies);

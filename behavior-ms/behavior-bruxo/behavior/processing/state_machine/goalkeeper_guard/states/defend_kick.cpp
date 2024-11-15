@@ -15,8 +15,8 @@ OutputMessage DefendKick::exec(const World& world, RobotIdMessage& ally_id) {
   robocin::ilog("Exec DefendKick state");
   ally_id_ = std::move(ally_id);
   robocin::Point2Df ball_position = world.field.allyGoalInsideBottom();
-  std::cout << " ball position in goalkeeper fsm: " << ball_position.x << " " << ball_position.y
-            << std::endl;
+  // std::cout << " ball position in goalkeeper fsm: " << ball_position.x << " " << ball_position.y
+  //           << std::endl;
   checkAndHandleTransitions(world);
   return makeDefendKickOutput(world);
 }

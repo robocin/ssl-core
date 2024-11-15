@@ -29,7 +29,7 @@ void ForwardFollowAndKickBallStateMachine::transitionTo(IState* state) {
 }
 
 void ForwardFollowAndKickBallStateMachine::run(const World& world, RobotIdMessage& ally_id) {
-  robocin::ilog("ForwardFollowAndKickBallStateMachine running!");
+  // robocin::ilog("ForwardFollowAndKickBallStateMachine running!");
   robocin::Point2Df ball_position
       = robocin::Point2Df{world.ball.position->x, world.ball.position->y};
   if (target_kick_.has_value()) {

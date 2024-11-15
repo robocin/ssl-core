@@ -28,6 +28,7 @@ services:
       driver: none
     depends_on:
       - simulator
+    attach: false
 
   game-controller:
     container_name: game-controller
@@ -50,6 +51,7 @@ services:
     depends_on:
       - autoref-tigers
     network_mode: host
+    attach: false
 
   ssl-vision-client:
     container_name: ssl-vision-client
@@ -102,7 +104,7 @@ services:
       - .ssl-core:/tmp/.ssl-core
     depends_on:
       - perception-ms
-    attach: false
+    attach: true
 
   playback-ms:
     container_name: playback-ms

@@ -9,11 +9,11 @@ namespace behavior {
 FollowBallLine::FollowBallLine() = default;
 
 OutputMessage FollowBallLine::exec(const World& world, RobotIdMessage& ally_id) {
-  robocin::ilog("Exec FollowBallLine state");
+  // robocin::ilog("Exec FollowBallLine state");
   ally_id_ = std::move(ally_id);
   robocin::Point2Df ball_position = world.field.allyGoalInsideBottom();
-  std::cout << " ball position in goalkeeper fsm: " << ball_position.x << " " << ball_position.y
-            << std::endl;
+  // std::cout << " ball position in goalkeeper fsm: " << ball_position.x << " " << ball_position.y
+  //           << std::endl;
   // Handle state transitions
   checkAndHandleTransitions(world);
 

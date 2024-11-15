@@ -14,7 +14,7 @@ namespace behavior {
 GoToBall::GoToBall() = default;
 
 OutputMessage GoToBall::exec(const World& world, RobotIdMessage& ally_id) {
-  robocin::ilog("Exec GoToBall state");
+  // robocin::ilog("Exec GoToBall state");
   ally_id_ = std::move(ally_id);
   robocin::Point2Df ball_position = world.field.allyGoalInsideBottom();
   checkAndHandleTransitions(world);

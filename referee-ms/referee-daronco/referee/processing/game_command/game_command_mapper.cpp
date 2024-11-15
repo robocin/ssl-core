@@ -599,7 +599,7 @@ rc::GameCommand GameCommandMapper::fromDetectionAndReferee(const rc::Detection& 
     if (team_kicking_penalty_ != rc::Team::TEAM_UNSPECIFIED) {
       return factory.makePenalty(team_kicking_penalty_);
     }
-    return factory.makeInGame();
+    return factory.makeHalt();
   }
 
   return factory.makeHalt();

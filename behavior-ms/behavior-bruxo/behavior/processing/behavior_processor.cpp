@@ -21,6 +21,10 @@
 #include <robocin/memory/object_ptr.h>
 #include <robocin/output/log.h>
 #include <vector>
+#include <iostream>
+#include <chrono>
+#include <iomanip>
+#include <ctime>
 
 namespace behavior {
 
@@ -84,18 +88,23 @@ std::optional<rc::Behavior> BehaviorProcessor::process(std::span<const Payload> 
     ilog("Failed to update world.");
     return std::nullopt;
   }
+  auto now = std::chrono::system_clock::now();
+  std::time_t now_time = std::chrono::system_clock::to_time_t(now);
+    auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(
+                            now.time_since_epoch()) % 1000;
+  std::cout << "PROCESSING BEHAVIOR " << std::put_time(std::localtime(&now_time), "%Y-%m-%d %H:%M:%S") << '.' << std::setw(3) << std::setfill('0') << milliseconds.count() << std::endl;
 
-  // if (world_.isHalt() || world_.isTimeout()) {
-  //   ilog("HALT");
-  //   return impl::onHalt();
-  // }
+  if (world_.isHalt() || world_.isTimeout()) {
+    ilog("HALT");
+    return impl::onHalt();
+  }
 
   if (world_.isStop()) {
     ilog("STOP");
     return impl::onStop(world_, *goalkeeper_guard_state_machine_);
   }
 
-  if (world_.isInGame() || true) {
+  if (world_.isInGame()) {
     ilog("IN GAME");
     return impl::onInGame(world_,
                           *goalkeeper_guard_state_machine_,

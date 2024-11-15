@@ -7,7 +7,7 @@ namespace behavior {
 GoToBallGK::GoToBallGK() = default;
 
 OutputMessage GoToBallGK::exec(const World& world, RobotIdMessage& ally_id) {
-  robocin::ilog("Exec GoToBallGK state");
+  // robocin::ilog("Exec GoToBallGK state");
   ally_id_ = std::move(ally_id);
 
   // Handle state transitions
