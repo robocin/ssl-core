@@ -307,11 +307,11 @@ std::optional<rc::Behavior> onStop(World& world, GoalkeeperGuardStateMachine& gu
                           true /* charge */,
                           false /* bypass_ir */
                       }}});
+  }
 
-    auto support = takeSupport(world.allies);
-    if (support.has_value()) {
-      emplaceSupportOutput(support.value(), world, behavior_message);
-    }
+  auto support = takeSupport(world.allies);
+  if (support.has_value()) {
+    emplaceSupportOutput(support.value(), world, behavior_message);
   }
 
   // Take goalkeeper
@@ -343,7 +343,28 @@ std::optional<rc::Behavior> onAwayPenalty(World& world,
         RobotIdMessage{pAllyColor, pForwardNumber()},
         MotionMessage{GoToPointMessage{world.field.enemyPenaltyAreaCornerTop(),
                                        0.0,
-                                       GoToPointMessage::MovingProfile::DirectApproachBallSpeed,
+                                       GoToPointMessage::MovingProfile::BalancedInSlowSpeed,
+                                       GoToPointMessage::PrecisionToTarget::HIGH,
+                                       true /* sync_rotate_with_linear_movement */},
+                      std::nullopt /* go_to_point_with_trajectory */,
+                      std::nullopt /* rotate_in_point */,
+                      std::nullopt /* rotate_on_self */,
+                      PeripheralActuationMessage{KickCommandMessage{
+                          0.0, /* strength */
+                          false /* is_front */,
+                          false /* is_chip */,
+                          true /* charge */,
+                          false /* bypass_ir */
+                      }}});
+  }
+
+  auto support = takeSupport(world.allies);
+  if (support.has_value()) {
+    behavior_message.output.emplace_back(
+        RobotIdMessage{pAllyColor, pSupportNumber()},
+        MotionMessage{GoToPointMessage{world.field.enemyPenaltyAreaCornerBottom(),
+                                       0.0,
+                                       GoToPointMessage::MovingProfile::BalancedInSlowSpeed,
                                        GoToPointMessage::PrecisionToTarget::HIGH,
                                        true /* sync_rotate_with_linear_movement */},
                       std::nullopt /* go_to_point_with_trajectory */,
@@ -380,6 +401,27 @@ std::optional<rc::Behavior> onPrepareHomePenalty(World& world,
         MotionMessage{GoToPointMessage{world.field.enemyPenaltyAreaCenter(),
                                        0.0,
                                        GoToPointMessage::MovingProfile::DirectApproachBallSpeed,
+                                       GoToPointMessage::PrecisionToTarget::HIGH,
+                                       true /* sync_rotate_with_linear_movement */},
+                      std::nullopt /* go_to_point_with_trajectory */,
+                      std::nullopt /* rotate_in_point */,
+                      std::nullopt /* rotate_on_self */,
+                      PeripheralActuationMessage{KickCommandMessage{
+                          0.0, /* strength */
+                          false /* is_front */,
+                          false /* is_chip */,
+                          true /* charge */,
+                          false /* bypass_ir */
+                      }}});
+  }
+
+  auto support = takeSupport(world.allies);
+  if (support.has_value()) {
+    behavior_message.output.emplace_back(
+        RobotIdMessage{pAllyColor, pSupportNumber()},
+        MotionMessage{GoToPointMessage{world.field.enemyPenaltyAreaCornerBottom(),
+                                       0.0,
+                                       GoToPointMessage::MovingProfile::BalancedInSlowSpeed,
                                        GoToPointMessage::PrecisionToTarget::HIGH,
                                        true /* sync_rotate_with_linear_movement */},
                       std::nullopt /* go_to_point_with_trajectory */,
