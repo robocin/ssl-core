@@ -1,5 +1,6 @@
 #include "behavior/processing/impl/impl.h"
 
+#include "ally_analyzer.h"
 #include "ball_analyzer.h"
 #include "behavior/parameters/parameters.h"
 #include "behavior/processing/messages/common/game_event/game_event_message.h"
@@ -197,6 +198,18 @@ void emplaceSupportOutput(RobotMessage& support, World& world, BehaviorMessage& 
 
   support_target_point
       = AllyAnalyzer::safeTargetPoint(world, pSupportNumber(), support_target_point);
+
+  auto forward = takeForward(world.allies);
+
+  if (forward.has_value()) {
+    robocin::Point2Df forward_position = forward->position.value();
+    robocin::Point2Df support_position = support.position.value();
+    if (support.position->distanceTo(forward_position) < pRobotDiameter()) {
+      robocin::Point2Df support_to_forward_vector = forward_position - support_position;
+      support_target_point
+          = support_target_point - support_to_forward_vector.resized(pRobotRadius());
+    }
+  }
 
   // Always send go to point
   behavior_message.output.emplace_back(
