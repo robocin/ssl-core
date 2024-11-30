@@ -1,9 +1,7 @@
 #ifndef BEHAVIOR_PROCESSING_ENTITIES_WORLD_H
 #define BEHAVIOR_PROCESSING_ENTITIES_WORLD_H
 
-
 #include "behavior/parameters/parameters.h"
-
 #include "behavior/processing/messages/decision/decision_message.h"
 #include "behavior/processing/messages/perception/ball/ball_message.h"
 #include "behavior/processing/messages/perception/field/field_message.h"
@@ -37,21 +35,30 @@ class World {
   std::vector<RobotMessage> allies;
   std::vector<RobotMessage> enemies;
 
-  void update(const protocols::decision::Decision& decision,
-              const std::vector<protocols::perception::Robot>& robots,
+  void update(const std::vector<protocols::perception::Robot>& robots,
               const std::vector<protocols::perception::Ball>& balls,
               const protocols::perception::Field& field,
               const protocols::referee::GameStatus& game_status);
 
+  // CBR: checker for every command
+  bool isStop();
+  bool isHalt();
+  bool isInGame();
+
+  bool isTimeout();
+  bool isInterval();
+  bool isKickOff();
+  bool isPenalty();
+  bool isDirectFreeKick();
+
  private:
   void takeBallHighConfidence(const std::vector<protocols::perception::Ball>& balls);
   void takeAlliesAndEnemies(const std::vector<protocols::perception::Robot>& robots);
-  void takeDecision(const protocols::decision::Decision& decision);
+  void takeDecision(const protocols::decision::Decision& decision); // unused in cbr early version
   void takeGameStatus(const protocols::referee::GameStatus& game_status);
   void takeField(const protocols::perception::Field& field);
 
   [[nodiscard]] bool isAlly(const RobotMessage& robot) const;
-
 };
 
 } // namespace behavior

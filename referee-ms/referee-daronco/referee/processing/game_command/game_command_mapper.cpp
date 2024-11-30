@@ -70,7 +70,9 @@ class RefereeUtil {
       is_next_command_(is_next_command),
       referee_(&referee) {}
 
-  [[nodiscard]] bool homeIsBlueTeam() const { return !referee_->blue_team_on_positive_half(); }
+  [[nodiscard]] bool homeIsBlueTeam() const { 
+    return true;
+    return referee_->blue().name() == "RobôCin"; }
 
   [[nodiscard]] rc::Team getTeamFromCommand() const {
     std::string_view referee_command_name = tp::Referee_Command_Name(getCommand());
@@ -132,13 +134,13 @@ class RefereeUtil {
     return std::ranges::contains(kBallPlacements, getCommand());
   }
 
-  [[nodiscard]] bool isPrepareDirectFreeKick() const {
-    static constexpr std::array kPrepareDirectFreeKicks = {
+  [[nodiscard]] bool isDirectFreeKick() const {
+    static constexpr std::array kDirectFreeKicks = {
         tp::RefereeCommand::Referee_Command_DIRECT_FREE_BLUE,
         tp::RefereeCommand::Referee_Command_DIRECT_FREE_YELLOW,
     };
 
-    return std::ranges::contains(kPrepareDirectFreeKicks, getCommand());
+    return std::ranges::contains(kDirectFreeKicks, getCommand());
   }
 
   [[nodiscard]] bool isHalt() const {
@@ -158,10 +160,12 @@ class RefereeUtil {
   }
 
   [[nodiscard]] bool isCurrentActionTimeUnexpired() const {
+    // robocin::ilog("ACBOU TEMPO, VAI");
     return referee_->current_action_time_remaining() >= 0LL;
   }
 
   [[nodiscard]] google::protobuf::Duration getCurrentActionTimeRemaining() const {
+    // robocin::ilog("TEMPO");
     return durationFromMicros(referee_->current_action_time_remaining());
   }
 
@@ -246,28 +250,6 @@ class FactoryInternal {
       }
       case rc::Team::TEAM_AWAY: {
         *result.mutable_away_prepare_kickoff() = rc::PrepareKickoff{};
-        break;
-      }
-      default: {
-        // elog(kTeamUnavailableMessage);
-        *result.mutable_halt() = rc::Halt{};
-        break;
-      }
-    }
-
-    return result;
-  }
-
-  rc::GameCommand makePrepareDirectFreeKick() {
-    rc::GameCommand result;
-
-    switch (referee_util_->getTeamFromCommand()) {
-      case rc::Team::TEAM_HOME: {
-        *result.mutable_home_prepare_direct_free_kick() = rc::PrepareDirectFreeKick{};
-        break;
-      }
-      case rc::Team::TEAM_AWAY: {
-        *result.mutable_away_prepare_direct_free_kick() = rc::PrepareDirectFreeKick{};
         break;
       }
       default: {
@@ -449,7 +431,7 @@ class KickingTeamUtil {
               rc::Team& team_kicking_direct_free_kick, // NOLINT(*swappable*)
               rc::Team& team_kicking_penalty) {
     team_kicking_kickoff = getTeamKickingKickoff(team_kicking_kickoff);
-    team_kicking_direct_free_kick = getTeamKickingKickoff(team_kicking_direct_free_kick);
+    team_kicking_direct_free_kick = getTeamKickingDirectFreeKick(team_kicking_direct_free_kick);
     team_kicking_penalty = getTeamKickingPenalty(team_kicking_penalty);
   }
 
@@ -458,38 +440,39 @@ class KickingTeamUtil {
     if (referee_util_->isPrepareKickoff()) {
       return referee_util_->getTeamFromCommand();
     }
-    if (referee_util_->isNormalStart()) {
-      if (hasHomeTeamMovedBall() && last_team_kicking_kickoff == rc::Team::TEAM_HOME) {
-        return rc::Team::TEAM_UNSPECIFIED;
-      }
-      if (hasAwayTeamMovedBall() && last_team_kicking_kickoff == rc::Team::TEAM_AWAY) {
-        return rc::Team::TEAM_UNSPECIFIED;
-      }
+    // if (referee_util_->isNormalStart()) {
 
-      if (referee_util_->isCurrentActionTimeUnexpired()) {
-        return last_team_kicking_kickoff;
-      }
+    // }
+    
+    if (hasHomeTeamMovedBall() && last_team_kicking_kickoff == rc::Team::TEAM_HOME) {
+      return rc::Team::TEAM_UNSPECIFIED;
     }
+    if (hasAwayTeamMovedBall() && last_team_kicking_kickoff == rc::Team::TEAM_AWAY) {
+      return rc::Team::TEAM_UNSPECIFIED;
+    }
+
+    if (referee_util_->isCurrentActionTimeUnexpired()) {
+      return last_team_kicking_kickoff;
+    }
+
     return rc::Team::TEAM_UNSPECIFIED;
   }
 
   [[nodiscard]] rc::Team
   getTeamKickingDirectFreeKick(rc::Team last_team_kicking_direct_free_kick) const {
-    if (referee_util_->isPrepareDirectFreeKick()) {
+    if (referee_util_->isDirectFreeKick()) {
       return referee_util_->getTeamFromCommand();
     }
-    if (referee_util_->isNormalStart()) {
-      if (hasHomeTeamMovedBall() && last_team_kicking_direct_free_kick == rc::Team::TEAM_HOME) {
-        return rc::Team::TEAM_UNSPECIFIED;
-      }
-      if (hasAwayTeamMovedBall() && last_team_kicking_direct_free_kick == rc::Team::TEAM_AWAY) {
-        return rc::Team::TEAM_UNSPECIFIED;
-      }
-
-      if (referee_util_->isCurrentActionTimeUnexpired()) {
-        return last_team_kicking_direct_free_kick;
-      }
+    if (hasHomeTeamMovedBall() && last_team_kicking_direct_free_kick == rc::Team::TEAM_HOME) {
+      return rc::Team::TEAM_UNSPECIFIED;
     }
+    if (hasAwayTeamMovedBall() && last_team_kicking_direct_free_kick == rc::Team::TEAM_AWAY) {
+      return rc::Team::TEAM_UNSPECIFIED;
+    }
+    if (referee_util_->isCurrentActionTimeUnexpired()) {
+      return last_team_kicking_direct_free_kick;
+    }
+
     return rc::Team::TEAM_UNSPECIFIED;
   }
 
@@ -497,9 +480,9 @@ class KickingTeamUtil {
     if (referee_util_->isPreparePenalty()) {
       return referee_util_->getTeamFromCommand();
     }
-    if (referee_util_->isNormalStart()) {
+    // if (referee_util_->isNormalStart()) {
       return last_team_kicking_penalty;
-    }
+    // }
 
     // a spontaneous transition is expected in order to end the penalty.
     return rc::Team::TEAM_UNSPECIFIED;
@@ -597,11 +580,11 @@ rc::GameCommand GameCommandMapper::fromDetectionAndReferee(const rc::Detection& 
   if (referee_util.isTimeout()) {
     return factory.makeTimeout();
   }
+  if (referee_util.isDirectFreeKick()) {
+    return factory.makeDirectFreeKick(team_kicking_direct_free_kick_);
+  }
   if (referee_util.isPrepareKickoff()) {
     return factory.makePrepareKickoff();
-  }
-  if (referee_util.isPrepareDirectFreeKick()) {
-    return factory.makePrepareDirectFreeKick();
   }
   if (referee_util.isPreparePenalty()) {
     return factory.makePreparePenalty();
@@ -616,23 +599,16 @@ rc::GameCommand GameCommandMapper::fromDetectionAndReferee(const rc::Detection& 
     return factory.makeInGame();
   }
   if (referee_util.isNormalStart()) {
+    // std::cout << "IS NORMAL START\n";
     if (team_kicking_kickoff_ != rc::Team::TEAM_UNSPECIFIED) {
       return factory.makeKickoff(team_kicking_kickoff_);
-    }
-    if (team_kicking_direct_free_kick_ != rc::Team::TEAM_UNSPECIFIED) {
-      return factory.makeDirectFreeKick(team_kicking_direct_free_kick_);
     }
     if (team_kicking_penalty_ != rc::Team::TEAM_UNSPECIFIED) {
       return factory.makePenalty(team_kicking_penalty_);
     }
-
-    return factory.makeInGame();
+    return factory.makeHalt();
   }
 
-  if (!referee_util.isHalt()) {
-    // elog("the expected command was halt, but '{}' was found.",
-    // static_cast<int>(referee.command()));
-  }
   return factory.makeHalt();
 }
 

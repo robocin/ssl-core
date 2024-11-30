@@ -55,7 +55,7 @@ void ConsumerController::exec(std::span<const Payload> payloads) {
   // parameters_handler_engine_->update(parameters_values);
 
   std::optional<rc::Behavior> behavior = behavior_processor_->process(payloads);
-  if (behavior != std::nullopt) {
+  if (behavior.has_value()) {
     // ilog("Sent something!");
     message_sender_->send(*behavior);
   }

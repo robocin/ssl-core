@@ -238,6 +238,8 @@ void GameStatusMessage::fromProto(const protocols::referee::GameStatus& game_sta
       command.emplace();
     }
 
+    command.reset();
+
     // implement, always returns empty command
     command->fromProto(game_status_proto.command());
   }

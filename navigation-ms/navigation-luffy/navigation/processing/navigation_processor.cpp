@@ -2,11 +2,8 @@
 
 #include "navigation/messaging/receiver/payload.h"
 #include "navigation/processing/messages/behavior/behavior_message.h"
-#include "navigation/processing/messages/common/robot_id/robot_id_message.h"
 #include "navigation/processing/messages/navigation/navigation_message.h"
 #include "navigation/processing/messages/perception/detection/detection_message.h"
-#include "navigation/processing/messages/perception/robot/robot_message.h"
-#include "navigation/processing/messages/planning/planning_message.h"
 #include "navigation/processing/messages/referee/game_status_message.h"
 
 #include <optional>
@@ -15,11 +12,9 @@
 #include <protocols/perception/detection.pb.h>
 #include <protocols/referee/game_status.pb.h>
 #include <ranges>
+#include <robocin/output/log.h>
 
 namespace navigation {
-
-namespace parameters = ::robocin::parameters;
-
 namespace rc {
 using ::protocols::behavior::unification::Behavior;
 using ::protocols::perception::Detection;
@@ -54,10 +49,12 @@ NavigationProcessor::process(std::span<const Payload> payloads) {
   if (std::vector<rc::Behavior> behaviors = behaviorFromPayloads(payloads); !behaviors.empty()) {
     last_behavior_ = BehaviorUnificationMessage(behaviors.back());
   }
-
+  
+  bool isHalt = false;
   if (std::vector<rc::GameStatus> game_statuses = gameStatusFromPayloads(payloads);
       !game_statuses.empty()) {
     last_game_status_ = GameStatusMessage(game_statuses.back());
+    isHalt = game_statuses.back().command().has_halt();
   }
 
   if (!last_behavior_ or !last_game_status_) {
@@ -77,7 +74,7 @@ NavigationProcessor::process(std::span<const Payload> payloads) {
   for (auto& behavior : last_behavior_->behavior_outputs) {
     motion_parser_->setWorld(behavior, last_detection, last_game_status_.value());
     NavigationOutputMessage output_msg = motion_parser_->parseMotion();
-    navigation_msg.output->emplace_back(std::move(output_msg));
+    navigation_msg.output.emplace_back(std::move(output_msg));
   }
 
   return navigation_msg.toProto();

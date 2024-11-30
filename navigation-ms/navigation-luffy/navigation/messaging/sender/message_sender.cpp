@@ -23,7 +23,7 @@ MessageSender::MessageSender(std::unique_ptr<::robocin::IZmqPublisherSocket> nav
     navigation_socket_{std::move(navigation_socket)} {}
 
 void MessageSender::send(const rc::Navigation& navigation) {
-  // ilog("sending... {}", navigation.DebugString());
+  ilog("sending... {}", navigation.DebugString());
 
   navigation_socket_->send({
       service_discovery::kNavigationOutputTopic,

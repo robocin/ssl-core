@@ -9,9 +9,11 @@
 #include "communication/processing/messages/common/robot_velocity/robot_velocity.h"
 #include "communication/processing/messages/communication/communication_message.h"
 #include "communication/processing/messages/flags/flags.h"
+#include "robocin/parameters/parameters.h"
 
 #include <protocols/communication/communication.pb.h>
-#include <robocin/parameters/parameters.h>
+#include <protocols/third_party/simulation/robot_control.pb.h>
+#include <protocols/perception/detection.pb.h>
 
 namespace communication {
 
@@ -26,8 +28,11 @@ class ICommunicationProcessor {
 
   virtual ~ICommunicationProcessor() = default;
 
+  virtual std::optional<::protocols::third_party::simulation::RobotControl>
+  processSimulator(std::span<const Payload> payloads) = 0;
+
   virtual std::optional<::protocols::communication::Communication>
-  process(std::span<const Payload> payloads) = 0;
+  processReal(std::span<const Payload> payloads) = 0;
 };
 
 class CommunicationProcessor : public ICommunicationProcessor {
@@ -35,12 +40,15 @@ class CommunicationProcessor : public ICommunicationProcessor {
   explicit CommunicationProcessor(
       std::unique_ptr<::robocin::parameters::IHandlerEngine> parameters_handler_engine);
 
+  std::optional<::protocols::third_party::simulation::RobotControl>
+  processSimulator(std::span<const Payload> payloads) override;
+
   std::optional<::protocols::communication::Communication>
-  process(std::span<const Payload> payloads) override;
+  processReal(std::span<const Payload> payloads) override;
 
  private:
   std::unique_ptr<::robocin::parameters::IHandlerEngine> parameters_handler_engine_;
-
+  std::optional<::protocols::perception::Detection> last_detection_;
   std::optional<::protocols::third_party::game_controller::Referee> last_game_controller_referee_;
 };
 

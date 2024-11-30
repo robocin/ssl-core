@@ -105,11 +105,24 @@ rc::Detection TrackedDetectionMapper::fromTrackedWrapperPacket(
   rc::Detection detection;
 
   for (const auto& tracked_robot : tracked_frame.robots()) {
+    if (!pConsiderEntitiesInNegativeSide() && tracked_robot.pos().x() <= 0) {
+      continue;
+    }
+
+    if (!pConsiderEntitiesInPositiveSide() && tracked_robot.pos().x() > 0) {
+      continue;
+    }
+
     rc::Robot& robot = *detection.add_robots();
     robot = robotFromTrackedRobot(tracked_robot);
   }
 
   for (const auto& tracked_ball : tracked_frame.balls()) {
+    if ((!pConsiderEntitiesInNegativeSide() && (tracked_ball.pos().x()<= 0)) || 
+    (!pConsiderEntitiesInPositiveSide() && (tracked_ball.pos().x() > 0))) {
+      continue;
+    }
+
     rc::Ball& ball = *detection.add_balls();
     ball = ballFromTrackedBall(tracked_ball);
   }

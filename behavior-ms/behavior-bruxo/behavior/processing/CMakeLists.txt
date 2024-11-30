@@ -6,6 +6,6 @@ robocin_cpp_library(
          messages
          entities
          state_machine
-         behavior_manager
          analyzers
+         impl
 )

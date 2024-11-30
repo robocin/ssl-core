@@ -2,6 +2,7 @@
 
 #include "communication/messaging/receiver/payload.h"
 
+#include <protocols/perception/detection.pb.h>
 #include <robocin/network/zmq_datagram.h>
 #include <robocin/output/log.h>
 #include <robocin/wip/service_discovery/addresses.h>
@@ -18,6 +19,7 @@ using ::robocin::ZmqDatagram;
 namespace rc {
 
 using ::protocols::navigation::Navigation;
+using ::protocols::perception::Detection;
 
 } // namespace rc
 
@@ -32,11 +34,13 @@ using ::protocols::third_party::game_controller::Referee;
 Payload PayloadMapper::fromZmqDatagrams(std::span<const ZmqDatagram> messages) const {
   std::vector<rc::Navigation> navigation;
   std::vector<tp::Referee> referee;
+  std::vector<rc::Detection> detection;
 
   for (const ZmqDatagram& zmq_datagram : messages) {
     if (zmq_datagram.topic() == service_discovery::kNavigationOutputTopic) {
       rc::Navigation navigation_message;
       navigation_message.ParseFromString(std::string{zmq_datagram.message()});
+      // robocin::ilog("Received from navigation: {}", navigation_message.DebugString());
       navigation.emplace_back(std::move(navigation_message));
 
     } else if (zmq_datagram.topic() == service_discovery::kGameControllerRefereeTopic) {
@@ -44,12 +48,17 @@ Payload PayloadMapper::fromZmqDatagrams(std::span<const ZmqDatagram> messages) c
       referee_message.ParseFromString(std::string{zmq_datagram.message()});
       referee.emplace_back(std::move(referee_message));
 
+    } else if (zmq_datagram.topic() == service_discovery::kPerceptionDetectionTopic) {
+      rc::Detection detection_message;
+      detection_message.ParseFromString(std::string{zmq_datagram.message()});
+      // robocin::ilog("Detection message received: {}", detection_message.DebugString());
+      detection.emplace_back(std::move(detection_message));
     } else {
-      // wlog("zmq_datagram with topic '{}' not processed.", zmq_datagram.topic());
+      wlog("zmq_datagram with topic '{}' not processed.", zmq_datagram.topic());
     }
   }
 
-  return Payload{std::move(referee), std::move(navigation)};
+  return Payload{std::move(referee), std::move(navigation), std::move(detection)};
 }
 
 } // namespace communication

@@ -1,6 +1,8 @@
 #ifndef BEHAVIOR_PROCESSING_MESSAGES_MOTION_MOTION_MESSAGE_H
 #define BEHAVIOR_PROCESSING_MESSAGES_MOTION_MOTION_MESSAGE_H
 
+#include "behavior/processing/messages/common/peripheral_actuation/peripheral_actuation.h"
+
 #include <protocols/behavior/behavior_unification.pb.h>
 #include <protocols/behavior/motion.pb.h>
 #include <robocin/geometry/point2d.h>
@@ -14,7 +16,7 @@ namespace behavior {
 ()
 */
 class GoToPointMessage : public robocin::IProtoConvertible<protocols::behavior::GoToPoint> {
-
+ public:
   enum MovingProfile {
     // Move safely profile
     SafeInStopSpeed = 0,
@@ -51,7 +53,6 @@ class GoToPointMessage : public robocin::IProtoConvertible<protocols::behavior::
     NORMAL = 1,
   };
 
- public:
   explicit GoToPointMessage(std::optional<robocin::Point2D<float>> target = std::nullopt,
                             std::optional<double> target_angle = std::nullopt,
                             std::optional<MovingProfile> moving_profile = std::nullopt,
@@ -119,7 +120,8 @@ class MotionMessage : public robocin::IProtoConvertible<protocols::behavior::uni
                 std::optional<GoToPointWithTrajectoryMessage> go_to_point_with_trajectory
                 = std::nullopt,
                 std::optional<RotateInPointMessage> rotate_in_point = std::nullopt,
-                std::optional<RotateOnSelfMessage> rotate_on_self = std::nullopt);
+                std::optional<RotateOnSelfMessage> rotate_on_self = std::nullopt,
+                std::optional<PeripheralActuationMessage> peripheral_actuation = std::nullopt);
 
   [[nodiscard]] protocols::behavior::unification::Motion toProto() const override;
 
@@ -129,6 +131,7 @@ class MotionMessage : public robocin::IProtoConvertible<protocols::behavior::uni
   std::optional<GoToPointWithTrajectoryMessage> go_to_point_with_trajectory;
   std::optional<RotateInPointMessage> rotate_in_point;
   std::optional<RotateOnSelfMessage> rotate_on_self;
+  std::optional<PeripheralActuationMessage> peripheral_actuation;
 };
 
 } // namespace behavior

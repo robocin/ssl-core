@@ -8,7 +8,12 @@ services:
       REALISM: "RC2021"
     logging:
       driver: none
-
+    ports:
+      - "10301:10301/udp"
+      - "10302:10302/udp"
+      - "10300:10300/udp"
+      - "11003:11003/udp"
+      
   autoref-tigers:
     container_name: autoref-tigers
     image: tigersmannheim/auto-referee:1.2.0
@@ -18,11 +23,12 @@ services:
       - "-visionAddress"
       - "224.5.23.2:10020"
       - "-refereeAddress"
-      - "224.5.23.1:11003"
+      - "224.5.23.1:10003"
     logging:
       driver: none
     depends_on:
       - simulator
+    attach: false
 
   game-controller:
     container_name: game-controller
@@ -33,7 +39,7 @@ services:
       - "-trackerAddress"
       - "224.5.23.2:11010"
       - "-publishAddress"
-      - "224.5.23.1:11003"
+      - "224.5.23.1:10003"
       - "-address"
       - ":8081"
     restart: unless-stopped
@@ -44,6 +50,8 @@ services:
       driver: none
     depends_on:
       - autoref-tigers
+    network_mode: host
+    attach: false
 
   ssl-vision-client:
     container_name: ssl-vision-client
@@ -68,13 +76,15 @@ services:
       dockerfile: gateway/gateway-augusto/gateway-augusto.Dockerfile
     environment:
       - VISION_PORT=10020
-      - GC_PORT=11003
+      - GC_PORT=10003
     volumes:
       - .ssl-core:/tmp/.ssl-core
     ports:
       - 50051:50051
     depends_on:
       - simulator
+    network_mode: host
+    restart: on-failure
 
   perception-ms:
     container_name: perception-ms
@@ -85,6 +95,7 @@ services:
       - .ssl-core:/tmp/.ssl-core
     depends_on:
       - gateway
+    restart: on-failure
 
   referee-ms:
     container_name: referee-ms
@@ -95,6 +106,8 @@ services:
       - .ssl-core:/tmp/.ssl-core
     depends_on:
       - perception-ms
+    attach: true
+    restart: on-failure
 
   playback-ms:
     container_name: playback-ms
@@ -202,27 +215,6 @@ services:
       - metrics-db
     attach: false
 
-  navigation-ms:
-    container_name: navigation-ms
-    build:
-      context: .
-      dockerfile: navigation-ms/navigation-luffy/navigation-luffy.Dockerfile
-    volumes:
-      - .ssl-core:/tmp/.ssl-core
-    attach: false
-
-  decision-ms:
-    container_name: decision-ms
-    build:
-      context: .
-      dockerfile: decision-ms/decision-guardiola/decision-guardiola.Dockerfile
-    volumes:
-      - .ssl-core:/tmp/.ssl-core
-    depends_on:
-      - perception-ms
-      - referee-ms
-    attach: true
-
   behavior-ms:
     container_name: behavior-ms
     build:
@@ -230,8 +222,21 @@ services:
       dockerfile: behavior-ms/behavior-bruxo/behavior-bruxo.Dockerfile
     volumes:
       - .ssl-core:/tmp/.ssl-core
+    attach: true
+    restart: on-failure
+
+  navigation-ms:
+    container_name: navigation-ms
+    build:
+      context: .
+      dockerfile: navigation-ms/navigation-luffy/navigation-luffy.Dockerfile
+    volumes:
+      - .ssl-core:/tmp/.ssl-core
+    depends_on:
+      - behavior-ms
     attach: false
-  
+    restart: on-failure
+
   communication-ms:
     container_name: communication-ms
     build:
@@ -240,10 +245,10 @@ services:
     volumes:
       - .ssl-core:/tmp/.ssl-core
     depends_on:
-      - gateway
+      - navigation-ms
     network_mode: "host"
     attach: false
-
+    restart: on-failure
 
 volumes:
   .ssl-core:

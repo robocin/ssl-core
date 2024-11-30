@@ -15,6 +15,17 @@ Wheel::Wheel(std::optional<uint32_t> wheel_id, std::optional<float> motor_speed)
     wheel_id(wheel_id),
     motor_speed(motor_speed) {};
 
+protocols::perception::Robot::Feedback::Wheel Wheel::toProto() const {
+  protocols::perception::Robot::Feedback::Wheel wheel_proto;
+  if (wheel_id.has_value()) {
+    wheel_proto.set_wheel_id(wheel_id.value());
+  }
+  if (motor_speed.has_value()) {
+    wheel_proto.set_motor_speed(motor_speed.value());
+  }
+  return wheel_proto;
+}
+
 //////////////////////////////////////////// Feedback ///////////////////////////////////////////
 
 FeedbackMessage::FeedbackMessage(std::optional<bool> dribbler_ball_contact,
@@ -35,6 +46,23 @@ void FeedbackMessage::fromProto(const rc::Robot::Feedback& feedback_proto) {
   kick_charge_percentage = feedback_proto.kick_charge_percentage();
   battery_percentage = feedback_proto.battery_percentage();
 };
+
+protocols::perception::Robot::Feedback FeedbackMessage::toProto() const {
+  protocols::perception::Robot::Feedback feedback_proto;
+  if (dribbler_ball_contact.has_value()) {
+    feedback_proto.set_dribbler_ball_contact(dribbler_ball_contact.value());
+  }
+  if (kick_charge_percentage.has_value()) {
+    feedback_proto.set_kick_charge_percentage(kick_charge_percentage.value());
+  }
+  if (battery_percentage.has_value()) {
+    feedback_proto.set_battery_percentage(battery_percentage.value());
+  }
+  for (auto& wheel : wheels) {
+    feedback_proto.add_wheels()->CopyFrom(wheel.toProto());
+  }
+  return feedback_proto;
+}
 
 ///////////////////////////////////////////// Robot /////////////////////////////////////////////
 
@@ -86,5 +114,41 @@ void RobotMessage::fromProto(const rc::Robot& robot_proto) {
   }
 };
 
+protocols::perception::Robot RobotMessage::toProto() const {
+  protocols::perception::Robot robot_proto;
+  if (robot_id.has_value()) {
+    robot_proto.mutable_robot_id()->CopyFrom(robot_id->toProto());
+  }
+  if (feedback.has_value()) {
+    robot_proto.mutable_feedback()->CopyFrom(feedback->toProto());
+  }
+  if (position.has_value()) {
+    robot_proto.mutable_position()->set_x(position->x);
+    robot_proto.mutable_position()->set_y(position->y);
+  }
+  if (velocity.has_value()) {
+    robot_proto.mutable_velocity()->set_x(velocity->x);
+    robot_proto.mutable_velocity()->set_y(velocity->y);
+  }
+  if (confidence.has_value()) {
+    robot_proto.set_confidence(confidence.value());
+  }
+  if (angle.has_value()) {
+    robot_proto.set_angle(angle.value());
+  }
+  if (angular_velocity.has_value()) {
+    robot_proto.set_angular_velocity(angular_velocity.value());
+  }
+  if (radius.has_value()) {
+    robot_proto.set_radius(radius.value());
+  }
+  if (height.has_value()) {
+    robot_proto.set_height(height.value());
+  }
+  if (dribbler_width.has_value()) {
+    robot_proto.set_dribbler_width(dribbler_width.value());
+  }
+  return robot_proto;
+}
 RobotMessage::RobotMessage(const rc::Robot& robot_proto) { RobotMessage::fromProto(robot_proto); }
 } // namespace navigation

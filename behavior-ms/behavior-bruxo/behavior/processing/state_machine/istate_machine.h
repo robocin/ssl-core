@@ -1,6 +1,7 @@
 #ifndef BEHAVIOR_STATE_MACHINE_ISTATE_MACHINE_H
 #define BEHAVIOR_STATE_MACHINE_ISTATE_MACHINE_H
 
+#include "behavior/processing/entities/world.h"
 #include "behavior/processing/messages/behavior/behavior_message.h"
 
 namespace behavior {
@@ -28,7 +29,7 @@ class IStateMachine {
   virtual ~IStateMachine() = default;
 
   virtual void transitionTo(IState* state) = 0;
-  virtual void run() = 0;
+  virtual void run(const World& world, RobotIdMessage& ally_id) = 0;
 };
 
 class IState {
@@ -46,7 +47,7 @@ class IState {
   virtual ~IState() = default;
 
   virtual void setStateMachine(IStateMachine* state_machine) = 0;
-  virtual OutputMessage exec() = 0;
+  virtual OutputMessage exec(const World& world, RobotIdMessage& ally_id) = 0;
 };
 
 } // namespace behavior

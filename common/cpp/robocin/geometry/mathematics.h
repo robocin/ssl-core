@@ -1,15 +1,21 @@
 #ifndef ROBOCIN_MATHEMATICS_H
 #define ROBOCIN_MATHEMATICS_H
 
-#include "robocin/geometry/point2d.h"
 #include "robocin/geometry/line.h"
+#include "robocin/geometry/point2d.h"
 
 #include <algorithm>
 #include <cmath>
+#include <optional>
 #include <stdexcept>
 #include <type_traits>
 
 namespace mathematics {
+
+template <class T>
+bool fuzzyIsNull(T value, T epsilon = static_cast<T>(1e-9)) {
+  return std::abs(value) < epsilon;
+}
 
 /*!
  * @tparam T arithmetic type.
@@ -20,10 +26,11 @@ namespace mathematics {
  * @param r_higher higher value from r-range.
  * @return Returns value mapped from l-range to r-range.
  */
+
 template <class T>
 [[maybe_unused]] constexpr T
 map(const T& value, const T& l_lower, const T& l_higher, const T& r_lower, const T& r_higher) {
-  if (robocin::Point2D<T>::fuzzyIsNull(l_higher - l_lower)) {
+  if (fuzzyIsNull(l_higher - l_lower)) {
     throw std::runtime_error("'l_lower' equals to 'l_higher'.");
   }
   return (value - l_lower) * (r_higher - r_lower) / (l_higher - l_lower) + r_lower;
@@ -41,7 +48,7 @@ constexpr bool linesParallel(const robocin::Point2D<T>& a,
                              const robocin::Point2D<T>& b,
                              const robocin::Point2D<T>& c,
                              const robocin::Point2D<T>& d) {
-  return robocin::Point2D<T>::fuzzyIsNull(robocin::Point2D<T>{b - a}.cross(c - d));
+  return fuzzyIsNull(robocin::Point2D<T>{b - a}.cross(c - d));
 }
 
 /*!
@@ -50,9 +57,8 @@ constexpr bool linesParallel(const robocin::Point2D<T>& a,
  * @return Determines if lines through (a, b) and (c, d) are parallel.
  */
 template <class T>
-constexpr bool linesParallel(const robocin::Line<T>& a,
-                             const robocin::Line<T>& b) {
-  return linesParallel(a.p1(),a.p2(),b.p1(),b.p2());
+constexpr bool linesParallel(const robocin::Line<T>& a, const robocin::Line<T>& b) {
+  return linesParallel(a.p1(), a.p2(), b.p1(), b.p2());
 }
 
 /*!
@@ -62,16 +68,16 @@ constexpr bool linesParallel(const robocin::Line<T>& a,
  */
 template <class T>
 constexpr bool linesCollinear(const robocin::Point2D<T>& a,
-                             const robocin::Point2D<T>& b,
-                             const robocin::Point2D<T>& c,
-                             const robocin::Point2D<T>& d) {
+                              const robocin::Point2D<T>& b,
+                              const robocin::Point2D<T>& c,
+                              const robocin::Point2D<T>& d) {
   if (!linesParallel<T>(a, b, c, d)) {
     return false;
   }
-  if (!robocin::Point2D<T>::fuzzyIsNull(robocin::Point2D<T>{a - b}.cross(a - c))) {
+  if (!fuzzyIsNull(robocin::Point2D<T>{a - b}.cross(a - c))) {
     return false;
   }
-  if (!robocin::Point2D<T>::fuzzyIsNull(robocin::Point2D<T>{c - d}.cross(c - a))) {
+  if (!fuzzyIsNull(robocin::Point2D<T>{c - d}.cross(c - a))) {
     return false;
   }
   return true;
@@ -83,9 +89,8 @@ constexpr bool linesCollinear(const robocin::Point2D<T>& a,
  * @return Determines if lines through (a, b) and (c, d) are collinear.
  */
 template <class T>
-constexpr bool linesCollinear(const robocin::Line<T>& a,
-                              const robocin::Line<T>& b) {
-  return linesCollinear(a.p1(),a.p2(),b.p1(),b.p2());
+constexpr bool linesCollinear(const robocin::Line<T>& a, const robocin::Line<T>& b) {
+  return linesCollinear(a.p1(), a.p2(), b.p1(), b.p2());
 }
 /*!
  * @tparam T arithmetic type.
@@ -94,14 +99,12 @@ constexpr bool linesCollinear(const robocin::Line<T>& a,
  */
 template <class T>
 constexpr bool segmentsIntersect(const robocin::Point2D<T>& a,
-                             const robocin::Point2D<T>& b,
-                             const robocin::Point2D<T>& c,
-                             const robocin::Point2D<T>& d) {
+                                 const robocin::Point2D<T>& b,
+                                 const robocin::Point2D<T>& c,
+                                 const robocin::Point2D<T>& d) {
   if (linesCollinear<T>(a, b, c, d)) {
-    if (robocin::Point2D<T>::fuzzyIsNull(a.distanceSquaredTo(c))
-        || robocin::Point2D<T>::fuzzyIsNull(a.distanceSquaredTo(d))
-        || robocin::Point2D<T>::fuzzyIsNull(b.distanceSquaredTo(c))
-        || robocin::Point2D<T>::fuzzyIsNull(b.distanceSquaredTo(d))) {
+    if (fuzzyIsNull(a.distanceSquaredTo(c)) || fuzzyIsNull(a.distanceSquaredTo(d))
+        || fuzzyIsNull(b.distanceSquaredTo(c)) || fuzzyIsNull(b.distanceSquaredTo(d))) {
       return true;
     }
     if (robocin::Point2D<T>{c - a}.dot(c - b) > 0 && robocin::Point2D<T>{d - a}.dot(d - b) > 0
@@ -125,9 +128,66 @@ constexpr bool segmentsIntersect(const robocin::Point2D<T>& a,
  * @return Determines if line segment from a to b intersects with line segment from c to d.
  */
 template <class T>
-constexpr bool segmentsIntersect(const robocin::Line<T>& a,
-                                 const robocin::Line<T>& b) {
-  return segmentsIntersect(a.p1(),a.p2(),b.p1(),b.p2());
+constexpr bool segmentsIntersect(const robocin::Line<T>& a, const robocin::Line<T>& b) {
+  return segmentsIntersect(a.p1(), a.p2(), b.p1(), b.p2());
+}
+
+/*!
+ * @tparam T arithmetic type.
+ * @param a, b, c, d lines (a, b) and (c, d).
+ * @return Returns the intersection point between the two segments (if exists).
+ * @note implementation is based on Graphics Gems III's "Faster Line Segment Intersection"
+ */
+template <class T>
+constexpr std::enable_if_t<std::is_floating_point_v<T>, std::optional<robocin::Point2D<T>>>
+segmentsIntersection(const robocin::Point2D<T>& a,
+                     const robocin::Point2D<T>& b,
+                     const robocin::Point2D<T>& c,
+                     const robocin::Point2D<T>& d) {
+  const robocin::Point2D<T> ba = b - a;
+  const robocin::Point2D<T> cd = c - d;
+  const robocin::Point2D<T> ac = a - c;
+  const auto denominator = cd.cross(ba);
+  if (fuzzyIsNull(denominator)) {
+    return std::nullopt;
+  }
+  const T reciprocal = static_cast<T>(1) / denominator;
+  const T na = ac.cross(cd) * reciprocal;
+  if (!(0 <= na && na <= 1)) {
+    return std::nullopt;
+  }
+  const T nb = ba.cross(ac) * reciprocal;
+  if (!(0 <= nb && nb <= 1)) {
+    return std::nullopt;
+  }
+  return a + ba * na;
+}
+
+/*!
+ * @tparam T arithmetic type.
+ * @param lhs, rhs lines.
+ * @return Returns the intersection point between the two segments (if exists).
+ * @note implementation is based on Graphics Gems III's "Faster Line Segment Intersection"
+ */
+template <class T>
+constexpr auto segmentsIntersection(const robocin::Line<T>& lhs, const robocin::Line<T>& rhs) {
+  return segmentsIntersection(lhs.p1(), lhs.p2(), rhs.p1(), rhs.p2());
+}
+
+/*!
+ * @tparam PT Requires '.x()' and '.y()' members.
+ * @param lhs, rhs the vectors.
+ * @return Computes the angle between lhs and rhs (in the range [-π , +π] radians, the order
+ * matters).
+ */
+template <class PT>
+constexpr auto angleBetween(const PT& lhs, const PT& rhs) {
+  return std::atan2(lhs.cross(rhs), lhs.dot(rhs));
+}
+
+template <class T>
+constexpr T degreesToRadians(T degrees) {
+  return degrees * static_cast<T>(M_PI) / static_cast<T>(180);
 }
 
 } // namespace mathematics

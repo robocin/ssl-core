@@ -11,12 +11,45 @@ namespace behavior {
 constinit const auto pBehaviorPollerTimeoutMs
     = ::robocin::parameters::View<1>::asInt32(10 /*ms ~= 100Hz*/);
 
-constinit const auto pAllyColor = Color::COLOR_BLUE;
+constinit const auto pAllyColor = Color::COLOR_BLUE; // COLOR_BLUE
 
-constinit const auto isAttackingToRight = ::robocin::parameters::View<1>::asBool(true);
+constinit const auto isAttackingToRight = ::robocin::parameters::View<1>::asBool(false);
 
-constinit const auto pBallIsMovingVelocity = ::robocin::parameters::View<1>::asInt32(300);
-constinit const auto pBallIsMovingFastVelocity = ::robocin::parameters::View<1>::asInt32(850);
+constinit const auto pBallIsMovingVelocity = ::robocin::parameters::View<2>::asInt32(300);
+constinit const auto pBallIsMovingFastVelocity = ::robocin::parameters::View<3>::asInt32(850);
+
+constinit const auto pRobotRadius = ::robocin::parameters::View<4>::asInt32(90);
+constinit const auto pRobotDiameter = ::robocin::parameters::View<5>::asInt32(180);
+
+// CBR:
+constinit const auto pGoalkeeperNumber = ::robocin::parameters::View<6>::asInt32(1);
+constinit const auto pForwardNumber = ::robocin::parameters::View<7>::asInt32(0);
+constinit const auto pSupportNumber = ::robocin::parameters::View<8>::asInt32(2);
+constinit const auto pForwardDistToEnterKickBallWhenMovingAway
+    = ::robocin::parameters::View<9>::asInt32(200);
+constinit const auto pForwardMaxDistToMoveAroundBallWhenIsStoppedAndLookingToBallAndTarget
+    = ::robocin::parameters::View<10>::asInt32(330);
+constinit const auto pApproachAngleThreshold = ::robocin::parameters::View<11>::asFloat(0.13f);
+constinit const auto pFrontKickStrenght = ::robocin::parameters::View<12>::asFloat(6.5f);
+constinit const auto pMarginEps = ::robocin::parameters::View<13>::asInt32(20);
+
+constinit const auto pStopRadius = ::robocin::parameters::View<14>::asFloat(600.0f);
+constinit const auto pChipKickStrenght = ::robocin::parameters::View<15>::asFloat(6.0f);
+constinit const auto pWaitDirectFreeKick = ::robocin::parameters::View<16>::asInt32(10);
+constinit const auto pWaitKickOff = ::robocin::parameters::View<17>::asInt32(10);
+
+constinit const auto pBallRadius = ::robocin::parameters::View<18>::asInt32(22);
+constinit const auto pDistanceThreshold = ::robocin::parameters::View<19>::asInt32(200);
+
+namespace shoot {
+inline static double MIN_Y_DISTANCE_TO_CHANGE_TO_KICK_TO_POST = 2000;
+inline static double MAX_DIFF_TO_CHANGE_TO_POST = 1000;
+inline static bool ONLY_KICK_IN_GOAL_CENTER = false;
+inline static bool ALLOWED_KICK_ON_POST = false;
+inline static double DONT_HAVE_ANGLE_TO_KICK_THRESHOLD = 0.12;
+inline static double HOW_MANY_DIAMETERS_DISCOUNT_OUT_GOAL_LINE_WHEN_KICK_ON_CORNER = 3.5;
+}; // namespace shoot
+
 // NOLINTEND(*comment*)
 } // namespace behavior
 

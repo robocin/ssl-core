@@ -2,6 +2,10 @@
 
 #include "behavior/messaging/receiver/payload.h"
 
+#include <chrono>
+#include <ctime>
+#include <iomanip>
+#include <iostream>
 #include <robocin/network/zmq_datagram.h>
 #include <robocin/output/log.h>
 #include <robocin/wip/service_discovery/addresses.h>
@@ -44,6 +48,7 @@ Payload PayloadMapper::fromZmqDatagrams(std::span<const ZmqDatagram> messages) c
     } else if (zmq_datagram.topic() == service_discovery::kRefereeGameStatusTopic) {
       rc::GameStatus game_status_message;
       game_status_message.ParseFromString(std::string{zmq_datagram.message()});
+      // robocin::ilog("Received from referee: {}", game_status_message.DebugString());
       game_status.emplace_back(std::move(game_status_message));
 
     } else {

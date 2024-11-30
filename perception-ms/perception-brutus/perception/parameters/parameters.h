@@ -9,7 +9,7 @@ namespace perception {
 constinit const auto pPerceptionPollerTimeoutMs
     = ::robocin::parameters::View<1>::asInt32(10 /*ms ~= 100Hz*/);
 // TODO(matheusvtna): retrieve the vision source from perception parameters.
-constinit const auto pUseTrackedDetectionAsSource = ::robocin::parameters::View<2>::asBool(false);
+constinit const auto pUseTrackedDetectionAsSource = ::robocin::parameters::View<2>::asBool(true);
 constinit const auto pRobotRadius = ::robocin::parameters::View<3>::asFloat(90);
 constinit const auto pRobotHeight = ::robocin::parameters::View<4>::asFloat(140);
 constinit const auto pDribblerWidth = ::robocin::parameters::View<5>::asFloat(60);
@@ -23,6 +23,9 @@ constinit const auto pPenaltyAreaDepth = ::robocin::parameters::View<10>::asFloa
 constinit const auto pPenaltyAreaWidth = ::robocin::parameters::View<11>::asFloat(3'600);
 constinit const auto pBoundaryWidth = ::robocin::parameters::View<12>::asFloat(300);
 constinit const auto pGoalCenterToPenaltyMark = ::robocin::parameters::View<13>::asFloat(8'000);
+
+constinit const auto pConsiderEntitiesInPositiveSide = ::robocin::parameters::View<14>::asBool(true);
+constinit const auto pConsiderEntitiesInNegativeSide = ::robocin::parameters::View<15>::asBool(true);
 
 // NOLINTEND(*comment*)
 } // namespace perception

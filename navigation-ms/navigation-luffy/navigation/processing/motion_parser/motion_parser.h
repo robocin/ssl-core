@@ -8,6 +8,7 @@
 #include "navigation/processing/messages/perception/detection/detection_message.h"
 #include "navigation/processing/messages/referee/game_status_message.h"
 
+#include <cstdint>
 #include <navigation/processing/entities/robot_move.h>
 
 #define PI 3.14159265358979323846
@@ -57,6 +58,7 @@ class MotionParser : public IMotionParser {
   RobotMove fromRotateOnSelf(const RotateOnSelfMessage& rotate_on_self) override;
 
   World world_;
+  int8_t sequence_number_ = 0;
 };
 
 } // namespace navigation

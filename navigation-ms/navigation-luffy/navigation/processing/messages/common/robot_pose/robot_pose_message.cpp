@@ -2,12 +2,21 @@
 
 namespace navigation {
 
-RobotPoseMessage::RobotPoseMessage(robocin::Point2Df position, float orientation) :
+RobotPoseMessage::RobotPoseMessage(std::optional<robocin::Point2Df> position,
+                                   std::optional<float> orientation) :
     position(position),
     orientation(orientation) {}
 
 protocols::common::RobotPose RobotPoseMessage::toProto() const {
-  return protocols::common::RobotPose{};
+  protocols::common::RobotPose pose_proto;
+  if (position.has_value()) {
+    pose_proto.mutable_position()->set_x(position->x);
+    pose_proto.mutable_position()->set_y(position->y);
+  }
+  if (orientation.has_value()) {
+    pose_proto.set_orientation(orientation.value());
+  }
+  return pose_proto;
 };
 
 void RobotPoseMessage::fromProto(const protocols::common::RobotPose& robot_pose_proto) {
